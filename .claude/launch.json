@@ -1,0 +1,19 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "Python Static Server",
+      "runtimeExecutable": "sh",
+      "runtimeArgs": ["-c", "python3 -m http.server ${PORT:-8080}"],
+      "port": 8080,
+      "autoPort": true
+    },
+    {
+      "name": "Vercel Dev",
+      "runtimeExecutable": "vercel",
+      "runtimeArgs": ["dev", "--listen", "3001"],
+      "port": 3001,
+      "autoPort": false
+    }
+  ]
+}
