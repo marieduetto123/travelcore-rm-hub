@@ -2822,6 +2822,8 @@ function renderWeekView(month, day) {
   const wvSection  = document.getElementById('weekView');
   if (calSection) calSection.style.display = 'none';
   if (wvSection)  wvSection.classList.add('visible');
+  var backArrow = document.getElementById('wvBack');
+  if (backArrow) backArrow.style.display = 'inline-flex';
 
   buildWeekGrid(month, weekStartDay, day);
 }
@@ -7132,6 +7134,8 @@ document.querySelectorAll('.wv-groupby-btn').forEach(function(btn) {
 document.getElementById('wvBack')?.addEventListener('click', () => {
   document.getElementById('demand-calendar').style.display = '';
   document.getElementById('weekView').classList.remove('visible');
+  var backArrow = document.getElementById('wvBack');
+  if (backArrow) backArrow.style.display = 'none';
 });
 document.getElementById('wvPrev')?.addEventListener('click', () => {
   const dim = [0,31,28,31,30,31,30,31,31,30,31,30,31];

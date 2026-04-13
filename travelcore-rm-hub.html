@@ -435,6 +435,9 @@
         <!-- Header (single bar with all controls) -->
         <div class="cal-header">
           <div class="cal-header-left">
+            <button id="wvBack" style="display:none;background:none;border:none;cursor:pointer;padding:0 8px 0 0;color:#111827;line-height:0;flex-shrink:0" title="Back to month view">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polyline points="10 4 5 8 10 12"/></svg>
+            </button>
             <h2 class="cal-title">Calendar</h2>
           </div>
           <div class="cal-header-right">
@@ -957,31 +960,22 @@
 
           </div>
         </div>
-        <!-- Week date navigation row with group-by toggle — Figma 835-44906 / 866-11490 -->
-        <div class="wv-date-nav">
-          <button class="wv-back-btn" id="wvBack">
-            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="10 4 5 8 10 12"/></svg>
-            Back to Month View
-          </button>
-          <div class="wv-date-nav-right">
-            <!-- Daily-H metric reorder modal -->
-            <div id="dhReorderModal" onclick="dhReorderModalBg(event)" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.35);align-items:flex-start;justify-content:center;padding-top:80px">
-              <div style="background:#fff;border-radius:12px;box-shadow:0 16px 48px rgba(0,0,0,.18);width:460px;max-width:94vw;max-height:80vh;overflow-y:auto;display:flex;flex-direction:column">
-                <div style="padding:16px 20px;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#fff;z-index:1">
-                  <div>
-                    <div style="font-size:15px;font-weight:700;color:#111827">Reorder Metrics</div>
-                    <div style="font-size:12px;color:#6b7280;margin-top:2px">Drag to reprioritise. Persists across week navigation.</div>
-                  </div>
-                  <button onclick="document.getElementById('dhReorderModal').style.display='none'" style="background:none;border:none;cursor:pointer;color:#9ca3af;padding:4px;line-height:0">
-                    <svg viewBox="0 0 16 16" fill="none" width="14" height="14"><path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-                  </button>
-                </div>
-                <div id="dhReorderList" style="padding:14px 18px;flex:1;display:flex;flex-direction:column;gap:6px;min-height:100px"></div>
-                <div style="padding:12px 20px;border-top:1px solid #e5e7eb;display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0;background:#fff">
-                  <button onclick="dhResetReorder()" style="padding:7px 14px;border:1px solid #e5e7eb;background:transparent;color:#6b7280;border-radius:7px;font-size:12px;cursor:pointer;font-family:inherit">Reset to default</button>
-                  <button onclick="dhApplyReorder()" style="padding:7px 20px;background:#006461;color:#fff;border:none;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">Apply</button>
-                </div>
+        <!-- Daily-H metric reorder modal (position:fixed, can live anywhere) -->
+        <div id="dhReorderModal" onclick="dhReorderModalBg(event)" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.35);align-items:flex-start;justify-content:center;padding-top:80px">
+          <div style="background:#fff;border-radius:12px;box-shadow:0 16px 48px rgba(0,0,0,.18);width:460px;max-width:94vw;max-height:80vh;overflow-y:auto;display:flex;flex-direction:column">
+            <div style="padding:16px 20px;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#fff;z-index:1">
+              <div>
+                <div style="font-size:15px;font-weight:700;color:#111827">Reorder Metrics</div>
+                <div style="font-size:12px;color:#6b7280;margin-top:2px">Drag to reprioritise. Persists across week navigation.</div>
               </div>
+              <button onclick="document.getElementById('dhReorderModal').style.display='none'" style="background:none;border:none;cursor:pointer;color:#9ca3af;padding:4px;line-height:0">
+                <svg viewBox="0 0 16 16" fill="none" width="14" height="14"><path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              </button>
+            </div>
+            <div id="dhReorderList" style="padding:14px 18px;flex:1;display:flex;flex-direction:column;gap:6px;min-height:100px"></div>
+            <div style="padding:12px 20px;border-top:1px solid #e5e7eb;display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0;background:#fff">
+              <button onclick="dhResetReorder()" style="padding:7px 14px;border:1px solid #e5e7eb;background:transparent;color:#6b7280;border-radius:7px;font-size:12px;cursor:pointer;font-family:inherit">Reset to default</button>
+              <button onclick="dhApplyReorder()" style="padding:7px 20px;background:#006461;color:#fff;border:none;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">Apply</button>
             </div>
           </div>
         </div>
