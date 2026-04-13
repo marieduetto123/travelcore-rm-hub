@@ -391,11 +391,13 @@
               <button type="button" id="revGranDay"   class="rev-gran-btn"        onclick="revSetGran('day')" disabled>Daily</button>
             </div>
             <div class="rev-gran-wrap">
-              <button type="button" id="revChartLines" class="rev-gran-btn rev-gran-btn--icon" title="Lines" onclick="revSetChartMode('lines')">
+              <button type="button" id="revChartLines" class="rev-gran-btn rev-gran-btn--icon" title="Line chart" onclick="revSetChartMode('lines')">
                 <svg viewBox="0 0 18 12" fill="none" stroke="currentColor" stroke-width="1.6" width="16" height="11"><polyline points="1,10 5,4 9,7 13,2 17,5"/></svg>
+                Line
               </button>
-              <button type="button" id="revChartHisto" class="rev-gran-btn rev-gran-btn--icon active" title="Histogram" onclick="revSetChartMode('histogram')">
+              <button type="button" id="revChartHisto" class="rev-gran-btn rev-gran-btn--icon active" title="Bar chart" onclick="revSetChartMode('histogram')">
                 <svg viewBox="0 0 18 12" fill="none" stroke="currentColor" stroke-width="1.4" width="16" height="11"><rect x="1" y="4" width="3" height="8" fill="currentColor" opacity=".7"/><rect x="6" y="2" width="3" height="10" fill="currentColor" opacity=".7"/><rect x="11" y="5" width="3" height="7" fill="currentColor" opacity=".7"/><rect x="16" y="3" width="1" height="9" fill="currentColor" opacity=".7"/></svg>
+                Bar
               </button>
             </div>
           </div>
@@ -831,6 +833,13 @@
         <div class="wv-topbar">
           <span class="wv-topbar-title">Calendar</span>
           <div class="wv-topbar-right">
+            <!-- Compare pills — STLY / LY / Fcst -->
+            <div id="wvCmpPills" style="display:flex;align-items:center;gap:4px;margin-right:4px">
+              <button class="wv-cmp-pill active" id="wvPill_stly" onclick="wvSetCompare('stly')">STLY</button>
+              <button class="wv-cmp-pill" id="wvPill_ly" onclick="wvSetCompare('ly')">LY</button>
+              <button class="wv-cmp-pill" id="wvPill_fcst" onclick="wvSetCompare('fcst')">Fcst</button>
+              <button class="wv-cmp-pill" id="wvPill_none" onclick="wvSetCompare('none')">None</button>
+            </div>
             <div class="cal-filters-wrap wv-filters-wrap" id="wvFiltersWrap">
               <button class="wv-outline-btn" id="wvFiltersBtn">
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" width="14" height="14"><line x1="2" y1="4" x2="14" y2="4"/><line x1="4" y1="8" x2="12" y2="8"/><line x1="6" y1="12" x2="10" y2="12"/></svg>
@@ -1006,6 +1015,11 @@
             </button>
             <!-- Open All / Close All -->
             <div class="wv-date-acc-controls" style="margin-left:auto">
+              <!-- Close-out selected days (Daily B only, shown when days are selected) -->
+              <button class="wv-acc-action-btn" id="wbCloseOutBtn" style="display:none;background:#006461;color:#fff;border-color:#006461;gap:5px" onclick="wbOpenCloseOut()">
+                <svg viewBox="0 0 12 14" fill="none" stroke="currentColor" stroke-width="1.5" width="12" height="13"><rect x="1" y="5" width="10" height="9" rx="1"/><path d="M3.5 5V3a2.5 2.5 0 0 1 5 0v2"/></svg>
+                Close Out Days
+              </button>
               <button class="wv-acc-action-btn" id="wvRtCloseAll">
                 <svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M13 3h4v4"/><path d="M17 3l-5.5 5.5"/>
