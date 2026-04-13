@@ -3432,6 +3432,10 @@ function buildDailyBView(days, month, activeDay) {
             + '<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,Math.round(baseRate/280*100))+'%;background:#006461;height:12px"></div></div>';
 
         } else {
+        // colors are read from the first sub-row's dot for each section
+        function wbBar(pct, clr) {
+          return '<div class="wv-occ-bar-track"><div style="width:'+pct+'%;background:'+clr+';height:12px"></div></div>';
+        }
         switch (row.id) {
           // ── Daily Metrics ──────────────────────────────────────────────────
           case 'occ':
@@ -3442,108 +3446,108 @@ function buildDailyBView(days, month, activeDay) {
               + '<div style="width:'+d.otherPct+'%;background:#47c5bc;height:12px"></div>'
               + '</div>';
             break;
-          case 'onoff':
+          case 'onoff': // Online=#3b82f6, Offline=#f97316 — stacked
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.onlinePct+'%</span></div>'
               + '<div class="wv-occ-bar-track">'
-              + '<div style="width:'+d.onlinePct+'%;background:#006461;height:12px"></div>'
-              + '<div style="width:'+(100-d.onlinePct)+'%;background:#47c5bc;height:12px"></div>'
+              + '<div style="width:'+d.onlinePct+'%;background:#3b82f6;height:12px"></div>'
+              + '<div style="width:'+(100-d.onlinePct)+'%;background:#f97316;height:12px"></div>'
               + '</div>';
             break;
-          case 'adr':
+          case 'adr': // T ADR=#94b1f5
             cs = cmpSfx(wvCompare==='stly'?'$'+d.sdlyA:wvCompare==='ly'?'$'+d.lyA:wvCompare==='fcst'?'$'+d.fcstA:'');
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">$'+d.toAdr+cs+'</span></div>'
-              + '<div class="wv-occ-bar-track"><div style="width:'+d.adrBar+'%;background:#006461;height:12px"></div></div>';
+              + wbBar(d.adrBar, '#94b1f5');
             break;
-          case 'rev':
+          case 'rev': // T Revenue=#eba2a2
             cs = cmpSfx(wvCompare==='stly'?d.fR(d.sdlyR):wvCompare==='ly'?d.fR(d.lyR):wvCompare==='fcst'?d.fR(d.fcstR):'');
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.fR(d.toRev)+cs+'</span></div>'
-              + '<div class="wv-occ-bar-track"><div style="width:'+d.revBar+'%;background:#006461;height:12px"></div></div>';
+              + wbBar(d.revBar, '#eba2a2');
             break;
           // ── More Metrics ───────────────────────────────────────────────────
-          case 'rn':
+          case 'rn': // T RN=#2e65e8
             cs = cmpSfx(wvCompare==='stly'?String(d.sdlyRn):wvCompare==='ly'?String(d.lyRn):wvCompare==='fcst'?String(d.fcstRn):'');
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.toRn+cs+'</span></div>'
-              + '<div class="wv-occ-bar-track"><div style="width:'+Math.round(d.toRn/WV_CAP*100)+'%;background:#006461;height:12px"></div></div>';
+              + wbBar(Math.round(d.toRn/WV_CAP*100), '#2e65e8');
             break;
-          case 'revpar_s':
+          case 'revpar_s': // T REVPAR=#9333ea
             cs = cmpSfx(wvCompare==='stly'?'$'+d.sdlyRevpar:wvCompare==='ly'?'$'+d.lyRevpar:'');
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">$'+d.revpar+cs+'</span></div>'
-              + '<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,Math.round(d.revpar/4))+'%;background:#006461;height:12px"></div></div>';
+              + wbBar(Math.min(90,Math.round(d.revpar/4)), '#9333ea');
             break;
-          case 'pickup_s':
+          case 'pickup_s': // T Pickup=#16a34a
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">+'+d.pickup+'</span></div>'
-              + '<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,d.pickup*3)+'%;background:#006461;height:12px"></div></div>';
+              + wbBar(Math.min(90,d.pickup*3), '#16a34a');
             break;
-          case 'avga_s':
+          case 'avga_s': // T Avg Adults=#2e65e8
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.avgA+'</span></div>'
-              + '<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,parseFloat(d.avgA)/3*100)+'%;background:#006461;height:12px"></div></div>';
+              + wbBar(Math.min(90,parseFloat(d.avgA)/3*100), '#2e65e8');
             break;
-          case 'avgc_s':
+          case 'avgc_s': // T Avg Children=#d33030
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.avgC+'</span></div>'
-              + '<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,parseFloat(d.avgC)/2*100)+'%;background:#006461;height:12px"></div></div>';
+              + wbBar(Math.min(90,parseFloat(d.avgC)/2*100), '#d33030');
             break;
-          case 'tota_s':
+          case 'tota_s': // Total Adults=#2e65e8
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.totAT+'</span></div>'
-              + '<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,Math.round(d.totAT/500*100))+'%;background:#006461;height:12px"></div></div>';
+              + wbBar(Math.min(90,Math.round(d.totAT/500*100)), '#2e65e8');
             break;
-          case 'totc_s':
+          case 'totc_s': // Total Children=#d33030
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.totCT+'</span></div>'
-              + '<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,Math.round(d.totCT/100*100))+'%;background:#006461;height:12px"></div></div>';
+              + wbBar(Math.min(90,Math.round(d.totCT/100*100)), '#d33030');
             break;
-          case 'totg_s':
+          case 'totg_s': // Total Guests=#0369a1
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.totG+'</span></div>'
-              + '<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,Math.round(d.totG/600*100))+'%;background:#006461;height:12px"></div></div>';
+              + wbBar(Math.min(90,Math.round(d.totG/600*100)), '#0369a1');
             break;
-          case 'los_s':
+          case 'los_s': // Avg LOS=#0891b2
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.avgLos+'</span></div>'
-              + '<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,parseFloat(d.avgLos)/10*100)+'%;background:#006461;height:12px"></div></div>';
+              + wbBar(Math.min(90,parseFloat(d.avgLos)/10*100), '#0891b2');
             break;
-          case 'lead_s':
+          case 'lead_s': // Lead Time=#6366f1
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.avgLead+'</span></div>'
-              + '<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,parseInt(d.avgLead)/90*100)+'%;background:#006461;height:12px"></div></div>';
+              + wbBar(Math.min(90,parseInt(d.avgLead)/90*100), '#6366f1');
             break;
-          case 'avail_s':
+          case 'avail_s': // Avail Rooms=#16a34a
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.availRooms+' rm</span></div>'
-              + '<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,Math.round(d.availRooms/WV_CAP*100))+'%;background:#006461;height:12px"></div></div>';
+              + wbBar(Math.min(90,Math.round(d.availRooms/WV_CAP*100)), '#16a34a');
             break;
-          case 'availg_s':
+          case 'availg_s': // Avail Guar.=#ea580c
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.availGuar+' rm</span></div>'
-              + '<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,Math.round(d.availGuar/20*100))+'%;background:#006461;height:12px"></div></div>';
+              + wbBar(Math.min(90,Math.round(d.availGuar/20*100)), '#ea580c');
             break;
-          // ── Meal Plans ─────────────────────────────────────────────────────
-          case 'mp_ai':
+          // ── Meal Plans — each uses its own dot color ────────────────────────
+          case 'mp_ai': // Hotel %=#006461
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.aiPct+'%</span></div>'
-              + '<div class="wv-occ-bar-track"><div style="width:'+d.aiPct+'%;background:#006461;height:12px"></div></div>';
+              + wbBar(d.aiPct, '#006461');
             break;
-          case 'mp_bb':
+          case 'mp_bb': // Hotel %=#3b82f6
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.bbPct+'%</span></div>'
-              + '<div class="wv-occ-bar-track"><div style="width:'+d.bbPct+'%;background:#006461;height:12px"></div></div>';
+              + wbBar(d.bbPct, '#3b82f6');
             break;
-          case 'mp_hb':
+          case 'mp_hb': // Hotel %=#8b5cf6
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.hbPct+'%</span></div>'
-              + '<div class="wv-occ-bar-track"><div style="width:'+d.hbPct+'%;background:#006461;height:12px"></div></div>';
+              + wbBar(d.hbPct, '#8b5cf6');
             break;
-          case 'mp_ro':
+          case 'mp_ro': // Hotel %=#f59e0b
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.roPct+'%</span></div>'
-              + '<div class="wv-occ-bar-track"><div style="width:'+d.roPct+'%;background:#006461;height:12px"></div></div>';
+              + wbBar(d.roPct, '#f59e0b');
             break;
-          case 'mp_sum':
-            cellContent = wbStackBar([{p:d.aiPct,c:'#006461'},{p:d.bbPct,c:'#47c5bc'},{p:d.hbPct,c:'#b1d8b7'},{p:d.roPct,c:'#d1fae5'}])
+          case 'mp_sum': // stacked using each plan's dot color
+            cellContent = wbStackBar([{p:d.aiPct,c:'#006461'},{p:d.bbPct,c:'#3b82f6'},{p:d.hbPct,c:'#8b5cf6'},{p:d.roPct,c:'#f59e0b'}])
               + '<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:3px">'
-              + '<span style="font-size:14px;font-family:Lato,sans-serif;color:#006461">AI '+d.aiPct+'%</span>'
-              + '<span style="font-size:14px;font-family:Lato,sans-serif;color:#47c5bc">BB '+d.bbPct+'%</span>'
-              + '<span style="font-size:14px;font-family:Lato,sans-serif;color:#0891b2">HB '+d.hbPct+'%</span>'
-              + '<span style="font-size:14px;font-family:Lato,sans-serif;color:#9ca3af">RO '+d.roPct+'%</span>'
+              + '<span style="font-size:12px;font-family:Lato,sans-serif;color:#006461">AI '+d.aiPct+'%</span>'
+              + '<span style="font-size:12px;font-family:Lato,sans-serif;color:#3b82f6">BB '+d.bbPct+'%</span>'
+              + '<span style="font-size:12px;font-family:Lato,sans-serif;color:#8b5cf6">HB '+d.hbPct+'%</span>'
+              + '<span style="font-size:12px;font-family:Lato,sans-serif;color:#f59e0b">RO '+d.roPct+'%</span>'
               + '</div>';
             break;
-          // ── Business Mix ───────────────────────────────────────────────────
-          case 'biz':
-            cellContent = wbStackBar([{p:d.toMix,c:'#006461'},{p:d.dirMix,c:'#47c5bc'},{p:d.otaMix,c:'#b1d8b7'},{p:d.otherMix,c:'#d1fae5'}])
+          // ── Business Mix — stacked using sub-row dot colors ─────────────────
+          case 'biz': // TO=#006461, Direct=#47c5bc, OTA=#b1d8b7, Other=#9ca3af
+            cellContent = wbStackBar([{p:d.toMix,c:'#006461'},{p:d.dirMix,c:'#47c5bc'},{p:d.otaMix,c:'#b1d8b7'},{p:d.otherMix,c:'#9ca3af'}])
               + '<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:3px">'
-              + '<span style="font-size:14px;font-family:Lato,sans-serif;color:#006461">TO '+d.toMix+'%</span>'
-              + '<span style="font-size:14px;font-family:Lato,sans-serif;color:#47c5bc">D '+d.dirMix+'%</span>'
-              + '<span style="font-size:14px;font-family:Lato,sans-serif;color:#0891b2">OTA '+d.otaMix+'%</span>'
-              + '<span style="font-size:14px;font-family:Lato,sans-serif;color:#9ca3af">Oth '+d.otherMix+'%</span>'
+              + '<span style="font-size:12px;font-family:Lato,sans-serif;color:#006461">TO '+d.toMix+'%</span>'
+              + '<span style="font-size:12px;font-family:Lato,sans-serif;color:#47c5bc">D '+d.dirMix+'%</span>'
+              + '<span style="font-size:12px;font-family:Lato,sans-serif;color:#b1d8b7">OTA '+d.otaMix+'%</span>'
+              + '<span style="font-size:12px;font-family:Lato,sans-serif;color:#9ca3af">Oth '+d.otherMix+'%</span>'
               + '</div>';
             break;
         }
