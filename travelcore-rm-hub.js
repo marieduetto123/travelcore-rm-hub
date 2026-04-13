@@ -1590,6 +1590,20 @@ function renderCalendar() {
       const cellDbaHtml = (!isCompact && cellDba > 0 && !isLocked)
         ? `<span style="font-size:8px;font-weight:700;color:#006461;letter-spacing:.1px;opacity:.85">${cellDba}d</span>`
         : '';
+      const RT_INVS_CAL  = [51, 36, 27, 12, 15, 9];
+      const RT_ABBRS_CAL = ['Std','Sup','Del','Ste','Jr','Fam'];
+      const RT_CLRS_CAL  = ['#ff5900','#547733','#604f35','#3f3e78','#967ef3','#248b86'];
+      const rtMiniHtml = (!isCompact && !isLocked)
+        ? '<div style="display:flex;gap:1px;margin:2px 4px 1px;">'
+          + RT_INVS_CAL.map((inv, i) => {
+              const sold  = Math.min(inv, Math.floor(inv * hotel / 110));
+              const avail = Math.max(0, inv - sold);
+              const pct   = Math.round(sold / inv * 100);
+              const clr   = avail === 0 ? '#dc2626' : pct >= 85 ? '#ea580c' : pct >= 60 ? '#f59e0b' : '#16a34a';
+              return `<div title="${RT_ABBRS_CAL[i]}: ${avail} avail" style="flex:1;height:3px;border-radius:1px;background:${clr};opacity:.75"></div>`;
+            }).join('')
+          + '</div>'
+        : '';
       cells += `<div class="${classes}" data-month="${m.month}" data-day="${d}" title="${isLocked ? 'Closed Out' : `Hotel: ${hotel}% (${hotelRooms} rooms) · TO: ${to}% (${toRoomsSold} rooms)`}">
         <div class="cell-day-hdr">
           <div style="display:flex;align-items:center;gap:3px">
@@ -1599,6 +1613,7 @@ function renderCalendar() {
           </div>
           ${isLocked || isCompact ? '' : eyeSvg}
         </div>
+        ${rtMiniHtml}
         ${!isCompact ? `<div class="cell-content">${metricRows}</div>` : ''}
         ${!isCompact ? allotBadge : ''}
         ${!isCompact && dot ? `<span class="day-dot" style="background:${dot}"></span>` : ''}
@@ -2426,14 +2441,21 @@ function clearCalSelection() {
       var name = row[0], inv = row[1];
       var sold  = Math.min(inv, Math.floor(inv * hotel / 110));
       var avail = Math.max(0, inv - sold);
-      var soldClr  = sold  > inv*0.8 ? '#d33030' : '#111827';
-      var availClr = avail === 0 ? '#d33030' : avail <= 2 ? '#d97706' : '#16a34a';
-      return '<div class="popup-rt-row">'
+      var pct   = Math.round(sold / inv * 100);
+      var barClr  = avail === 0 ? '#dc2626' : pct >= 85 ? '#ea580c' : pct >= 60 ? '#f59e0b' : '#16a34a';
+      var availClr = avail === 0 ? '#dc2626' : avail <= 3 ? '#d97706' : '#16a34a';
+      var rowBg = avail === 0 ? 'background:#fff1f2;border-radius:4px;padding:2px 4px;margin:1px -4px;' : 'padding:2px 0;';
+      return '<div class="popup-rt-row" style="flex-direction:column;gap:2px;align-items:stretch;'+rowBg+'">'
+        +'<div style="display:flex;align-items:center;gap:4px">'
         +'<span class="popup-rt-sw" style="background:'+RT_COLORS[i]+'"></span>'
-        +'<span class="popup-rt-nm">'+name+(avail===0?' <span class="wv-rt-closed-badge">CLOSED</span>':'')+'</span>'
-        +'<span class="popup-rt-inv">'+inv+'</span>'
-        +'<span class="popup-rt-sold" style="color:'+soldClr+'">'+sold+'</span>'
-        +'<span class="popup-rt-avail" style="color:'+availClr+'">'+avail+'</span>'
+        +'<span class="popup-rt-nm" style="flex:1">'+name+'</span>'
+        +(avail === 0
+          ? '<span style="font-size:7px;font-weight:700;color:#dc2626;background:#fee2e2;padding:1px 5px;border-radius:3px;letter-spacing:.2px">SOLD OUT</span>'
+          : '<span style="font-size:9px;font-weight:700;color:'+availClr+'">'+avail+' avail</span>')
+        +'</div>'
+        +'<div style="height:4px;border-radius:2px;background:#f0f0f0;overflow:hidden;margin-left:11px">'
+        +'<div style="height:100%;width:'+pct+'%;background:'+barClr+';border-radius:2px"></div>'
+        +'</div>'
         +'</div>';
     }).join('');
 
@@ -2540,7 +2562,6 @@ function clearCalSelection() {
       // 4. Room Availability
       +'<div class="popup-metrics-section">'
       +'<div class="popup-metrics-title">ROOM AVAILABILITY</div>'
-      +'<div class="popup-rt-hdr"><span class="popup-rt-th-nm">Room Type</span><span class="popup-rt-th">Inv</span><span class="popup-rt-th">Sold</span><span class="popup-rt-th">Avail</span></div>'
       + rtHTML
       +'</div>'
 
