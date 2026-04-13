@@ -1586,10 +1586,15 @@ function renderCalendar() {
       const directPct = Math.max(0, hotel - to);
 
       const isCompact = (calDisplayView === 6 || calDisplayView === 12);
+      const cellDba = Math.round((new Date(2026, m.month - 1, d) - new Date(2026, 2, 9)) / 86400000);
+      const cellDbaHtml = (!isCompact && cellDba > 0 && !isLocked)
+        ? `<span style="font-size:8px;font-weight:700;color:#006461;letter-spacing:.1px;opacity:.85">${cellDba}d</span>`
+        : '';
       cells += `<div class="${classes}" data-month="${m.month}" data-day="${d}" title="${isLocked ? 'Closed Out' : `Hotel: ${hotel}% (${hotelRooms} rooms) · TO: ${to}% (${toRoomsSold} rooms)`}">
         <div class="cell-day-hdr">
           <div style="display:flex;align-items:center;gap:3px">
             <span class="day-num${isLocked ? ' day-muted' : ''}">${d}${isLocked && !(typeof window.hmIsStopSales === 'function' && window.hmIsStopSales()) ? `<svg style="margin-left:3px;vertical-align:middle;opacity:.55" viewBox="0 0 10 12" fill="none" stroke="currentColor" stroke-width="1.6" width="9" height="11"><rect x="1" y="5" width="8" height="7" rx="1"/><path d="M3 5V3.5a2 2 0 0 1 4 0V5"/></svg>` : ''}</span>
+            ${cellDbaHtml}
             ${!isCompact ? restrictBadge : ''}
           </div>
           ${isLocked || isCompact ? '' : eyeSvg}
@@ -2328,7 +2333,14 @@ function clearCalSelection() {
   function openPopup(cell, month, day) {
     const dm = month, dd = day;
     const d = new Date(2026, dm - 1, dd);
-    dateEl.textContent = DAY_NAMES[d.getDay()] + ', ' + MONTH_NAMES[dm] + ' ' + dd + ', 2026';
+    const TODAY_POPUP = new Date(2026, 2, 9);
+    const popupDba = Math.round((d - TODAY_POPUP) / 86400000);
+    const popupDbaHtml = popupDba === 0
+      ? ' <span style="font-size:9px;font-weight:700;color:#006461;background:#ccfbf1;padding:1px 6px;border-radius:4px;margin-left:4px;vertical-align:middle">Today</span>'
+      : popupDba > 0
+      ? ' <span style="font-size:9px;font-weight:700;color:#006461;background:#ccfbf1;padding:1px 6px;border-radius:4px;margin-left:4px;vertical-align:middle">' + popupDba + ' DBA</span>'
+      : '';
+    dateEl.innerHTML = DAY_NAMES[d.getDay()] + ', ' + MONTH_NAMES[dm] + ' ' + dd + ', 2026' + popupDbaHtml;
 
     // ── Compute same values as buildWeekGrid ──
     const { hotel, to: toRaw } = getOccupancy(dm, dd);
