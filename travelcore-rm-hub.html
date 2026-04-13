@@ -14,7 +14,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@33.3.0/styles/ag-grid.css"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@33.3.0/styles/ag-theme-quartz.css"/>
   <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@33.3.0/dist/ag-grid-community.min.js"></script>
-  <link rel="stylesheet" href="travelcore-rm-hub.css?v=8">
+  <link rel="stylesheet" href="travelcore-rm-hub.css?v=9">
 </head>
 <body>
 
@@ -1016,9 +1016,12 @@
         </div>
         <!-- 7 Day Metrics Summary accordion (rendered by JS) -->
         <div id="wvSummaryContainer"></div>
+        <!-- Snapshot strip — always visible, injected by JS -->
+        <div id="wvSnapStrip"></div>
         <!-- View toggle — sits directly above the 7-day grid columns -->
         <div class="wv-groupby-bar">
           <div class="wv-groupby-row">
+            <button class="wv-groupby-btn" data-groupby="snapshot">📊 Snapshot</button>
             <button class="wv-groupby-btn active" data-groupby="combined">Daily</button>
             <button class="wv-groupby-btn" data-groupby="dailyH">Daily H</button>
             <button class="wv-groupby-btn" data-groupby="report">Daily R</button>
@@ -3238,5 +3241,5 @@
 
 
 
-  <script src="travelcore-rm-hub.js?v=14"></script>
+  <script src="travelcore-rm-hub.js?v=15"></script>
 </body>
