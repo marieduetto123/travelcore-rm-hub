@@ -5056,6 +5056,31 @@ function buildWeekGrid(month, weekStart, activeDay) {
     +dotLegend([['TO',avgToMix+'%','#006461'],['Direct',avgDirMix+'%','#0284c7'],['OTA',avgOtaMix+'%','#7c3aed'],['Other',avgOtherMix+'%','#9ca3af']])
   );
 
+  // Room Types section
+  const RT2_DEF = [['Standard',51],['Superior',36],['Deluxe',27],['Suite',12],['Jr. Suite',15],['Family',9]];
+  const RT_SUM_COLORS = ['#006461','#0891b2','#6366f1','#f59e0b','#ec4899','#10b981'];
+  const totalCap = RT2_DEF.reduce(function(s,r){return s+r[1];},0);
+  const secRoomTypes = sumSec('Room Types',
+    stackBar(RT2_DEF.map(function(r,ri){return {p:Math.round(r[1]/totalCap*100),c:RT_SUM_COLORS[ri]};}))
+    +RT2_DEF.map(function(r,ri){
+      var cap=r[1];
+      var totalSold=Math.min(cap,Math.floor(cap*avgHotel/110));
+      var toRn=Math.min(totalSold,Math.round(totalSold*avgTo/Math.max(1,avgHotel)));
+      var avail=Math.max(0,cap-totalSold);
+      var occPct=Math.round(totalSold/cap*100);
+      return '<div style="display:flex;align-items:center;gap:4px;margin-bottom:3px">'
+        +'<span style="width:6px;height:6px;border-radius:50%;background:'+RT_SUM_COLORS[ri]+';flex-shrink:0"></span>'
+        +'<span style="font-size:8px;color:#374151;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+r[0]+'</span>'
+        +'<span style="font-size:7.5px;color:#9ca3af;min-width:32px;text-align:right">'+avail+' avail</span>'
+        +'<span style="font-size:8px;font-weight:700;color:'+RT_SUM_COLORS[ri]+';min-width:26px;text-align:right">'+toRn+'rn</span>'
+        +'</div>';
+    }).join('')
+    +'<div style="margin-top:4px;padding-top:4px;border-top:1px solid #f3f4f6;display:flex;justify-content:space-between">'
+    +'<span style="font-size:7.5px;color:#9ca3af">Cap: '+totalCap+' rooms</span>'
+    +'<span style="font-size:7.5px;font-weight:700;color:#006461">'+Math.round(RT2_DEF.reduce(function(s,r){return s+Math.min(r[1],Math.floor(r[1]*avgHotel/110));},0)/totalCap*100)+'% sold</span>'
+    +'</div>'
+  );
+
   const tcOps=[['Sunshine Tours','#3b82f6'],['Global Adv.','#8b5cf6'],['Beach Hols','#0ea5e9'],['City Breaks','#10b981'],['Adventure','#f59e0b']];
   const promoLabel=isEbbWeek?'EBB 10%':'Contract';
   const promoClr  =isEbbWeek?'#16a34a':'#2563eb';
@@ -5080,12 +5105,12 @@ function buildWeekGrid(month, weekStart, activeDay) {
     +'<svg id="wvSummaryChev" viewBox="0 0 10 6" fill="none" stroke="#6b7280" stroke-width="2" width="10" height="6" style="flex-shrink:0;transition:transform .2s"><path d="M1 1l4 4 4-4"/></svg>'
     +'</div>'
     +'<div id="wvSummaryDetail" style="display:none;padding:10px 12px">'
-    +'<div style="display:grid;grid-template-columns:2fr 2fr 1fr 1fr;gap:8px;align-items:start">'
+    +'<div style="display:grid;grid-template-columns:2fr 2fr 1fr 1fr 1fr;gap:8px;align-items:start">'
     +secOcc+secMore
     +'<div style="display:flex;flex-direction:column;gap:8px">'
     +secMeals+secBiz
     +'</div>'
-    +secTC
+    +secRoomTypes+secTC
     +'</div>'
     +'</div>'
     +'</div>';
