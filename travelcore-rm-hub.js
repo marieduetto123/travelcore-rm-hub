@@ -3361,6 +3361,28 @@ var _dhSecRenderers = [];   // live SecRenderer instances → used for Open/Clos
 var _dhParCells     = [];   // live par cell DOM refs for chevron sync
 var _dhMetricOrder  = null; // null = default; array of parKey strings = custom order
 var _dhLastInitArgs = null; // saved args for grid rebuild after reorder
+var _wvSectionOrder = null; // null = default; array of section keys for combined view
+var _drColOrder     = null; // null = default; array of group names for Daily R
+var _drLastInitArgs = null; // saved args for Daily R rebuild
+
+// Section/group definitions used by the reorder modal
+var WV_SECTIONS_DEF = [
+  { key:'daily',        lbl:'Daily Metrics',        clr:'#006461' },
+  { key:'detailed',     lbl:'More Metrics',          clr:'#2e65e8' },
+  { key:'meals',        lbl:'Meal Plans',            clr:'#7c3aed' },
+  { key:'mealsSummary', lbl:'Meal Plans Summary',    clr:'#7c3aed' },
+  { key:'avail',        lbl:'Room Availability',     clr:'#16a34a' },
+  { key:'toRates',      lbl:'Travel Company Rates',  clr:'#0f766e' },
+  { key:'bizMix',       lbl:'Business Mix',          clr:'#0284c7' },
+];
+var DR_GROUPS_DEF = [
+  { key:'Daily Metrics',    clr:'#006461' },
+  { key:'Room Avail.',      clr:'#16a34a' },
+  { key:'Segments (T)',     clr:'#0891b2' },
+  { key:'Business Mix',     clr:'#0284c7' },
+  { key:'Meal Plans',       clr:'#7c3aed' },
+  { key:'Travel Co. Rates', clr:'#0f766e' },
+];
 
 // Reorder ROWS by a custom par-key sequence (preserves sec headers above their first par)
 function reorderDHRows(rows, order) {
@@ -4044,6 +4066,7 @@ function initCoReportGrid(days, containerEl) {
 var _dailyRevGridApi = null;
 
 function initDailyRevGrid(days, containerEl) {
+  _drLastInitArgs = { days: days, container: containerEl };
   var AG = _realAgGrid;
   if (!AG || typeof AG.createGrid !== 'function') {
     containerEl.innerHTML = buildReportView(days);
@@ -4134,23 +4157,9 @@ function initDailyRevGrid(days, containerEl) {
   };
 
   // ── column defs ───────────────────────────────────────────────────────────
-  var colDefs = [
-    // Pinned date column
-    {
-      headerName:'Stay Date', pinned:'left', lockPinned:true, width:140, suppressSizeToFit:true,
-      cellRenderer: function(p){
-        var d=p.data;
-        return '<div style="line-height:1.4;padding:2px 0">'
-          +'<div style="font-weight:800;font-size:11px;color:#111827">'+d._date+'</div>'
-          +'<div style="font-size:9px;color:#6b7280;display:flex;align-items:center;gap:4px">'
-          +'<span>'+d._dow+'</span>'
-          +(d._dba?'<span style="color:#006461;font-weight:700">'+d._dba+'</span>':'')
-          +'</div>'
-          +(d._isToday?'<div style="width:24px;height:2px;background:#006461;border-radius:1px;margin-top:2px"></div>':'')
-          +'</div>';
-      }
-    },
-    // ── Daily Metrics ─────────────────────────────────────────────────────
+  // Group colDefs keyed by headerName for reorder support
+  var drGroupColDefs = {
+    'Daily Metrics':
     { headerName:'Daily Metrics', headerClass:'drg-top drg-daily', openByDefault:true, children:[
       { headerName:'Occupancy', children:[
         {field:'occ_t',    headerName:'T',     width:65, cellStyle:cs('#006461',true)},
@@ -4185,7 +4194,7 @@ function initDailyRevGrid(days, containerEl) {
         {field:'pk_h', headerName:'Hotel', width:70, cellStyle:cs('#374151')},
       ]},
     ]},
-    // ── Room Availability ─────────────────────────────────────────────────
+    'Room Avail.':
     { headerName:'Room Avail.', headerClass:'drg-top drg-avail', openByDefault:true, children:[
       { headerName:'T Dist. Hubs', children:[
         {field:'td_rms', headerName:'Rooms', width:85, cellStyle:cs('#006461',true)},
@@ -4204,7 +4213,7 @@ function initDailyRevGrid(days, containerEl) {
         {field:'on_off', headerName:'Offline', width:75, cellStyle:cs('#f97316')},
       ]},
     ]},
-    // ── Segments (T) ──────────────────────────────────────────────────────
+    'Segments (T)':
     { headerName:'Segments (T)', headerClass:'drg-top drg-segs', openByDefault:true, children:[
       { headerName:'Static FIT', children:[
         {field:'fit_rms', headerName:'Rooms', width:85, cellStyle:cs('#006461',true)},
@@ -4219,14 +4228,14 @@ function initDailyRevGrid(days, containerEl) {
         {field:'ser_pct', headerName:'%',     width:60},
       ]},
     ]},
-    // ── Business Mix ─────────────────────────────────────────────────────
+    'Business Mix':
     { headerName:'Business Mix', headerClass:'drg-top drg-biz', openByDefault:true, children:[
       {field:'biz_to',  headerName:'TO',     width:75, cellStyle:cs('#006461',true)},
       {field:'biz_dir', headerName:'Direct', width:85, cellStyle:cs('#0284c7',true)},
       {field:'biz_ota', headerName:'OTA',    width:75, cellStyle:cs('#7c3aed',true)},
       {field:'biz_oth', headerName:'Other',  width:75, cellStyle:cs('#9ca3af')},
     ]},
-    // ── Meal Plans ────────────────────────────────────────────────────────
+    'Meal Plans':
     { headerName:'Meal Plans', headerClass:'drg-top drg-meals', openByDefault:false, children:[
       { headerName:'AI', children:[
         {field:'mp_ai_h',   headerName:'Hotel', width:72, cellStyle:cs('#374151')},
@@ -4249,7 +4258,7 @@ function initDailyRevGrid(days, containerEl) {
         {field:'mp_ro_pct', headerName:'Occ',   width:65},
       ]},
     ]},
-    // ── Travel Co. Rates ─────────────────────────────────────────────────
+    'Travel Co. Rates':
     { headerName:'Travel Co. Rates', headerClass:'drg-top drg-tc', openByDefault:true, children:[
       {field:'tc_0',    headerName:'Sunshine',    width:92, cellStyle:cs('#3b82f6',true)},
       {field:'tc_1',    headerName:'Global Adv.', width:105, cellStyle:cs('#8b5cf6',true)},
@@ -4258,7 +4267,25 @@ function initDailyRevGrid(days, containerEl) {
       {field:'tc_4',    headerName:'Adventure',   width:92, cellStyle:cs('#f59e0b',true)},
       {field:'tc_base', headerName:'Base Rate',   width:92, cellStyle:cs('#9333ea',true)},
     ]},
-  ];
+  };
+
+  // Build ordered colDefs (pinned date + groups in custom or default order)
+  var groupOrder = (_drColOrder && _drColOrder.length) ? _drColOrder : DR_GROUPS_DEF.map(function(g){return g.key;});
+  var colDefs = [{
+    headerName:'Stay Date', pinned:'left', lockPinned:true, width:140, suppressSizeToFit:true,
+    cellRenderer: function(p){
+      var d=p.data;
+      return '<div style="line-height:1.4;padding:2px 0">'
+        +'<div style="font-weight:800;font-size:11px;color:#111827">'+d._date+'</div>'
+        +'<div style="font-size:9px;color:#6b7280;display:flex;align-items:center;gap:4px">'
+        +'<span>'+d._dow+'</span>'
+        +(d._dba?'<span style="color:#006461;font-weight:700">'+d._dba+'</span>':'')
+        +'</div>'
+        +(d._isToday?'<div style="width:24px;height:2px;background:#006461;border-radius:1px;margin-top:2px"></div>':'')
+        +'</div>';
+    }
+  }];
+  groupOrder.forEach(function(k){ if(drGroupColDefs[k]) colDefs.push(drGroupColDefs[k]); });
 
   // ── create grid ───────────────────────────────────────────────────────────
   _dailyRevGridApi = AG.createGrid(wrapper, {
@@ -4798,6 +4825,22 @@ window.wvSetSegMode = function(mode) {
   document.getElementById('wvSegIndividual').classList.toggle('active', mode === 'individual');
   buildWeekGrid(wvMonth, wvWeekStart, wvWeekStart);
 };
+
+// DOM-reorder .wv-acc-sect elements within each .wv-acc-group per _wvSectionOrder
+function applyWvSectionOrder(grid) {
+  if (!_wvSectionOrder || !_wvSectionOrder.length) return;
+  grid.querySelectorAll('.wv-acc-group').forEach(function(group) {
+    var sects = {};
+    group.querySelectorAll('.wv-acc-sect').forEach(function(el) {
+      var hdr = el.querySelector('.wv-acc-hdr[data-section]');
+      if (hdr) sects[hdr.dataset.section] = el;
+    });
+    // Append in desired order; any key missing from sects is silently skipped
+    _wvSectionOrder.forEach(function(key) {
+      if (sects[key]) group.appendChild(sects[key]);
+    });
+  });
+}
 
 function buildWeekGrid(month, weekStart, activeDay) {
   const days = getWeekDays(2026, month, weekStart);
@@ -5680,6 +5723,9 @@ function buildWeekGrid(month, weekStart, activeDay) {
 
   if (wvGroupBy === 'report' || wvGroupBy === 'coReport' || wvGroupBy === 'dailyH') return;
 
+  // Apply custom section order for combined view
+  if (wvGroupBy === 'combined' && _wvSectionOrder) applyWvSectionOrder(grid);
+
   // ── Equalize section body heights across day columns ──────────────────────
   // Returns a map of section → max body height (for panel sync)
   var sectionHeightMap = {};
@@ -5812,27 +5858,19 @@ function setAllAccordions(collapse) {
 document.getElementById('wvRtCloseAll')?.addEventListener('click', function() { setAllAccordions(true); });
 document.getElementById('wvRtOpenAll')?.addEventListener('click',  function() { setAllAccordions(false); });
 
-// ── Daily-H Metric Reorder ────────────────────────────────────────────────
-window.dhOpenReorder = function() {
-  var modal = document.getElementById('dhReorderModal');
-  var list  = document.getElementById('dhReorderList');
-  if (!modal || !list) return;
+// ── Reorder Modal (shared across Daily, Daily H, Daily R) ─────────────────
+function _buildReorderList(list, items) {
+  // items: [{ key, lbl, badgeLbl, badgeClr }]
   list.innerHTML = '';
-  // Build par list from current ROWS
-  var pars = [], curSecLbl = '', curSecClr = '#374151';
-  _dhAllRows.forEach(function(r) {
-    if (r.type === 'sec') { curSecLbl = r.lbl; curSecClr = r.clr; }
-    if (r.type === 'par') pars.push({ parKey: r.parKey, lbl: r.lbl, secLbl: curSecLbl, secClr: curSecClr });
-  });
   var dragging = null;
-  pars.forEach(function(p) {
+  items.forEach(function(p) {
     var li = document.createElement('div');
     li.className = 'dh-reorder-item';
     li.draggable = true;
-    li.dataset.parKey = p.parKey;
+    li.dataset.parKey = p.key;
     li.innerHTML =
       '<span class="dh-reorder-handle"><svg width="12" height="18" viewBox="0 0 12 18" fill="currentColor"><circle cx="4" cy="3.5" r="1.6"/><circle cx="4" cy="9" r="1.6"/><circle cx="4" cy="14.5" r="1.6"/><circle cx="9" cy="3.5" r="1.6"/><circle cx="9" cy="9" r="1.6"/><circle cx="9" cy="14.5" r="1.6"/></svg></span>'
-      + '<span class="dh-reorder-sec-badge" style="background:' + p.secClr + '22;color:' + p.secClr + '">' + p.secLbl + '</span>'
+      + (p.badgeLbl ? '<span class="dh-reorder-sec-badge" style="background:' + p.badgeClr + '22;color:' + p.badgeClr + '">' + p.badgeLbl + '</span>' : '')
       + '<span class="dh-reorder-lbl">' + p.lbl + '</span>';
     li.addEventListener('dragstart', function(e) {
       dragging = li; li.classList.add('dragging');
@@ -5859,6 +5897,58 @@ window.dhOpenReorder = function() {
     });
     list.appendChild(li);
   });
+}
+
+window.dhOpenReorder = function() {
+  var modal = document.getElementById('dhReorderModal');
+  var list  = document.getElementById('dhReorderList');
+  if (!modal || !list) return;
+
+  // Update modal title per view
+  var titleEl = modal.querySelector('[style*="font-size:15px"]');
+  if (titleEl) {
+    titleEl.textContent = wvGroupBy === 'combined' ? 'Reorder Sections'
+                        : wvGroupBy === 'report'   ? 'Reorder Column Groups'
+                        :                            'Reorder Metrics';
+  }
+
+  if (wvGroupBy === 'dailyH') {
+    // Build items from current Daily H rows
+    var pars = [], curSecLbl = '', curSecClr = '#374151';
+    _dhAllRows.forEach(function(r) {
+      if (r.type === 'sec') { curSecLbl = r.lbl; curSecClr = r.clr; }
+      if (r.type === 'par') pars.push({ key: r.parKey, lbl: r.lbl, badgeLbl: curSecLbl, badgeClr: curSecClr });
+    });
+    _buildReorderList(list, pars);
+
+  } else if (wvGroupBy === 'combined') {
+    // Build items from WV_SECTIONS_DEF; only show sections currently rendered in the grid
+    var renderedSecs = {};
+    var g = document.getElementById('weekGrid');
+    if (g) g.querySelectorAll('.wv-acc-hdr[data-section]').forEach(function(el) { renderedSecs[el.dataset.section] = true; });
+    var curOrder = (_wvSectionOrder && _wvSectionOrder.length) ? _wvSectionOrder : WV_SECTIONS_DEF.map(function(s){return s.key;});
+    var items = [];
+    curOrder.forEach(function(k) {
+      if (!renderedSecs[k]) return;
+      var def = WV_SECTIONS_DEF.filter(function(s){return s.key===k;})[0];
+      if (def) items.push({ key: k, lbl: def.lbl, badgeLbl: 'Section', badgeClr: def.clr });
+    });
+    // Also append any rendered sections not in curOrder (new ones)
+    WV_SECTIONS_DEF.forEach(function(s) {
+      if (renderedSecs[s.key] && curOrder.indexOf(s.key) === -1)
+        items.push({ key: s.key, lbl: s.lbl, badgeLbl: 'Section', badgeClr: s.clr });
+    });
+    _buildReorderList(list, items);
+
+  } else if (wvGroupBy === 'report') {
+    var curOrder = (_drColOrder && _drColOrder.length) ? _drColOrder : DR_GROUPS_DEF.map(function(g){return g.key;});
+    var items = curOrder.map(function(k) {
+      var def = DR_GROUPS_DEF.filter(function(g){return g.key===k;})[0] || { clr:'#374151' };
+      return { key: k, lbl: k, badgeLbl: 'Group', badgeClr: def.clr };
+    });
+    _buildReorderList(list, items);
+  }
+
   modal.style.display = 'flex';
 };
 
@@ -5870,17 +5960,35 @@ window.dhApplyReorder = function() {
   var list = document.getElementById('dhReorderList');
   var order = [];
   list.querySelectorAll('[data-par-key]').forEach(function(li) { order.push(li.dataset.parKey); });
-  _dhMetricOrder = order;
   document.getElementById('dhReorderModal').style.display = 'none';
-  var a = _dhLastInitArgs;
-  if (a) initDailyHGrid(a.days, a.month, a.day, a.container);
+  if (wvGroupBy === 'dailyH') {
+    _dhMetricOrder = order;
+    var a = _dhLastInitArgs;
+    if (a) initDailyHGrid(a.days, a.month, a.day, a.container);
+  } else if (wvGroupBy === 'combined') {
+    _wvSectionOrder = order;
+    buildWeekGrid(wvMonth, wvWeekStart, wvWeekStart);
+  } else if (wvGroupBy === 'report') {
+    _drColOrder = order;
+    var a = _drLastInitArgs;
+    if (a) initDailyRevGrid(a.days, a.container);
+  }
 };
 
 window.dhResetReorder = function() {
-  _dhMetricOrder = null;
   document.getElementById('dhReorderModal').style.display = 'none';
-  var a = _dhLastInitArgs;
-  if (a) initDailyHGrid(a.days, a.month, a.day, a.container);
+  if (wvGroupBy === 'dailyH') {
+    _dhMetricOrder = null;
+    var a = _dhLastInitArgs;
+    if (a) initDailyHGrid(a.days, a.month, a.day, a.container);
+  } else if (wvGroupBy === 'combined') {
+    _wvSectionOrder = null;
+    buildWeekGrid(wvMonth, wvWeekStart, wvWeekStart);
+  } else if (wvGroupBy === 'report') {
+    _drColOrder = null;
+    var a = _drLastInitArgs;
+    if (a) initDailyRevGrid(a.days, a.container);
+  }
 };
 
 // ── Group-by toggle ───────────────────────────────────────────────────────
@@ -5890,7 +5998,7 @@ document.querySelectorAll('.wv-groupby-btn').forEach(function(btn) {
     document.querySelectorAll('.wv-groupby-btn').forEach(function(b) { b.classList.remove('active'); });
     this.classList.add('active');
     var reorderBtn = document.getElementById('dhReorderBtn');
-    if (reorderBtn) reorderBtn.style.display = wvGroupBy === 'dailyH' ? '' : 'none';
+    if (reorderBtn) reorderBtn.style.display = ['dailyH','combined','report'].indexOf(wvGroupBy) !== -1 ? '' : 'none';
     buildWeekGrid(wvMonth, wvWeekStart, wvWeekStart);
   });
 });
