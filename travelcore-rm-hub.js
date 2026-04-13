@@ -3190,6 +3190,7 @@ function buildDailyBView(days, month, activeDay) {
   });
 
   // ── Row schema ────────────────────────────────────────────────────────────
+  var compLabel = wvCompare==='ly'?'LY':wvCompare==='fcst'?'Fcst':'STLY';
   var rows = [];
 
   // Group: Daily Metrics
@@ -3198,7 +3199,7 @@ function buildDailyBView(days, month, activeDay) {
     rows.push({type:'sect', id:'occ',       label:'Occupancy',               parent:'g_daily'});
     rows.push({type:'sub',  id:'occ_tdh',   label:'Travel Distribution Hubs',dot:'#006461', parent:'occ'});
     rows.push({type:'sub',  id:'occ_other', label:'Other Segments',          dot:'#47c5bc', parent:'occ'});
-    rows.push({type:'sub',  id:'occ_stly',  label:'STLY',                    dot:'#c4ff45', parent:'occ'});
+    rows.push({type:'sub',  id:'occ_stly',  label:compLabel,                 dot:'#c4ff45', parent:'occ'});
     rows.push({type:'sub',  id:'occ_rem',   label:'Remaining',               dot:'#388c3f', parent:'occ', isRem:true});
   }
   if (wvMetricState.onlineOffline) {
@@ -3210,13 +3211,13 @@ function buildDailyBView(days, month, activeDay) {
     rows.push({type:'sect', id:'adr',       label:'ADR',          parent:'g_daily'});
     rows.push({type:'sub',  id:'adr_t',     label:'T ADR',        dot:'#006461', parent:'adr'});
     rows.push({type:'sub',  id:'adr_hotel', label:'Hotel ADR',    dot:'#47c5bc', parent:'adr'});
-    rows.push({type:'sub',  id:'adr_stly',  label:'STLY',         dot:'#c4ff45', parent:'adr'});
+    rows.push({type:'sub',  id:'adr_stly',  label:compLabel,      dot:'#c4ff45', parent:'adr'});
   }
   if (wvMetricState.revenue) {
     rows.push({type:'sect', id:'rev',       label:'Revenue',       parent:'g_daily'});
     rows.push({type:'sub',  id:'rev_t',     label:'T Revenue',     dot:'#006461', parent:'rev'});
     rows.push({type:'sub',  id:'rev_hotel', label:'Hotel Revenue', dot:'#47c5bc', parent:'rev'});
-    rows.push({type:'sub',  id:'rev_stly',  label:'STLY',          dot:'#c4ff45', parent:'rev'});
+    rows.push({type:'sub',  id:'rev_stly',  label:compLabel,       dot:'#c4ff45', parent:'rev'});
   }
 
   // Group: More Metrics
@@ -3231,12 +3232,12 @@ function buildDailyBView(days, month, activeDay) {
       rows.push({type:'sect', id:'rn',       label:'RN Sold',    parent:'g_more'});
       rows.push({type:'sub',  id:'rn_t',     label:'T RN',       dot:'#006461', parent:'rn'});
       rows.push({type:'sub',  id:'rn_hotel', label:'Hotel RN',   dot:'#47c5bc', parent:'rn'});
-      rows.push({type:'sub',  id:'rn_stly',  label:'STLY',       dot:'#c4ff45', parent:'rn'});
+      rows.push({type:'sub',  id:'rn_stly',  label:compLabel,    dot:'#c4ff45', parent:'rn'});
     }
     if (wvMetricState.dm_trevpar) {
       rows.push({type:'sect', id:'revpar_s',    label:'REVPAR',    parent:'g_more'});
       rows.push({type:'sub',  id:'revpar_t',    label:'T REVPAR',  dot:'#006461', parent:'revpar_s'});
-      rows.push({type:'sub',  id:'revpar_stly', label:'STLY',      dot:'#c4ff45', parent:'revpar_s'});
+      rows.push({type:'sub',  id:'revpar_stly', label:compLabel,   dot:'#c4ff45', parent:'revpar_s'});
     }
     if (wvMetricState.dm_pickup) {
       rows.push({type:'sect', id:'pickup_s', label:'Pickup',       parent:'g_more'});
@@ -3634,7 +3635,7 @@ function buildDailyBView(days, month, activeDay) {
           // occupancy
           case 'occ_tdh':    v1 = d.toRn+' rms';    v2 = d.to+'%';                         break;
           case 'occ_other':  v1 = d.otherRms+' rms'; v2 = d.otherPct+'%';                  break;
-          case 'occ_stly':   v1 = d.sdlyRn+' rms';  v2 = d.sdlyH+'%';                      break;
+          case 'occ_stly':   { var cRn=wvCompare==='ly'?d.lyRn:wvCompare==='fcst'?d.fcstRn:d.sdlyRn; var cH=wvCompare==='ly'?d.lyH:wvCompare==='fcst'?d.fcstH:d.sdlyH; v1=cRn+' rms'; v2=cH+'%'; } break;
           case 'occ_rem':    v1 = d.freeRms+' rms';  v2 = Math.max(0,100-d.hotel)+'%';     break;
           // online/offline
           case 'onoff_on':   v1 = d.onlinePct+'%';                                          break;
@@ -3642,18 +3643,18 @@ function buildDailyBView(days, month, activeDay) {
           // adr
           case 'adr_t':      v1 = '$'+d.toAdr;                                              break;
           case 'adr_hotel':  v1 = '$'+d.adr;                                                break;
-          case 'adr_stly':   v1 = '$'+d.sdlyA;                                              break;
+          case 'adr_stly':   v1 = '$'+(wvCompare==='ly'?d.lyA:wvCompare==='fcst'?d.fcstA:d.sdlyA); break;
           // revenue
           case 'rev_t':      v1 = d.fR(d.toRev);                                            break;
           case 'rev_hotel':  v1 = d.fR(d.hnRev);                                            break;
-          case 'rev_stly':   v1 = d.fR(d.sdlyR);                                            break;
+          case 'rev_stly':   v1 = d.fR(wvCompare==='ly'?d.lyR:wvCompare==='fcst'?d.fcstR:d.sdlyR); break;
           // rn sold
           case 'rn_t':       v1 = d.toRn+' rms';                                            break;
           case 'rn_hotel':   v1 = d.hnRn+' rms';                                            break;
-          case 'rn_stly':    v1 = d.sdlyRn+' rms';                                          break;
+          case 'rn_stly':    v1 = (wvCompare==='ly'?d.lyRn:wvCompare==='fcst'?d.fcstRn:d.sdlyRn)+' rms'; break;
           // revpar
           case 'revpar_t':   v1 = '$'+d.revpar;                                             break;
-          case 'revpar_stly':v1 = '$'+d.sdlyRevpar;                                         break;
+          case 'revpar_stly':v1 = '$'+(wvCompare==='ly'?d.lyRevpar:d.sdlyRevpar);           break;
           // pickup
           case 'pickup_t':   v1 = '+'+d.pickup;                                             break;
           case 'pickup_h':   v1 = '+'+d.hPickup;                                            break;
