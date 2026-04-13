@@ -4151,7 +4151,7 @@ function initDailyRevGrid(days, containerEl) {
       }
     },
     // ── Daily Metrics ─────────────────────────────────────────────────────
-    { headerName:'Daily Metrics', headerClass:'drg-daily', openByDefault:true, children:[
+    { headerName:'Daily Metrics', headerClass:'drg-top drg-daily', openByDefault:true, children:[
       { headerName:'Occupancy', children:[
         {field:'occ_t',    headerName:'T',     width:65, cellStyle:cs('#006461',true)},
         {field:'occ_h',    headerName:'Hotel', width:70, cellStyle:cs('#374151')},
@@ -4186,7 +4186,7 @@ function initDailyRevGrid(days, containerEl) {
       ]},
     ]},
     // ── Room Availability ─────────────────────────────────────────────────
-    { headerName:'Room Avail.', openByDefault:true, children:[
+    { headerName:'Room Avail.', headerClass:'drg-top drg-avail', openByDefault:true, children:[
       { headerName:'T Dist. Hubs', children:[
         {field:'td_rms', headerName:'Rooms', width:85, cellStyle:cs('#006461',true)},
         {field:'td_pct', headerName:'%',     width:60, cellStyle:cs('#006461')},
@@ -4205,7 +4205,7 @@ function initDailyRevGrid(days, containerEl) {
       ]},
     ]},
     // ── Segments (T) ──────────────────────────────────────────────────────
-    { headerName:'Segments (T)', openByDefault:true, children:[
+    { headerName:'Segments (T)', headerClass:'drg-top drg-segs', openByDefault:true, children:[
       { headerName:'Static FIT', children:[
         {field:'fit_rms', headerName:'Rooms', width:85, cellStyle:cs('#006461',true)},
         {field:'fit_pct', headerName:'%',     width:60},
@@ -4220,14 +4220,14 @@ function initDailyRevGrid(days, containerEl) {
       ]},
     ]},
     // ── Business Mix ─────────────────────────────────────────────────────
-    { headerName:'Business Mix', openByDefault:true, children:[
+    { headerName:'Business Mix', headerClass:'drg-top drg-biz', openByDefault:true, children:[
       {field:'biz_to',  headerName:'TO',     width:75, cellStyle:cs('#006461',true)},
       {field:'biz_dir', headerName:'Direct', width:85, cellStyle:cs('#0284c7',true)},
       {field:'biz_ota', headerName:'OTA',    width:75, cellStyle:cs('#7c3aed',true)},
       {field:'biz_oth', headerName:'Other',  width:75, cellStyle:cs('#9ca3af')},
     ]},
     // ── Meal Plans ────────────────────────────────────────────────────────
-    { headerName:'Meal Plans', openByDefault:false, children:[
+    { headerName:'Meal Plans', headerClass:'drg-top drg-meals', openByDefault:false, children:[
       { headerName:'AI', children:[
         {field:'mp_ai_h',   headerName:'Hotel', width:72, cellStyle:cs('#374151')},
         {field:'mp_ai_t',   headerName:'T',     width:65, cellStyle:cs('#006461',true)},
@@ -4250,7 +4250,7 @@ function initDailyRevGrid(days, containerEl) {
       ]},
     ]},
     // ── Travel Co. Rates ─────────────────────────────────────────────────
-    { headerName:'Travel Co. Rates', openByDefault:true, children:[
+    { headerName:'Travel Co. Rates', headerClass:'drg-top drg-tc', openByDefault:true, children:[
       {field:'tc_0',    headerName:'Sunshine',    width:92, cellStyle:cs('#3b82f6',true)},
       {field:'tc_1',    headerName:'Global Adv.', width:105, cellStyle:cs('#8b5cf6',true)},
       {field:'tc_2',    headerName:'Beach Hols',  width:100, cellStyle:cs('#0ea5e9',true)},

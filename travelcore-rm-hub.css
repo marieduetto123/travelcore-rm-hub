@@ -961,6 +961,17 @@ body.dark .wv-summary-kpi-val, body.dark .wv-summary-metric-val { color: #f3f4f6
   padding-right: 4px !important;
 }
 /* Group header color accents */
+.daily-rev-ag-wrap .ag-header-group-cell.drg-top {
+  color: #fff !important;
+  font-size: 10.5px !important;
+  letter-spacing: 0.4px !important;
+}
+.daily-rev-ag-wrap .ag-header-group-cell.drg-daily  { background: #006461 !important; }
+.daily-rev-ag-wrap .ag-header-group-cell.drg-avail  { background: #16a34a !important; }
+.daily-rev-ag-wrap .ag-header-group-cell.drg-segs   { background: #0891b2 !important; }
+.daily-rev-ag-wrap .ag-header-group-cell.drg-biz    { background: #0284c7 !important; }
+.daily-rev-ag-wrap .ag-header-group-cell.drg-meals  { background: #7c3aed !important; }
+.daily-rev-ag-wrap .ag-header-group-cell.drg-tc     { background: #0f766e !important; }
 .daily-rev-ag-wrap .ag-column-drop-cell { display:none; }
 body.dark .daily-rev-ag-wrap {
   --ag-background-color: #122a2d;
