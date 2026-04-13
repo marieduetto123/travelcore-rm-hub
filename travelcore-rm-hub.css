@@ -7008,3 +7008,195 @@ body.dark .cal-mfilt-btn.active { background: #1a3535; }
 }
 .co-more-pill:hover { background: #e5e7eb; color: #374151; }
 
+/* ═══════════════════════════════════════════════════════════════
+   Daily B View  (.wb-*)
+   ═══════════════════════════════════════════════════════════════ */
+.wb-layout {
+  display: flex;
+  flex-direction: column;
+  overflow-x: auto;
+  flex: 1;
+  min-width: 0;
+  background: #fff;
+}
+
+/* Every row is a horizontal flex strip */
+.wb-row {
+  display: flex;
+  min-width: fit-content;
+  border-bottom: 1px solid #dde1e2;
+}
+.wb-row-hidden { display: none !important; }
+
+/* ── Sticky label column ── */
+.wb-label-cell {
+  width: 177px;
+  flex-shrink: 0;
+  position: sticky;
+  left: 0;
+  z-index: 10;
+  background: #fff;
+  border-right: 1px solid #dde1e2;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* ── Day data columns ── */
+.wb-data-cell {
+  width: 344px;
+  flex-shrink: 0;
+  border-right: 1px solid #e5e7eb;
+  box-sizing: border-box;
+}
+
+/* ── Date header row ── */
+.wb-hdr-row {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+.wb-hdr-label-cell {
+  background: #1a5e5b;
+}
+.wb-hdr-cell {
+  background: #1a5e5b;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 10px;
+}
+.wb-hdr-active { background: #006461; border-left: 2px solid #c4ff45; }
+.wb-hdr-dow  { font-family: 'Lato', sans-serif; font-size: 13px; font-weight: 700; color: #fff; }
+.wb-hdr-date { font-family: 'Lato', sans-serif; font-size: 11px; font-weight: 400; color: rgba(255,255,255,.7); }
+
+/* ── Group header row (Daily Metrics) ── */
+.wb-grp-hdr {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 13px;
+  height: 44px;
+  cursor: pointer;
+  background: #fafafa;
+  user-select: none;
+}
+.wb-grp-label {
+  font-family: 'Lato', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1c1c1c;
+}
+.wb-row-top .wb-data-cell { background: #fafafa; height: 44px; }
+
+/* ── Section header row ── */
+.wb-sect-lbl {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 19px;
+  min-height: 53px;
+  cursor: pointer;
+  user-select: none;
+  background: #fff;
+}
+.wb-sect-label {
+  font-family: 'Lato', sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  color: #1c1c1c;
+}
+.wb-sect-cell {
+  padding: 10px 8px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 53px;
+  box-sizing: border-box;
+}
+.wb-sect-val {
+  display: flex;
+  align-items: center;
+}
+
+/* ── Sub-row label ── */
+.wb-sub-lbl-cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 8px 0 27px;
+  height: 32px;
+}
+.wb-sub-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.wb-sub-label {
+  font-family: 'Lato', sans-serif;
+  font-size: 12px;
+  color: #1c1c1c;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.wb-sub-lbl-rem { color: #388c3f; font-weight: 600; }
+
+/* ── Sub-row data cell ── */
+.wb-sub-cell {
+  display: flex;
+  align-items: center;
+  height: 32px;
+  padding: 0 8px;
+}
+.wb-sub-vals {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  width: 100%;
+  height: 100%;
+  padding: 0 8px;
+}
+.wb-sub-v1 {
+  font-family: 'Lato', sans-serif;
+  font-size: 14px;
+  color: #111827;
+  text-align: right;
+  white-space: nowrap;
+}
+.wb-sub-v2 {
+  font-family: 'Lato', sans-serif;
+  font-size: 14px;
+  color: #6b7280;
+  text-align: right;
+  min-width: 30px;
+  white-space: nowrap;
+}
+.wb-sub-val-rem .wb-sub-v1 { color: #388c3f; }
+.wb-sub-val-rem .wb-sub-v2 { color: #388c3f; }
+
+/* Remaining row highlight */
+.wb-row[data-wb-id="occ_rem"] .wb-label-cell,
+.wb-row[data-wb-id="occ_rem"] .wb-data-cell { background: #fff8f5; }
+
+/* Chevron icon */
+.wb-chev { display: flex; align-items: center; color: #006461; flex-shrink: 0; }
+
+/* Section data cell: same min-height as label, padding matches body padding */
+.wb-row-sect .wb-data-cell {
+  padding: 10px 8px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 53px;
+  box-sizing: border-box;
+}
+/* Sub data row height */
+.wb-row-sub .wb-data-cell {
+  height: 32px;
+  display: flex;
+  align-items: center;
+}
+

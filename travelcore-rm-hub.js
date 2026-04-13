@@ -3086,6 +3086,203 @@ function buildCoReportView(days) {
 }
 
 
+// ── Daily B View — accordion metric rows, sticky label column, 7 day columns ──
+var _wbCollapsed = {};
+
+function wbToggle(id) {
+  _wbCollapsed[id] = !_wbCollapsed[id];
+  buildWeekGrid(wvMonth, wvWeekStart, wvWeekStart);
+}
+
+function buildDailyBView(days, month, activeDay) {
+  var DOW_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  var WV_CAP    = 250;
+
+  // ── Per-day values (same math as Daily H) ────────────────────────────────
+  var dd7 = days.map(function(dv) {
+    var dm = dv.month, dd = dv.day;
+    var hh = getOccupancy(dm, dd); var hotel = hh.hotel, to = hh.to;
+    var adr   = 150 + Math.abs((dm*47+dd*31)%130);
+    var v     = Math.abs((dm*127+dd*53+dm*dd*7+dd*dd*3))%100;
+    var toAdr = Math.max(80, adr - 20 - Math.abs((dm*3+dd*7)%15));
+    var toRn  = Math.round(WV_CAP * to / 100);
+    var hnRn  = Math.round(WV_CAP * hotel / 100);
+    var toRev = Math.floor(toRn * toAdr);
+    var hnRev = Math.floor(hnRn * adr);
+    var otherPct = Math.max(0, hotel - to);
+    var otherRms = Math.round(WV_CAP * otherPct / 100);
+    var freeRms  = WV_CAP - toRn - otherRms;
+    var onlinePct = Math.max(30, Math.min(80, 45 + Math.abs((dm*13+dd*7)%35)));
+    var adrBar = Math.min(90, Math.round(toAdr / 280 * 100));
+    var revBar = Math.min(90, Math.round(toRev / 4500000 * 100));
+    var sdlyH  = Math.max(5, hotel - 9);
+    var sdlyA  = adr - 8;
+    var sdlyRn = Math.round(toRn * 0.88);
+    var sdlyR  = Math.floor(Math.round(WV_CAP * sdlyH / 100) * sdlyA);
+    return {dm, dd, hotel, to, adr, toAdr, toRn, hnRn, toRev, hnRev,
+            otherPct, otherRms, freeRms, onlinePct, adrBar, revBar,
+            sdlyH, sdlyA, sdlyRn, sdlyR, v};
+  });
+
+  // ── Row schema ────────────────────────────────────────────────────────────
+  var rows = [];
+  rows.push({type:'top',  id:'g_daily', label:'Daily Metrics'});
+
+  if (wvMetricState.capacity || wvMetricState.adr || wvMetricState.revenue || wvMetricState.onlineOffline) {
+    if (wvMetricState.capacity) {
+      rows.push({type:'sect', id:'occ',       label:'Occupancy',              parent:'g_daily'});
+      rows.push({type:'sub',  id:'occ_tdh',   label:'Travel Distribution Hubs', dot:'#006461', parent:'occ'});
+      rows.push({type:'sub',  id:'occ_other', label:'Other Segments',           dot:'#47c5bc', parent:'occ'});
+      rows.push({type:'sub',  id:'occ_stly',  label:'STLY',                     dot:'#c4ff45', parent:'occ'});
+      rows.push({type:'sub',  id:'occ_rem',   label:'Remaining',                dot:'#388c3f', parent:'occ', isRem:true});
+    }
+    if (wvMetricState.onlineOffline) {
+      rows.push({type:'sect', id:'onoff',      label:'Online / Offline',  parent:'g_daily'});
+      rows.push({type:'sub',  id:'onoff_on',   label:'Online',  dot:'#3b82f6', parent:'onoff'});
+      rows.push({type:'sub',  id:'onoff_off',  label:'Offline', dot:'#f97316', parent:'onoff'});
+    }
+    if (wvMetricState.adr) {
+      rows.push({type:'sect', id:'adr',        label:'ADR',           parent:'g_daily'});
+      rows.push({type:'sub',  id:'adr_t',      label:'T ADR',         dot:'#94b1f5', parent:'adr'});
+      rows.push({type:'sub',  id:'adr_hotel',  label:'Hotel ADR',     dot:'#7c3aed', parent:'adr'});
+      rows.push({type:'sub',  id:'adr_stly',   label:'STLY',          dot:'#c4ff45', parent:'adr'});
+    }
+    if (wvMetricState.revenue) {
+      rows.push({type:'sect', id:'rev',        label:'Revenue',        parent:'g_daily'});
+      rows.push({type:'sub',  id:'rev_t',      label:'T Revenue',      dot:'#eba2a2', parent:'rev'});
+      rows.push({type:'sub',  id:'rev_hotel',  label:'Hotel Revenue',  dot:'#ea580c', parent:'rev'});
+      rows.push({type:'sub',  id:'rev_stly',   label:'STLY',           dot:'#c4ff45', parent:'rev'});
+    }
+  }
+
+  // ── Helpers ────────────────────────────────────────────────────────────────
+  var chevUp   = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="18 15 12 9 6 15"/></svg>';
+  var chevDown = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 12 15 18 9"/></svg>';
+
+  // Check if a row should be hidden (parent or grandparent is collapsed)
+  function isHidden(row) {
+    if (!row.parent) return false;
+    if (_wbCollapsed[row.parent]) return true;
+    // check grandparent
+    var par = rows.find(function(r){ return r.id === row.parent; });
+    if (par && par.parent && _wbCollapsed[par.parent]) return true;
+    return false;
+  }
+
+  // ── Build HTML ─────────────────────────────────────────────────────────────
+  var html = '<div class="wb-layout">';
+
+  // Sticky date-header row
+  html += '<div class="wb-row wb-hdr-row">';
+  html += '<div class="wb-label-cell wb-hdr-label-cell"></div>';
+  days.forEach(function(dv) {
+    var dt  = new Date(dv.year, dv.month - 1, dv.day);
+    var dow = DOW_SHORT[dt.getDay()];
+    var isAct = dv.day === activeDay && dv.month === month;
+    html += '<div class="wb-data-cell wb-hdr-cell' + (isAct ? ' wb-hdr-active' : '') + '">'
+          + '<span class="wb-hdr-dow">' + dow + '</span>'
+          + '<span class="wb-hdr-date">' + dv.day + '/' + dv.month + '</span>'
+          + '</div>';
+  });
+  html += '</div>';
+
+  // Data rows
+  rows.forEach(function(row) {
+    var collapsed = !!_wbCollapsed[row.id];
+    var hidden    = isHidden(row);
+    var rowCls    = 'wb-row wb-row-' + row.type + (hidden ? ' wb-row-hidden' : '');
+
+    html += '<div class="' + rowCls + '" data-wb-id="' + row.id + '"'
+          + (row.parent ? ' data-wb-parent="' + row.parent + '"' : '') + '>';
+
+    // ── Label cell ──────────────────────────────────────────────────────────
+    if (row.type === 'top') {
+      html += '<div class="wb-label-cell wb-grp-hdr" onclick="wbToggle(\'' + row.id + '\')">'
+            + '<span class="wb-chev">' + (collapsed ? chevDown : chevUp) + '</span>'
+            + '<span class="wb-grp-label">' + row.label + '</span>'
+            + '</div>';
+    } else if (row.type === 'sect') {
+      html += '<div class="wb-label-cell wb-sect-lbl" onclick="wbToggle(\'' + row.id + '\')">'
+            + '<span class="wb-chev">' + (collapsed ? chevDown : chevUp) + '</span>'
+            + '<span class="wb-sect-label">' + row.label + '</span>'
+            + '</div>';
+    } else {
+      var dotHtml = row.dot ? '<span class="wb-sub-dot" style="background:' + row.dot + '"></span>' : '';
+      html += '<div class="wb-label-cell wb-sub-lbl-cell">'
+            + dotHtml
+            + '<span class="wb-sub-label' + (row.isRem ? ' wb-sub-lbl-rem' : '') + '">' + row.label + '</span>'
+            + '</div>';
+    }
+
+    // ── Data cells (one per day) ────────────────────────────────────────────
+    days.forEach(function(dv, i) {
+      var d = dd7[i];
+      var cellContent = '';
+
+      if (row.type === 'top') {
+        // Group header — empty data cells
+        cellContent = '';
+      } else if (row.type === 'sect') {
+        // Section header: value + bar
+        var cmpSuffix = '';
+        if (wvCompare !== 'none') {
+          var cmpStr = row.id === 'occ'   ? d.sdlyH + '%'
+                     : row.id === 'onoff' ? d.sdlyH + '%'
+                     : row.id === 'adr'   ? '$' + d.sdlyA
+                     : row.id === 'rev'   ? '$' + Math.floor(d.sdlyR/1000) + 'k' : '';
+          if (cmpStr) cmpSuffix = '<span class="wv-cmp-sep"> / </span><span class="wv-cmp-val-txt">' + cmpStr + '</span>';
+        }
+        if (row.id === 'occ') {
+          var barHtml = '<div style="width:' + d.to + '%;background:#006461;height:12px"></div>'
+                      + '<div style="width:' + d.otherPct + '%;background:#47c5bc;height:12px"></div>';
+          cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">' + d.hotel + '%' + cmpSuffix + '</span></div>'
+                      + '<div class="wv-occ-bar-track">' + barHtml + '</div>';
+        } else if (row.id === 'onoff') {
+          cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">' + d.onlinePct + '%' + cmpSuffix + '</span></div>'
+                      + '<div class="wv-occ-bar-track">'
+                      + '<div style="width:' + d.onlinePct + '%;background:#3b82f6;height:12px"></div>'
+                      + '<div style="width:' + (100 - d.onlinePct) + '%;background:#f97316;height:12px"></div>'
+                      + '</div>';
+        } else if (row.id === 'adr') {
+          cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">$' + d.toAdr + cmpSuffix + '</span></div>'
+                      + '<div class="wv-occ-bar-track"><div style="width:' + d.adrBar + '%;background:#94b1f5;height:12px"></div></div>';
+        } else if (row.id === 'rev') {
+          cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">$' + Math.round(d.toRev/1000) + 'k' + cmpSuffix + '</span></div>'
+                      + '<div class="wv-occ-bar-track"><div style="width:' + d.revBar + '%;background:#eba2a2;height:12px"></div></div>';
+        }
+      } else {
+        // Sub-row: value(s) right-aligned
+        var v1 = '', v2 = '', remCls = row.isRem ? ' wb-sub-val-rem' : '';
+        switch (row.id) {
+          case 'occ_tdh':   v1 = d.toRn + ' rms';               v2 = d.to + '%';          break;
+          case 'occ_other': v1 = d.otherRms + ' rms';           v2 = d.otherPct + '%';    break;
+          case 'occ_stly':  v1 = d.sdlyRn + ' rms';             v2 = d.sdlyH + '%';       break;
+          case 'occ_rem':   v1 = d.freeRms + ' rms';            v2 = Math.max(0, 100 - d.hotel) + '%'; break;
+          case 'onoff_on':  v1 = d.onlinePct + '%';                                        break;
+          case 'onoff_off': v1 = (100 - d.onlinePct) + '%';                                break;
+          case 'adr_t':     v1 = '$' + d.toAdr;                                            break;
+          case 'adr_hotel': v1 = '$' + d.adr;                                              break;
+          case 'adr_stly':  v1 = '$' + d.sdlyA;                                            break;
+          case 'rev_t':     v1 = '$' + Math.round(d.toRev/1000) + 'k';                    break;
+          case 'rev_hotel': v1 = '$' + Math.round(d.hnRev/1000) + 'k';                    break;
+          case 'rev_stly':  v1 = '$' + Math.floor(d.sdlyR/1000) + 'k';                    break;
+        }
+        cellContent = '<div class="wb-sub-vals' + remCls + '">'
+                    + '<span class="wb-sub-v1">' + v1 + '</span>'
+                    + (v2 ? '<span class="wb-sub-v2">' + v2 + '</span>' : '')
+                    + '</div>';
+      }
+
+      html += '<div class="wb-data-cell wb-' + row.type + '-cell">' + cellContent + '</div>';
+    });
+
+    html += '</div>'; // wb-row
+  });
+
+  html += '</div>'; // wb-layout
+  return html;
+}
+
 // ── Daily H View — horizontal layout with sticky label column ─────────────────
 function buildDailyHView(days, activeMonth, activeDay) {
   var DOW_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
@@ -4964,6 +5161,10 @@ function buildWeekGrid(month, weekStart, activeDay) {
     initDailyHGrid(days, month, activeDay, grid);
     return;
   }
+  if (wvGroupBy === 'dailyB') {
+    grid.innerHTML = buildDailyBView(days, month, activeDay);
+    return;
+  }
 
   // ── Build 7-day aggregate summary ──────────────────────────────────────
   var sumRn=0,sumHotelRn=0,sumRev=0,sumHotelRev=0,sumAdr=0,sumHotelAdr=0;
@@ -5798,7 +5999,7 @@ function buildWeekGrid(month, weekStart, activeDay) {
     </div>`;
   }).join('');
 
-  if (wvGroupBy === 'report' || wvGroupBy === 'coReport' || wvGroupBy === 'dailyH') return;
+  if (wvGroupBy === 'report' || wvGroupBy === 'coReport' || wvGroupBy === 'dailyH' || wvGroupBy === 'dailyB') return;
 
   // Apply custom section order for combined view
   if (wvGroupBy === 'combined' && _wvSectionOrder) applyWvSectionOrder(grid);
