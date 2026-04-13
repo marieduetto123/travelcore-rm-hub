@@ -2824,6 +2824,8 @@ function renderWeekView(month, day) {
   if (wvSection)  wvSection.classList.add('visible');
   var backArrow = document.getElementById('wvBack');
   if (backArrow) backArrow.style.display = 'inline-flex';
+  var cmpWrap = document.getElementById('wvCmpWrap');
+  if (cmpWrap) cmpWrap.style.display = 'flex';
 
   buildWeekGrid(month, weekStartDay, day);
 }
@@ -7150,6 +7152,8 @@ document.getElementById('wvBack')?.addEventListener('click', () => {
   document.getElementById('weekView').classList.remove('visible');
   var backArrow = document.getElementById('wvBack');
   if (backArrow) backArrow.style.display = 'none';
+  var cmpWrap = document.getElementById('wvCmpWrap');
+  if (cmpWrap) cmpWrap.style.display = 'none';
 });
 document.getElementById('wvPrev')?.addEventListener('click', () => {
   const dim = [0,31,28,31,30,31,30,31,31,30,31,30,31];
