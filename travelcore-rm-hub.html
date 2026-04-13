@@ -1035,12 +1035,12 @@
         <!-- Summary stats -->
         <div class="rt-stats">
           <div class="rt-stat-group">
-            <div class="rt-stat"><div class="rt-stat-label">T TOTAL BOOKINGS</div><div class="rt-stat-value">521</div></div>
-            <div class="rt-stat"><div class="rt-stat-label">T TOTAL REVENUE</div><div class="rt-stat-value">$106.9k</div></div>
+            <div class="rt-stat"><div class="rt-stat-label">T TOTAL BOOKINGS</div><div class="rt-stat-value" id="rtStatTotalBook">521</div></div>
+            <div class="rt-stat"><div class="rt-stat-label">T TOTAL REVENUE</div><div class="rt-stat-value" id="rtStatTotalRev">$106.9k</div></div>
           </div>
           <div class="rt-stat-group">
-            <div class="rt-stat"><div class="rt-stat-label">DIRECT BOOKINGS BOOKINGS</div><div class="rt-stat-value">523</div></div>
-            <div class="rt-stat"><div class="rt-stat-label">DIRECT BOOKINGS REVENUE</div><div class="rt-stat-value">$139.3k</div></div>
+            <div class="rt-stat"><div class="rt-stat-label">DIRECT BOOKINGS BOOKINGS</div><div class="rt-stat-value" id="rtStatDirectBook">523</div></div>
+            <div class="rt-stat"><div class="rt-stat-label">DIRECT BOOKINGS REVENUE</div><div class="rt-stat-value" id="rtStatDirectRev">$139.3k</div></div>
           </div>
         </div>
 
@@ -1048,9 +1048,9 @@
         <div class="grid-scroll-wrap"><div id="roomTypeGrid" style="width:100%;height:320px"></div></div>
 
         <div class="rt-footnotes">
-          <div class="rt-fn"><span class="fn-dot aug"></span> Avg T ADR $205 | Direct Bookings ADR $266</div>
-          <div class="rt-fn"><span class="fn-dot rev"></span> Revenue Gap $32.4k</div>
-          <div class="rt-fn"><span class="fn-dot vol"></span> Booking Volume Direct Bookings higher by 2 rooms</div>
+          <div class="rt-fn" id="rtFnAdr"><span class="fn-dot aug"></span> Avg T ADR $205 | Direct Bookings ADR $266</div>
+          <div class="rt-fn" id="rtFnRevGap"><span class="fn-dot rev"></span> Revenue Gap $32.4k</div>
+          <div class="rt-fn" id="rtFnVol"><span class="fn-dot vol"></span> Booking Volume Direct Bookings higher by 2 rooms</div>
         </div>
       </div>
 
@@ -1362,11 +1362,11 @@
               </div>
             </div>
             <div class="ac-inv-stats">
-              <div class="ac-inv-stat"><div class="ac-inv-stat-lbl">Total allocated</div><div class="ac-inv-stat-val">920</div></div>
-              <div class="ac-inv-stat"><div class="ac-inv-stat-lbl">Total sold</div><div class="ac-inv-stat-val">662</div></div>
-              <div class="ac-inv-stat"><div class="ac-inv-stat-lbl">Remaining</div><div class="ac-inv-stat-val">258</div></div>
-              <div class="ac-inv-stat"><div class="ac-inv-stat-lbl">Sold %</div><div class="ac-inv-stat-val">72.0%</div></div>
-              <div class="ac-inv-stat"><div class="ac-inv-stat-lbl">Total revenue</div><div class="ac-inv-stat-val">$121.7k</div></div>
+              <div class="ac-inv-stat"><div class="ac-inv-stat-lbl">Total allocated</div><div class="ac-inv-stat-val" id="acStatAlloc">920</div></div>
+              <div class="ac-inv-stat"><div class="ac-inv-stat-lbl">Total sold</div><div class="ac-inv-stat-val" id="acStatSold">662</div></div>
+              <div class="ac-inv-stat"><div class="ac-inv-stat-lbl">Remaining</div><div class="ac-inv-stat-val" id="acStatRemain">258</div></div>
+              <div class="ac-inv-stat"><div class="ac-inv-stat-lbl">Sold %</div><div class="ac-inv-stat-val" id="acStatSoldPct">72.0%</div></div>
+              <div class="ac-inv-stat"><div class="ac-inv-stat-lbl">Total revenue</div><div class="ac-inv-stat-val" id="acStatRev">$121.7k</div></div>
             </div>
             <div class="grid-scroll-wrap"><div id="inventoryGrid" style="width:100%;height:440px"></div></div>
             <div class="ac-insights">
@@ -1401,10 +1401,10 @@
 
           <!-- Stat cards -->
           <div class="pm-stats-row">
-            <div class="pm-stat-card"><div class="pm-stat-lbl">Active promotions</div><div class="pm-stat-val">17</div></div>
-            <div class="pm-stat-card"><div class="pm-stat-lbl">Total promotions</div><div class="pm-stat-val">18</div></div>
-            <div class="pm-stat-card"><div class="pm-stat-lbl">Matched bookings</div><div class="pm-stat-val">324</div></div>
-            <div class="pm-stat-card"><div class="pm-stat-lbl">Total revenue</div><div class="pm-stat-val">$388,800</div></div>
+            <div class="pm-stat-card"><div class="pm-stat-lbl">Active promotions</div><div class="pm-stat-val" id="pmStatActive">17</div></div>
+            <div class="pm-stat-card"><div class="pm-stat-lbl">Total promotions</div><div class="pm-stat-val" id="pmStatTotal">18</div></div>
+            <div class="pm-stat-card"><div class="pm-stat-lbl">Matched bookings</div><div class="pm-stat-val" id="pmStatBook">324</div></div>
+            <div class="pm-stat-card"><div class="pm-stat-lbl">Total revenue</div><div class="pm-stat-val" id="pmStatRev">$388,800</div></div>
           </div>
 
           <!-- Expiry alerts -->

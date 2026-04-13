@@ -405,11 +405,43 @@ function revDRUpdateDailyBtn() {
   if(!ok && revGranularity === 'day') revSetGran('month');
 }
 
+function fmtStatK(v) {
+  if (v >= 1e6) return '$' + (v / 1e6).toFixed(1) + 'M';
+  if (v >= 1e3) return '$' + (v / 1e3).toFixed(1) + 'k';
+  return '$' + Math.round(v);
+}
+
+function updateRevStats() {
+  var BASE_DAYS  = 184; // Aug 1 2025 → Jan 31 2026
+  var BASE_T_BOOK = 521,  BASE_T_REV  = 106900;
+  var BASE_D_BOOK = 523,  BASE_D_REV  = 139300;
+  var days = Math.max(1, Math.round((revDRTo - revDRFrom) / 864e5) + 1);
+  var f    = days / BASE_DAYS;
+  var tBook = Math.max(1, Math.round(BASE_T_BOOK * f));
+  var tRev  = Math.max(0, Math.round(BASE_T_REV  * f));
+  var dBook = Math.max(1, Math.round(BASE_D_BOOK * f));
+  var dRev  = Math.max(0, Math.round(BASE_D_REV  * f));
+  var revGap = Math.abs(dRev - tRev);
+  var volDiff = Math.max(1, Math.round(2 * f));
+  function set(id, val) { var el = document.getElementById(id); if (el) el.textContent = val; }
+  set('rtStatTotalBook',  tBook.toLocaleString());
+  set('rtStatTotalRev',   fmtStatK(tRev));
+  set('rtStatDirectBook', dBook.toLocaleString());
+  set('rtStatDirectRev',  fmtStatK(dRev));
+  var fnAdr = document.getElementById('rtFnAdr');
+  if (fnAdr) fnAdr.innerHTML = '<span class="fn-dot aug"></span> Avg T ADR $205 | Direct Bookings ADR $266';
+  var fnGap = document.getElementById('rtFnRevGap');
+  if (fnGap) fnGap.innerHTML = '<span class="fn-dot rev"></span> Revenue Gap ' + fmtStatK(revGap);
+  var fnVol = document.getElementById('rtFnVol');
+  if (fnVol) fnVol.innerHTML = '<span class="fn-dot vol"></span> Booking Volume Direct Bookings higher by ' + volDiff + ' room' + (volDiff === 1 ? '' : 's');
+}
+
 function revDRApplyRange() {
   var lbl = document.getElementById('revDRLabel');
   if(lbl) lbl.textContent = revDRFmt(revDRFrom) + ' – ' + revDRFmt(revDRTo);
   revDRUpdateDailyBtn();
   updateChart();
+  updateRevStats();
 }
 
 /* ── IIFE: Revenue Trend Date Range Picker ─── */
@@ -6142,6 +6174,7 @@ document.querySelector('.btn-reopen')?.addEventListener('click', () => {
     if (startDate && endDate) {
       trigText.textContent = `${fmt(startDate)} – ${fmt(endDate)}`;
       closePicker();
+      if (window.dpOnApply) window.dpOnApply(startDate, endDate);
     }
     // If only start selected, don't close — wait for end date
   });
@@ -6161,11 +6194,49 @@ document.querySelector('.btn-reopen')?.addEventListener('click', () => {
   trigText.textContent = `${fmt(startDate)} – ${fmt(endDate)}`;
 })();
 
+/* ─── Contracts & Promotions date-driven summaries ─── */
+function updateContractsStats(start, end) {
+  var BASE_DAYS = 365; // annual baseline
+  var d1   = new Date(start.y, start.m - 1, start.d);
+  var d2   = new Date(end.y,   end.m   - 1, end.d);
+  var days = Math.max(1, Math.round((d2 - d1) / 864e5) + 1);
+  var f    = days / BASE_DAYS;
+  function set(id, val) { var el = document.getElementById(id); if (el) el.textContent = val; }
+  // Contracts inventory
+  var alloc   = Math.max(1,  Math.round(920   * f));
+  var sold    = Math.min(alloc, Math.max(0, Math.round(662 * f)));
+  var remain  = alloc - sold;
+  var soldPct = (sold / alloc * 100).toFixed(1);
+  var rev     = Math.round(121700 * f);
+  set('acStatAlloc',   alloc.toLocaleString());
+  set('acStatSold',    sold.toLocaleString());
+  set('acStatRemain',  remain.toLocaleString());
+  set('acStatSoldPct', soldPct + '%');
+  set('acStatRev',     fmtStatK(rev));
+  // Key insights text
+  var insEl = document.querySelector('.ac-insights-list');
+  if (insEl) insEl.innerHTML =
+    '<div class="ac-insight"><span class="ac-insight-dot"></span>Overall Utilization: ' + soldPct + '% of allocated rooms sold</div>'
+    + '<div class="ac-insight"><span class="ac-insight-dot"></span>Avg ADR: $184 across all contracted rooms</div>'
+    + '<div class="ac-insight"><span class="ac-insight-dot"></span>Available Inventory: ' + remain.toLocaleString() + ' rooms still available</div>';
+  // Promotions stats — bookings/revenue scale; active/total stay anchored
+  var pmBook   = Math.max(1, Math.round(324    * f));
+  var pmRev    = Math.round(388800 * f);
+  var pmActive = Math.min(18, Math.max(1, Math.round(17 * Math.pow(f, 0.6))));
+  set('pmStatActive', pmActive);
+  set('pmStatTotal',  18);
+  set('pmStatBook',   pmBook.toLocaleString());
+  set('pmStatRev',    fmtStatK(pmRev));
+}
+window.dpOnApply = updateContractsStats;
+
 /* ─── INIT ─── */
 initTargetsGrid();
 updateChart();
 buildRoomTypeTable();
 buildCalendar();
+updateRevStats();
+updateContractsStats({ y:2025, m:7, d:17 }, { y:2025, m:7, d:25 });
 
 /* ─── MOBILE SIDEBAR TOGGLE ─── */
 (function () {
