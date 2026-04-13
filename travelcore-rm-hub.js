@@ -3704,7 +3704,7 @@ function initDailyHGrid(days, activeMonth, activeDay, containerEl) {
 
     var label = document.createElement('span');
     label.style.cssText =
-      'font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.65px;color:' + clr;
+      'font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.65px;color:#1e2d3a';
     label.textContent = r._lbl;
 
     this.gui.appendChild(iconWrap);
@@ -3756,7 +3756,7 @@ function initDailyHGrid(days, activeMonth, activeDay, containerEl) {
         iconWrap.innerHTML = '<svg viewBox="0 0 10 6" width="8" height="8" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1l4 4 4-4"/></svg>';
 
         var label = document.createElement('span');
-        label.style.cssText = 'font-size:10px;font-weight:600;color:' + clr + ';letter-spacing:.15px';
+        label.style.cssText = 'font-size:10px;font-weight:600;color:#374151;letter-spacing:.15px';
         label.textContent = r._lbl;
 
         el.appendChild(iconWrap);
