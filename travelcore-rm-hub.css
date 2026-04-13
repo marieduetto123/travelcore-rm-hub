@@ -2167,7 +2167,7 @@ body.dark .wv-range { color: var(--text-primary); }
 
 /* 7-column week grid */
 .wv-grid {
-  display: grid; grid-template-columns: repeat(7, 1fr);
+  display: grid; grid-template-columns: repeat(7, 344px);
   padding: 0; overflow-x: auto;
   flex: 1; min-width: 0;
 }
