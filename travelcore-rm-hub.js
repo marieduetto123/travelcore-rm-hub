@@ -2764,28 +2764,11 @@ function wvCmpValSuffix(stlyStr, lyStr, fcstStr) {
   return '<span class="wv-cmp-sep"> / </span><span class="wv-cmp-val-txt">' + s + '</span>';
 }
 
-// Delta chip: arrow + absolute delta, coloured red/green
-function wvDeltaChip(current, stlyNum, lyNum, fcstNum, suffix) {
-  if (wvCompare === 'none') return '';
-  const cmp = wvCompare === 'stly' ? stlyNum : wvCompare === 'ly' ? lyNum : fcstNum;
-  if (cmp == null || isNaN(cmp)) return '';
-  const delta = current - cmp;
-  if (delta === 0) return '';
-  const isPos = delta > 0;
-  const arrow = isPos
-    ? '<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 9L9 3M9 3H4M9 3V8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'
-    : '<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 3L9 9M9 9V4M9 9H4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-  return '<div class="wv-delta-chip ' + (isPos ? 'pos' : 'neg') + '">' + arrow
-    + '<span>' + Math.abs(Math.round(delta)) + (suffix || '') + '</span></div>';
-}
-
-// Full right-side header block: "mainVal / cmpVal  [chip]"
-function wvHdrRight(mainVal, stlyStr, lyStr, fcstStr, currentNum, stlyNum, lyNum, fcstNum, suffix) {
+// Right-side header block: "mainVal / cmpVal" (no chip)
+function wvHdrRight(mainVal, stlyStr, lyStr, fcstStr) {
   const valSuffix = wvCmpValSuffix(stlyStr, lyStr, fcstStr);
-  const chip = wvDeltaChip(currentNum, stlyNum, lyNum, fcstNum, suffix);
   return '<div class="wv-hdr-right">'
     + '<span class="wv-occ-total">' + mainVal + valSuffix + '</span>'
-    + chip
     + '</div>';
 }
 // Tracks which TO detail panels are open (key: 'tos_ri_bi' for BT, 'rtos_ri' for RT)
@@ -5398,9 +5381,8 @@ function buildWeekGrid(month, weekStart, activeDay) {
             }
 
             return '<div class="wv-occ-bar-wrap">'
-              +'<div class="wv-occ-bar-labels"><span class="wv-q-label">Occupancy</span>'+wvHdrRight(hotel+'%',sdlyH+'%',lyH+'%',fcstH+'%',hotel,sdlyH,lyH,fcstH,'%')+'</div>'
+              +'<div class="wv-occ-bar-labels"><span class="wv-q-label">Occupancy</span>'+wvHdrRight(hotel+'%',sdlyH+'%',lyH+'%',fcstH+'%')+'</div>'
               +'<div class="wv-occ-bar-track" style="position:relative">'+barInner+occTicks()+'</div>'
-              +refRow(sdlyH+'%', lyH+'%', fcstH+'%')
               +'<div class="wv-occ-breakdown">'+bdRows+'</div>'
               +'</div>';
           })() : ''}
@@ -5412,10 +5394,6 @@ function buildWeekGrid(month, weekStart, activeDay) {
             const diff      = hotelAdrV - toAdrV;
             const diffSign  = diff >= 0 ? '+$'+diff : '-$'+Math.abs(diff);
             const diffColor = diff >= 0 ? '#16a34a' : '#dc2626';
-            const refParts  = [];
-            if (showS) refParts.push('<span class="wv-ref-tag wv-ref-sdly">STLY $'+sdlyA+'</span>');
-            if (showL && lyA != null) refParts.push('<span class="wv-ref-tag wv-ref-ly">LY $'+lyA+'</span>');
-            if (showF) refParts.push('<span class="wv-ref-tag wv-ref-fcst">Fcst $'+fcstA+'</span>');
             var segRows = '';
             if (showH) {
               if (wvSegMode === 'individual') {
@@ -5431,9 +5409,8 @@ function buildWeekGrid(month, weekStart, activeDay) {
             const hdrRow = '<div class="wv-occ-br-row"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:#7c3aed"></span><span class="wv-occ-br-lbl">Hotel ADR</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms">$'+hotelAdrV+'</span></div></div>';
             const htick  = showH ? '<div class="wv-bar-ref-tick" style="left:'+hotelAdrTick+'%;background:#7c3aed;width:2px;position:absolute;top:0;bottom:0"></div>' : '';
             return '<div>'
-              +'<div class="wv-occ-bar-labels"><span class="wv-q-label">T ADR</span>'+wvHdrRight('$'+toAdrV,'$'+sdlyA,'$'+(lyA??sdlyA),'$'+fcstA,toAdrV,sdlyA,(lyA??sdlyA),fcstA,'')+'</div>'
+              +'<div class="wv-occ-bar-labels"><span class="wv-q-label">T ADR</span>'+wvHdrRight('$'+toAdrV,'$'+sdlyA,'$'+(lyA??sdlyA),'$'+fcstA)+'</div>'
               +'<div class="wv-occ-bar-track" style="position:relative;overflow:visible"><div style="width:'+adrBar+'%;height:7px;background:#94b1f5;border-radius:4px;flex-shrink:0"></div>'+htick+barTicks(Math.max(3,adrBarRef-5),adrBarRef,Math.min(92,adrBarRef+5))+'</div>'
-              +'<div class="wv-ref-row">'+refParts.join('')+'</div>'
               +(showH ? '<div class="wv-occ-breakdown">'+hdrRow+segRows+'</div>' : '')
               +'</div>';
           })() : ''}
@@ -5446,10 +5423,6 @@ function buildWeekGrid(month, weekStart, activeDay) {
             const toShare   = hotelRevV > 0 ? Math.round(toRevV / hotelRevV * 100) : 0;
             const toRevStr  = '$'+Math.round(toRevV/1000)+'k';
             const hotRevStr = '$'+Math.round(hotelRevV/1000)+'k';
-            const refParts  = [];
-            if (showS) refParts.push('<span class="wv-ref-tag wv-ref-sdly">STLY $'+Math.floor(sdlyR/1000)+'k</span>');
-            if (showL && lyR != null) refParts.push('<span class="wv-ref-tag wv-ref-ly">LY $'+Math.floor(lyR/1000)+'k</span>');
-            if (showF) refParts.push('<span class="wv-ref-tag wv-ref-fcst">Fcst $'+Math.floor(fcstR/1000)+'k</span>');
             var segRows = '';
             if (showH) {
               if (wvSegMode === 'individual') {
@@ -5467,9 +5440,8 @@ function buildWeekGrid(month, weekStart, activeDay) {
             const hotRevRow = '<div class="wv-occ-br-row"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:#ea580c"></span><span class="wv-occ-br-lbl">Hotel Revenue</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms">'+hotRevStr+'</span></div></div>';
             const htick     = showH ? '<div class="wv-bar-ref-tick" style="left:'+hotelRevTick+'%;background:#ea580c;width:2px;position:absolute;top:0;bottom:0"></div>' : '';
             return '<div>'
-              +'<div class="wv-occ-bar-labels"><span class="wv-q-label">T Revenue</span>'+wvHdrRight(toRevStr,'$'+Math.floor(sdlyR/1000)+'k','$'+Math.floor((lyR??sdlyR)/1000)+'k','$'+Math.floor(fcstR/1000)+'k',toRevV,sdlyR,(lyR??sdlyR),fcstR,'')+'</div>'
+              +'<div class="wv-occ-bar-labels"><span class="wv-q-label">T Revenue</span>'+wvHdrRight(toRevStr,'$'+Math.floor(sdlyR/1000)+'k','$'+Math.floor((lyR??sdlyR)/1000)+'k','$'+Math.floor(fcstR/1000)+'k')+'</div>'
               +'<div class="wv-occ-bar-track" style="position:relative;overflow:visible"><div style="width:'+revBar+'%;height:7px;background:#eba2a2;border-radius:4px;flex-shrink:0"></div>'+htick+barTicks(Math.max(3,revBarRef-5),revBarRef,Math.min(92,revBarRef+5))+'</div>'
-              +'<div class="wv-ref-row">'+refParts.join('')+'</div>'
               +(showH ? '<div class="wv-occ-breakdown">'+hotRevRow+segRows+'</div>' : '')
               +'</div>';
           })() : ''}
@@ -5567,18 +5539,13 @@ function buildWeekGrid(month, weekStart, activeDay) {
               }
             }
             const headerClr = isHotelOnly ? '#181d1f' : '#006461';
-            const dmValNum = parseFloat(String(val).replace(/[^0-9.-]/g,'')) || 0;
-            const dmSvNum  = sv != null ? parseFloat(String(sv).replace(/[^0-9.-]/g,'')) : null;
-            const dmLvNum  = lv != null ? parseFloat(String(lv).replace(/[^0-9.-]/g,'')) : null;
-            const dmFvNum  = fv != null ? parseFloat(String(fv).replace(/[^0-9.-]/g,'')) : null;
             const dmHdrRight = (sv != null || lv != null || fv != null)
-              ? wvHdrRight(val, sv != null ? String(sv) : null, lv != null ? String(lv) : null, fv != null ? String(fv) : null, dmValNum, dmSvNum, dmLvNum, dmFvNum, '')
+              ? wvHdrRight(val, sv != null ? String(sv) : null, lv != null ? String(lv) : null, fv != null ? String(fv) : null)
               : '<div class="wv-hdr-right"><span class="wv-occ-total" style="color:'+headerClr+'">'+val+'</span></div>';
             return '<div>'
               +'<div class="wv-occ-bar-labels"><span class="wv-q-label">'+lbl+'</span>'+dmHdrRight+'</div>'
               +dualBar
               +'<div class="wv-occ-breakdown" style="margin-top:2px">'+bdRows+'</div>'
-              +dmRefRow(sv,lv,fv,hvDisplay)
               +'</div>';
           }).join('');
         })())  : '' : ''}
