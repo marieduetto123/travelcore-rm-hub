@@ -3359,6 +3359,35 @@ var _dhCollapsed    = {};   // persists collapse state between tab/week switches
 var _dhAllRows      = [];   // flat ROWS array; rebuilt each time initDailyHGrid runs
 var _dhSecRenderers = [];   // live SecRenderer instances → used for Open/Close All chevron sync
 var _dhParCells     = [];   // live par cell DOM refs for chevron sync
+var _dhMetricOrder  = null; // null = default; array of parKey strings = custom order
+var _dhLastInitArgs = null; // saved args for grid rebuild after reorder
+
+// Reorder ROWS by a custom par-key sequence (preserves sec headers above their first par)
+function reorderDHRows(rows, order) {
+  // Parse into groups: { sec, pars: [{par, rows:[]}] }
+  var sections = [], curSec = null, curPar = null;
+  rows.forEach(function(r) {
+    if (r.type === 'sec') { curSec = { sec: r, pars: [] }; sections.push(curSec); curPar = null; }
+    else if (r.type === 'par') { curPar = { par: r, rows: [] }; if (curSec) curSec.pars.push(curPar); }
+    else if (r.type === 'row') { if (curPar) curPar.rows.push(r); }
+  });
+  // Build lookup: parKey → { section, parGroup }
+  var parMap = {};
+  sections.forEach(function(sec) {
+    sec.pars.forEach(function(pg) { parMap[pg.par.parKey] = { sec: sec, pg: pg }; });
+  });
+  // Emit rows in specified order, emitting sec header the first time it appears
+  var result = [], usedSecs = {};
+  order.forEach(function(pk) {
+    var entry = parMap[pk];
+    if (!entry) return;
+    var secKey = entry.sec.sec.secKey;
+    if (!usedSecs[secKey]) { result.push(entry.sec.sec); usedSecs[secKey] = true; }
+    result.push(entry.pg.par);
+    entry.pg.rows.forEach(function(r) { result.push(r); });
+  });
+  return result;
+}
 
 function _getDHVisibleRowData() {
   return _dhAllRows.filter(function(r) {
@@ -3395,6 +3424,7 @@ function dhSetAll(collapse) {
 }
 
 function initDailyHGrid(days, activeMonth, activeDay, containerEl) {
+  _dhLastInitArgs = { days: days, month: activeMonth, day: activeDay, container: containerEl };
   var AG = _realAgGrid;
   if (!AG || typeof AG.createGrid !== 'function') {
     containerEl.innerHTML = buildDailyHView(days, activeMonth, activeDay);
@@ -3777,6 +3807,11 @@ function initDailyHGrid(days, activeMonth, activeDay, containerEl) {
       },
     });
   });
+
+  // ── Apply custom metric order if set ─────────────────────────────────────
+  if (_dhMetricOrder && _dhMetricOrder.length) {
+    ROWS = reorderDHRows(ROWS, _dhMetricOrder);
+  }
 
   // ── Expose rows to module level (for Open All / Close All) ──────────────
   _dhAllRows = ROWS;
@@ -5752,12 +5787,85 @@ function setAllAccordions(collapse) {
 document.getElementById('wvRtCloseAll')?.addEventListener('click', function() { setAllAccordions(true); });
 document.getElementById('wvRtOpenAll')?.addEventListener('click',  function() { setAllAccordions(false); });
 
+// ── Daily-H Metric Reorder ────────────────────────────────────────────────
+window.dhOpenReorder = function() {
+  var modal = document.getElementById('dhReorderModal');
+  var list  = document.getElementById('dhReorderList');
+  if (!modal || !list) return;
+  list.innerHTML = '';
+  // Build par list from current ROWS
+  var pars = [], curSecLbl = '', curSecClr = '#374151';
+  _dhAllRows.forEach(function(r) {
+    if (r.type === 'sec') { curSecLbl = r.lbl; curSecClr = r.clr; }
+    if (r.type === 'par') pars.push({ parKey: r.parKey, lbl: r.lbl, secLbl: curSecLbl, secClr: curSecClr });
+  });
+  var dragging = null;
+  pars.forEach(function(p) {
+    var li = document.createElement('div');
+    li.className = 'dh-reorder-item';
+    li.draggable = true;
+    li.dataset.parKey = p.parKey;
+    li.innerHTML =
+      '<span class="dh-reorder-handle">⠿</span>'
+      + '<span class="dh-reorder-sec-badge" style="background:' + p.secClr + '1a;color:' + p.secClr + '">' + p.secLbl + '</span>'
+      + '<span class="dh-reorder-lbl">' + p.lbl + '</span>';
+    li.addEventListener('dragstart', function(e) {
+      dragging = li; li.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    li.addEventListener('dragend', function() {
+      li.classList.remove('dragging'); dragging = null;
+      list.querySelectorAll('.dh-reorder-item').forEach(function(i) { i.classList.remove('drop-above','drop-below'); });
+    });
+    li.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      if (!dragging || dragging === li) return;
+      var mid = li.getBoundingClientRect().top + li.offsetHeight / 2;
+      li.classList.remove('drop-above','drop-below');
+      li.classList.add(e.clientY < mid ? 'drop-above' : 'drop-below');
+    });
+    li.addEventListener('dragleave', function() { li.classList.remove('drop-above','drop-below'); });
+    li.addEventListener('drop', function(e) {
+      e.preventDefault();
+      li.classList.remove('drop-above','drop-below');
+      if (!dragging || dragging === li) return;
+      var mid = li.getBoundingClientRect().top + li.offsetHeight / 2;
+      list.insertBefore(dragging, e.clientY < mid ? li : li.nextSibling);
+    });
+    list.appendChild(li);
+  });
+  modal.style.display = 'flex';
+};
+
+window.dhReorderModalBg = function(e) {
+  if (e.target.id === 'dhReorderModal') e.target.style.display = 'none';
+};
+
+window.dhApplyReorder = function() {
+  var list = document.getElementById('dhReorderList');
+  var order = [];
+  list.querySelectorAll('[data-par-key]').forEach(function(li) { order.push(li.dataset.parKey); });
+  _dhMetricOrder = order;
+  document.getElementById('dhReorderModal').style.display = 'none';
+  var a = _dhLastInitArgs;
+  if (a) initDailyHGrid(a.days, a.month, a.day, a.container);
+};
+
+window.dhResetReorder = function() {
+  _dhMetricOrder = null;
+  document.getElementById('dhReorderModal').style.display = 'none';
+  var a = _dhLastInitArgs;
+  if (a) initDailyHGrid(a.days, a.month, a.day, a.container);
+};
+
 // ── Group-by toggle ───────────────────────────────────────────────────────
 document.querySelectorAll('.wv-groupby-btn').forEach(function(btn) {
   btn.addEventListener('click', function() {
     wvGroupBy = this.dataset.groupby;
     document.querySelectorAll('.wv-groupby-btn').forEach(function(b) { b.classList.remove('active'); });
     this.classList.add('active');
+    var reorderBtn = document.getElementById('dhReorderBtn');
+    if (reorderBtn) reorderBtn.style.display = wvGroupBy === 'dailyH' ? '' : 'none';
     buildWeekGrid(wvMonth, wvWeekStart, wvWeekStart);
   });
 });

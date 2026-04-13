@@ -1055,6 +1055,28 @@ body.dark .daily-h-ag-wrap {
   --ag-row-border-color: #1e3c3f;
 }
 
+/* ── Daily-H Metric Reorder Modal ── */
+.dh-reorder-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #fff;
+  cursor: grab;
+  user-select: none;
+  transition: box-shadow .12s, opacity .12s;
+}
+.dh-reorder-item:hover { box-shadow: 0 2px 8px rgba(0,0,0,.08); }
+.dh-reorder-item:active { cursor: grabbing; }
+.dh-reorder-item.dragging { opacity: 0.35; box-shadow: none; }
+.dh-reorder-item.drop-above { border-top: 2px solid #006461; }
+.dh-reorder-item.drop-below { border-bottom: 2px solid #006461; }
+.dh-reorder-handle { font-size: 17px; color: #d1d5db; flex-shrink: 0; line-height: 1; }
+.dh-reorder-sec-badge { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px; flex-shrink: 0; white-space: nowrap; }
+.dh-reorder-lbl { font-size: 13px; color: #374151; font-weight: 500; flex: 1; }
+
 /* ── Daily X AG Grid ── */
 
 /* ── Close Out Report AG Grid ── */
