@@ -2748,6 +2748,21 @@ let wvActiveTab = 'occupancy';
 // Weekly group-by: 'combined' | 'roomType' | 'boardType'
 let wvGroupBy = 'combined';
 let wvSegMode = 'combined'; // 'combined' | 'individual'
+let wvCompare = 'stly';    // 'none' | 'stly' | 'ly' | 'fcst'
+
+function wvSetCompare(val) {
+  wvCompare = val;
+  // Show/hide the compare dropdown only on combined view
+  buildWeekGrid(wvMonth, wvWeekStart, wvWeekStart);
+}
+
+// Returns a compare chip HTML string given a value string, or '' if wvCompare=none
+function wvCmpChip(stlyVal, lyVal, fcstVal) {
+  if (wvCompare === 'none') return '';
+  const val = wvCompare === 'stly' ? stlyVal : wvCompare === 'ly' ? lyVal : fcstVal;
+  if (val == null || val === '') return '';
+  return '<span class="wv-cmp-chip ' + wvCompare + '">' + val + '</span>';
+}
 // Tracks which TO detail panels are open (key: 'tos_ri_bi' for BT, 'rtos_ri' for RT)
 const wvTosOpen = {};
 
@@ -5358,13 +5373,13 @@ function buildWeekGrid(month, weekStart, activeDay) {
             }
 
             return '<div class="wv-occ-bar-wrap">'
-              +'<div class="wv-occ-bar-labels"><span class="wv-q-label">Occupancy</span><span class="wv-occ-total">'+hotel+'%</span></div>'
+              +'<div class="wv-occ-bar-labels"><span class="wv-q-label">Occupancy</span><span class="wv-occ-total">'+hotel+'%'+wvCmpChip(sdlyH+'%',lyH+'%',fcstH+'%')+'</span></div>'
               +'<div class="wv-occ-bar-track" style="position:relative">'+barInner+occTicks()+'</div>'
               +refRow(sdlyH+'%', lyH+'%', fcstH+'%')
               +'<div class="wv-occ-breakdown">'+bdRows+'</div>'
               +'</div>';
           })() : ''}
-          ${wvMetricState.onlineOffline ? `<div class="wv-online-row"><span class="wv-dot" style="background:#3b82f6"></span>${onlinePct}% online<span class="wv-dot" style="background:#f97316;margin-left:4px"></span>${100-onlinePct}% offline</div>` : ''}
+          ${wvMetricState.onlineOffline ? `<div><div class="wv-occ-bar-labels"><span class="wv-q-label">Online / Offline</span><span class="wv-occ-total">${onlinePct}%</span></div><div class="wv-occ-bar-track"><div style="width:${onlinePct}%;background:#3b82f6;height:7px"></div><div style="width:${100-onlinePct}%;background:#f97316;height:7px"></div></div><div class="wv-occ-breakdown"><div class="wv-occ-br-row"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:#3b82f6"></span><span class="wv-occ-br-lbl">Online</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms">${onlinePct}%</span></div></div><div class="wv-occ-br-row"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:#f97316"></span><span class="wv-occ-br-lbl">Offline</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms">${100-onlinePct}%</span></div></div></div></div>` : ''}
           ${wvMetricState.adr ? (function(){
             const toAdrV    = Math.max(80, adr - 20 - Math.abs((dm*3+dd*7)%15));
             const hotelAdrV = adr;
@@ -5380,19 +5395,19 @@ function buildWeekGrid(month, weekStart, activeDay) {
             if (showH) {
               if (wvSegMode === 'individual') {
                 const fitAdr = Math.round(toAdrV * 0.97), dynAdr = Math.round(toAdrV * 1.04), serAdr = Math.round(toAdrV * 0.91);
-                segRows = '<div class="wv-occ-br-row"><span class="wv-occ-br-dot" style="background:#006461"></span><span class="wv-occ-br-lbl">Static FIT Rates</span><span class="wv-occ-br-pct">$'+fitAdr+'</span></div>'
-                  +'<div class="wv-occ-br-row"><span class="wv-occ-br-dot" style="background:#0891b2"></span><span class="wv-occ-br-lbl">TO Dynamic</span><span class="wv-occ-br-pct">$'+dynAdr+'</span></div>'
-                  +'<div class="wv-occ-br-row"><span class="wv-occ-br-dot" style="background:#6366f1"></span><span class="wv-occ-br-lbl">Tour Series</span><span class="wv-occ-br-pct">$'+serAdr+'</span></div>';
+                segRows = '<div class="wv-occ-br-row"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:#006461"></span><span class="wv-occ-br-lbl">Static FIT Rates</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms">$'+fitAdr+'</span></div></div>'
+                  +'<div class="wv-occ-br-row"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:#0891b2"></span><span class="wv-occ-br-lbl">TO Dynamic</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms">$'+dynAdr+'</span></div></div>'
+                  +'<div class="wv-occ-br-row"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:#6366f1"></span><span class="wv-occ-br-lbl">Tour Series</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms">$'+serAdr+'</span></div></div>';
               } else {
-                segRows = '<div class="wv-occ-br-row"><span class="wv-occ-br-dot" style="background:#94b1f5"></span><span class="wv-occ-br-lbl">T ADR</span><span class="wv-occ-br-pct">$'+toAdrV+'</span></div>';
+                segRows = '<div class="wv-occ-br-row"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:#94b1f5"></span><span class="wv-occ-br-lbl">T ADR</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms">$'+toAdrV+'</span></div></div>';
               }
-              segRows += '<div class="wv-occ-br-row"><span class="wv-occ-br-dot" style="background:#e5e7eb"></span><span class="wv-occ-br-lbl">Difference</span><span class="wv-occ-br-pct" style="color:'+diffColor+'">'+diffSign+'</span></div>';
+              segRows += '<div class="wv-occ-br-row"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:#e5e7eb"></span><span class="wv-occ-br-lbl">Difference</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms" style="color:'+diffColor+'">'+diffSign+'</span></div></div>';
             }
-            const hdrRow = '<div class="wv-occ-br-row"><span class="wv-occ-br-dot" style="background:#7c3aed"></span><span class="wv-occ-br-lbl">Hotel ADR</span><span class="wv-occ-br-pct">$'+hotelAdrV+'</span></div>';
+            const hdrRow = '<div class="wv-occ-br-row"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:#7c3aed"></span><span class="wv-occ-br-lbl">Hotel ADR</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms">$'+hotelAdrV+'</span></div></div>';
             const htick  = showH ? '<div class="wv-bar-ref-tick" style="left:'+hotelAdrTick+'%;background:#7c3aed;width:2px;position:absolute;top:0;bottom:0"></div>' : '';
             return '<div>'
-              +'<div class="wv-q-row"><span class="wv-q-label">T ADR</span><span class="wv-q-val">$'+toAdrV+'</span></div>'
-              +'<div class="wv-bar-track" style="position:relative"><div class="wv-bar-fill" style="width:'+adrBar+'%;background:#94b1f5"></div>'+htick+barTicks(Math.max(3,adrBarRef-5),adrBarRef,Math.min(92,adrBarRef+5))+'</div>'
+              +'<div class="wv-occ-bar-labels"><span class="wv-q-label">T ADR</span><span class="wv-occ-total">$'+toAdrV+wvCmpChip('$'+sdlyA,'$'+(lyA??sdlyA),'$'+fcstA)+'</span></div>'
+              +'<div class="wv-occ-bar-track" style="position:relative;overflow:visible"><div style="width:'+adrBar+'%;height:7px;background:#94b1f5;border-radius:4px;flex-shrink:0"></div>'+htick+barTicks(Math.max(3,adrBarRef-5),adrBarRef,Math.min(92,adrBarRef+5))+'</div>'
               +'<div class="wv-ref-row">'+refParts.join('')+'</div>'
               +(showH ? '<div class="wv-occ-breakdown">'+hdrRow+segRows+'</div>' : '')
               +'</div>';
@@ -5417,18 +5432,18 @@ function buildWeekGrid(month, weekStart, activeDay) {
                 const fStr = fitRev>=1000 ? '$'+Math.round(fitRev/1000)+'k' : '$'+fitRev;
                 const dStr = dynRev>=1000 ? '$'+Math.round(dynRev/1000)+'k' : '$'+dynRev;
                 const sStr = serRev>=1000 ? '$'+Math.round(serRev/1000)+'k' : '$'+serRev;
-                segRows = '<div class="wv-occ-br-row"><span class="wv-occ-br-dot" style="background:#006461"></span><span class="wv-occ-br-lbl">Static FIT Rates</span><span class="wv-occ-br-pct">'+fStr+'</span></div>'
-                  +'<div class="wv-occ-br-row"><span class="wv-occ-br-dot" style="background:#0891b2"></span><span class="wv-occ-br-lbl">TO Dynamic</span><span class="wv-occ-br-pct">'+dStr+'</span></div>'
-                  +'<div class="wv-occ-br-row"><span class="wv-occ-br-dot" style="background:#6366f1"></span><span class="wv-occ-br-lbl">Tour Series</span><span class="wv-occ-br-pct">'+sStr+'</span></div>';
+                segRows = '<div class="wv-occ-br-row"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:#006461"></span><span class="wv-occ-br-lbl">Static FIT Rates</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms">'+fStr+'</span></div></div>'
+                  +'<div class="wv-occ-br-row"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:#0891b2"></span><span class="wv-occ-br-lbl">TO Dynamic</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms">'+dStr+'</span></div></div>'
+                  +'<div class="wv-occ-br-row"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:#6366f1"></span><span class="wv-occ-br-lbl">Tour Series</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms">'+sStr+'</span></div></div>';
               } else {
-                segRows = '<div class="wv-occ-br-row"><span class="wv-occ-br-dot" style="background:#eba2a2"></span><span class="wv-occ-br-lbl">T Revenue</span><span class="wv-occ-br-pct">'+toRevStr+'</span></div>';
+                segRows = '<div class="wv-occ-br-row"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:#eba2a2"></span><span class="wv-occ-br-lbl">T Revenue</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms">'+toRevStr+'</span></div></div>';
               }
             }
-            const hotRevRow = '<div class="wv-occ-br-row"><span class="wv-occ-br-dot" style="background:#ea580c"></span><span class="wv-occ-br-lbl">Hotel Revenue</span><span class="wv-occ-br-pct">'+hotRevStr+'</span></div>';
+            const hotRevRow = '<div class="wv-occ-br-row"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:#ea580c"></span><span class="wv-occ-br-lbl">Hotel Revenue</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms">'+hotRevStr+'</span></div></div>';
             const htick     = showH ? '<div class="wv-bar-ref-tick" style="left:'+hotelRevTick+'%;background:#ea580c;width:2px;position:absolute;top:0;bottom:0"></div>' : '';
             return '<div>'
-              +'<div class="wv-q-row"><span class="wv-q-label">T Revenue</span><span class="wv-q-val">'+toRevStr+'</span></div>'
-              +'<div class="wv-bar-track" style="position:relative"><div class="wv-bar-fill" style="width:'+revBar+'%;background:#eba2a2"></div>'+htick+barTicks(Math.max(3,revBarRef-5),revBarRef,Math.min(92,revBarRef+5))+'</div>'
+              +'<div class="wv-occ-bar-labels"><span class="wv-q-label">T Revenue</span><span class="wv-occ-total">'+toRevStr+wvCmpChip('$'+Math.floor(sdlyR/1000)+'k','$'+Math.floor((lyR??sdlyR)/1000)+'k','$'+Math.floor(fcstR/1000)+'k')+'</span></div>'
+              +'<div class="wv-occ-bar-track" style="position:relative;overflow:visible"><div style="width:'+revBar+'%;height:7px;background:#eba2a2;border-radius:4px;flex-shrink:0"></div>'+htick+barTicks(Math.max(3,revBarRef-5),revBarRef,Math.min(92,revBarRef+5))+'</div>'
               +'<div class="wv-ref-row">'+refParts.join('')+'</div>'
               +(showH ? '<div class="wv-occ-breakdown">'+hotRevRow+segRows+'</div>' : '')
               +'</div>';
@@ -5508,10 +5523,10 @@ function buildWeekGrid(month, weekStart, activeDay) {
             // Breakdown rows
             var bdRows = '';
             if (isHotelOnly) {
-              bdRows = '<div class="wv-occ-br-row"><span class="wv-occ-br-dot" style="background:'+barClr+'"></span><span class="wv-occ-br-lbl">Hotel</span><span class="wv-occ-br-pct" style="margin-left:auto">'+val+'</span></div>';
+              bdRows = '<div class="wv-occ-br-row"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:'+barClr+'"></span><span class="wv-occ-br-lbl">Hotel</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms">'+val+'</span></div></div>';
             } else {
               if (hvDisplay != null) {
-                bdRows += '<div class="wv-occ-br-row"><span class="wv-occ-br-dot" style="background:'+barClr+';opacity:.45"></span><span class="wv-occ-br-lbl">Hotel</span><span class="wv-occ-br-pct" style="margin-left:auto">'+hvDisplay+'</span></div>';
+                bdRows += '<div class="wv-occ-br-row"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:'+barClr+';opacity:.45"></span><span class="wv-occ-br-lbl">Hotel</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms">'+hvDisplay+'</span></div></div>';
               }
               const canIndiv = (row[7]==='dm_rnSold'||row[7]==='dm_pickup'||row[7]==='dm_trevpar'||row[7]==='dm_avgAdults'||row[7]==='dm_avgChildren'||row[7]==='dm_totalAdults'||row[7]==='dm_totalChildren'||row[7]==='dm_avgLos'||row[7]==='dm_avgLeadTime'||row[7]==='dm_totalGuests');
               if (wvSegMode === 'individual' && canIndiv) {
@@ -5519,16 +5534,17 @@ function buildWeekGrid(month, weekStart, activeDay) {
                 const isPickup = row[7]==='dm_pickup', isRev = row[7]==='dm_trevpar',
                       isLos = row[7]==='dm_avgLos', isLead = row[7]==='dm_avgLeadTime';
                 const fmtSeg = function(f){ return isRev ? '$'+Math.round(rawVal*f) : isLos ? (rawVal*f).toFixed(1)+'n' : isLead ? Math.round(rawVal*f)+'d' : isPickup ? (rawVal*f>=0?'+':'')+Math.round(rawVal*f) : String(Math.round(rawVal*f)); };
-                bdRows += '<div class="wv-occ-br-row"><span class="wv-occ-br-dot" style="background:#006461"></span><span class="wv-occ-br-lbl" style="color:#006461">Static FIT</span><span class="wv-occ-br-pct" style="margin-left:auto;color:#006461">'+fmtSeg(0.45)+'</span></div>'
-                  +'<div class="wv-occ-br-row"><span class="wv-occ-br-dot" style="background:#0891b2"></span><span class="wv-occ-br-lbl" style="color:#0891b2">TO Dynamic</span><span class="wv-occ-br-pct" style="margin-left:auto;color:#0891b2">'+fmtSeg(0.35)+'</span></div>'
-                  +'<div class="wv-occ-br-row"><span class="wv-occ-br-dot" style="background:#6366f1"></span><span class="wv-occ-br-lbl" style="color:#6366f1">Tour Series</span><span class="wv-occ-br-pct" style="margin-left:auto;color:#6366f1">'+fmtSeg(0.20)+'</span></div>';
+                bdRows += '<div class="wv-occ-br-row"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:#006461"></span><span class="wv-occ-br-lbl" style="color:#006461">Static FIT</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms" style="color:#006461">'+fmtSeg(0.45)+'</span></div></div>'
+                  +'<div class="wv-occ-br-row"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:#0891b2"></span><span class="wv-occ-br-lbl" style="color:#0891b2">TO Dynamic</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms" style="color:#0891b2">'+fmtSeg(0.35)+'</span></div></div>'
+                  +'<div class="wv-occ-br-row"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:#6366f1"></span><span class="wv-occ-br-lbl" style="color:#6366f1">Tour Series</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms" style="color:#6366f1">'+fmtSeg(0.20)+'</span></div></div>';
               } else {
-                bdRows += '<div class="wv-occ-br-row"><span class="wv-occ-br-dot" style="background:#006461"></span><span class="wv-occ-br-lbl" style="color:#006461">T</span><span class="wv-occ-br-pct" style="margin-left:auto;color:#006461">'+val+'</span></div>';
+                bdRows += '<div class="wv-occ-br-row"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:#006461"></span><span class="wv-occ-br-lbl" style="color:#006461">T</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms" style="color:#006461">'+val+'</span></div></div>';
               }
             }
             const headerClr = isHotelOnly ? '#181d1f' : '#006461';
-            return '<div class="wv-dm-row">'
-              +'<div class="wv-dm-top"><span class="wv-dm-label">'+lbl+'</span><span class="wv-dm-val" style="color:'+headerClr+'">'+val+'</span></div>'
+            const dmChip = (sv != null || lv != null || fv != null) ? wvCmpChip(sv != null ? sv : null, lv != null ? lv : null, fv != null ? fv : null) : '';
+            return '<div>'
+              +'<div class="wv-occ-bar-labels"><span class="wv-q-label">'+lbl+'</span><span class="wv-occ-total" style="color:'+headerClr+'">'+val+dmChip+'</span></div>'
               +dualBar
               +'<div class="wv-occ-breakdown" style="margin-top:2px">'+bdRows+'</div>'
               +dmRefRow(sv,lv,fv,hvDisplay)
