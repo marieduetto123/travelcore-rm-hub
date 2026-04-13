@@ -4899,230 +4899,6 @@ function applyWvSectionOrder(grid) {
   });
 }
 
-/* ── 7-day Snapshot: compact scorecard for quick reading / sharing ─────────── */
-function buildSnapshotView(days) {
-  var MNAMES = ['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  var DOWS   = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  var TODAY  = new Date(2026, 2, 9);
-
-  var metrics = [
-    { key:'occ',     label:'Occupancy',  unit:'%' },
-    { key:'adr',     label:'T ADR',      unit:'$', prefix:'$' },
-    { key:'rev',     label:'T Revenue',  unit:'k',  prefix:'$' },
-    { key:'pickup',  label:'Pickup',     unit:'',  prefix:'+' },
-    { key:'dba',     label:'DBA',        unit:'d' },
-    { key:'closeout',label:'Close Out',  unit:'' },
-  ];
-
-  // Compute per-day data
-  var dayData = days.map(function(dv) {
-    var dm = dv.month, dd = dv.day;
-    var dt  = new Date(2026, dm-1, dd);
-    var dow = DOWS[dt.getDay()];
-    var dba = Math.round((dt - TODAY) / 86400000);
-    var occ = getOccupancy(dm, dd);
-    var hotel = occ.hotel, to = occ.to;
-    var adr   = 150 + Math.abs((dm*47 + dd*31) % 130);
-    var toAdr = Math.max(80, adr - 20 - Math.abs((dm*3+dd*7)%15));
-    var v     = Math.abs((dm*127 + dd*53 + dm*dd*7 + dd*dd*3)) % 100;
-    var toRn  = Math.round(250 * to / 100);
-    var rev   = toRn * toAdr;
-    var pickup = Math.max(0, Math.floor((v%25+5) * to / Math.max(1, hotel)));
-    var isLocked  = LOCKED_DAYS.has(dm+'-'+dd);
-    var rules     = PARTIAL_CLOSURES[dm+'-'+dd] || [];
-    var isToday   = dba === 0;
-    return { dm, dd, dow, dba, hotel, to, toAdr, rev, pickup, isLocked, rules, isToday };
-  });
-
-  // ── Traffic light for occupancy
-  function occClr(pct) {
-    return pct >= 90 ? '#16a34a' : pct >= 70 ? '#006461' : pct >= 50 ? '#f59e0b' : '#dc2626';
-  }
-  function occBg(pct) {
-    return pct >= 90 ? '#f0fdf4' : pct >= 70 ? '#f0fffe' : pct >= 50 ? '#fffbeb' : '#fef2f2';
-  }
-
-  // ── Header row ─────────────────────────────────────────────────────────────
-  var hdrCells = '<th class="ss-row-lbl ss-th-lbl"></th>'
-    + dayData.map(function(d) {
-        var todayStyle = d.isToday ? 'border-bottom:2px solid #006461;' : '';
-        var lockStyle  = d.isLocked ? 'opacity:.6;' : '';
-        return '<th class="ss-th" style="'+todayStyle+lockStyle+'">'
-          + '<div class="ss-th-dow">'+d.dow+'</div>'
-          + '<div class="ss-th-date">'+MNAMES[d.dm]+' '+d.dd+'</div>'
-          + (d.isToday ? '<div class="ss-today-bar"></div>' : '')
-          + '</th>';
-      }).join('');
-
-  // ── Data rows ──────────────────────────────────────────────────────────────
-  // 1. Occupancy band (big visual row)
-  var occRow = '<tr class="ss-row ss-row-occ">'
-    + '<td class="ss-row-lbl">Occupancy</td>'
-    + dayData.map(function(d) {
-        if (d.isLocked) {
-          return '<td class="ss-td ss-td-locked"><span class="ss-lock-ico">🔒</span><span class="ss-locked-lbl">Closed</span></td>';
-        }
-        var clr = occClr(d.hotel), bg = occBg(d.hotel);
-        var toW  = Math.round(d.to / 100 * 60), hW = Math.round(d.hotel / 100 * 60);
-        return '<td class="ss-td" style="background:'+bg+'">'
-          + '<div class="ss-occ-num" style="color:'+clr+'">'+d.hotel+'<span class="ss-unit">%</span></div>'
-          + '<div class="ss-occ-sub" style="color:#006461">T: '+d.to+'%</div>'
-          + '<div class="ss-occ-bar"><div class="ss-occ-bar-h" style="width:'+Math.min(100,d.hotel)+'%;background:'+clr+';opacity:.25"></div><div class="ss-occ-bar-t" style="width:'+Math.min(100,d.to)+'%;background:'+clr+'"></div></div>'
-          + '</td>';
-      }).join('')
-    + '</tr>';
-
-  // 2. ADR row
-  var adrRow = '<tr class="ss-row">'
-    + '<td class="ss-row-lbl">T ADR</td>'
-    + dayData.map(function(d) {
-        if (d.isLocked) return '<td class="ss-td ss-td-locked">—</td>';
-        var clr = d.toAdr >= 200 ? '#15803d' : d.toAdr >= 160 ? '#006461' : d.toAdr >= 130 ? '#b45309' : '#b91c1c';
-        return '<td class="ss-td"><span class="ss-metric-val" style="color:'+clr+'">'
-          + '<span class="ss-unit ss-unit-pre">$</span>'+d.toAdr+'</span></td>';
-      }).join('')
-    + '</tr>';
-
-  // 3. Revenue row
-  var revRow = '<tr class="ss-row">'
-    + '<td class="ss-row-lbl">T Revenue</td>'
-    + dayData.map(function(d) {
-        if (d.isLocked) return '<td class="ss-td ss-td-locked">—</td>';
-        var rk = d.rev >= 1000 ? '$'+Math.round(d.rev/1000)+'k' : '$'+d.rev;
-        return '<td class="ss-td"><span class="ss-metric-val" style="color:#ea580c">'+rk+'</span></td>';
-      }).join('')
-    + '</tr>';
-
-  // 4. Pickup row
-  var pickupRow = '<tr class="ss-row">'
-    + '<td class="ss-row-lbl">Pickup</td>'
-    + dayData.map(function(d) {
-        if (d.isLocked) return '<td class="ss-td ss-td-locked">—</td>';
-        var clr = d.pickup >= 20 ? '#15803d' : d.pickup >= 10 ? '#006461' : d.pickup >= 5 ? '#b45309' : '#6b7280';
-        return '<td class="ss-td"><span class="ss-metric-val" style="color:'+clr+'">+'+ d.pickup+'</span></td>';
-      }).join('')
-    + '</tr>';
-
-  // 5. DBA row
-  var dbaRow = '<tr class="ss-row">'
-    + '<td class="ss-row-lbl">DBA</td>'
-    + dayData.map(function(d) {
-        var label = d.dba === 0 ? 'Today' : d.dba > 0 ? d.dba+'d' : 'Past';
-        var clr   = d.dba === 0 ? '#006461' : d.dba <= 7 ? '#dc2626' : d.dba <= 30 ? '#b45309' : '#6b7280';
-        return '<td class="ss-td"><span class="ss-metric-val" style="color:'+clr+'">'+label+'</span></td>';
-      }).join('')
-    + '</tr>';
-
-  // 6. Closeout row
-  var BMAP_S = {ai:'AI',bb:'BB',hb:'HB',ro:'RO',fb:'FB'};
-  var coRow = '<tr class="ss-row ss-row-co">'
-    + '<td class="ss-row-lbl">Close Outs</td>'
-    + dayData.map(function(d) {
-        if (d.isLocked) {
-          return '<td class="ss-td ss-td-co ss-td-locked-co">'
-            + '<span class="ss-co-badge ss-co-full">🔒 Full Day</span></td>';
-        }
-        if (d.rules.length === 0) {
-          return '<td class="ss-td ss-td-co ss-td-open">'
-            + '<svg viewBox="0 0 14 14" fill="none" stroke="#15803d" stroke-width="2.2" width="13" height="13"><path d="M2 7l4 4 6-6"/></svg>'
-            + ' <span style="font-size:9px;font-weight:700;color:#15803d">Open</span></td>';
-        }
-        var pills = d.rules.slice(0,2).map(function(rule, ri) {
-          var rtLabel = rule.roomTypes.length ? rule.roomTypes.slice(0,2).join(', ') : 'All Rooms';
-          var toLabel = rule.tos.length ? rule.tos[0] : 'All TOs';
-          return '<div class="ss-co-rule">'
-            + '<span class="ss-co-num">'+(ri+1)+'</span>'
-            + '<span class="ss-co-desc">'+toLabel+'<br>'+rtLabel+'</span>'
-            + '</div>';
-        }).join('');
-        var more = d.rules.length > 2 ? '<span class="ss-co-more">+' + (d.rules.length-2) + ' more</span>' : '';
-        return '<td class="ss-td ss-td-co">'+ pills + more +'</td>';
-      }).join('')
-    + '</tr>';
-
-  // ── Week aggregate footer ──────────────────────────────────────────────────
-  var totalRev  = dayData.reduce(function(s,d){return s + (d.isLocked?0:d.rev);},0);
-  var avgOcc    = Math.round(dayData.reduce(function(s,d){return s + d.hotel;},0) / dayData.length);
-  var avgTo     = Math.round(dayData.reduce(function(s,d){return s + d.to;},0)    / dayData.length);
-  var avgAdr    = Math.round(dayData.reduce(function(s,d){return s + d.toAdr;},0) / dayData.length);
-  var totalPkup = dayData.reduce(function(s,d){return s + d.pickup;},0);
-  var totalCo   = dayData.filter(function(d){return d.isLocked || d.rules.length>0;}).length;
-  var revStr    = totalRev >= 1000000 ? '$'+(totalRev/1000000).toFixed(1)+'M' : '$'+Math.round(totalRev/1000)+'k';
-  var sumRow = '<tr class="ss-row ss-row-sum">'
-    + '<td class="ss-row-lbl ss-sum-lbl">7-Day Total</td>'
-    + '<td class="ss-sum-cell" colspan="7">'
-    + '<div class="ss-sum-strip">'
-    + '<div class="ss-sum-kpi"><div class="ss-sum-val">'+avgOcc+'%</div><div class="ss-sum-key">Avg Occ</div></div>'
-    + '<div class="ss-sum-div"></div>'
-    + '<div class="ss-sum-kpi"><div class="ss-sum-val" style="color:#006461">'+avgTo+'%</div><div class="ss-sum-key">Avg T Occ</div></div>'
-    + '<div class="ss-sum-div"></div>'
-    + '<div class="ss-sum-kpi"><div class="ss-sum-val">$'+avgAdr+'</div><div class="ss-sum-key">Avg T ADR</div></div>'
-    + '<div class="ss-sum-div"></div>'
-    + '<div class="ss-sum-kpi"><div class="ss-sum-val" style="color:#ea580c">'+revStr+'</div><div class="ss-sum-key">T Revenue</div></div>'
-    + '<div class="ss-sum-div"></div>'
-    + '<div class="ss-sum-kpi"><div class="ss-sum-val" style="color:#16a34a">+'+totalPkup+'</div><div class="ss-sum-key">Total Pickup</div></div>'
-    + '<div class="ss-sum-div"></div>'
-    + '<div class="ss-sum-kpi"><div class="ss-sum-val" style="color:'+(totalCo>0?'#dc2626':'#15803d')+'">'+totalCo+'</div><div class="ss-sum-key">Days w/ Closeouts</div></div>'
-    + '</div></td>'
-    + '</tr>';
-
-  var MNAMES_RANGE = ['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  var d0 = dayData[0], d6 = dayData[6];
-  var rangeLabel = d0.dm === d6.dm
-    ? MNAMES_RANGE[d0.dm]+' '+d0.dd+'–'+d6.dd+', 2026'
-    : MNAMES_RANGE[d0.dm]+' '+d0.dd+' – '+MNAMES_RANGE[d6.dm]+' '+d6.dd+', 2026';
-
-  return '<div class="ss-wrap">'
-    + '<div class="ss-title-bar">'
-    + '<span class="ss-title">Weekly Snapshot</span>'
-    + '<span class="ss-range">'+rangeLabel+'</span>'
-    + '</div>'
-    + '<div class="ss-table-wrap">'
-    + '<table class="ss-table">'
-    + '<thead><tr>'+hdrCells+'</tr></thead>'
-    + '<tbody>'+occRow+adrRow+revRow+pickupRow+dbaRow+coRow+sumRow+'</tbody>'
-    + '</table>'
-    + '</div>'
-    + '</div>';
-}
-
-/* ── Persistent snap-strip (rendered above tabs, always visible) ─────────── */
-function renderSnapStrip(days) {
-  var el = document.getElementById('wvSnapStrip');
-  if (!el) return;
-  var DOWS  = ['Su','Mo','Tu','We','Th','Fr','Sa'];
-  var MNAMES = ['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-
-  var html = '<div class="snp-strip">'
-    + days.map(function(dv) {
-        var dm = dv.month, dd = dv.day;
-        var occ = getOccupancy(dm, dd);
-        var hotel = occ.hotel, to = occ.to;
-        var isLocked  = LOCKED_DAYS.has(dm+'-'+dd);
-        var rules     = PARTIAL_CLOSURES[dm+'-'+dd] || [];
-        var dt  = new Date(2026, dm-1, dd);
-        var dow = DOWS[dt.getDay()];
-        var isToday = dm===3 && dd===9;
-
-        var coInd = isLocked  ? '<span class="snp-co snp-co-locked" title="Full Day Closed">🔒</span>'
-                  : rules.length > 0 ? '<span class="snp-co snp-co-partial" title="'+rules.length+' closeout rule'+(rules.length>1?'s':'')+'">⚠ '+rules.length+'</span>'
-                  : '<span class="snp-co snp-co-open" title="All Open">✓</span>';
-
-        var occClr = hotel >= 90 ? '#15803d' : hotel >= 70 ? '#006461' : hotel >= 50 ? '#b45309' : '#dc2626';
-        var cellBorder = isToday ? 'border:1.5px solid #006461;' : isLocked ? 'border:1.5px solid #dc262633;' : '';
-        var cellBg     = isLocked ? 'background:#fef2f2;' : isToday ? 'background:#f0fffe;' : '';
-
-        return '<div class="snp-cell" style="'+cellBorder+cellBg+'">'
-          + '<div class="snp-dow">'+dow+(isToday?' <span style="color:#006461;font-weight:900">·</span>':'')+' '+(isToday?'<span style="color:#006461;font-size:7.5px;font-weight:800">Today</span>':MNAMES[dm]+' '+dd)+'</div>'
-          + '<div class="snp-occ" style="color:'+occClr+'">'+(isLocked?'—':hotel+'%')+'</div>'
-          + '<div class="snp-to">T: '+(isLocked?'—':to+'%')+'</div>'
-          + coInd
-          + '</div>';
-      }).join('')
-    + '</div>';
-  el.innerHTML = html;
-}
-
 function buildWeekGrid(month, weekStart, activeDay) {
   const days = getWeekDays(2026, month, weekStart);
   const rangeEl = document.getElementById('wvRange');
@@ -5133,9 +4909,6 @@ function buildWeekGrid(month, weekStart, activeDay) {
     : `${MNAMES[m0.month]} ${m0.day} – ${MNAMES[m6.month]} ${m6.day}, 2026`;
 
   const grid = document.getElementById('weekGrid');
-
-  // Always render the snap strip (always visible regardless of tab)
-  renderSnapStrip(days);
 
   // Always hide section panel immediately — only shown at end for 'combined' tab
   (function(){ var p = document.getElementById('wvSectionPanel'); if (p) p.style.display = 'none'; })();
@@ -5156,10 +4929,6 @@ function buildWeekGrid(month, weekStart, activeDay) {
     _dailyHGridApi = null;
   }
   // ── Report view: AG Grid ──────────────────────────────────────────────────
-  if (wvGroupBy === 'snapshot') {
-    grid.innerHTML = buildSnapshotView(days);
-    return;
-  }
   if (wvGroupBy === 'report') {
     initDailyRevGrid(days, grid);
     return;
@@ -6009,7 +5778,7 @@ function buildWeekGrid(month, weekStart, activeDay) {
     </div>`;
   }).join('');
 
-  if (wvGroupBy === 'report' || wvGroupBy === 'coReport' || wvGroupBy === 'dailyH' || wvGroupBy === 'snapshot') return;
+  if (wvGroupBy === 'report' || wvGroupBy === 'coReport' || wvGroupBy === 'dailyH') return;
 
   // Apply custom section order for combined view
   if (wvGroupBy === 'combined' && _wvSectionOrder) applyWvSectionOrder(grid);
