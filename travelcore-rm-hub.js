@@ -1558,7 +1558,8 @@ function renderCalendar() {
       const eyeSvg  = `<button class="cell-eye" aria-label="Quick view" data-month="${m.month}" data-day="${d}"><svg viewBox="0 0 14 10" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1 5s2.5-4 6-4 6 4 6 4-2.5 4-6 4-6-4-6-4z"/><circle cx="7" cy="5" r="1.6"/></svg></button>`;
       const calCl = PARTIAL_CLOSURES[m.month + '-' + d];
       const hasCalCl = !isLocked && calCl && Array.isArray(calCl) && calCl.length > 0;
-      const restrictBadge = hasCalCl
+      const _isStopSalesActive = typeof window.hmIsStopSales === 'function' && window.hmIsStopSales();
+      const restrictBadge = hasCalCl && !_isStopSalesActive
         ? `<span class="cell-restrict-badge" title="Closed Out: ${calCl.length} strateg${calCl.length>1?'ies':'y'}"><svg viewBox="0 0 10 12" fill="none" stroke="#ea580c" stroke-width="1.6" width="9" height="11"><rect x="1" y="5" width="8" height="7" rx="1"/><path d="M3 5V3.5a2 2 0 0 1 4 0V5"/></svg></span>`
         : '';
       const isBulkSel = bulkSelectMode && isLocked && bulkSelected.has(key);
@@ -1657,10 +1658,7 @@ function renderCalendar() {
       <div class="cal-month">
         <div class="cal-month-hdr">
           <span class="cal-month-name">${m.name}</span>
-          <span class="cal-lock-badge">
-            <svg viewBox="0 0 10 12" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="5" width="8" height="7" rx="1"/><path d="M3 5V3.5a2 2 0 0 1 4 0V5"/></svg>
-            ${m.lockedCount}
-          </span>
+          ${!(typeof window.hmIsStopSales === 'function' && window.hmIsStopSales()) ? `<span class="cal-lock-badge"><svg viewBox="0 0 10 12" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="5" width="8" height="7" rx="1"/><path d="M3 5V3.5a2 2 0 0 1 4 0V5"/></svg>${m.lockedCount}</span>` : ''}
         </div>
         <div class="cal-dow">${DOW.map(d => `<span>${d}</span>`).join('')}</div>
         <div class="cal-days">${cells}</div>
