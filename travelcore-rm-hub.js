@@ -2752,14 +2752,12 @@ let wvCompare = 'stly';    // 'none' | 'stly' | 'ly' | 'fcst'
 
 function wvSetCompare(val) {
   wvCompare = val;
-  // Sync centre select
+  // Sync topbar select
   var sel = document.getElementById('wvCmpSelect');
   if (sel) sel.value = val;
-  // Sync pills
-  ['stly','ly','fcst','none'].forEach(function(v) {
-    var p = document.getElementById('wvPill_' + v);
-    if (p) p.classList.toggle('active', v === val);
-  });
+  // Also sync old centre select if present
+  var sel2 = document.getElementById('wvCmpSelectOld');
+  if (sel2) sel2.value = val;
   buildWeekGrid(wvMonth, wvWeekStart, wvWeekStart);
 }
 
