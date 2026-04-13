@@ -3095,8 +3095,12 @@ function wbToggle(id) {
 }
 
 function buildDailyBView(days, month, activeDay) {
-  var DOW_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  var WV_CAP    = 250;
+  var DOW_SHORT  = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  var WV_CAP     = 250;
+  var RT_NAMES   = ['Standard','Superior','Deluxe','Suite','Jr. Suite','Family'];
+  var RT_CAPS    = [51,36,27,12,15,9];
+  var TO_NAMES   = ['Sunshine Tours','Global Adv.','Beach Hols','City Breaks','Adventure'];
+  var TO_COLORS  = ['#3b82f6','#8b5cf6','#0ea5e9','#10b981','#f59e0b'];
 
   // ── Per-day values ────────────────────────────────────────────────────────
   var dd7 = days.map(function(dv) {
@@ -3274,9 +3278,30 @@ function buildDailyBView(days, month, activeDay) {
     rows.push({type:'top',  id:'g_biz',      label:'Business Mix'});
     rows.push({type:'sect', id:'biz',         label:'Channel Mix',  parent:'g_biz'});
     rows.push({type:'sub',  id:'biz_to',      label:'TO',           dot:'#006461', parent:'biz'});
-    rows.push({type:'sub',  id:'biz_dir',     label:'Direct',       dot:'#0284c7', parent:'biz'});
-    rows.push({type:'sub',  id:'biz_ota',     label:'OTA',          dot:'#7c3aed', parent:'biz'});
+    rows.push({type:'sub',  id:'biz_dir',     label:'Direct',       dot:'#47c5bc', parent:'biz'});
+    rows.push({type:'sub',  id:'biz_ota',     label:'OTA',          dot:'#b1d8b7', parent:'biz'});
     rows.push({type:'sub',  id:'biz_other',   label:'Other',        dot:'#9ca3af', parent:'biz'});
+  }
+
+  // Group: Room Availability
+  if (wvMetricState.avail || wvMetricState.availAlloc) {
+    rows.push({type:'top', id:'g_avail', label:'Room Availability'});
+    RT_NAMES.forEach(function(name, i) {
+      rows.push({type:'sect', id:'avrt'+i, label:name, parent:'g_avail', rtIdx:i});
+      rows.push({type:'sub',  id:'avrt'+i+'_to',   label:'TO Sold',   dot:'#006461', parent:'avrt'+i, rtIdx:i, rtSub:'to'});
+      rows.push({type:'sub',  id:'avrt'+i+'_ot',   label:'Other',     dot:'#47c5bc', parent:'avrt'+i, rtIdx:i, rtSub:'other'});
+      rows.push({type:'sub',  id:'avrt'+i+'_al',   label:'Alloc Rem.',dot:'#b1d8b7', parent:'avrt'+i, rtIdx:i, rtSub:'alloc'});
+      rows.push({type:'sub',  id:'avrt'+i+'_av',   label:'Available', dot:'#d1fae5', parent:'avrt'+i, rtIdx:i, rtSub:'avail'});
+    });
+  }
+
+  // Group: Travel Co. Rates
+  if (wvMetricState.toRates) {
+    rows.push({type:'top', id:'g_torates', label:'Travel Co. Rates'});
+    TO_NAMES.forEach(function(name, i) {
+      rows.push({type:'sect', id:'torate'+i, label:name, parent:'g_torates', toIdx:i});
+    });
+    rows.push({type:'sect', id:'torate_base', label:'Base Rate', parent:'g_torates', toBase:true});
   }
 
   // ── Helpers ────────────────────────────────────────────────────────────────
@@ -3360,7 +3385,53 @@ function buildDailyBView(days, month, activeDay) {
         cellContent = '';
 
       } else if (row.type === 'sect') {
-        var cs = '', mainVal = '';
+        var cs = '';
+
+        // ── Room Availability (dynamic rtIdx) ────────────────────────────────
+        if (row.rtIdx !== undefined) {
+          var inv  = RT_CAPS[row.rtIdx];
+          var sold = Math.min(inv, Math.floor(inv * d.hotel / 110));
+          var toS  = Math.min(sold, Math.round(sold * d.to / Math.max(1, d.hotel)));
+          var otS  = sold - toS;
+          var alloc = Math.floor(inv * 0.8 + Math.abs((d.dm*(row.rtIdx+3)+d.dd*(row.rtIdx+5))%15));
+          var allocRem = Math.max(0, alloc - toS);
+          var avRm = Math.max(0, inv - sold);
+          var toP  = Math.round(toS/inv*100), otP = Math.round(otS/inv*100);
+          var alP  = Math.round(allocRem/inv*100), avP = Math.max(0, 100-toP-otP-alP);
+          var avClr = avRm === 0 ? '#dc2626' : '#006461';
+          cellContent = '<div class="wb-sect-val"><span class="wv-occ-total" style="color:'+avClr+'">'
+            + (avRm === 0 ? 'SOLD OUT' : avRm+' avail') + '</span>'
+            + '<span style="font-size:12px;color:#9ca3af;margin-left:4px">/ '+inv+'</span></div>'
+            + '<div class="wv-occ-bar-track">'
+            + '<div style="width:'+toP+'%;background:#006461;height:12px"></div>'
+            + '<div style="width:'+otP+'%;background:#47c5bc;height:12px"></div>'
+            + '<div style="width:'+alP+'%;background:#b1d8b7;height:12px"></div>'
+            + '<div style="width:'+avP+'%;background:#d1fae5;height:12px"></div>'
+            + '</div>';
+
+        // ── Travel Co. Rates (dynamic toIdx) ──────────────────────────────────
+        } else if (row.toIdx !== undefined) {
+          var toRate  = d.adr - 15 + Math.abs((d.dm*(row.toIdx+3)+d.dd*(row.toIdx+5))%50);
+          var toAllot = 5 + Math.abs((d.dm*(row.toIdx+2)+d.dd*(row.toIdx+3))%20);
+          var toUsed  = Math.max(0, toAllot - Math.floor(d.hotel/20));
+          var toRem   = toAllot - toUsed;
+          var barPct  = Math.round(toUsed/toAllot*100);
+          var isEbb   = (new Date(2026,d.dm-1,d.dd)).getDay() < 3;
+          var promoTxt = isEbb ? 'EBB 10%' : 'Contract';
+          var promoClr = isEbb ? '#16a34a' : '#2563eb';
+          cellContent = '<div class="wb-sect-val" style="justify-content:space-between">'
+            + '<span class="wv-occ-total">$'+toRate+'</span>'
+            + '<span style="font-size:12px;color:#9ca3af">'+toRem+'r</span>'
+            + '<span style="font-size:11px;font-weight:700;padding:1px 5px;border-radius:3px;background:'+promoClr+'22;color:'+promoClr+';border:1px solid '+promoClr+'44">'+promoTxt+'</span>'
+            + '</div>'
+            + '<div class="wv-occ-bar-track"><div style="width:'+barPct+'%;background:#006461;height:12px"></div></div>';
+
+        } else if (row.toBase) {
+          var baseRate = d.adr + 8;
+          cellContent = '<div class="wb-sect-val"><span class="wv-occ-total" style="font-weight:700">$'+baseRate+'</span></div>'
+            + '<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,Math.round(baseRate/280*100))+'%;background:#006461;height:12px"></div></div>';
+
+        } else {
         switch (row.id) {
           // ── Daily Metrics ──────────────────────────────────────────────────
           case 'occ':
@@ -3374,70 +3445,70 @@ function buildDailyBView(days, month, activeDay) {
           case 'onoff':
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.onlinePct+'%</span></div>'
               + '<div class="wv-occ-bar-track">'
-              + '<div style="width:'+d.onlinePct+'%;background:#3b82f6;height:12px"></div>'
-              + '<div style="width:'+(100-d.onlinePct)+'%;background:#f97316;height:12px"></div>'
+              + '<div style="width:'+d.onlinePct+'%;background:#006461;height:12px"></div>'
+              + '<div style="width:'+(100-d.onlinePct)+'%;background:#47c5bc;height:12px"></div>'
               + '</div>';
             break;
           case 'adr':
             cs = cmpSfx(wvCompare==='stly'?'$'+d.sdlyA:wvCompare==='ly'?'$'+d.lyA:wvCompare==='fcst'?'$'+d.fcstA:'');
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">$'+d.toAdr+cs+'</span></div>'
-              + '<div class="wv-occ-bar-track"><div style="width:'+d.adrBar+'%;background:#94b1f5;height:12px"></div></div>';
+              + '<div class="wv-occ-bar-track"><div style="width:'+d.adrBar+'%;background:#006461;height:12px"></div></div>';
             break;
           case 'rev':
             cs = cmpSfx(wvCompare==='stly'?d.fR(d.sdlyR):wvCompare==='ly'?d.fR(d.lyR):wvCompare==='fcst'?d.fR(d.fcstR):'');
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.fR(d.toRev)+cs+'</span></div>'
-              + '<div class="wv-occ-bar-track"><div style="width:'+d.revBar+'%;background:#eba2a2;height:12px"></div></div>';
+              + '<div class="wv-occ-bar-track"><div style="width:'+d.revBar+'%;background:#006461;height:12px"></div></div>';
             break;
           // ── More Metrics ───────────────────────────────────────────────────
           case 'rn':
             cs = cmpSfx(wvCompare==='stly'?String(d.sdlyRn):wvCompare==='ly'?String(d.lyRn):wvCompare==='fcst'?String(d.fcstRn):'');
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.toRn+cs+'</span></div>'
-              + '<div class="wv-occ-bar-track"><div style="width:'+Math.round(d.toRn/WV_CAP*100)+'%;background:#2e65e8;height:12px"></div></div>';
+              + '<div class="wv-occ-bar-track"><div style="width:'+Math.round(d.toRn/WV_CAP*100)+'%;background:#006461;height:12px"></div></div>';
             break;
           case 'revpar_s':
             cs = cmpSfx(wvCompare==='stly'?'$'+d.sdlyRevpar:wvCompare==='ly'?'$'+d.lyRevpar:'');
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">$'+d.revpar+cs+'</span></div>'
-              + '<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,Math.round(d.revpar/4))+'%;background:#9333ea;height:12px"></div></div>';
+              + '<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,Math.round(d.revpar/4))+'%;background:#006461;height:12px"></div></div>';
             break;
           case 'pickup_s':
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">+'+d.pickup+'</span></div>'
-              + '<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,d.pickup*3)+'%;background:#16a34a;height:12px"></div></div>';
+              + '<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,d.pickup*3)+'%;background:#006461;height:12px"></div></div>';
             break;
           case 'avga_s':
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.avgA+'</span></div>'
-              + '<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,parseFloat(d.avgA)/3*100)+'%;background:#2e65e8;height:12px"></div></div>';
+              + '<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,parseFloat(d.avgA)/3*100)+'%;background:#006461;height:12px"></div></div>';
             break;
           case 'avgc_s':
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.avgC+'</span></div>'
-              + '<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,parseFloat(d.avgC)/2*100)+'%;background:#d33030;height:12px"></div></div>';
+              + '<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,parseFloat(d.avgC)/2*100)+'%;background:#006461;height:12px"></div></div>';
             break;
           case 'tota_s':
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.totAT+'</span></div>'
-              + '<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,Math.round(d.totAT/500*100))+'%;background:#2e65e8;height:12px"></div></div>';
+              + '<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,Math.round(d.totAT/500*100))+'%;background:#006461;height:12px"></div></div>';
             break;
           case 'totc_s':
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.totCT+'</span></div>'
-              + '<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,Math.round(d.totCT/100*100))+'%;background:#d33030;height:12px"></div></div>';
+              + '<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,Math.round(d.totCT/100*100))+'%;background:#006461;height:12px"></div></div>';
             break;
           case 'totg_s':
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.totG+'</span></div>'
-              + '<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,Math.round(d.totG/600*100))+'%;background:#0369a1;height:12px"></div></div>';
+              + '<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,Math.round(d.totG/600*100))+'%;background:#006461;height:12px"></div></div>';
             break;
           case 'los_s':
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.avgLos+'</span></div>'
-              + '<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,parseFloat(d.avgLos)/10*100)+'%;background:#0891b2;height:12px"></div></div>';
+              + '<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,parseFloat(d.avgLos)/10*100)+'%;background:#006461;height:12px"></div></div>';
             break;
           case 'lead_s':
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.avgLead+'</span></div>'
-              + '<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,parseInt(d.avgLead)/90*100)+'%;background:#6366f1;height:12px"></div></div>';
+              + '<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,parseInt(d.avgLead)/90*100)+'%;background:#006461;height:12px"></div></div>';
             break;
           case 'avail_s':
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.availRooms+' rm</span></div>'
-              + '<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,Math.round(d.availRooms/WV_CAP*100))+'%;background:#16a34a;height:12px"></div></div>';
+              + '<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,Math.round(d.availRooms/WV_CAP*100))+'%;background:#006461;height:12px"></div></div>';
             break;
           case 'availg_s':
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.availGuar+' rm</span></div>'
-              + '<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,Math.round(d.availGuar/20*100))+'%;background:#ea580c;height:12px"></div></div>';
+              + '<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,Math.round(d.availGuar/20*100))+'%;background:#006461;height:12px"></div></div>';
             break;
           // ── Meal Plans ─────────────────────────────────────────────────────
           case 'mp_ai':
@@ -3446,40 +3517,55 @@ function buildDailyBView(days, month, activeDay) {
             break;
           case 'mp_bb':
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.bbPct+'%</span></div>'
-              + '<div class="wv-occ-bar-track"><div style="width:'+d.bbPct+'%;background:#3b82f6;height:12px"></div></div>';
+              + '<div class="wv-occ-bar-track"><div style="width:'+d.bbPct+'%;background:#006461;height:12px"></div></div>';
             break;
           case 'mp_hb':
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.hbPct+'%</span></div>'
-              + '<div class="wv-occ-bar-track"><div style="width:'+d.hbPct+'%;background:#8b5cf6;height:12px"></div></div>';
+              + '<div class="wv-occ-bar-track"><div style="width:'+d.hbPct+'%;background:#006461;height:12px"></div></div>';
             break;
           case 'mp_ro':
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.roPct+'%</span></div>'
-              + '<div class="wv-occ-bar-track"><div style="width:'+d.roPct+'%;background:#f59e0b;height:12px"></div></div>';
+              + '<div class="wv-occ-bar-track"><div style="width:'+d.roPct+'%;background:#006461;height:12px"></div></div>';
             break;
           case 'mp_sum':
-            cellContent = wbStackBar([{p:d.aiPct,c:'#006461'},{p:d.bbPct,c:'#3b82f6'},{p:d.hbPct,c:'#8b5cf6'},{p:d.roPct,c:'#f59e0b'}])
+            cellContent = wbStackBar([{p:d.aiPct,c:'#006461'},{p:d.bbPct,c:'#47c5bc'},{p:d.hbPct,c:'#b1d8b7'},{p:d.roPct,c:'#d1fae5'}])
               + '<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:3px">'
               + '<span style="font-size:14px;font-family:Lato,sans-serif;color:#006461">AI '+d.aiPct+'%</span>'
-              + '<span style="font-size:14px;font-family:Lato,sans-serif;color:#3b82f6">BB '+d.bbPct+'%</span>'
-              + '<span style="font-size:14px;font-family:Lato,sans-serif;color:#8b5cf6">HB '+d.hbPct+'%</span>'
-              + '<span style="font-size:14px;font-family:Lato,sans-serif;color:#f59e0b">RO '+d.roPct+'%</span>'
+              + '<span style="font-size:14px;font-family:Lato,sans-serif;color:#47c5bc">BB '+d.bbPct+'%</span>'
+              + '<span style="font-size:14px;font-family:Lato,sans-serif;color:#0891b2">HB '+d.hbPct+'%</span>'
+              + '<span style="font-size:14px;font-family:Lato,sans-serif;color:#9ca3af">RO '+d.roPct+'%</span>'
               + '</div>';
             break;
           // ── Business Mix ───────────────────────────────────────────────────
           case 'biz':
-            cellContent = wbStackBar([{p:d.toMix,c:'#006461'},{p:d.dirMix,c:'#0284c7'},{p:d.otaMix,c:'#7c3aed'},{p:d.otherMix,c:'#9ca3af'}])
+            cellContent = wbStackBar([{p:d.toMix,c:'#006461'},{p:d.dirMix,c:'#47c5bc'},{p:d.otaMix,c:'#b1d8b7'},{p:d.otherMix,c:'#d1fae5'}])
               + '<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:3px">'
               + '<span style="font-size:14px;font-family:Lato,sans-serif;color:#006461">TO '+d.toMix+'%</span>'
-              + '<span style="font-size:14px;font-family:Lato,sans-serif;color:#0284c7">D '+d.dirMix+'%</span>'
-              + '<span style="font-size:14px;font-family:Lato,sans-serif;color:#7c3aed">OTA '+d.otaMix+'%</span>'
+              + '<span style="font-size:14px;font-family:Lato,sans-serif;color:#47c5bc">D '+d.dirMix+'%</span>'
+              + '<span style="font-size:14px;font-family:Lato,sans-serif;color:#0891b2">OTA '+d.otaMix+'%</span>'
               + '<span style="font-size:14px;font-family:Lato,sans-serif;color:#9ca3af">Oth '+d.otherMix+'%</span>'
               + '</div>';
             break;
+        }
         }
 
       } else {
         // Sub-row
         var v1 = '', v2 = '', remCls = row.isRem ? ' wb-sub-val-rem' : '';
+        // Room availability sub-rows (dynamic)
+        if (row.rtSub !== undefined) {
+          var inv2  = RT_CAPS[row.rtIdx];
+          var sold2 = Math.min(inv2, Math.floor(inv2 * d.hotel / 110));
+          var toS2  = Math.min(sold2, Math.round(sold2 * d.to / Math.max(1, d.hotel)));
+          var otS2  = sold2 - toS2;
+          var alloc2 = Math.floor(inv2 * 0.8 + Math.abs((d.dm*(row.rtIdx+3)+d.dd*(row.rtIdx+5))%15));
+          var alRem2 = Math.max(0, alloc2 - toS2);
+          var avRm2  = Math.max(0, inv2 - sold2);
+          if      (row.rtSub === 'to')    v1 = toS2 + ' rm';
+          else if (row.rtSub === 'other') v1 = otS2 + ' rm';
+          else if (row.rtSub === 'alloc') v1 = alRem2 + ' rm';
+          else if (row.rtSub === 'avail') { v1 = avRm2 + ' rm'; remCls = avRm2 === 0 ? ' wb-sub-val-rem' : ''; }
+        } else {
         switch (row.id) {
           // occupancy
           case 'occ_tdh':    v1 = d.toRn+' rms';    v2 = d.to+'%';                         break;
@@ -3539,6 +3625,7 @@ function buildDailyBView(days, month, activeDay) {
           case 'biz_ota':    v1 = d.otaMix+'%';                                             break;
           case 'biz_other':  v1 = d.otherMix+'%';                                           break;
         }
+        } // end rtSub else
         cellContent = '<div class="wb-sub-vals' + remCls + '">'
                     + '<span class="wb-sub-v1">' + v1 + '</span>'
                     + (v2 ? '<span class="wb-sub-v2">' + v2 + '</span>' : '')
@@ -5434,9 +5521,11 @@ function buildWeekGrid(month, weekStart, activeDay) {
     return;
   }
   if (wvGroupBy === 'dailyB') {
+    grid.style.cssText = 'display:flex;flex-direction:column;overflow-x:auto;';
     grid.innerHTML = buildDailyBView(days, month, activeDay);
     return;
   }
+  grid.style.cssText = '';
 
   // ── Build 7-day aggregate summary ──────────────────────────────────────
   var sumRn=0,sumHotelRn=0,sumRev=0,sumHotelRev=0,sumAdr=0,sumHotelAdr=0;

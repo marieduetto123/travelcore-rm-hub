@@ -7029,7 +7029,7 @@ body.dark .cal-mfilt-btn.active { background: #1a3535; }
 
 /* ── Sticky label column ── */
 .wb-label-cell {
-  width: 177px;
+  width: 200px;
   flex-shrink: 0;
   position: sticky;
   left: 0;
