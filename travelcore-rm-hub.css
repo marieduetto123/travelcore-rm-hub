@@ -7023,7 +7023,6 @@ body.dark .cal-mfilt-btn.active { background: #1a3535; }
 /* Every row is a horizontal flex strip */
 .wb-row {
   display: flex;
-  min-width: fit-content;
   border-bottom: 1px solid #dde1e2;
 }
 .wb-row-hidden { display: none !important; }
@@ -7043,10 +7042,11 @@ body.dark .cal-mfilt-btn.active { background: #1a3535; }
 
 /* ── Day data columns ── */
 .wb-data-cell {
-  width: 344px;
-  flex-shrink: 0;
+  flex: 1;
+  min-width: 110px;
   border-right: 1px solid #e5e7eb;
   box-sizing: border-box;
+  overflow: hidden;
 }
 
 /* ── Date header row ── */
@@ -7067,8 +7067,8 @@ body.dark .cal-mfilt-btn.active { background: #1a3535; }
   padding: 0 10px;
 }
 .wb-hdr-active { background: #006461; border-left: 2px solid #c4ff45; }
-.wb-hdr-dow  { font-family: 'Lato', sans-serif; font-size: 13px; font-weight: 700; color: #fff; }
-.wb-hdr-date { font-family: 'Lato', sans-serif; font-size: 11px; font-weight: 400; color: rgba(255,255,255,.7); }
+.wb-hdr-dow  { font-family: 'Lato', sans-serif; font-size: 14px; font-weight: 700; color: #fff; }
+.wb-hdr-date { font-family: 'Lato', sans-serif; font-size: 14px; font-weight: 400; color: rgba(255,255,255,.7); }
 
 /* ── Group header row (Daily Metrics) ── */
 .wb-grp-hdr {
@@ -7083,7 +7083,7 @@ body.dark .cal-mfilt-btn.active { background: #1a3535; }
 }
 .wb-grp-label {
   font-family: 'Lato', sans-serif;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   color: #1c1c1c;
 }
@@ -7102,7 +7102,7 @@ body.dark .cal-mfilt-btn.active { background: #1a3535; }
 }
 .wb-sect-label {
   font-family: 'Lato', sans-serif;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 400;
   color: #1c1c1c;
 }
@@ -7135,7 +7135,7 @@ body.dark .cal-mfilt-btn.active { background: #1a3535; }
 }
 .wb-sub-label {
   font-family: 'Lato', sans-serif;
-  font-size: 12px;
+  font-size: 14px;
   color: #1c1c1c;
   white-space: nowrap;
   overflow: hidden;

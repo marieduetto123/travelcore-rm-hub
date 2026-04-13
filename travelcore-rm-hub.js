@@ -3098,7 +3098,7 @@ function buildDailyBView(days, month, activeDay) {
   var DOW_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
   var WV_CAP    = 250;
 
-  // ── Per-day values (same math as Daily H) ────────────────────────────────
+  // ── Per-day values ────────────────────────────────────────────────────────
   var dd7 = days.map(function(dv) {
     var dm = dv.month, dd = dv.day;
     var hh = getOccupancy(dm, dd); var hotel = hh.hotel, to = hh.to;
@@ -3115,58 +3115,195 @@ function buildDailyBView(days, month, activeDay) {
     var onlinePct = Math.max(30, Math.min(80, 45 + Math.abs((dm*13+dd*7)%35)));
     var adrBar = Math.min(90, Math.round(toAdr / 280 * 100));
     var revBar = Math.min(90, Math.round(toRev / 4500000 * 100));
-    var sdlyH  = Math.max(5, hotel - 9);
-    var sdlyA  = adr - 8;
-    var sdlyRn = Math.round(toRn * 0.88);
+    var sdlyH  = Math.max(5, hotel - 9), lyH = Math.max(5, hotel - 6), fcstH = Math.min(100, hotel + 4);
+    var sdlyA  = adr - 8, lyA = adr - 4, fcstA = adr + 6;
+    var sdlyRn = Math.round(toRn * 0.88), lyRn = Math.round(toRn * 0.93), fcstRn = Math.round(toRn * 1.06);
     var sdlyR  = Math.floor(Math.round(WV_CAP * sdlyH / 100) * sdlyA);
+    var lyR    = Math.floor(hnRev * 0.95), fcstR = Math.floor(hnRev * 1.06);
+    var revpar = Math.max(50, (adr+80) - 30 - Math.abs((dm*5+dd*3)%20));
+    var sdlyRevpar = Math.max(40, revpar - 8), lyRevpar = Math.max(40, revpar - 4);
+    var pickup = Math.max(0, Math.floor((v%25+5)*to/Math.max(1,hotel)));
+    var hPickup = Math.floor(v%25+5);
+    var avgA  = (1.8+v%3*0.1).toFixed(1), avgC = (0.3+v%2*0.1).toFixed(1);
+    var hAvgA = (parseFloat(avgA)+0.3).toFixed(1), hAvgC = (parseFloat(avgC)+0.1).toFixed(1);
+    var totAT = Math.round(toRn*parseFloat(avgA)),  totCT = Math.round(toRn*parseFloat(avgC));
+    var totAH = Math.round(hnRn*parseFloat(hAvgA)), totCH = Math.round(hnRn*parseFloat(hAvgC));
+    var totG  = Math.round(toRn*(parseFloat(avgA)+parseFloat(avgC)));
+    var hTotG = Math.round(hnRn*(parseFloat(hAvgA)+parseFloat(hAvgC)));
+    var avgLos = (2.8+v%5*0.3).toFixed(1)+'n', hLos = (2.8+v%5*0.3+0.4).toFixed(1)+'n';
+    var avgLead = (18+v%60)+'d', hLead = (18+v%60+12)+'d';
+    var availRooms = Math.max(0, 102-Math.floor(hotel*1.02));
+    var availGuar  = Math.floor(8+v%5);
+    var aiPct = Math.max(45, Math.min(68, 55+(dm*7+dd*3)%14));
+    var bbPct = Math.max(14, Math.min(28, 20+(dm*11+dd*5)%11));
+    var hbPct = Math.max(6,  Math.min(16, 10+(dm*5+dd*7)%9));
+    var roPct = 100 - aiPct - bbPct - hbPct;
+    var toPct = to / Math.max(1, hotel);
+    var toMix   = 28+Math.abs((dm*7+dd*5)%25);
+    var dirMix  = 30+Math.abs((dm*5+dd*9)%20);
+    var otaMix  = 20+Math.abs((dm*9+dd*3)%18);
+    var otherMix = Math.max(0, 100-toMix-dirMix-otaMix);
+    function fR(val){return val>=1000000?'$'+(val/1000000).toFixed(1)+'M':'$'+Math.round(val/1000)+'k';}
     return {dm, dd, hotel, to, adr, toAdr, toRn, hnRn, toRev, hnRev,
             otherPct, otherRms, freeRms, onlinePct, adrBar, revBar,
-            sdlyH, sdlyA, sdlyRn, sdlyR, v};
+            sdlyH, lyH, fcstH, sdlyA, lyA, fcstA, sdlyRn, lyRn, fcstRn,
+            sdlyR, lyR, fcstR, revpar, sdlyRevpar, lyRevpar,
+            pickup, hPickup, avgA, avgC, hAvgA, hAvgC,
+            totAT, totCT, totAH, totCH, totG, hTotG,
+            avgLos, hLos, avgLead, hLead, availRooms, availGuar,
+            aiPct, bbPct, hbPct, roPct, toPct, toMix, dirMix, otaMix, otherMix, fR, v};
   });
 
   // ── Row schema ────────────────────────────────────────────────────────────
   var rows = [];
-  rows.push({type:'top',  id:'g_daily', label:'Daily Metrics'});
 
-  if (wvMetricState.capacity || wvMetricState.adr || wvMetricState.revenue || wvMetricState.onlineOffline) {
-    if (wvMetricState.capacity) {
-      rows.push({type:'sect', id:'occ',       label:'Occupancy',              parent:'g_daily'});
-      rows.push({type:'sub',  id:'occ_tdh',   label:'Travel Distribution Hubs', dot:'#006461', parent:'occ'});
-      rows.push({type:'sub',  id:'occ_other', label:'Other Segments',           dot:'#47c5bc', parent:'occ'});
-      rows.push({type:'sub',  id:'occ_stly',  label:'STLY',                     dot:'#c4ff45', parent:'occ'});
-      rows.push({type:'sub',  id:'occ_rem',   label:'Remaining',                dot:'#388c3f', parent:'occ', isRem:true});
+  // Group: Daily Metrics
+  rows.push({type:'top', id:'g_daily', label:'Daily Metrics'});
+  if (wvMetricState.capacity) {
+    rows.push({type:'sect', id:'occ',       label:'Occupancy',               parent:'g_daily'});
+    rows.push({type:'sub',  id:'occ_tdh',   label:'Travel Distribution Hubs',dot:'#006461', parent:'occ'});
+    rows.push({type:'sub',  id:'occ_other', label:'Other Segments',          dot:'#47c5bc', parent:'occ'});
+    rows.push({type:'sub',  id:'occ_stly',  label:'STLY',                    dot:'#c4ff45', parent:'occ'});
+    rows.push({type:'sub',  id:'occ_rem',   label:'Remaining',               dot:'#388c3f', parent:'occ', isRem:true});
+  }
+  if (wvMetricState.onlineOffline) {
+    rows.push({type:'sect', id:'onoff',     label:'Online / Offline', parent:'g_daily'});
+    rows.push({type:'sub',  id:'onoff_on',  label:'Online',  dot:'#3b82f6', parent:'onoff'});
+    rows.push({type:'sub',  id:'onoff_off', label:'Offline', dot:'#f97316', parent:'onoff'});
+  }
+  if (wvMetricState.adr) {
+    rows.push({type:'sect', id:'adr',       label:'ADR',          parent:'g_daily'});
+    rows.push({type:'sub',  id:'adr_t',     label:'T ADR',        dot:'#94b1f5', parent:'adr'});
+    rows.push({type:'sub',  id:'adr_hotel', label:'Hotel ADR',    dot:'#7c3aed', parent:'adr'});
+    rows.push({type:'sub',  id:'adr_stly',  label:'STLY',         dot:'#c4ff45', parent:'adr'});
+  }
+  if (wvMetricState.revenue) {
+    rows.push({type:'sect', id:'rev',       label:'Revenue',       parent:'g_daily'});
+    rows.push({type:'sub',  id:'rev_t',     label:'T Revenue',     dot:'#eba2a2', parent:'rev'});
+    rows.push({type:'sub',  id:'rev_hotel', label:'Hotel Revenue', dot:'#ea580c', parent:'rev'});
+    rows.push({type:'sub',  id:'rev_stly',  label:'STLY',          dot:'#c4ff45', parent:'rev'});
+  }
+
+  // Group: More Metrics
+  var hasMore = wvMetricState.dm_rnSold || wvMetricState.dm_trevpar || wvMetricState.dm_pickup ||
+                wvMetricState.dm_avgAdults || wvMetricState.dm_avgChildren ||
+                wvMetricState.dm_totalAdults || wvMetricState.dm_totalChildren ||
+                wvMetricState.dm_totalGuests || wvMetricState.dm_avgLos ||
+                wvMetricState.dm_avgLeadTime || wvMetricState.dm_availRooms || wvMetricState.dm_availGuar;
+  if (hasMore) {
+    rows.push({type:'top', id:'g_more', label:'More Metrics'});
+    if (wvMetricState.dm_rnSold) {
+      rows.push({type:'sect', id:'rn',       label:'RN Sold',    parent:'g_more'});
+      rows.push({type:'sub',  id:'rn_t',     label:'T RN',       dot:'#2e65e8', parent:'rn'});
+      rows.push({type:'sub',  id:'rn_hotel', label:'Hotel RN',   dot:'#93c5fd', parent:'rn'});
+      rows.push({type:'sub',  id:'rn_stly',  label:'STLY',       dot:'#c4ff45', parent:'rn'});
     }
-    if (wvMetricState.onlineOffline) {
-      rows.push({type:'sect', id:'onoff',      label:'Online / Offline',  parent:'g_daily'});
-      rows.push({type:'sub',  id:'onoff_on',   label:'Online',  dot:'#3b82f6', parent:'onoff'});
-      rows.push({type:'sub',  id:'onoff_off',  label:'Offline', dot:'#f97316', parent:'onoff'});
+    if (wvMetricState.dm_trevpar) {
+      rows.push({type:'sect', id:'revpar_s',    label:'REVPAR',    parent:'g_more'});
+      rows.push({type:'sub',  id:'revpar_t',    label:'T REVPAR',  dot:'#9333ea', parent:'revpar_s'});
+      rows.push({type:'sub',  id:'revpar_stly', label:'STLY',      dot:'#c4ff45', parent:'revpar_s'});
     }
-    if (wvMetricState.adr) {
-      rows.push({type:'sect', id:'adr',        label:'ADR',           parent:'g_daily'});
-      rows.push({type:'sub',  id:'adr_t',      label:'T ADR',         dot:'#94b1f5', parent:'adr'});
-      rows.push({type:'sub',  id:'adr_hotel',  label:'Hotel ADR',     dot:'#7c3aed', parent:'adr'});
-      rows.push({type:'sub',  id:'adr_stly',   label:'STLY',          dot:'#c4ff45', parent:'adr'});
+    if (wvMetricState.dm_pickup) {
+      rows.push({type:'sect', id:'pickup_s', label:'Pickup',       parent:'g_more'});
+      rows.push({type:'sub',  id:'pickup_t', label:'T Pickup',     dot:'#16a34a', parent:'pickup_s'});
+      rows.push({type:'sub',  id:'pickup_h', label:'Hotel Pickup', dot:'#4ade80', parent:'pickup_s'});
     }
-    if (wvMetricState.revenue) {
-      rows.push({type:'sect', id:'rev',        label:'Revenue',        parent:'g_daily'});
-      rows.push({type:'sub',  id:'rev_t',      label:'T Revenue',      dot:'#eba2a2', parent:'rev'});
-      rows.push({type:'sub',  id:'rev_hotel',  label:'Hotel Revenue',  dot:'#ea580c', parent:'rev'});
-      rows.push({type:'sub',  id:'rev_stly',   label:'STLY',           dot:'#c4ff45', parent:'rev'});
+    if (wvMetricState.dm_avgAdults) {
+      rows.push({type:'sect', id:'avga_s', label:'Avg Adults',   parent:'g_more'});
+      rows.push({type:'sub',  id:'avga_t', label:'T Avg Adults', dot:'#2e65e8', parent:'avga_s'});
+      rows.push({type:'sub',  id:'avga_h', label:'Hotel',        dot:'#93c5fd', parent:'avga_s'});
     }
+    if (wvMetricState.dm_avgChildren) {
+      rows.push({type:'sect', id:'avgc_s', label:'Avg Children',   parent:'g_more'});
+      rows.push({type:'sub',  id:'avgc_t', label:'T Avg Children', dot:'#d33030', parent:'avgc_s'});
+      rows.push({type:'sub',  id:'avgc_h', label:'Hotel',          dot:'#fca5a5', parent:'avgc_s'});
+    }
+    if (wvMetricState.dm_totalAdults) {
+      rows.push({type:'sect', id:'tota_s', label:'Total Adults',   parent:'g_more'});
+      rows.push({type:'sub',  id:'tota_t', label:'T Total Adults', dot:'#2e65e8', parent:'tota_s'});
+      rows.push({type:'sub',  id:'tota_h', label:'Hotel',          dot:'#93c5fd', parent:'tota_s'});
+    }
+    if (wvMetricState.dm_totalChildren) {
+      rows.push({type:'sect', id:'totc_s', label:'Total Children',   parent:'g_more'});
+      rows.push({type:'sub',  id:'totc_t', label:'T Total Children', dot:'#d33030', parent:'totc_s'});
+      rows.push({type:'sub',  id:'totc_h', label:'Hotel',            dot:'#fca5a5', parent:'totc_s'});
+    }
+    if (wvMetricState.dm_totalGuests) {
+      rows.push({type:'sect', id:'totg_s', label:'Total Guests', parent:'g_more'});
+      rows.push({type:'sub',  id:'totg_t', label:'T Guests',     dot:'#0369a1', parent:'totg_s'});
+      rows.push({type:'sub',  id:'totg_h', label:'Hotel',        dot:'#7dd3fc', parent:'totg_s'});
+    }
+    if (wvMetricState.dm_avgLos) {
+      rows.push({type:'sect', id:'los_s', label:'Avg LOS',   parent:'g_more'});
+      rows.push({type:'sub',  id:'los_t', label:'T Avg LOS', dot:'#0891b2', parent:'los_s'});
+      rows.push({type:'sub',  id:'los_h', label:'Hotel',     dot:'#67e8f9', parent:'los_s'});
+    }
+    if (wvMetricState.dm_avgLeadTime) {
+      rows.push({type:'sect', id:'lead_s', label:'Lead Time',   parent:'g_more'});
+      rows.push({type:'sub',  id:'lead_t', label:'T Lead Time', dot:'#6366f1', parent:'lead_s'});
+      rows.push({type:'sub',  id:'lead_h', label:'Hotel',       dot:'#a5b4fc', parent:'lead_s'});
+    }
+    if (wvMetricState.dm_availRooms) {
+      rows.push({type:'sect', id:'avail_s',  label:'Avail Rooms',  parent:'g_more'});
+    }
+    if (wvMetricState.dm_availGuar) {
+      rows.push({type:'sect', id:'availg_s', label:'Avail Guar.',  parent:'g_more'});
+    }
+  }
+
+  // Group: Meal Plans
+  if (wvMetricState.mealsSummary) {
+    rows.push({type:'top',  id:'g_meals', label:'Meal Plans'});
+    rows.push({type:'sect', id:'mp_ai',   label:'All Inclusive',   parent:'g_meals'});
+    rows.push({type:'sub',  id:'mp_ai_h', label:'Hotel %',         dot:'#006461', parent:'mp_ai'});
+    rows.push({type:'sub',  id:'mp_ai_t', label:'TO %',            dot:'#47c5bc', parent:'mp_ai'});
+    rows.push({type:'sect', id:'mp_bb',   label:'Bed & Breakfast', parent:'g_meals'});
+    rows.push({type:'sub',  id:'mp_bb_h', label:'Hotel %',         dot:'#3b82f6', parent:'mp_bb'});
+    rows.push({type:'sub',  id:'mp_bb_t', label:'TO %',            dot:'#93c5fd', parent:'mp_bb'});
+    rows.push({type:'sect', id:'mp_hb',   label:'Half Board',      parent:'g_meals'});
+    rows.push({type:'sub',  id:'mp_hb_h', label:'Hotel %',         dot:'#8b5cf6', parent:'mp_hb'});
+    rows.push({type:'sub',  id:'mp_hb_t', label:'TO %',            dot:'#c4b5fd', parent:'mp_hb'});
+    rows.push({type:'sect', id:'mp_ro',   label:'Room Only',       parent:'g_meals'});
+    rows.push({type:'sub',  id:'mp_ro_h', label:'Hotel %',         dot:'#f59e0b', parent:'mp_ro'});
+    rows.push({type:'sub',  id:'mp_ro_t', label:'TO %',            dot:'#fcd34d', parent:'mp_ro'});
+    rows.push({type:'sect', id:'mp_sum',  label:'Summary',         parent:'g_meals'});
+  }
+
+  // Group: Business Mix
+  if (wvMetricState.bizMix) {
+    rows.push({type:'top',  id:'g_biz',      label:'Business Mix'});
+    rows.push({type:'sect', id:'biz',         label:'Channel Mix',  parent:'g_biz'});
+    rows.push({type:'sub',  id:'biz_to',      label:'TO',           dot:'#006461', parent:'biz'});
+    rows.push({type:'sub',  id:'biz_dir',     label:'Direct',       dot:'#0284c7', parent:'biz'});
+    rows.push({type:'sub',  id:'biz_ota',     label:'OTA',          dot:'#7c3aed', parent:'biz'});
+    rows.push({type:'sub',  id:'biz_other',   label:'Other',        dot:'#9ca3af', parent:'biz'});
   }
 
   // ── Helpers ────────────────────────────────────────────────────────────────
   var chevUp   = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="18 15 12 9 6 15"/></svg>';
   var chevDown = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 12 15 18 9"/></svg>';
 
-  // Check if a row should be hidden (parent or grandparent is collapsed)
+  // Flat id→row map for fast grandparent lookup
+  var rowMap = {};
+  rows.forEach(function(r){ rowMap[r.id] = r; });
+
   function isHidden(row) {
     if (!row.parent) return false;
     if (_wbCollapsed[row.parent]) return true;
-    // check grandparent
-    var par = rows.find(function(r){ return r.id === row.parent; });
+    var par = rowMap[row.parent];
     if (par && par.parent && _wbCollapsed[par.parent]) return true;
     return false;
+  }
+
+  function cmpSfx(cmpStr) {
+    if (!cmpStr || wvCompare === 'none') return '';
+    return '<span class="wv-cmp-sep"> / </span><span class="wv-cmp-val-txt">' + cmpStr + '</span>';
+  }
+
+  function wbStackBar(segs) {
+    return '<div style="height:5px;background:#e5e7eb;border-radius:3px;display:flex;overflow:hidden;margin-top:3px">'
+      + segs.map(function(s){ return '<div style="width:'+s.p+'%;background:'+s.c+'"></div>'; }).join('')
+      + '</div>';
   }
 
   // ── Build HTML ─────────────────────────────────────────────────────────────
@@ -3220,52 +3357,187 @@ function buildDailyBView(days, month, activeDay) {
       var cellContent = '';
 
       if (row.type === 'top') {
-        // Group header — empty data cells
         cellContent = '';
+
       } else if (row.type === 'sect') {
-        // Section header: value + bar
-        var cmpSuffix = '';
-        if (wvCompare !== 'none') {
-          var cmpStr = row.id === 'occ'   ? d.sdlyH + '%'
-                     : row.id === 'onoff' ? d.sdlyH + '%'
-                     : row.id === 'adr'   ? '$' + d.sdlyA
-                     : row.id === 'rev'   ? '$' + Math.floor(d.sdlyR/1000) + 'k' : '';
-          if (cmpStr) cmpSuffix = '<span class="wv-cmp-sep"> / </span><span class="wv-cmp-val-txt">' + cmpStr + '</span>';
+        var cs = '', mainVal = '';
+        switch (row.id) {
+          // ── Daily Metrics ──────────────────────────────────────────────────
+          case 'occ':
+            cs = cmpSfx(wvCompare==='stly'?d.sdlyH+'%':wvCompare==='ly'?d.lyH+'%':wvCompare==='fcst'?d.fcstH+'%':'');
+            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.hotel+'%'+cs+'</span></div>'
+              + '<div class="wv-occ-bar-track">'
+              + '<div style="width:'+d.to+'%;background:#006461;height:12px"></div>'
+              + '<div style="width:'+d.otherPct+'%;background:#47c5bc;height:12px"></div>'
+              + '</div>';
+            break;
+          case 'onoff':
+            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.onlinePct+'%</span></div>'
+              + '<div class="wv-occ-bar-track">'
+              + '<div style="width:'+d.onlinePct+'%;background:#3b82f6;height:12px"></div>'
+              + '<div style="width:'+(100-d.onlinePct)+'%;background:#f97316;height:12px"></div>'
+              + '</div>';
+            break;
+          case 'adr':
+            cs = cmpSfx(wvCompare==='stly'?'$'+d.sdlyA:wvCompare==='ly'?'$'+d.lyA:wvCompare==='fcst'?'$'+d.fcstA:'');
+            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">$'+d.toAdr+cs+'</span></div>'
+              + '<div class="wv-occ-bar-track"><div style="width:'+d.adrBar+'%;background:#94b1f5;height:12px"></div></div>';
+            break;
+          case 'rev':
+            cs = cmpSfx(wvCompare==='stly'?d.fR(d.sdlyR):wvCompare==='ly'?d.fR(d.lyR):wvCompare==='fcst'?d.fR(d.fcstR):'');
+            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.fR(d.toRev)+cs+'</span></div>'
+              + '<div class="wv-occ-bar-track"><div style="width:'+d.revBar+'%;background:#eba2a2;height:12px"></div></div>';
+            break;
+          // ── More Metrics ───────────────────────────────────────────────────
+          case 'rn':
+            cs = cmpSfx(wvCompare==='stly'?String(d.sdlyRn):wvCompare==='ly'?String(d.lyRn):wvCompare==='fcst'?String(d.fcstRn):'');
+            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.toRn+cs+'</span></div>'
+              + '<div class="wv-occ-bar-track"><div style="width:'+Math.round(d.toRn/WV_CAP*100)+'%;background:#2e65e8;height:12px"></div></div>';
+            break;
+          case 'revpar_s':
+            cs = cmpSfx(wvCompare==='stly'?'$'+d.sdlyRevpar:wvCompare==='ly'?'$'+d.lyRevpar:'');
+            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">$'+d.revpar+cs+'</span></div>'
+              + '<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,Math.round(d.revpar/4))+'%;background:#9333ea;height:12px"></div></div>';
+            break;
+          case 'pickup_s':
+            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">+'+d.pickup+'</span></div>'
+              + '<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,d.pickup*3)+'%;background:#16a34a;height:12px"></div></div>';
+            break;
+          case 'avga_s':
+            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.avgA+'</span></div>'
+              + '<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,parseFloat(d.avgA)/3*100)+'%;background:#2e65e8;height:12px"></div></div>';
+            break;
+          case 'avgc_s':
+            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.avgC+'</span></div>'
+              + '<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,parseFloat(d.avgC)/2*100)+'%;background:#d33030;height:12px"></div></div>';
+            break;
+          case 'tota_s':
+            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.totAT+'</span></div>'
+              + '<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,Math.round(d.totAT/500*100))+'%;background:#2e65e8;height:12px"></div></div>';
+            break;
+          case 'totc_s':
+            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.totCT+'</span></div>'
+              + '<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,Math.round(d.totCT/100*100))+'%;background:#d33030;height:12px"></div></div>';
+            break;
+          case 'totg_s':
+            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.totG+'</span></div>'
+              + '<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,Math.round(d.totG/600*100))+'%;background:#0369a1;height:12px"></div></div>';
+            break;
+          case 'los_s':
+            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.avgLos+'</span></div>'
+              + '<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,parseFloat(d.avgLos)/10*100)+'%;background:#0891b2;height:12px"></div></div>';
+            break;
+          case 'lead_s':
+            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.avgLead+'</span></div>'
+              + '<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,parseInt(d.avgLead)/90*100)+'%;background:#6366f1;height:12px"></div></div>';
+            break;
+          case 'avail_s':
+            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.availRooms+' rm</span></div>'
+              + '<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,Math.round(d.availRooms/WV_CAP*100))+'%;background:#16a34a;height:12px"></div></div>';
+            break;
+          case 'availg_s':
+            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.availGuar+' rm</span></div>'
+              + '<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,Math.round(d.availGuar/20*100))+'%;background:#ea580c;height:12px"></div></div>';
+            break;
+          // ── Meal Plans ─────────────────────────────────────────────────────
+          case 'mp_ai':
+            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.aiPct+'%</span></div>'
+              + '<div class="wv-occ-bar-track"><div style="width:'+d.aiPct+'%;background:#006461;height:12px"></div></div>';
+            break;
+          case 'mp_bb':
+            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.bbPct+'%</span></div>'
+              + '<div class="wv-occ-bar-track"><div style="width:'+d.bbPct+'%;background:#3b82f6;height:12px"></div></div>';
+            break;
+          case 'mp_hb':
+            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.hbPct+'%</span></div>'
+              + '<div class="wv-occ-bar-track"><div style="width:'+d.hbPct+'%;background:#8b5cf6;height:12px"></div></div>';
+            break;
+          case 'mp_ro':
+            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.roPct+'%</span></div>'
+              + '<div class="wv-occ-bar-track"><div style="width:'+d.roPct+'%;background:#f59e0b;height:12px"></div></div>';
+            break;
+          case 'mp_sum':
+            cellContent = wbStackBar([{p:d.aiPct,c:'#006461'},{p:d.bbPct,c:'#3b82f6'},{p:d.hbPct,c:'#8b5cf6'},{p:d.roPct,c:'#f59e0b'}])
+              + '<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:3px">'
+              + '<span style="font-size:14px;font-family:Lato,sans-serif;color:#006461">AI '+d.aiPct+'%</span>'
+              + '<span style="font-size:14px;font-family:Lato,sans-serif;color:#3b82f6">BB '+d.bbPct+'%</span>'
+              + '<span style="font-size:14px;font-family:Lato,sans-serif;color:#8b5cf6">HB '+d.hbPct+'%</span>'
+              + '<span style="font-size:14px;font-family:Lato,sans-serif;color:#f59e0b">RO '+d.roPct+'%</span>'
+              + '</div>';
+            break;
+          // ── Business Mix ───────────────────────────────────────────────────
+          case 'biz':
+            cellContent = wbStackBar([{p:d.toMix,c:'#006461'},{p:d.dirMix,c:'#0284c7'},{p:d.otaMix,c:'#7c3aed'},{p:d.otherMix,c:'#9ca3af'}])
+              + '<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:3px">'
+              + '<span style="font-size:14px;font-family:Lato,sans-serif;color:#006461">TO '+d.toMix+'%</span>'
+              + '<span style="font-size:14px;font-family:Lato,sans-serif;color:#0284c7">D '+d.dirMix+'%</span>'
+              + '<span style="font-size:14px;font-family:Lato,sans-serif;color:#7c3aed">OTA '+d.otaMix+'%</span>'
+              + '<span style="font-size:14px;font-family:Lato,sans-serif;color:#9ca3af">Oth '+d.otherMix+'%</span>'
+              + '</div>';
+            break;
         }
-        if (row.id === 'occ') {
-          var barHtml = '<div style="width:' + d.to + '%;background:#006461;height:12px"></div>'
-                      + '<div style="width:' + d.otherPct + '%;background:#47c5bc;height:12px"></div>';
-          cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">' + d.hotel + '%' + cmpSuffix + '</span></div>'
-                      + '<div class="wv-occ-bar-track">' + barHtml + '</div>';
-        } else if (row.id === 'onoff') {
-          cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">' + d.onlinePct + '%' + cmpSuffix + '</span></div>'
-                      + '<div class="wv-occ-bar-track">'
-                      + '<div style="width:' + d.onlinePct + '%;background:#3b82f6;height:12px"></div>'
-                      + '<div style="width:' + (100 - d.onlinePct) + '%;background:#f97316;height:12px"></div>'
-                      + '</div>';
-        } else if (row.id === 'adr') {
-          cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">$' + d.toAdr + cmpSuffix + '</span></div>'
-                      + '<div class="wv-occ-bar-track"><div style="width:' + d.adrBar + '%;background:#94b1f5;height:12px"></div></div>';
-        } else if (row.id === 'rev') {
-          cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">$' + Math.round(d.toRev/1000) + 'k' + cmpSuffix + '</span></div>'
-                      + '<div class="wv-occ-bar-track"><div style="width:' + d.revBar + '%;background:#eba2a2;height:12px"></div></div>';
-        }
+
       } else {
-        // Sub-row: value(s) right-aligned
+        // Sub-row
         var v1 = '', v2 = '', remCls = row.isRem ? ' wb-sub-val-rem' : '';
         switch (row.id) {
-          case 'occ_tdh':   v1 = d.toRn + ' rms';               v2 = d.to + '%';          break;
-          case 'occ_other': v1 = d.otherRms + ' rms';           v2 = d.otherPct + '%';    break;
-          case 'occ_stly':  v1 = d.sdlyRn + ' rms';             v2 = d.sdlyH + '%';       break;
-          case 'occ_rem':   v1 = d.freeRms + ' rms';            v2 = Math.max(0, 100 - d.hotel) + '%'; break;
-          case 'onoff_on':  v1 = d.onlinePct + '%';                                        break;
-          case 'onoff_off': v1 = (100 - d.onlinePct) + '%';                                break;
-          case 'adr_t':     v1 = '$' + d.toAdr;                                            break;
-          case 'adr_hotel': v1 = '$' + d.adr;                                              break;
-          case 'adr_stly':  v1 = '$' + d.sdlyA;                                            break;
-          case 'rev_t':     v1 = '$' + Math.round(d.toRev/1000) + 'k';                    break;
-          case 'rev_hotel': v1 = '$' + Math.round(d.hnRev/1000) + 'k';                    break;
-          case 'rev_stly':  v1 = '$' + Math.floor(d.sdlyR/1000) + 'k';                    break;
+          // occupancy
+          case 'occ_tdh':    v1 = d.toRn+' rms';    v2 = d.to+'%';                         break;
+          case 'occ_other':  v1 = d.otherRms+' rms'; v2 = d.otherPct+'%';                  break;
+          case 'occ_stly':   v1 = d.sdlyRn+' rms';  v2 = d.sdlyH+'%';                      break;
+          case 'occ_rem':    v1 = d.freeRms+' rms';  v2 = Math.max(0,100-d.hotel)+'%';     break;
+          // online/offline
+          case 'onoff_on':   v1 = d.onlinePct+'%';                                          break;
+          case 'onoff_off':  v1 = (100-d.onlinePct)+'%';                                    break;
+          // adr
+          case 'adr_t':      v1 = '$'+d.toAdr;                                              break;
+          case 'adr_hotel':  v1 = '$'+d.adr;                                                break;
+          case 'adr_stly':   v1 = '$'+d.sdlyA;                                              break;
+          // revenue
+          case 'rev_t':      v1 = d.fR(d.toRev);                                            break;
+          case 'rev_hotel':  v1 = d.fR(d.hnRev);                                            break;
+          case 'rev_stly':   v1 = d.fR(d.sdlyR);                                            break;
+          // rn sold
+          case 'rn_t':       v1 = d.toRn+' rms';                                            break;
+          case 'rn_hotel':   v1 = d.hnRn+' rms';                                            break;
+          case 'rn_stly':    v1 = d.sdlyRn+' rms';                                          break;
+          // revpar
+          case 'revpar_t':   v1 = '$'+d.revpar;                                             break;
+          case 'revpar_stly':v1 = '$'+d.sdlyRevpar;                                         break;
+          // pickup
+          case 'pickup_t':   v1 = '+'+d.pickup;                                             break;
+          case 'pickup_h':   v1 = '+'+d.hPickup;                                            break;
+          // avg adults / children
+          case 'avga_t':     v1 = d.avgA;                                                   break;
+          case 'avga_h':     v1 = d.hAvgA;                                                  break;
+          case 'avgc_t':     v1 = d.avgC;                                                   break;
+          case 'avgc_h':     v1 = d.hAvgC;                                                  break;
+          // total adults / children / guests
+          case 'tota_t':     v1 = d.totAT;                                                  break;
+          case 'tota_h':     v1 = d.totAH;                                                  break;
+          case 'totc_t':     v1 = d.totCT;                                                  break;
+          case 'totc_h':     v1 = d.totCH;                                                  break;
+          case 'totg_t':     v1 = d.totG;                                                   break;
+          case 'totg_h':     v1 = d.hTotG;                                                  break;
+          // avg los / lead time
+          case 'los_t':      v1 = d.avgLos;                                                 break;
+          case 'los_h':      v1 = d.hLos;                                                   break;
+          case 'lead_t':     v1 = d.avgLead;                                                break;
+          case 'lead_h':     v1 = d.hLead;                                                  break;
+          // meal plans
+          case 'mp_ai_h':    v1 = d.aiPct+'%';                                              break;
+          case 'mp_ai_t':    v1 = Math.max(0,Math.round(d.aiPct*d.toPct*0.9))+'%';         break;
+          case 'mp_bb_h':    v1 = d.bbPct+'%';                                              break;
+          case 'mp_bb_t':    v1 = Math.max(0,Math.round(d.bbPct*d.toPct*0.9))+'%';         break;
+          case 'mp_hb_h':    v1 = d.hbPct+'%';                                              break;
+          case 'mp_hb_t':    v1 = Math.max(0,Math.round(d.hbPct*d.toPct*0.9))+'%';         break;
+          case 'mp_ro_h':    v1 = d.roPct+'%';                                              break;
+          case 'mp_ro_t':    v1 = Math.max(0,Math.round(d.roPct*d.toPct*0.9))+'%';         break;
+          // business mix
+          case 'biz_to':     v1 = d.toMix+'%';                                              break;
+          case 'biz_dir':    v1 = d.dirMix+'%';                                             break;
+          case 'biz_ota':    v1 = d.otaMix+'%';                                             break;
+          case 'biz_other':  v1 = d.otherMix+'%';                                           break;
         }
         cellContent = '<div class="wb-sub-vals' + remCls + '">'
                     + '<span class="wb-sub-v1">' + v1 + '</span>'
