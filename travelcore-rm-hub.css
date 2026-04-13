@@ -2163,7 +2163,7 @@ body.dark .wv-range { color: var(--text-primary); }
 .wv-week-layout .wv-grid .wv-acc-group { gap: 0; padding: 0; }
 .wv-week-layout .wv-grid .wv-acc-sect { border-bottom: 1px solid #dde1e2; }
 .wv-week-layout .wv-grid .wv-acc-sect:last-child { border-bottom: none; }
-.wv-week-layout .wv-grid .wv-acc-body:not(.wv-body-hidden) { padding: 11px 8px 9px; }
+.wv-week-layout .wv-grid .wv-acc-body:not(.wv-body-hidden) { padding: 16px 8px; }
 
 /* 7-column week grid */
 .wv-grid {
@@ -2632,7 +2632,7 @@ body.dark .wv-acc-title { color: #fff; }
 }
 .wv-occ-seg { height: 100%; transition: width 0.2s; }
 .wv-occ-to    { background: #006461; }
-.wv-occ-other { background: #5883ed; }
+.wv-occ-other { background: #47c5bc; }
 .wv-occ-bar-legend {
   display: flex; align-items: center; gap: 6px; margin-top: 3px; flex-wrap: wrap;
   font-size: 7px; color: #6b7280;
@@ -2643,14 +2643,18 @@ body.dark .wv-acc-title { color: #fff; }
 /* ── Occupancy room breakdown ───────────────────────────────── */
 .wv-occ-breakdown { margin-top: 5px; display: flex; flex-direction: column; gap: 2px; padding-top: 3px; }
 .wv-occ-br-row {
-  display: grid; grid-template-columns: 9px 1fr auto auto;
-  align-items: start; gap: 4px; font-family: 'Lato', sans-serif;
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 4px; font-family: 'Lato', sans-serif;
   border-bottom: 1px solid #dde1e2; padding-bottom: 8px;
 }
 .wv-occ-br-row:last-child { border-bottom: none; padding-bottom: 0; }
+/* Left side: dot + label */
+.wv-occ-br-left { display: flex; align-items: flex-start; gap: 8px; flex: 1; min-width: 0; }
+/* Right side: rms + pct */
+.wv-occ-br-right { display: flex; align-items: flex-start; gap: 4px; flex-shrink: 0; }
 .wv-occ-br-dot { width: 9px; height: 9px; border-radius: 2px; flex-shrink: 0; margin-top: 2px; }
 .wv-occ-br-lbl { font-size: 12px; color: #1c1c1c; }
-.wv-occ-br-rms { font-size: 8px; font-weight: 700; color: #111827; text-align: right; }
+.wv-occ-br-rms { font-size: 8px; font-weight: 700; color: #111827; text-align: right; min-width: 30px; }
 .wv-occ-br-pct { font-size: 7.5px; color: #6b7280; text-align: right; min-width: 24px; }
 .wv-occ-br-remain { }
 .wv-occ-br-remain .wv-occ-br-lbl { color: #388C3F; font-weight: 600; }

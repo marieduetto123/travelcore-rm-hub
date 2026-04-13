@@ -5340,15 +5340,21 @@ function buildWeekGrid(month, weekStart, activeDay) {
             if (wvSegMode === 'individual') {
               const fitPct = Math.round(to * 0.45), dynPct = Math.round(to * 0.35), serPct = to - fitPct - dynPct;
               const fitRms = Math.round(WV_CAP * fitPct / 100), dynRms = Math.round(WV_CAP * dynPct / 100), serRms = Math.round(WV_CAP * serPct / 100);
-              bdRows = '<div class="wv-occ-br-row"><span class="wv-occ-br-dot" style="background:#006461"></span><span class="wv-occ-br-lbl">Static FIT Rates</span><span class="wv-occ-br-rms">'+fitRms+' rms</span><span class="wv-occ-br-pct">'+fitPct+'%</span></div>'
-                +'<div class="wv-occ-br-row"><span class="wv-occ-br-dot" style="background:#0891b2"></span><span class="wv-occ-br-lbl">TO Dynamic</span><span class="wv-occ-br-rms">'+dynRms+' rms</span><span class="wv-occ-br-pct">'+dynPct+'%</span></div>'
-                +'<div class="wv-occ-br-row"><span class="wv-occ-br-dot" style="background:#6366f1"></span><span class="wv-occ-br-lbl">Tour Series</span><span class="wv-occ-br-rms">'+serRms+' rms</span><span class="wv-occ-br-pct">'+serPct+'%</span></div>'
-                +'<div class="wv-occ-br-row"><span class="wv-occ-br-dot" style="background:#5883ed"></span><span class="wv-occ-br-lbl">Other Segments</span><span class="wv-occ-br-rms">'+otherRms+' rms</span><span class="wv-occ-br-pct">'+otherPct+'%</span></div>'
-                +'<div class="wv-occ-br-row wv-occ-br-remain"><span class="wv-occ-br-dot" style="background:#388C3F"></span><span class="wv-occ-br-lbl">Remaining</span><span class="wv-occ-br-rms wv-remain-count">'+freeRms+' rms</span><span class="wv-occ-br-pct">'+freePct+'%</span></div>';
+              function brRow(clr,lbl,rms,pct,extra,rmsCls){
+                return '<div class="wv-occ-br-row'+(extra?' '+extra:'')+'"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:'+clr+'"></span><span class="wv-occ-br-lbl">'+lbl+'</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms'+(rmsCls?' '+rmsCls:'')+'">'+rms+' rms</span><span class="wv-occ-br-pct">'+pct+'%</span></div></div>';
+              }
+              bdRows = brRow('#006461','Static FIT Rates',fitRms,fitPct)
+                +brRow('#0891b2','TO Dynamic',dynRms,dynPct)
+                +brRow('#6366f1','Tour Series',serRms,serPct)
+                +brRow('#47c5bc','Other Segments',otherRms,otherPct)
+                +brRow('#388C3F','Remaining',freeRms,freePct,'wv-occ-br-remain','wv-remain-count');
             } else {
-              bdRows = '<div class="wv-occ-br-row"><span class="wv-occ-br-dot" style="background:#006461"></span><span class="wv-occ-br-lbl">Travel Distribution Hubs</span><span class="wv-occ-br-rms">'+toRms+' rms</span><span class="wv-occ-br-pct">'+to+'%</span></div>'
-                +'<div class="wv-occ-br-row"><span class="wv-occ-br-dot" style="background:#5883ed"></span><span class="wv-occ-br-lbl">Other Segments</span><span class="wv-occ-br-rms">'+otherRms+' rms</span><span class="wv-occ-br-pct">'+otherPct+'%</span></div>'
-                +'<div class="wv-occ-br-row wv-occ-br-remain"><span class="wv-occ-br-dot" style="background:#388C3F"></span><span class="wv-occ-br-lbl">Remaining</span><span class="wv-occ-br-rms wv-remain-count">'+freeRms+' rms</span><span class="wv-occ-br-pct">'+freePct+'%</span></div>';
+              function brRow(clr,lbl,rms,pct,extra,rmsCls){
+                return '<div class="wv-occ-br-row'+(extra?' '+extra:'')+'"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:'+clr+'"></span><span class="wv-occ-br-lbl">'+lbl+'</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms'+(rmsCls?' '+rmsCls:'')+'">'+rms+' rms</span><span class="wv-occ-br-pct">'+pct+'%</span></div></div>';
+              }
+              bdRows = brRow('#006461','Travel Distribution Hubs',toRms,to)
+                +brRow('#47c5bc','Other Segments',otherRms,otherPct)
+                +brRow('#388C3F','Remaining',freeRms,freePct,'wv-occ-br-remain','wv-remain-count');
             }
 
             return '<div class="wv-occ-bar-wrap">'
