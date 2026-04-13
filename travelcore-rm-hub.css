@@ -1008,11 +1008,14 @@ body.dark .daily-rev-ag-wrap {
   border-right: 2px solid rgba(255,255,255,0.15) !important;
 }
 .daily-h-ag-wrap .ag-pinned-left-header .ag-header-cell-text {
-  font-size: 11px !important;
-  font-weight: 600 !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
   text-transform: none !important;
   letter-spacing: 0 !important;
   color: rgba(255,255,255,0.85) !important;
+}
+.daily-h-ag-wrap .ag-pinned-left-header .ag-header-cell {
+  padding: 0 16px !important;
 }
 .daily-h-ag-wrap .ag-header-cell-text {
   font-size: 12px !important;
