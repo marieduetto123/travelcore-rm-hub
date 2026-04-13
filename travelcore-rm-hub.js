@@ -5806,8 +5806,8 @@ window.dhOpenReorder = function() {
     li.draggable = true;
     li.dataset.parKey = p.parKey;
     li.innerHTML =
-      '<span class="dh-reorder-handle">⠿</span>'
-      + '<span class="dh-reorder-sec-badge" style="background:' + p.secClr + '1a;color:' + p.secClr + '">' + p.secLbl + '</span>'
+      '<span class="dh-reorder-handle"><svg width="12" height="18" viewBox="0 0 12 18" fill="currentColor"><circle cx="4" cy="3.5" r="1.6"/><circle cx="4" cy="9" r="1.6"/><circle cx="4" cy="14.5" r="1.6"/><circle cx="9" cy="3.5" r="1.6"/><circle cx="9" cy="9" r="1.6"/><circle cx="9" cy="14.5" r="1.6"/></svg></span>'
+      + '<span class="dh-reorder-sec-badge" style="background:' + p.secClr + '22;color:' + p.secClr + '">' + p.secLbl + '</span>'
       + '<span class="dh-reorder-lbl">' + p.lbl + '</span>';
     li.addEventListener('dragstart', function(e) {
       dragging = li; li.classList.add('dragging');
