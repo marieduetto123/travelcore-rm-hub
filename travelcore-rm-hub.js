@@ -11077,7 +11077,8 @@ setTimeout(function() {
     grey:  { threshold: 85, params: {} },
     green: { threshold: 60, params: {} },
     blue:  { params: {} },
-    enabled: false
+    enabled: false,
+    condition: { enabled: false, metric: 'hotel', op: '>', value: 50 }
   };
 
   // ── Type definitions ───────────────────────────────────────────
@@ -11154,6 +11155,20 @@ setTimeout(function() {
     if (!section || !rows) return;
     section.style.display = 'flex';
 
+    // Show condition section and restore its state
+    var condSection = document.getElementById('hmConditionSection');
+    if (condSection) condSection.style.display = 'block';
+    var condCb = document.getElementById('hmCondEnabled');
+    if (condCb) condCb.checked = hmState.condition.enabled;
+    var condCtrls = document.getElementById('hmCondControls');
+    if (condCtrls) condCtrls.style.display = hmState.condition.enabled ? 'block' : 'none';
+    var condMetric = document.getElementById('hmCondMetric');
+    if (condMetric) condMetric.value = hmState.condition.metric;
+    var condOp = document.getElementById('hmCondOp');
+    if (condOp) condOp.value = hmState.condition.op;
+    var condVal = document.getElementById('hmCondValue');
+    if (condVal) condVal.value = hmState.condition.value;
+
     // Stop Sales uses semantic red/yellow/green labels
     var isStopSales = type === 'stopsales';
     var colours = [
@@ -11195,6 +11210,12 @@ setTimeout(function() {
     hmState[color][param] = parseFloat(el.value) || 0;
   };
 
+  // ── Condition toggle ───────────────────────────────────────────
+  window.hmCondToggle = function(cb) {
+    var ctrls = document.getElementById('hmCondControls');
+    if (ctrls) ctrls.style.display = cb.checked ? 'block' : 'none';
+  };
+
   // ── Apply ──────────────────────────────────────────────────────
   window.hmApply = function() {
     // Read any number inputs
@@ -11203,6 +11224,17 @@ setTimeout(function() {
       if (c && p) hmState[c][p] = parseFloat(el.value) || 0;
     });
     hmState.enabled = !!hmState.type;
+    // Read condition
+    var condCb     = document.getElementById('hmCondEnabled');
+    var condMetric = document.getElementById('hmCondMetric');
+    var condOp     = document.getElementById('hmCondOp');
+    var condValEl  = document.getElementById('hmCondValue');
+    hmState.condition = {
+      enabled: !!(condCb && condCb.checked),
+      metric:  condMetric ? condMetric.value : 'hotel',
+      op:      condOp     ? condOp.value     : '>',
+      value:   condValEl  ? (parseFloat(condValEl.value) || 0) : 50
+    };
     // Update button to reflect active heatmap type
     hmUpdateBtn();
     hmToggle();
@@ -11233,12 +11265,19 @@ setTimeout(function() {
 
   // ── Reset ──────────────────────────────────────────────────────
   window.hmReset = function() {
-    hmState = { type: '', grey: { params:{} }, green: { params:{} }, blue: { params:{} }, enabled: false };
+    hmState = { type: '', grey: { params:{} }, green: { params:{} }, blue: { params:{} }, enabled: false,
+                condition: { enabled: false, metric: 'hotel', op: '>', value: 50 } };
     document.querySelectorAll('.hm-type-card').forEach(function(c) { c.classList.remove('active'); });
     var section = document.getElementById('hmColourSection');
     if (section) section.style.display = 'none';
     var rows = document.getElementById('hmColourRows');
     if (rows) rows.innerHTML = '';
+    var condSection = document.getElementById('hmConditionSection');
+    if (condSection) condSection.style.display = 'none';
+    var condCb = document.getElementById('hmCondEnabled');
+    if (condCb) condCb.checked = false;
+    var condCtrls = document.getElementById('hmCondControls');
+    if (condCtrls) condCtrls.style.display = 'none';
     hmUpdateBtn();
     renderCalendar();
   };
@@ -11250,6 +11289,28 @@ setTimeout(function() {
 
   window.hmGetCellClass = function(dayData) {
     if (!hmState.enabled || !hmState.type) return '';
+
+    // Condition gate — skip colouring if condition not met
+    if (hmState.condition.enabled) {
+      var cond = hmState.condition;
+      var mval;
+      switch (cond.metric) {
+        case 'hotel':       mval = dayData.hotel;       break;
+        case 'remainRooms': mval = dayData.remainRooms; break;
+        case 'totalGuests': mval = dayData.totalGuests; break;
+        case 'toOtb':       mval = dayData.toOtb;       break;
+        default:            mval = 0;
+      }
+      var pass = false;
+      switch (cond.op) {
+        case '>':  pass = mval >  cond.value; break;
+        case '>=': pass = mval >= cond.value; break;
+        case '<':  pass = mval <  cond.value; break;
+        case '<=': pass = mval <= cond.value; break;
+      }
+      if (!pass) return '';
+    }
+
     var type = hmState.type;
     var gT  = parseFloat(hmState.grey.greyT)   || 0;
     var gnT = parseFloat(hmState.green.greenT) || 0;
