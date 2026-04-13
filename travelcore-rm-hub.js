@@ -1588,8 +1588,8 @@ function renderCalendar() {
 
       const isCompact = (calDisplayView === 6 || calDisplayView === 12);
       const cellDba = Math.round((new Date(2026, m.month - 1, d) - new Date(2026, 2, 9)) / 86400000);
-      const cellDbaHtml = (!isCompact && cellDba > 0 && !isLocked)
-        ? `<span style="font-size:8px;font-weight:700;color:#006461;letter-spacing:.1px;opacity:.85">${cellDba}d</span>`
+      const cellDbaHtml = (!isCompact && cellDba > 0 && (!isLocked || _isStopSalesActive))
+        ? `<span style="font-size:8px;font-weight:700;color:${_isStopSalesActive && isLocked ? '#fff' : '#006461'};letter-spacing:.1px;opacity:.85">${cellDba}d</span>`
         : '';
       const RT_INVS_CAL  = [51, 36, 27, 12, 15, 9];
       const RT_ABBRS_CAL = ['Std','Sup','Del','Ste','Jr','Fam'];
