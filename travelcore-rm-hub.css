@@ -2163,7 +2163,7 @@ body.dark .wv-range { color: var(--text-primary); }
 .wv-week-layout .wv-grid .wv-acc-group { gap: 0; padding: 0; }
 .wv-week-layout .wv-grid .wv-acc-sect { border-bottom: 1px solid #dde1e2; }
 .wv-week-layout .wv-grid .wv-acc-sect:last-child { border-bottom: none; }
-.wv-week-layout .wv-grid .wv-acc-body:not(.wv-body-hidden) { padding: 9px 8px 7px; }
+.wv-week-layout .wv-grid .wv-acc-body:not(.wv-body-hidden) { padding: 11px 8px 9px; }
 
 /* 7-column week grid */
 .wv-grid {
@@ -2327,7 +2327,7 @@ body.dark .wv-acc-title { color: #fff; }
 }
 
 /* Quick metrics */
-.wv-quick { display: flex; flex-direction: column; gap: 7px; }
+.wv-quick { display: flex; flex-direction: column; gap: 9px; }
 .wv-q-row { display: flex; justify-content: space-between; align-items: center; }
 .wv-q-label { font-size: 10px; color: #6b7280; }
 .wv-q-val { font-size: 12px; font-weight: 700; color: #181d1f; }
