@@ -2945,165 +2945,121 @@ function buildRoomTypeBoardView(dm, dd, hotel, to, adr, rev, v) {
 }
 
 
-// ── Close Out Report View ─────────────────────────────────────────────────────
+// ── Close Out Report View — grouped-by-day card layout ───────────────────────
 function buildCoReportView(days) {
-  var BMAP = {ai:'All Inclusive',bb:'Bed & Breakfast',hb:'Half Board',ro:'Room Only',fb:'Full Board'};
-  var ALL_TOS  = ['Sunshine Tours','Global Adv.','Beach Hols','City Breaks','Adventure'];
-  var ALL_RTS  = ['Standard','Superior','Deluxe','Suite','Jr. Suite','Family'];
-  var ALL_BDS  = ['ai','bb','hb','ro'];
-  var DOW2     = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  var MNAMES2  = ['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  var TODAY_R  = new Date(2026, 2, 9);
+  var BMAP    = {ai:'All Inclusive',bb:'Bed & Breakfast',hb:'Half Board',ro:'Room Only',fb:'Full Board'};
+  var DOW2    = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  var MNAMES2 = ['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var TODAY_R = new Date(2026, 2, 9);
 
-  var lockSvg = '<svg viewBox="0 0 10 12" fill="none" stroke="currentColor" stroke-width="1.6" width="9" height="11"><rect x="1" y="5" width="8" height="7" rx="1"/><path d="M3 5V3.5a2 2 0 0 1 4 0V5"/></svg>';
-  var openSvg = '<svg viewBox="0 0 14 14" fill="none" stroke="#15803d" stroke-width="1.6" width="10" height="10"><path d="M2 7l4 4 6-6"/></svg>';
+  var lockSvg  = '<svg viewBox="0 0 10 12" fill="none" stroke="currentColor" stroke-width="1.6" width="10" height="12"><rect x="1" y="5" width="8" height="7" rx="1"/><path d="M3 5V3.5a2 2 0 0 1 4 0V5"/></svg>';
+  var checkSvg = '<svg viewBox="0 0 14 14" fill="none" stroke="#15803d" stroke-width="2" width="11" height="11"><path d="M2 7l4 4 6-6"/></svg>';
 
-  // ── Chip helpers ────────────────────────────────────────────────────────────
+  // ── Chip helpers ─────────────────────────────────────────────────────────────
   function chip(label, clr, bg) {
-    return '<span style="display:inline-flex;align-items:center;gap:2px;font-size:9px;font-weight:600;padding:1px 5px;border-radius:3px;background:'+(bg||clr+'18')+';color:'+clr+';border:1px solid '+clr+'44;white-space:nowrap">'+label+'</span>';
+    return '<span class="co-rpt-chip" style="background:'+(bg||clr+'18')+';color:'+clr+';border-color:'+clr+'44">'+label+'</span>';
+  }
+  function allDimChip(label) { return chip(label, '#6b7280', '#f3f4f6'); }
+
+  function chipsMore(items, mapFn, max, uid) {
+    if (items.length <= max) return items.map(mapFn).join('');
+    var shown  = items.slice(0, max).map(mapFn).join('');
+    var hidden = items.slice(max).map(mapFn).join('');
+    return shown
+      + '<span id="coh_'+uid+'" style="display:none">'+hidden+'</span>'
+      + '<span class="co-more-pill" onclick="coToggleMore(\''+uid+'\')" data-n="'+(items.length-max)+'">+'+(items.length-max)+' more</span>';
   }
 
-  // ── Collect all unique strategies across the 7 days ────────────────────────
-  // Strategy columns: each unique combo gets its own column group
-  // Columns: #, Operator(s), Room Type(s), Meal Plan(s)
-  // Rows: one per stay date
-
-  // ── Build header ────────────────────────────────────────────────────────────
-  // Row 1 (section): "Stay Date" (sticky) | "Strategy 1" spanning 3 cols | "Strategy 2" ...| "Full Day Close Out" 1 col
-  // Row 2 (metric parent): — | Operator | Room Type | Meal Plan | repeat | —
-  // Row 3 (child): — | — | — | — | repeat | —
-  // Determine max strategies across all days for column sizing
-  var maxStrats = 0;
-  days.forEach(function(dv) {
-    var r = PARTIAL_CLOSURES[dv.month+'-'+dv.day];
-    if (r && r.length > maxStrats) maxStrats = r.length;
-  });
-  if (maxStrats === 0) maxStrats = 1; // always show at least 1 strategy column
-
-  // Date cell sticky style
-  var dateTh = 'position:sticky;left:0;z-index:6;background:#1a5e5b;color:#fff;text-align:left;padding:5px 10px;min-width:110px;border-right:2px solid #006461;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.4px';
-  var dateTd = 'position:sticky;left:0;z-index:4;background:#fff;border-right:2px solid #006461;padding:5px 8px;min-width:110px;vertical-align:top';
-
-  // ── Header row 1: section groups ────────────────────────────────────────────
-  var hdr1 = '<tr class="wv-rpt-grp-hdr"><th rowspan="3" style="'+dateTh+'">Stay Date<br><span style="font-size:7px;opacity:.7;font-weight:500">DOW · DBA</span></th>';
-  var hdr2 = '<tr style="background:#f1f5f9">';
-  var hdr3 = '<tr class="wv-rpt-sub-hdr">';
-
-  // Strategy column groups
-  for (var si = 0; si < maxStrats; si++) {
-    var sn = si + 1;
-    var clr = ['#dc2626','#b45309','#7c3aed','#0891b2','#16a34a'][si % 5];
-    hdr1 += '<th colspan="3" style="background:'+clr+';border-left:2px solid rgba(255,255,255,.25);cursor:default;text-align:center">Strategy</th>';
-    hdr2 += '<th style="border-left:2px solid rgba(0,0,0,.08);background:#f1f5f9;color:#374151;font-size:8.5px;font-weight:700;text-align:center;padding:3px 6px;border-bottom:1px solid #d1d5db">Operator</th>';
-    hdr2 += '<th style="background:#f1f5f9;color:#374151;font-size:8.5px;font-weight:700;text-align:center;padding:3px 6px;border-bottom:1px solid #d1d5db;border-left:1px solid #e9ecef">Room Type</th>';
-    hdr2 += '<th style="background:#f1f5f9;color:#374151;font-size:8.5px;font-weight:700;text-align:center;padding:3px 6px;border-bottom:1px solid #d1d5db;border-left:1px solid #e9ecef">Meal Plan</th>';
-    hdr3 += '<th style="border-left:2px solid rgba(0,0,0,.08);color:'+clr+';font-size:8px;font-weight:700;text-align:center">Closed TOs</th>';
-    hdr3 += '<th style="color:'+clr+';font-size:8px;font-weight:700;text-align:center;border-left:1px solid #e9ecef">Closed Rooms</th>';
-    hdr3 += '<th style="color:'+clr+';font-size:8px;font-weight:700;text-align:center;border-left:1px solid #e9ecef">Closed Plans</th>';
-  }
-  // Full Day column
-  hdr1 += '<th style="background:#374151;border-left:2px solid rgba(255,255,255,.2);text-align:center">Full Day</th>';
-  hdr2 += '<th style="background:#f1f5f9;color:#374151;font-size:8.5px;font-weight:700;text-align:center;padding:3px 6px;border-bottom:1px solid #d1d5db;border-left:2px solid rgba(0,0,0,.08)">Status</th>';
-  hdr3 += '<th style="color:#374151;font-size:8px;font-weight:700;text-align:center;border-left:2px solid rgba(0,0,0,.08)">Locked</th>';
-
-  hdr1 += '</tr>'; hdr2 += '</tr>'; hdr3 += '</tr>';
-
-  // ── Data rows ───────────────────────────────────────────────────────────────
-  var rows = days.map(function(dv, idx) {
-    var dm = dv.month, day = dv.day;
-    var key = dm + '-' + day;
+  // ── Day cards ─────────────────────────────────────────────────────────────────
+  var cardsHtml = days.map(function(dv) {
+    var dm = dv.month, day = dv.day, key = dm+'-'+day;
     var isFullyLocked = LOCKED_DAYS.has(key);
     var rules = PARTIAL_CLOSURES[key] || [];
-    var dt = new Date(2026, dm-1, day);
+    var dt  = new Date(2026, dm-1, day);
     var dow = DOW2[dt.getDay()];
     var dba = Math.round((dt - TODAY_R) / 86400000);
-    var dbaStr = dba === 0 ? 'Today' : dba > 0 ? dba + ' DBA' : '';
-    var isToday = dm === 3 && day === 9;
-    var evtKey = dm+'-'+day;
-    var evts = (typeof CAL_EVENTS !== 'undefined' && CAL_EVENTS[evtKey]) ? CAL_EVENTS[evtKey] : null;
+    var isToday = dba === 0;
+    var evts = (typeof CAL_EVENTS !== 'undefined' && CAL_EVENTS[key]) ? CAL_EVENTS[key] : null;
 
-    var rowBg = isFullyLocked ? '#fef2f2' : isToday ? 'rgba(0,100,97,.04)' : idx%2 ? '#fafafa' : '#fff';
-    var dateBg = isFullyLocked ? '#fef2f2' : isToday ? 'rgba(0,100,97,.08)' : idx%2 ? '#fafafa' : '#fff';
+    var stateClass = isFullyLocked ? 'co-rpt-day--locked' : rules.length > 0 ? 'co-rpt-day--partial' : 'co-rpt-day--open';
+    var todayClass = isToday ? ' co-rpt-day--today' : '';
 
-    var row = '<tr style="background:'+rowBg+'">';
+    // ── Day header ──────────────────────────────────────────────────────────
+    var dbaLabel = dba === 0 ? 'Today' : dba > 0 ? dba+'d DBA' : '';
+    var evtDot   = evts ? '<span class="co-rpt-evt-dot" title="'+evts.map(function(e){return e.name;}).join(', ')+'"></span>' : '';
+    var badge = isFullyLocked
+      ? '<span class="co-rpt-badge co-rpt-badge--locked">'+lockSvg+' Full Day Closed</span>'
+      : rules.length > 0
+        ? '<span class="co-rpt-badge co-rpt-badge--partial">'+rules.length+' rule'+(rules.length>1?'s':'')+'</span>'
+        : '<span class="co-rpt-badge co-rpt-badge--open">'+checkSvg+' Open</span>';
 
-    // ── Date cell (sticky) ──────────────────────────────────────────────────
-    row += '<td style="'+dateTd+';background:'+dateBg+(isToday?';border-left:3px solid #006461':'')+(isFullyLocked?';border-left:3px solid #dc2626':'')+';">';
-    row += '<div style="font-weight:800;font-size:11px;color:#111827">'+(isFullyLocked?'🔒 ':'')+MNAMES2[dm]+' '+day+'</div>';
-    row += '<div style="display:flex;align-items:center;gap:4px;font-size:8px;color:#6b7280">';
-    row += '<span>'+dow+'</span>';
-    if (dbaStr) row += '<span style="color:#006461;font-weight:700">'+dbaStr+'</span>';
-    if (evts) row += '<span title="'+evts.map(function(e){return e.name;}).join(', ')+'" style="width:8px;height:8px;border-radius:2px;background:#C4FF45;display:inline-block;flex-shrink:0;cursor:help"></span>';
-    row += '</div>';
-    if (isToday) row += '<div style="width:20px;height:2px;background:#006461;border-radius:1px;margin-top:2px"></div>';
-    row += '</td>';
+    var hdr = '<div class="co-rpt-day-hdr">'
+      + '<div class="co-rpt-day-date">'+MNAMES2[dm]+' '+day+'</div>'
+      + '<div class="co-rpt-day-sub">'+dow+(dbaLabel ? ' <span class="co-rpt-dba">· '+dbaLabel+'</span>' : '')+evtDot+'</div>'
+      + badge
+      + '</div>';
 
-    // ── Strategy cells ──────────────────────────────────────────────────────
-    for (var si = 0; si < maxStrats; si++) {
-      var rule = rules[si];
-      var bl = 'border-left:2px solid rgba(0,0,0,.04);';
-      var tdStyle = 'padding:5px 7px;vertical-align:top;border-bottom:1px solid #f3f4f6;text-align:center;';
+    // ── Day body ─────────────────────────────────────────────────────────────
+    var body;
+    if (isFullyLocked) {
+      var lm = LOCKED_DAYS_META[key] || {};
+      body = '<div class="co-rpt-full-lock">'
+        + lockSvg + ' All inventory closed for this date'
+        + (lm.appliedBy ? coMetaHtml(lm.appliedBy, lm.appliedAt, 'margin-top:5px') : '')
+        + '</div>';
+    } else if (rules.length === 0) {
+      body = '<div class="co-rpt-all-open">'+checkSvg+' No restrictions — all channels open</div>';
+    } else {
+      // Column-label header (shown once per card, above the strategy rows)
+      body = '<div class="co-rpt-col-hdr">'
+        + '<div class="co-rpt-col-hdr-num"></div>'
+        + '<div class="co-rpt-col-hdr-dim">Operator</div>'
+        + '<div class="co-rpt-col-hdr-sep"></div>'
+        + '<div class="co-rpt-col-hdr-dim">Room Type</div>'
+        + '<div class="co-rpt-col-hdr-sep"></div>'
+        + '<div class="co-rpt-col-hdr-dim">Meal Plan</div>'
+        + '<div class="co-rpt-col-hdr-meta">Applied by</div>'
+        + '</div>';
 
-      if (isFullyLocked) {
-        // Full day lock — all strategy cells show full lock
-        row += '<td colspan="3" style="'+tdStyle+bl+'background:#fef2f2;color:#dc2626;font-size:10px;font-weight:700;text-align:center">🔒 Full Day Closed</td>';
-        si = maxStrats; // skip rest
-        break;
-      } else if (!rule) {
-        // No strategy at this index — open
-        row += '<td style="'+tdStyle+bl+'color:#15803d;text-align:center">'+openSvg+'</td>';
-        row += '<td style="'+tdStyle+'color:#15803d;text-align:center;border-left:1px solid #f3f4f6">'+openSvg+'</td>';
-        row += '<td style="'+tdStyle+'color:#15803d;text-align:center;border-left:1px solid #f3f4f6">'+openSvg+'</td>';
-      } else {
-        // Has a strategy — show chips with +N more collapse
-        var _rUid = 0;
-        function chipsMoreR(items, mapFn, max, prefix) {
-          if (items.length <= max) return items.map(mapFn).join('<br>');
-          var uid = 'cor_' + prefix + '_' + si + '_' + (++_rUid);
-          var shown  = items.slice(0, max).map(mapFn).join('<br>');
-          var hidden = items.slice(max).map(mapFn).join('<br>');
-          return shown
-            + '<br><span id="coh_' + uid + '" style="display:none">' + hidden + '</span>'
-            + '<span class="co-more-pill" onclick="coToggleMore(\'' + uid + '\')" data-n="' + (items.length - max) + '">+' + (items.length - max) + ' more</span>';
-        }
-        var toPart = rule.tos.length
-          ? chipsMoreR(rule.tos, function(n){ return chip(n, TO_COLORS_MAP[n]||'#dc2626'); }, 2, 'to')
-          : '<span style="font-size:8px;color:#9ca3af;font-style:italic">All</span>';
-        var rtPart = rule.roomTypes.length
-          ? chipsMoreR(rule.roomTypes, function(n){ return chip(n, RT_NAME_COLORS[n]||'#b45309'); }, 2, 'rt')
-          : '<span style="font-size:8px;color:#9ca3af;font-style:italic">All</span>';
-        var bdPart = rule.boards.length
-          ? chipsMoreR(rule.boards, function(b){ return chip(BMAP[b]||b, '#7c3aed'); }, 2, 'bd')
-          : '<span style="font-size:8px;color:#9ca3af;font-style:italic">All</span>';
+      body += rules.map(function(rule, ri) {
+        var uid = 'rpt_'+dm+'_'+day+'_'+ri;
+        var toFn = function(n) { return chip(n, TO_COLORS_MAP[n]||'#dc2626'); };
+        var rtFn = function(n) { return chip(n, RT_NAME_COLORS[n]||'#b45309'); };
+        var bdFn = function(b) { return chip(BMAP[b]||b, '#7c3aed'); };
 
-        var metaHtml = rule.appliedBy
-          ? '<div class="co-rule-meta" style="margin-top:4px;padding-top:4px;border-top:1px solid #f0f0f0">'
-            + '<span class="co-meta-avatar" style="width:14px;height:14px;font-size:7px">'+coInitials(rule.appliedBy)+'</span>'
-            + '<span class="co-meta-text" style="font-size:7.5px"><strong>'+rule.appliedBy+'</strong>'+(rule.appliedAt ? '<br>'+coFmtDate(rule.appliedAt) : '')+'</span>'
+        var toPart = rule.tos.length        ? chipsMore(rule.tos,        toFn, 2, uid+'_to') : allDimChip('All Operators');
+        var rtPart = rule.roomTypes.length  ? chipsMore(rule.roomTypes,  rtFn, 2, uid+'_rt') : allDimChip('All Room Types');
+        var bdPart = rule.boards.length     ? chipsMore(rule.boards,     bdFn, 2, uid+'_bd') : allDimChip('All Meal Plans');
+
+        var metaPart = rule.appliedBy
+          ? '<div class="co-rule-meta">'
+            + '<span class="co-meta-avatar" style="width:16px;height:16px;font-size:7.5px">'+coInitials(rule.appliedBy)+'</span>'
+            + '<span class="co-meta-text"><strong>'+rule.appliedBy+'</strong>'+(rule.appliedAt ? '<br><span style="font-weight:400">'+coFmtDate(rule.appliedAt)+'</span>' : '')+'</span>'
             + '</div>'
           : '';
-        row += '<td style="'+tdStyle+bl+'">'+toPart+metaHtml+'</td>';
-        row += '<td style="'+tdStyle+'border-left:1px solid #f3f4f6">'+rtPart+'</td>';
-        row += '<td style="'+tdStyle+'border-left:1px solid #f3f4f6">'+bdPart+'</td>';
-      }
+
+        var STRAT_COLORS = ['#dc2626','#b45309','#7c3aed','#0891b2','#16a34a'];
+        var sClr = STRAT_COLORS[ri % STRAT_COLORS.length];
+
+        return '<div class="co-rpt-strat-row">'
+          + '<div class="co-rpt-strat-num" style="background:'+sClr+'18;color:'+sClr+';border-color:'+sClr+'33">'+(ri+1)+'</div>'
+          + '<div class="co-rpt-strat-dim"><div class="co-rpt-chips">'+toPart+'</div></div>'
+          + '<div class="co-rpt-strat-sep">+</div>'
+          + '<div class="co-rpt-strat-dim"><div class="co-rpt-chips">'+rtPart+'</div></div>'
+          + '<div class="co-rpt-strat-sep">+</div>'
+          + '<div class="co-rpt-strat-dim"><div class="co-rpt-chips">'+bdPart+'</div></div>'
+          + '<div class="co-rpt-strat-meta">'+metaPart+'</div>'
+          + '</div>';
+      }).join('');
     }
 
-    // ── Full Day status cell ────────────────────────────────────────────────
-    if (!isFullyLocked) {
-      var fullTd = isFullyLocked
-        ? '<td style="padding:5px 7px;border-left:2px solid rgba(0,0,0,.06);text-align:center;vertical-align:middle;background:#fef2f2">🔒</td>'
-        : '<td style="padding:5px 7px;border-left:2px solid rgba(0,0,0,.06);text-align:center;vertical-align:middle;color:#15803d">'+openSvg+'</td>';
-      row += fullTd;
-    }
-
-    row += '</tr>';
-    return row;
+    return '<div class="co-rpt-day-card '+stateClass+todayClass+'">'
+      + hdr
+      + '<div class="co-rpt-day-body">'+body+'</div>'
+      + '</div>';
   }).join('');
 
-  return '<div class="wv-report-wrap"><table class="wv-report-tbl">'
-    + '<thead>'+hdr1+hdr2+hdr3+'</thead>'
-    + '<tbody>'+rows+'</tbody>'
-    + '</table></div>';
+  return '<div class="co-rpt-list">'+cardsHtml+'</div>';
 }
 
 
