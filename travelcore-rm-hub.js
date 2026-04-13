@@ -3086,8 +3086,34 @@ function buildCoReportView(days) {
 }
 
 
-// ── Daily B View — accordion metric rows, sticky label column, 7 day columns ──
-var _wbCollapsed = {};
+// ── Daily B View ─────────────────────────────────────────────────────────────
+var _wbCollapsed   = {};   // shared collapse state (used by both HTML fallback and AG Grid)
+var _dailyBGridApi = null;
+var _dbAllRows     = [];
+var _dbGrpRenderrs = [];
+
+function _getDBVisibleRows() {
+  return _dbAllRows.filter(function(r) {
+    if (r.type === 'grp') return true;
+    if (_wbCollapsed[r.grpKey]) return false;
+    if (r.type === 'sect') return true;
+    if (_wbCollapsed[r.sectKey]) return false;
+    return true;
+  }).map(function(r) {
+    return { _type:r.type, _lbl:r.lbl, _clr:r.clr||'#374151',
+             _dot:r.dot||null, _isRem:r.isRem||false,
+             _grpKey:r.grpKey||null, _sectKey:r.sectKey||null, _fn:r.fn||null };
+  });
+}
+function _toggleDBGrp(grpKey) {
+  _wbCollapsed[grpKey] = !_wbCollapsed[grpKey];
+  _dbGrpRenderrs.forEach(function(gr){ if (gr._grpKey===grpKey) gr._syncChev(); });
+  if (_dailyBGridApi) _dailyBGridApi.setGridOption('rowData', _getDBVisibleRows());
+}
+function _toggleDBSect(sectKey) {
+  _wbCollapsed[sectKey] = !_wbCollapsed[sectKey];
+  if (_dailyBGridApi) _dailyBGridApi.setGridOption('rowData', _getDBVisibleRows());
+}
 
 function wbToggle(id) {
   _wbCollapsed[id] = !_wbCollapsed[id];
@@ -3644,6 +3670,410 @@ function buildDailyBView(days, month, activeDay) {
 
   html += '</div>'; // wb-layout
   return html;
+}
+
+/* ── Daily B AG Grid ─────────────────────────────────────────────────────── */
+function initDailyBGrid(days, month, activeDay, containerEl) {
+  var AG = _realAgGrid;
+  if (!AG || typeof AG.createGrid !== 'function') {
+    containerEl.style.cssText = 'display:flex;flex-direction:column;overflow-x:auto;';
+    containerEl.innerHTML = buildDailyBView(days, month, activeDay);
+    return;
+  }
+  if (_dailyBGridApi) { try { _dailyBGridApi.destroy(); } catch(e){} _dailyBGridApi = null; }
+  containerEl.innerHTML = '';
+  containerEl.style.cssText = '';
+  containerEl.style.padding = '0';
+  var wrapper = document.createElement('div');
+  wrapper.className = 'ag-theme-quartz daily-b-ag-wrap';
+  containerEl.appendChild(wrapper);
+
+  var DOW_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  var MNAMES_S  = ['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var TODAY_WV  = new Date(2026, 2, 9);
+  var WV_CAP    = 250;
+  var RT_NAMES  = ['Standard','Superior','Deluxe','Suite','Jr. Suite','Family'];
+  var RT_CAPS   = [51,36,27,12,15,9];
+  var TO_NAMES  = ['Sunshine Tours','Global Adv.','Beach Hols','City Breaks','Adventure'];
+
+  // Per-day data
+  var dd7 = days.map(function(dv) {
+    var dm = dv.month, dd = dv.day;
+    var hh = getOccupancy(dm, dd); var hotel = hh.hotel, to = hh.to;
+    var adr   = 150 + Math.abs((dm*47+dd*31)%130);
+    var v     = Math.abs((dm*127+dd*53+dm*dd*7+dd*dd*3))%100;
+    var toAdr = Math.max(80, adr - 20 - Math.abs((dm*3+dd*7)%15));
+    var toRn  = Math.round(WV_CAP * to / 100);
+    var hnRn  = Math.round(WV_CAP * hotel / 100);
+    var toRev = Math.floor(toRn * toAdr);
+    var hnRev = Math.floor(hnRn * adr);
+    var otherPct = Math.max(0, hotel - to);
+    var otherRms = Math.round(WV_CAP * otherPct / 100);
+    var freeRms  = WV_CAP - toRn - otherRms;
+    var onlinePct = Math.max(30, Math.min(80, 45 + Math.abs((dm*13+dd*7)%35)));
+    var adrBar = Math.min(90, Math.round(toAdr / 280 * 100));
+    var revBar = Math.min(90, Math.round(toRev / 4500000 * 100));
+    var sdlyH  = Math.max(5, hotel - 9), lyH = Math.max(5, hotel - 6), fcstH = Math.min(100, hotel + 4);
+    var sdlyA  = adr - 8, lyA = adr - 4, fcstA = adr + 6;
+    var sdlyRn = Math.round(toRn * 0.88), lyRn = Math.round(toRn * 0.93), fcstRn = Math.round(toRn * 1.06);
+    var sdlyR  = Math.floor(Math.round(WV_CAP * sdlyH / 100) * sdlyA);
+    var lyR    = Math.floor(hnRev * 0.95), fcstR = Math.floor(hnRev * 1.06);
+    var revpar = Math.max(50, (adr+80) - 30 - Math.abs((dm*5+dd*3)%20));
+    var sdlyRevpar = Math.max(40, revpar - 8), lyRevpar = Math.max(40, revpar - 4);
+    var pickup = Math.max(0, Math.floor((v%25+5)*to/Math.max(1,hotel)));
+    var hPickup = Math.floor(v%25+5);
+    var avgA = (1.8+v%3*0.1).toFixed(1), avgC = (0.3+v%2*0.1).toFixed(1);
+    var hAvgA = (parseFloat(avgA)+0.3).toFixed(1), hAvgC = (parseFloat(avgC)+0.1).toFixed(1);
+    var totAT = Math.round(toRn*parseFloat(avgA)),  totCT = Math.round(toRn*parseFloat(avgC));
+    var totAH = Math.round(hnRn*parseFloat(hAvgA)), totCH = Math.round(hnRn*parseFloat(hAvgC));
+    var totG  = Math.round(toRn*(parseFloat(avgA)+parseFloat(avgC)));
+    var hTotG = Math.round(hnRn*(parseFloat(hAvgA)+parseFloat(hAvgC)));
+    var avgLos = (2.8+v%5*0.3).toFixed(1)+'n', hLos = (2.8+v%5*0.3+0.4).toFixed(1)+'n';
+    var avgLead = (18+v%60)+'d', hLead = (18+v%60+12)+'d';
+    var availRooms = Math.max(0, 102-Math.floor(hotel*1.02));
+    var availGuar  = Math.floor(8+v%5);
+    var aiPct = Math.max(45, Math.min(68, 55+(dm*7+dd*3)%14));
+    var bbPct = Math.max(14, Math.min(28, 20+(dm*11+dd*5)%11));
+    var hbPct = Math.max(6,  Math.min(16, 10+(dm*5+dd*7)%9));
+    var roPct = 100 - aiPct - bbPct - hbPct;
+    var toPct = to / Math.max(1, hotel);
+    var toMix = 28+Math.abs((dm*7+dd*5)%25), dirMix = 30+Math.abs((dm*5+dd*9)%20), otaMix = 20+Math.abs((dm*9+dd*3)%18);
+    var otherMix = Math.max(0, 100-toMix-dirMix-otaMix);
+    var tcRates = [0,1,2,3,4].map(function(i){ return adr-15+Math.abs((dm*(i+3)+dd*(i+5))%50); });
+    var baseRate = adr + 8;
+    var isEbbDay = (new Date(2026,dm-1,dd)).getDay() < 3;
+    function fR(val){return val>=1000000?'$'+(val/1000000).toFixed(1)+'M':'$'+Math.round(val/1000)+'k';}
+    return {dm,dd,hotel,to,adr,toAdr,toRn,hnRn,toRev,hnRev,otherPct,otherRms,freeRms,
+            onlinePct,adrBar,revBar,sdlyH,lyH,fcstH,sdlyA,lyA,fcstA,sdlyRn,lyRn,fcstRn,
+            sdlyR,lyR,fcstR,revpar,sdlyRevpar,lyRevpar,pickup,hPickup,
+            avgA,avgC,hAvgA,hAvgC,totAT,totCT,totAH,totCH,totG,hTotG,
+            avgLos,hLos,avgLead,hLead,availRooms,availGuar,
+            aiPct,bbPct,hbPct,roPct,toPct,toMix,dirMix,otaMix,otherMix,
+            tcRates,baseRate,isEbbDay,fR,v};
+  });
+
+  // ── Render helpers ────────────────────────────────────────────────────────
+  var C1='#006461', C2='#47c5bc', C3='#b1d8b7', C4='#d1fae5', CSTLY='#c4ff45', CREM='#388c3f';
+  function cmpSfx(s) {
+    if (!s || wvCompare === 'none') return '';
+    return '<span class="wv-cmp-sep"> / </span><span class="wv-cmp-val-txt">'+s+'</span>';
+  }
+  function bar(pct, clr) {
+    return '<div class="wv-occ-bar-track"><div style="width:'+pct+'%;background:'+clr+';height:12px"></div></div>';
+  }
+  function sBar(segs) {
+    return '<div class="wv-occ-bar-track">'
+      + segs.map(function(s){ return '<div style="width:'+s.p+'%;background:'+s.c+';height:12px"></div>'; }).join('')+'</div>';
+  }
+  function sCell(val, barHtml) {
+    return '<div style="font-size:14px;font-weight:400;color:#111827;margin-bottom:5px">'+val+'</div>'+barHtml;
+  }
+  function rCell(v1, v2, rem) {
+    var c = rem ? '#388c3f' : '#111827', c2 = rem ? '#388c3f' : '#6b7280';
+    return '<div style="display:flex;justify-content:flex-end;align-items:center;gap:8px;height:100%;padding:0 2px">'
+      +'<span style="font-size:14px;color:'+c+'">'+v1+'</span>'
+      +(v2?'<span style="font-size:14px;color:'+c2+'">'+v2+'</span>':'')
+      +'</div>';
+  }
+
+  // ── Row builder ───────────────────────────────────────────────────────────
+  _dbAllRows = []; _dbGrpRenderrs = [];
+  var _gi=0, _si=0, _curGK=null, _curSK=null;
+  function grp(lbl,clr){ _curGK='G'+(_gi++); _curSK=null; _dbAllRows.push({type:'grp',lbl:lbl,clr:clr||C1,grpKey:_curGK}); }
+  function sect(lbl,clr,dot,fn){ _curSK='S'+(_si++); _dbAllRows.push({type:'sect',lbl:lbl,clr:clr||C1,dot:dot,fn:fn,grpKey:_curGK,sectKey:_curSK}); }
+  function sub(lbl,dot,isRem,fn){ _dbAllRows.push({type:'sub',lbl:lbl,dot:dot,isRem:isRem||false,fn:fn,grpKey:_curGK,sectKey:_curSK}); }
+
+  // ── Daily Metrics ─────────────────────────────────────────────────────────
+  grp('Daily Metrics', C1);
+  if (wvMetricState.capacity) {
+    sect('Occupancy', C1, C1, function(d){ var cs=cmpSfx(wvCompare==='stly'?d.sdlyH+'%':wvCompare==='ly'?d.lyH+'%':wvCompare==='fcst'?d.fcstH+'%':''); return sCell(d.hotel+'%'+cs, sBar([{p:d.to,c:C1},{p:d.otherPct,c:C2}])); });
+    sub('Travel Distribution Hubs', C1, false, function(d){ return rCell(d.toRn+' rms',d.to+'%'); });
+    sub('Other Segments', C2, false, function(d){ return rCell(d.otherRms+' rms',d.otherPct+'%'); });
+    sub('STLY', CSTLY, false, function(d){ return rCell(d.sdlyRn+' rms',d.sdlyH+'%'); });
+    sub('Remaining', CREM, true, function(d){ return rCell(d.freeRms+' rms',Math.max(0,100-d.hotel)+'%',true); });
+  }
+  if (wvMetricState.onlineOffline) {
+    sect('Online / Offline', C1, C1, function(d){ return sCell(d.onlinePct+'%', sBar([{p:d.onlinePct,c:C1},{p:100-d.onlinePct,c:C2}])); });
+    sub('Online',  C1, false, function(d){ return rCell(d.onlinePct+'%'); });
+    sub('Offline', C2, false, function(d){ return rCell((100-d.onlinePct)+'%'); });
+  }
+  if (wvMetricState.adr) {
+    sect('ADR', C1, C1, function(d){ var cs=cmpSfx(wvCompare==='stly'?'$'+d.sdlyA:wvCompare==='ly'?'$'+d.lyA:wvCompare==='fcst'?'$'+d.fcstA:''); return sCell('$'+d.toAdr+cs, bar(d.adrBar,C1)); });
+    sub('T ADR',    C1,    false, function(d){ return rCell('$'+d.toAdr); });
+    sub('Hotel ADR', C2,   false, function(d){ return rCell('$'+d.adr); });
+    sub('STLY',     CSTLY, false, function(d){ return rCell('$'+d.sdlyA); });
+  }
+  if (wvMetricState.revenue) {
+    sect('Revenue', C1, C1, function(d){ var cs=cmpSfx(wvCompare==='stly'?d.fR(d.sdlyR):wvCompare==='ly'?d.fR(d.lyR):wvCompare==='fcst'?d.fR(d.fcstR):''); return sCell(d.fR(d.toRev)+cs, bar(d.revBar,C1)); });
+    sub('T Revenue',     C1,    false, function(d){ return rCell(d.fR(d.toRev)); });
+    sub('Hotel Revenue', C2,    false, function(d){ return rCell(d.fR(d.hnRev)); });
+    sub('STLY',          CSTLY, false, function(d){ return rCell(d.fR(d.sdlyR)); });
+  }
+
+  // ── More Metrics ──────────────────────────────────────────────────────────
+  var hasMore = wvMetricState.dm_rnSold||wvMetricState.dm_trevpar||wvMetricState.dm_pickup||
+    wvMetricState.dm_avgAdults||wvMetricState.dm_avgChildren||wvMetricState.dm_totalAdults||
+    wvMetricState.dm_totalChildren||wvMetricState.dm_totalGuests||wvMetricState.dm_avgLos||
+    wvMetricState.dm_avgLeadTime||wvMetricState.dm_availRooms||wvMetricState.dm_availGuar;
+  if (hasMore) {
+    grp('More Metrics', C1);
+    if (wvMetricState.dm_rnSold) {
+      sect('RN Sold', C1, C1, function(d){ var cs=cmpSfx(wvCompare==='stly'?String(d.sdlyRn):wvCompare==='ly'?String(d.lyRn):wvCompare==='fcst'?String(d.fcstRn):''); return sCell(d.toRn+cs, bar(Math.round(d.toRn/WV_CAP*100),C1)); });
+      sub('T RN',     C1,    false, function(d){ return rCell(d.toRn+' rms'); });
+      sub('Hotel RN', C2,    false, function(d){ return rCell(d.hnRn+' rms'); });
+      sub('STLY',     CSTLY, false, function(d){ return rCell(d.sdlyRn+' rms'); });
+    }
+    if (wvMetricState.dm_trevpar) {
+      sect('REVPAR', C1, C1, function(d){ var cs=cmpSfx(wvCompare==='stly'?'$'+d.sdlyRevpar:wvCompare==='ly'?'$'+d.lyRevpar:''); return sCell('$'+d.revpar+cs, bar(Math.min(90,Math.round(d.revpar/4)),C1)); });
+      sub('T REVPAR', C1,    false, function(d){ return rCell('$'+d.revpar); });
+      sub('STLY',     CSTLY, false, function(d){ return rCell('$'+d.sdlyRevpar); });
+    }
+    if (wvMetricState.dm_pickup) {
+      sect('Pickup', C1, C1, function(d){ return sCell('+'+d.pickup, bar(Math.min(90,d.pickup*3),C1)); });
+      sub('T Pickup',     C1, false, function(d){ return rCell('+'+d.pickup); });
+      sub('Hotel Pickup', C2, false, function(d){ return rCell('+'+d.hPickup); });
+    }
+    if (wvMetricState.dm_avgAdults) {
+      sect('Avg Adults', C1, C1, function(d){ return sCell(d.avgA, bar(Math.min(90,parseFloat(d.avgA)/3*100),C1)); });
+      sub('T', C1, false, function(d){ return rCell(d.avgA); });
+      sub('Hotel', C2, false, function(d){ return rCell(d.hAvgA); });
+    }
+    if (wvMetricState.dm_avgChildren) {
+      sect('Avg Children', C1, C1, function(d){ return sCell(d.avgC, bar(Math.min(90,parseFloat(d.avgC)/2*100),C1)); });
+      sub('T', C1, false, function(d){ return rCell(d.avgC); });
+      sub('Hotel', C2, false, function(d){ return rCell(d.hAvgC); });
+    }
+    if (wvMetricState.dm_totalAdults) {
+      sect('Total Adults', C1, C1, function(d){ return sCell(String(d.totAT), bar(Math.min(90,Math.round(d.totAT/500*100)),C1)); });
+      sub('T', C1, false, function(d){ return rCell(String(d.totAT)); });
+      sub('Hotel', C2, false, function(d){ return rCell(String(d.totAH)); });
+    }
+    if (wvMetricState.dm_totalChildren) {
+      sect('Total Children', C1, C1, function(d){ return sCell(String(d.totCT), bar(Math.min(90,Math.round(d.totCT/100*100)),C1)); });
+      sub('T', C1, false, function(d){ return rCell(String(d.totCT)); });
+      sub('Hotel', C2, false, function(d){ return rCell(String(d.totCH)); });
+    }
+    if (wvMetricState.dm_totalGuests) {
+      sect('Total Guests', C1, C1, function(d){ return sCell(String(d.totG), bar(Math.min(90,Math.round(d.totG/600*100)),C1)); });
+      sub('T', C1, false, function(d){ return rCell(String(d.totG)); });
+      sub('Hotel', C2, false, function(d){ return rCell(String(d.hTotG)); });
+    }
+    if (wvMetricState.dm_avgLos) {
+      sect('Avg LOS', C1, C1, function(d){ return sCell(d.avgLos, bar(Math.min(90,parseFloat(d.avgLos)/10*100),C1)); });
+      sub('T', C1, false, function(d){ return rCell(d.avgLos); });
+      sub('Hotel', C2, false, function(d){ return rCell(d.hLos); });
+    }
+    if (wvMetricState.dm_avgLeadTime) {
+      sect('Lead Time', C1, C1, function(d){ return sCell(d.avgLead, bar(Math.min(90,parseInt(d.avgLead)/90*100),C1)); });
+      sub('T', C1, false, function(d){ return rCell(d.avgLead); });
+      sub('Hotel', C2, false, function(d){ return rCell(d.hLead); });
+    }
+    if (wvMetricState.dm_availRooms) {
+      sect('Avail Rooms', C1, C1, function(d){ return sCell(d.availRooms+' rm', bar(Math.min(90,Math.round(d.availRooms/WV_CAP*100)),C1)); });
+    }
+    if (wvMetricState.dm_availGuar) {
+      sect('Avail Guar.', C1, C1, function(d){ return sCell(d.availGuar+' rm', bar(Math.min(90,Math.round(d.availGuar/20*100)),C1)); });
+    }
+  }
+
+  // ── Meal Plans ────────────────────────────────────────────────────────────
+  if (wvMetricState.mealsSummary) {
+    grp('Meal Plans', C1);
+    [['All Inclusive','aiPct',C1],['Bed & Breakfast','bbPct',C2],['Half Board','hbPct',C3],['Room Only','roPct',C4]].forEach(function(mp){
+      var k=mp[1], c=mp[2];
+      sect(mp[0], c, c, (function(k,c){ return function(d){ return sCell(d[k]+'%', bar(d[k],c)); }; })(k,c));
+      sub('Hotel %', c, false, (function(k){ return function(d){ return rCell(d[k]+'%'); }; })(k));
+      sub('TO %', C2, false, (function(k){ return function(d){ return rCell(Math.max(0,Math.round(d[k]*d.toPct*0.9))+'%'); }; })(k));
+    });
+    sect('Summary', C1, C1, function(d){
+      return sBar([{p:d.aiPct,c:C1},{p:d.bbPct,c:C2},{p:d.hbPct,c:C3},{p:d.roPct,c:C4}])
+        +'<div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:3px">'
+        +'<span style="font-size:12px;color:'+C1+'">AI '+d.aiPct+'%</span>'
+        +'<span style="font-size:12px;color:'+C2+'">BB '+d.bbPct+'%</span>'
+        +'<span style="font-size:12px;color:'+C3+'">HB '+d.hbPct+'%</span>'
+        +'<span style="font-size:12px;color:#6b7280">RO '+d.roPct+'%</span></div>';
+    });
+  }
+
+  // ── Business Mix ──────────────────────────────────────────────────────────
+  if (wvMetricState.bizMix) {
+    grp('Business Mix', C1);
+    sect('Channel Mix', C1, C1, function(d){
+      return sBar([{p:d.toMix,c:C1},{p:d.dirMix,c:C2},{p:d.otaMix,c:C3},{p:d.otherMix,c:'#9ca3af'}])
+        +'<div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:3px">'
+        +'<span style="font-size:12px;color:'+C1+'">TO '+d.toMix+'%</span>'
+        +'<span style="font-size:12px;color:'+C2+'">D '+d.dirMix+'%</span>'
+        +'<span style="font-size:12px;color:'+C3+'">OTA '+d.otaMix+'%</span>'
+        +'<span style="font-size:12px;color:#9ca3af">Oth '+d.otherMix+'%</span></div>';
+    });
+    sub('TO', C1, false, function(d){ return rCell(d.toMix+'%'); });
+    sub('Direct', C2, false, function(d){ return rCell(d.dirMix+'%'); });
+    sub('OTA', C3, false, function(d){ return rCell(d.otaMix+'%'); });
+    sub('Other', '#9ca3af', false, function(d){ return rCell(d.otherMix+'%'); });
+  }
+
+  // ── Room Availability ─────────────────────────────────────────────────────
+  if (wvMetricState.avail || wvMetricState.availAlloc) {
+    grp('Room Availability', C1);
+    RT_NAMES.forEach(function(name, rtI) {
+      var inv = RT_CAPS[rtI];
+      sect(name, C1, C1, (function(inv,rtI){ return function(d) {
+        var sold=Math.min(inv,Math.floor(inv*d.hotel/110));
+        var toS=Math.min(sold,Math.round(sold*d.to/Math.max(1,d.hotel)));
+        var otS=sold-toS;
+        var alRem=Math.max(0,Math.floor(inv*0.8+Math.abs((d.dm*(rtI+3)+d.dd*(rtI+5))%15))-toS);
+        var avRm=Math.max(0,inv-sold);
+        var toP=Math.round(toS/inv*100),otP=Math.round(otS/inv*100),alP=Math.round(alRem/inv*100);
+        var avClr=avRm===0?'#dc2626':C1;
+        return '<div style="font-size:14px;color:'+avClr+';margin-bottom:5px">'
+          +(avRm===0?'SOLD OUT':avRm+' avail')
+          +'<span style="font-size:12px;color:#9ca3af;margin-left:4px">/ '+inv+'</span></div>'
+          +sBar([{p:toP,c:C1},{p:otP,c:C2},{p:alP,c:C3},{p:Math.max(0,100-toP-otP-alP),c:C4}]);
+      }; })(inv,rtI));
+      sub('TO Sold', C1, false, (function(inv){ return function(d){ var s=Math.min(inv,Math.floor(inv*d.hotel/110)); return rCell(Math.min(s,Math.round(s*d.to/Math.max(1,d.hotel)))+' rm'); }; })(inv));
+      sub('Other',   C2, false, (function(inv){ return function(d){ var s=Math.min(inv,Math.floor(inv*d.hotel/110)); var t=Math.min(s,Math.round(s*d.to/Math.max(1,d.hotel))); return rCell((s-t)+' rm'); }; })(inv));
+      sub('Available', C4, false, (function(inv){ return function(d){ return rCell(Math.max(0,inv-Math.min(inv,Math.floor(inv*d.hotel/110)))+' rm'); }; })(inv));
+    });
+  }
+
+  // ── Travel Co. Rates ──────────────────────────────────────────────────────
+  if (wvMetricState.toRates) {
+    grp('Travel Co. Rates', C1);
+    TO_NAMES.forEach(function(name, toI) {
+      sect(name, C1, C1, (function(toI){ return function(d) {
+        var toRate=d.adr-15+Math.abs((d.dm*(toI+3)+d.dd*(toI+5))%50);
+        var toAllot=5+Math.abs((d.dm*(toI+2)+d.dd*(toI+3))%20);
+        var toUsed=Math.max(0,toAllot-Math.floor(d.hotel/20));
+        var promoTxt=d.isEbbDay?'EBB 10%':'Contract', promoClr=d.isEbbDay?'#16a34a':'#2563eb';
+        return '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">'
+          +'<span style="font-size:14px;color:#111827">$'+toRate+'</span>'
+          +'<span style="font-size:12px;color:#9ca3af">'+(toAllot-toUsed)+'r</span>'
+          +'<span style="font-size:11px;font-weight:700;padding:1px 5px;border-radius:3px;background:'+promoClr+'22;color:'+promoClr+';border:1px solid '+promoClr+'44">'+promoTxt+'</span></div>'
+          +bar(Math.round(toUsed/toAllot*100),C1);
+      }; })(toI));
+    });
+    sect('Base Rate', C1, C1, function(d){ return sCell('$'+d.baseRate, bar(Math.min(90,Math.round(d.baseRate/280*100)),C1)); });
+  }
+
+  // ── Group header renderer ─────────────────────────────────────────────────
+  function GrpRenderer() { this._iconEl=null; this._grpKey=null; }
+  GrpRenderer.prototype.init = function(p) {
+    var self=this, r=p.data;
+    this._grpKey=r._grpKey;
+    var isC=!!_wbCollapsed[r._grpKey], clr=r._clr;
+    this.gui=document.createElement('div');
+    this.gui.style.cssText='display:flex;align-items:center;gap:9px;width:100%;height:100%;box-sizing:border-box;cursor:pointer;user-select:none;padding:0 14px;background:#f8f9fd;border-left:3px solid '+clr+';border-top:1px solid #dde1e2;border-bottom:1px solid #dde1e2;';
+    var iconWrap=document.createElement('span');
+    this._iconEl=iconWrap;
+    iconWrap.style.cssText='display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;width:20px;height:20px;border-radius:5px;background:'+clr+'22;color:'+clr+';box-shadow:0 1px 3px '+clr+'33;transform:rotate('+(isC?'-90deg':'0deg')+');transition:transform .2s ease;';
+    iconWrap.innerHTML='<svg viewBox="0 0 10 6" width="9" height="9" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1l4 4 4-4"/></svg>';
+    var label=document.createElement('span');
+    label.style.cssText='font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.65px;color:#1e2d3a;';
+    label.textContent=r._lbl;
+    this.gui.appendChild(iconWrap); this.gui.appendChild(label);
+    this.gui.addEventListener('click', function(){ _toggleDBGrp(r._grpKey); });
+    _dbGrpRenderrs.push(self);
+  };
+  GrpRenderer.prototype._syncChev=function(){ if(this._iconEl) this._iconEl.style.transform='rotate('+(_wbCollapsed[this._grpKey]?'-90deg':'0deg')+')'; };
+  GrpRenderer.prototype.getGui=function(){ return this.gui; };
+  GrpRenderer.prototype.destroy=function(){ var i=_dbGrpRenderrs.indexOf(this); if(i!==-1) _dbGrpRenderrs.splice(i,1); };
+
+  // ── Day header factory ────────────────────────────────────────────────────
+  function makeDayHeader(dv, isActive, isToday, isLocked, dba, evts) {
+    var dm=dv.month, dd=dv.day;
+    var bg=isLocked?'#374151':isActive?'#006461':isToday?'#125756':'#1a5e5b';
+    var tb=isActive?'3px solid rgba(255,255,255,0.5)':isToday?'3px solid rgba(255,255,255,0.3)':isLocked?'3px solid #dc2626':'3px solid transparent';
+    var dc=isLocked?'#fca5a5':'#fff', sc=isLocked?'rgba(252,165,165,0.85)':'rgba(255,255,255,0.75)';
+    var dbaStr=dba===0?'Today':dba>0?dba+'d':'';
+    function H(){}
+    H.prototype.init=function(){ this.gui=document.createElement('div'); this.gui.style.cssText='background:'+bg+';width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4px 6px;box-sizing:border-box;gap:2px;border-top:'+tb+';border-right:1px solid rgba(255,255,255,0.12);'; this.gui.innerHTML='<div style="font-weight:700;font-size:13px;color:'+dc+'">'+(isLocked?'🔒 ':'')+DOW_SHORT[new Date(2026,dm-1,dd).getDay()]+' '+dd+'</div><div style="font-size:11px;color:'+sc+';display:flex;align-items:center;gap:4px"><span>'+MNAMES_S[dm]+'</span>'+(dbaStr?'<span style="background:rgba(255,255,255,0.2);border-radius:3px;padding:0 4px;font-size:10px;color:#fff">'+dbaStr+'</span>':'')+(evts?'<span style="width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.9);display:inline-block"></span>':'')+'</div>'; };
+    H.prototype.getGui=function(){ return this.gui; };
+    H.prototype.destroy=function(){};
+    return H;
+  }
+
+  // ── Column defs ───────────────────────────────────────────────────────────
+  var colDefs = [];
+  colDefs.push({
+    field:'_lbl', headerName:'', pinned:'left', lockPinned:true, width:210,
+    suppressMovable:true, resizable:false,
+    cellRenderer: function(p) {
+      var r=p.data;
+      if (r._type==='sect') {
+        var el=document.createElement('div');
+        el.style.cssText='display:flex;align-items:center;gap:6px;cursor:pointer;width:100%;height:100%;box-sizing:border-box;user-select:none;padding:0 10px 0 8px;';
+        var iw=document.createElement('span');
+        var isC=!!_wbCollapsed[r._sectKey];
+        iw.style.cssText='display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;width:16px;height:16px;border-radius:4px;background:'+r._clr+'18;color:'+r._clr+';transform:rotate('+(isC?'-90deg':'0deg')+');transition:transform .2s ease;';
+        iw.innerHTML='<svg viewBox="0 0 10 6" width="8" height="8" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1l4 4 4-4"/></svg>';
+        var lbl=document.createElement('span');
+        lbl.style.cssText='font-size:14px;font-weight:400;color:#1c1c1c;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:Lato,sans-serif;';
+        lbl.textContent=r._lbl;
+        el.appendChild(iw); el.appendChild(lbl);
+        el.addEventListener('click', function(){ _toggleDBSect(r._sectKey); });
+        return el;
+      }
+      var el2=document.createElement('div');
+      el2.style.cssText='display:flex;align-items:center;gap:5px;padding:0 8px 0 26px;width:100%;height:100%;box-sizing:border-box;font-family:Lato,sans-serif;';
+      if (r._dot) { var dot=document.createElement('span'); dot.style.cssText='width:9px;height:9px;border-radius:2px;background:'+r._dot+';flex-shrink:0;display:inline-block;'; el2.appendChild(dot); }
+      var lb2=document.createElement('span');
+      lb2.style.cssText='font-size:14px;color:'+(r._isRem?'#388c3f':'#1c1c1c')+';font-weight:'+(r._isRem?'600':'400')+';white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
+      lb2.textContent=r._lbl; el2.appendChild(lb2);
+      return el2;
+    },
+    cellStyle: function(p) {
+      var r=p.data;
+      if (r._type==='sect') return {background:'#fff',borderBottom:'1px solid #dde1e2',borderRight:'2px solid #dde1e2',display:'flex',alignItems:'center'};
+      return {background:r._isRem?'#fff8f5':'#fff',borderBottom:'1px solid #f3f4f6',borderRight:'2px solid #dde1e2'};
+    },
+  });
+
+  days.forEach(function(dv, di) {
+    var dm=dv.month, dd=dv.day;
+    var isToday=dm===3&&dd===9, isActive=dm===month&&dd===activeDay;
+    var isLocked=LOCKED_DAYS.has(dm+'-'+dd);
+    var dt=new Date(2026,dm-1,dd), dba=Math.round((dt-TODAY_WV)/86400000);
+    var evts=(typeof CAL_EVENTS!=='undefined'&&CAL_EVENTS[dm+'-'+dd])?CAL_EVENTS[dm+'-'+dd]:null;
+    colDefs.push({
+      field:'day'+di, flex:1, minWidth:110, suppressMovable:true, resizable:false,
+      headerComponent: makeDayHeader(dv,isActive,isToday,isLocked,dba,evts),
+      cellRenderer: function(p) {
+        var r=p.data; if(r._type==='grp') return '';
+        var d=dd7[di]; return r._fn?r._fn(d):'';
+      },
+      cellStyle: function(p) {
+        var r=p.data;
+        if (r._type==='sect') return {background:'#fff',padding:'8px 10px',borderBottom:'1px solid #dde1e2',borderRight:'1px solid #e5e7eb'};
+        return {background:r._isRem?'#fff8f5':'#fff',padding:'0 10px',borderBottom:'1px solid #f3f4f6',borderRight:'1px solid #e5e7eb',display:'flex',alignItems:'center'};
+      },
+    });
+  });
+
+  // ── Create grid ───────────────────────────────────────────────────────────
+  _dailyBGridApi = AG.createGrid(wrapper, {
+    columnDefs: colDefs,
+    rowData: _getDBVisibleRows(),
+    headerHeight: 50,
+    domLayout: 'autoHeight',
+    suppressHorizontalScroll: false,
+    alwaysShowHorizontalScroll: true,
+    suppressCellFocus: true,
+    suppressRowClickSelection: true,
+    getRowHeight: function(p) {
+      if (p.data._type==='grp')  return 40;
+      if (p.data._type==='sect') return 58;
+      return 33;
+    },
+    isFullWidthRow: function(p) { return p.rowNode.data._type==='grp'; },
+    fullWidthCellRenderer: GrpRenderer,
+    defaultColDef: { sortable:false, resizable:false },
+    getRowStyle: function(p) {
+      var t=p.data._type;
+      if (t==='grp')  return {borderTop:'1px solid #dde1e2',borderBottom:'1px solid #dde1e2'};
+      if (t==='sect') return {background:'#fff'};
+      return {background:p.data._isRem?'#fff8f5':'#fff'};
+    },
+  });
 }
 
 // ── Daily H View — horizontal layout with sticky label column ─────────────────
@@ -5524,9 +5954,13 @@ function buildWeekGrid(month, weekStart, activeDay) {
     initDailyHGrid(days, month, activeDay, grid);
     return;
   }
+  if (wvGroupBy !== 'dailyB' && _dailyBGridApi) {
+    try { _dailyBGridApi.destroy(); } catch(e) {}
+    _dailyBGridApi = null;
+  }
   if (wvGroupBy === 'dailyB') {
-    grid.style.cssText = 'display:flex;flex-direction:column;overflow-x:auto;';
-    grid.innerHTML = buildDailyBView(days, month, activeDay);
+    grid.style.cssText = '';
+    initDailyBGrid(days, month, activeDay, grid);
     return;
   }
   grid.style.cssText = '';

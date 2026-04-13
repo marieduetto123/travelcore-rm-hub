@@ -1069,6 +1069,85 @@ body.dark .daily-h-ag-wrap {
   --ag-row-border-color: #1e3c3f;
 }
 
+/* ── Daily-B AG Grid ── */
+.daily-b-ag-wrap {
+  grid-column: 1 / -1;
+  width: 100%;
+  min-height: 200px;
+  --ag-font-family: 'Lato', sans-serif;
+  --ag-font-size: 14px;
+  --ag-header-background-color: #1a5e5b;
+  --ag-row-border-color: #dde1e2;
+  --ag-border-color: #dde1e2;
+  --ag-cell-horizontal-border: solid #dde1e2;
+  --ag-column-border: solid #dde1e2;
+  --ag-header-column-separator-display: block;
+  --ag-header-column-separator-color: rgba(255,255,255,0.15);
+  --ag-wrapper-border-radius: 0;
+  --ag-wrapper-border: none;
+  --ag-odd-row-background-color: #fff;
+  --ag-row-hover-color: rgba(0,100,97,0.04);
+}
+.daily-b-ag-wrap .ag-header-cell,
+.daily-b-ag-wrap .ag-header-group-cell {
+  background: #1a5e5b !important;
+}
+.daily-b-ag-wrap .ag-header-row {
+  background: #1a5e5b !important;
+}
+.daily-b-ag-wrap .ag-header {
+  border-bottom: 1px solid rgba(255,255,255,0.15) !important;
+}
+.daily-b-ag-wrap .ag-header-cell {
+  padding: 0 !important;
+}
+.daily-b-ag-wrap .ag-pinned-left-header {
+  background: #1a3336 !important;
+  border-right: 2px solid rgba(255,255,255,0.15) !important;
+}
+.daily-b-ag-wrap .ag-pinned-left-header .ag-header-cell-text {
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+  color: rgba(255,255,255,0.85) !important;
+}
+.daily-b-ag-wrap .ag-pinned-left-header .ag-header-cell {
+  padding: 0 16px !important;
+}
+.daily-b-ag-wrap .ag-header-cell-text {
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  color: #fff !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+}
+.daily-b-ag-wrap .ag-pinned-left-cols-container .ag-cell {
+  border-right: 2px solid #dde1e2 !important;
+}
+.daily-b-ag-wrap .ag-cell {
+  overflow: visible;
+  padding: 4px 8px;
+  border-right: 1px solid #dde1e2 !important;
+}
+.daily-b-ag-wrap .ag-full-width-row .ag-cell-wrapper {
+  padding: 0;
+}
+.daily-b-ag-wrap .ag-row {
+  border-bottom: 1px solid #dde1e2 !important;
+}
+.daily-b-ag-wrap .ag-full-width-row {
+  border-top: 1px solid #dde1e2 !important;
+  border-bottom: 1px solid #dde1e2 !important;
+}
+body.dark .daily-b-ag-wrap {
+  --ag-background-color: #122a2d;
+  --ag-header-background-color: #1a3336;
+  --ag-odd-row-background-color: #111a1a;
+  --ag-border-color: #254548;
+  --ag-row-border-color: #1e3c3f;
+}
+
 /* ── Daily-H Metric Reorder Modal ── */
 .dh-reorder-item {
   display: flex;
