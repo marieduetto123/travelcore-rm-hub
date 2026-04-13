@@ -7189,15 +7189,18 @@ document.querySelectorAll('.wv-groupby-btn').forEach(function(btn) {
   });
 });
 
-// Week nav + back
-document.getElementById('wvBack')?.addEventListener('click', () => {
+// Return to monthly calendar view
+window.goToMonthView = function() {
   document.getElementById('demand-calendar').style.display = '';
   document.getElementById('weekView').classList.remove('visible');
   var backArrow = document.getElementById('wvBack');
   if (backArrow) backArrow.style.display = 'none';
   var cmpWrap = document.getElementById('wvCmpWrap');
   if (cmpWrap) cmpWrap.style.display = 'none';
-});
+};
+
+// Week nav + back (legacy arrow in cal-header also calls goToMonthView)
+document.getElementById('wvBack')?.addEventListener('click', goToMonthView);
 document.getElementById('wvPrev')?.addEventListener('click', () => {
   const dim = [0,31,28,31,30,31,30,31,31,30,31,30,31];
   wvWeekStart -= 1;
