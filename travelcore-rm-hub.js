@@ -3365,12 +3365,24 @@ function buildDailyBView(days, month, activeDay) {
   function trendBadge(curr, comp) {
     if (wvCompare === 'none' || comp == null || isNaN(curr) || isNaN(comp) || comp === 0) return '';
     var diff = curr - comp;
-    if (diff === 0) return '';
-    var pct = Math.round(Math.abs(diff) / Math.abs(comp) * 100);
-    var up = diff > 0;
-    var clr = up ? '#16a34a' : '#dc2626';
-    var bg  = up ? '#dcfce7' : '#fee2e2';
-    return '<span style="font-size:11px;font-weight:700;color:'+clr+';background:'+bg+';border-radius:4px;padding:1px 5px;flex-shrink:0;white-space:nowrap;margin-left:4px">'+(up?'↑':'↓')+' '+pct+'%</span>';
+    var pct  = Math.round(Math.abs(diff) / Math.abs(comp) * 100);
+    var base = 'font-size:11px;font-weight:600;border-radius:4px;padding:2px 6px;flex-shrink:0;white-space:nowrap;margin-left:4px;display:inline-flex;align-items:center;gap:3px;line-height:1.2;';
+    if (diff === 0) {
+      // Neutral — gray dash
+      return '<span style="'+base+'color:#6b7280;background:#f3f4f6">'
+        +'<svg width="9" height="2" viewBox="0 0 9 2" fill="none"><rect width="9" height="2" rx="1" fill="#6b7280"/></svg>'
+        +' '+pct+'%</span>';
+    }
+    if (diff > 0) {
+      // Up — green
+      return '<span style="'+base+'color:#059669;background:#d1fae5">'
+        +'<svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M4.5 7.5V1.5M1.5 4.5l3-3 3 3" stroke="#059669" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+        +' '+pct+'%</span>';
+    }
+    // Down — red
+    return '<span style="'+base+'color:#dc2626;background:#fee2e2">'
+      +'<svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M4.5 1.5v6M1.5 4.5l3 3 3-3" stroke="#dc2626" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+      +' '+pct+'%</span>';
   }
 
   function wbStackBar(segs) {
