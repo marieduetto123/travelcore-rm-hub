@@ -5955,13 +5955,9 @@ function buildWeekGrid(month, weekStart, activeDay) {
     initDailyHGrid(days, month, activeDay, grid);
     return;
   }
-  if (wvGroupBy !== 'dailyB' && _dailyBGridApi) {
-    try { _dailyBGridApi.destroy(); } catch(e) {}
-    _dailyBGridApi = null;
-  }
   if (wvGroupBy === 'dailyB') {
-    grid.style.cssText = '';
-    initDailyBGrid(days, month, activeDay, grid);
+    grid.style.cssText = 'display:flex;flex-direction:column;overflow-x:auto;';
+    grid.innerHTML = buildDailyBView(days, month, activeDay);
     return;
   }
   grid.style.cssText = '';
