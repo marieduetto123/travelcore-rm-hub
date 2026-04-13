@@ -2284,6 +2284,15 @@ body.dark .wv-range { color: var(--text-primary); }
   user-select: none; height: 44px; min-height: 44px;
   overflow: hidden; flex-wrap: nowrap;
 }
+/* Accordion headers inside the day-popup metrics group */
+.wv-acc-group .wv-acc-hdr {
+  background: #f5f5f5 !important; border: 1px solid #e0e0e0 !important;
+  border-radius: 4px !important; padding: 8px !important;
+  height: auto !important; min-height: unset !important;
+}
+.wv-acc-group .wv-acc-hdr:hover { background: #ededee !important; }
+.wv-acc-group .wv-acc-title { font-size: 14px !important; color: #006461 !important; font-weight: 400 !important; }
+.wv-acc-group .wv-acc-sect.wv-acc-open .wv-acc-hdr { border-bottom-color: #e0e0e0 !important; }
 .wv-acc-sect + .wv-acc-sect > .wv-acc-hdr { border-top: none; }
 .wv-acc-hdr:hover { background: #f0fffe; }
 body.dark .wv-acc-hdr { background: #1a2f31; border-color: #2a4545; }
@@ -2567,14 +2576,14 @@ body.dark .wv-acc-title { color: #fff; }
   display: flex; flex-wrap: wrap; gap: 2px; margin: 2px 0 3px;
 }
 .wv-ref-tag {
-  font-size: 7px; font-weight: 700; padding: 1px 5px;
-  border-radius: 20px; white-space: nowrap; line-height: 1.5;
+  font-size: 9px; font-weight: 700; padding: 2.5px 5px;
+  border-radius: 12px; white-space: nowrap; line-height: 1.5;
   font-family: 'Lato', sans-serif;
-  background: transparent; border: 1px solid currentColor;
+  background: transparent; border: 0.65px solid currentColor;
 }
-.wv-ref-sdly { color: #6b7280; border-color: #d1d5db; }
-.wv-ref-ly   { color: #1d4ed8; border-color: #93c5fd; }
-.wv-ref-fcst { color: #15803d; border-color: #86efac; }
+.wv-ref-sdly { color: #00298C; border-color: #00298C; }
+.wv-ref-ly   { color: #28592C; border-color: #28592C; }
+.wv-ref-fcst { color: #991F1F; border-color: #991F1F; }
 .wv-ref-hotel { color: #6d28d9; border-color: #c4b5fd; }
 
 /* ── Color dots in metrics dropdown ────────────────────────── */
@@ -2605,7 +2614,8 @@ body.dark .wv-acc-title { color: #fff; }
 /* ── Occupancy stacked bar ──────────────────────────────────── */
 .wv-occ-bar-wrap { margin-bottom: 5px; }
 .wv-occ-bar-labels { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 2px; }
-.wv-occ-total { font-size: 10px; font-weight: 700; color: #111827; }
+.wv-occ-total { font-size: 14px; font-weight: 700; color: #111827; }
+.wv-occ-bar-labels .wv-q-label { font-size: 14px !important; }
 .wv-occ-bar-track {
   display: flex; height: 7px; border-radius: 4px; overflow: hidden;
   background: #e5e7eb; width: 100%;
@@ -2621,19 +2631,22 @@ body.dark .wv-acc-title { color: #fff; }
 .wv-occ-cap { margin-left: auto; color: #9ca3af; }
 
 /* ── Occupancy room breakdown ───────────────────────────────── */
-.wv-occ-breakdown { margin-top: 5px; display: flex; flex-direction: column; gap: 2px; }
+.wv-occ-breakdown { margin-top: 5px; display: flex; flex-direction: column; gap: 2px; padding-top: 3px; }
 .wv-occ-br-row {
-  display: grid; grid-template-columns: 8px 1fr auto auto;
-  align-items: center; gap: 4px; font-family: 'Lato', sans-serif;
+  display: grid; grid-template-columns: 9px 1fr auto auto;
+  align-items: start; gap: 4px; font-family: 'Lato', sans-serif;
+  border-bottom: 1px solid #dde1e2; padding-bottom: 8px;
 }
-.wv-occ-br-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
-.wv-occ-br-lbl { font-size: 8px; color: #374151; }
+.wv-occ-br-row:last-child { border-bottom: none; padding-bottom: 0; }
+.wv-occ-br-dot { width: 9px; height: 9px; border-radius: 2px; flex-shrink: 0; margin-top: 2px; }
+.wv-occ-br-lbl { font-size: 12px; color: #1c1c1c; }
 .wv-occ-br-rms { font-size: 8px; font-weight: 700; color: #111827; text-align: right; }
 .wv-occ-br-pct { font-size: 7.5px; color: #6b7280; text-align: right; min-width: 24px; }
-.wv-occ-br-remain { border-top: 1px solid #e5e7eb; margin-top: 2px; padding-top: 2px; }
-.wv-occ-br-remain .wv-occ-br-lbl { color: #15803d; font-weight: 600; }
-.wv-occ-br-remain .wv-occ-br-pct { color: #15803d; }
-.wv-remain-count { font-size: 9px !important; font-weight: 800 !important; color: #15803d !important; }
+.wv-occ-br-remain { }
+.wv-occ-br-remain .wv-occ-br-lbl { color: #388C3F; font-weight: 600; }
+.wv-occ-br-remain .wv-occ-br-rms { color: #388C3F; }
+.wv-occ-br-remain .wv-occ-br-pct { color: #388C3F; }
+.wv-remain-count { font-size: 8px !important; font-weight: 700 !important; color: #388C3F !important; }
 
 /* ── Compare tab view ──────────────────────────────────────── */
 .wv-compare {
