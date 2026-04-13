@@ -2118,11 +2118,6 @@ body.dark .wv-range { color: var(--text-primary); }
   align-items: stretch;
 }
 
-/* Section panel header spacer — stays fixed with sticky col headers */
-.wvsp-hdr-spacer {
-  position: sticky; top: 40px; z-index: 4;
-  background: #fff; border-bottom: 2px solid #006461; flex-shrink: 0;
-}
 
 /* Left section panel */
 .wv-section-panel {
@@ -2207,7 +2202,7 @@ body.dark .wv-range { color: var(--text-primary); }
   display: flex; align-items: center; gap: 6px;
   background: #1a5e5b;
   border-bottom: none; flex-shrink: 0;
-  position: sticky; top: 40px; z-index: 5;
+  position: relative;
 }
 .wv-col-hdr.closed { background: #374151 !important; opacity: 0.9; }
 

@@ -5841,7 +5841,7 @@ function buildWeekGrid(month, weekStart, activeDay) {
   var firstColHdr = grid.querySelector('.wv-col-hdr');
   var colHdrH = firstColHdr ? Math.round(firstColHdr.getBoundingClientRect().height) : 0;
 
-  panel.innerHTML = '<div class="wvsp-hdr-spacer" style="height:' + colHdrH + 'px"></div>'
+  panel.innerHTML = '<div class="wvsp-hdr-spacer" style="height:' + colHdrH + 'px;flex-shrink:0;border-bottom:2px solid #006461"></div>'
     + sectionItems.map(function(item) {
     var collapsed = !!wvCollapsed[item.sec];
     return '<div class="wvsp-item' + (collapsed ? '' : ' wvsp-open') + '" onclick="wvToggleSection(\'' + item.sec + '\')" data-section="' + item.sec + '">'
