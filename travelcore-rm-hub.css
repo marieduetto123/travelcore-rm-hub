@@ -1983,14 +1983,7 @@ body.dark .wv-groupby-btn.active { background: #1a2f31; color: #5ceade; }
 }
 .wv-cmp-select:focus { border-color: #006461; box-shadow: 0 0 0 2px rgba(0,100,97,0.15); }
 
-/* Inline compare value chip */
-.wv-cmp-chip {
-  font-size: 11px; font-weight: 600; margin-left: 5px;
-  padding: 1px 4px; border-radius: 4px;
-}
-.wv-cmp-chip.stly { color: #00298C; background: #eef0fb; }
-.wv-cmp-chip.ly   { color: #28592C; background: #edf7ee; }
-.wv-cmp-chip.fcst { color: #991F1F; background: #fdf0f0; }
+/* (wv-cmp-chip removed — replaced by wv-delta-chip in occupancy section) */
 
 /* ── Group accordion ── */
 .wv-group-acc .wv-acc-hdr { padding: 5px 8px; gap: 5px; }
@@ -2376,8 +2369,8 @@ body.dark .wv-acc-title { color: #fff; }
 .wv-dm-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1px; }
 .wv-dm-label { font-size: 9px; color: #9e9e9e; font-weight: 400; }
 .wv-dm-val { font-size: 10px; color: #181d1f; font-weight: 700; }
-.wv-dm-bar-wrap { position: relative; height: 7px; background: #e5e7eb; border-radius: 4px; overflow: visible; margin-bottom: 1px; }
-.wv-dm-bar-fill { height: 7px; border-radius: 4px; position: absolute; top: 0; left: 0; }
+.wv-dm-bar-wrap { position: relative; height: 12px; background: #e5e7eb; border-radius: 12px; overflow: visible; margin-bottom: 1px; }
+.wv-dm-bar-fill { height: 12px; border-radius: 12px; position: absolute; top: 0; left: 0; }
 .wv-dm-sdly-mark { position: absolute; top: -2px; width: 2px; height: 8px; background: #aaa; border-radius: 1px; }
 .wv-dm-bottom { display: flex; justify-content: space-between; align-items: baseline; }
 .wv-dm-sdly { font-size: 7px; color: #bbb; font-weight: 400; }
@@ -2646,13 +2639,30 @@ body.dark .wv-acc-title { color: #fff; }
 }
 .wv-comp-pill:hover:not(.active) { border-color: #006461; color: #006461; }
 
-/* ── Occupancy stacked bar ──────────────────────────────────── */
+/* ── Metric bar + header (all metrics) ──────────────────────── */
 .wv-occ-bar-wrap { margin-bottom: 5px; }
-.wv-occ-bar-labels { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 2px; }
-.wv-occ-total { font-size: 14px; font-weight: 700; color: #111827; }
-.wv-occ-bar-labels .wv-q-label { font-size: 14px !important; }
+.wv-occ-bar-labels {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;
+}
+.wv-occ-bar-labels .wv-q-label { font-size: 14px !important; color: #6b7280; font-weight: 400; }
+/* Right-side header block: value + optional delta chip */
+.wv-hdr-right { display: flex; align-items: center; gap: 16px; }
+.wv-occ-total { font-size: 14px; font-weight: 400; color: #111827; }
+/* Inline compare value (" / 97%") */
+.wv-cmp-sep  { color: #9ca3af; }
+.wv-cmp-val-txt { color: #d32f2f; font-size: 14px; }
+/* Delta chip */
+.wv-delta-chip {
+  display: flex; align-items: center; gap: 1px;
+  height: 20px; padding: 2px 6px; border-radius: 44px;
+  font-family: 'Lato', sans-serif; font-size: 12px; font-weight: 400;
+  flex-shrink: 0; white-space: nowrap;
+}
+.wv-delta-chip.neg { background: #ffebee; color: #d32f2f; }
+.wv-delta-chip.pos { background: #e8f5e9; color: #2e7d32; }
+/* Bar track */
 .wv-occ-bar-track {
-  display: flex; height: 7px; border-radius: 4px; overflow: hidden;
+  display: flex; height: 12px; border-radius: 12px; overflow: hidden;
   background: #e5e7eb; width: 100%;
 }
 .wv-occ-seg { height: 100%; transition: width 0.2s; }
@@ -2665,27 +2675,29 @@ body.dark .wv-acc-title { color: #fff; }
 .wv-occ-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 2px; vertical-align: middle; }
 .wv-occ-cap { margin-left: auto; color: #9ca3af; }
 
-/* ── Occupancy room breakdown ───────────────────────────────── */
-.wv-occ-breakdown { margin-top: 5px; display: flex; flex-direction: column; gap: 2px; padding-top: 3px; }
+/* ── Breakdown rows ─────────────────────────────────────────── */
+.wv-occ-breakdown { margin-top: 5px; display: flex; flex-direction: column; gap: 0; padding-top: 3px; }
 .wv-occ-br-row {
   display: flex; align-items: flex-start; justify-content: space-between;
   gap: 4px; font-family: 'Lato', sans-serif;
-  border-bottom: 1px solid #dde1e2; padding-bottom: 8px;
+  border-bottom: 1px solid #dde1e2;
+  padding-top: 4px; padding-bottom: 8px;
 }
-.wv-occ-br-row:last-child { border-bottom: none; padding-bottom: 0; }
+.wv-occ-br-row:last-child { border-bottom: none; padding-bottom: 4px; }
 /* Left side: dot + label */
 .wv-occ-br-left { display: flex; align-items: flex-start; gap: 8px; flex: 1; min-width: 0; }
-/* Right side: rms + pct */
-.wv-occ-br-right { display: flex; align-items: flex-start; gap: 4px; flex-shrink: 0; }
-.wv-occ-br-dot { width: 9px; height: 9px; border-radius: 2px; flex-shrink: 0; margin-top: 2px; }
-.wv-occ-br-lbl { font-size: 12px; color: #1c1c1c; }
-.wv-occ-br-rms { font-size: 8px; font-weight: 700; color: #111827; text-align: right; min-width: 30px; }
-.wv-occ-br-pct { font-size: 7.5px; color: #6b7280; text-align: right; min-width: 24px; }
-.wv-occ-br-remain { background: #ffefe6; border-radius: 3px; padding: 4px !important; margin: 2px -4px 0; border-bottom: none !important; }
+/* Right side: value + pct */
+.wv-occ-br-right { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+.wv-occ-br-dot { width: 9px; height: 9px; border-radius: 2px; flex-shrink: 0; margin-top: 3px; }
+.wv-occ-br-lbl { font-size: 12px; color: #1c1c1c; line-height: 1.3; }
+.wv-occ-br-rms { font-size: 14px; font-weight: 400; color: #111827; text-align: right; min-width: 40px; white-space: nowrap; }
+.wv-occ-br-pct { font-size: 14px; font-weight: 400; color: #6b7280; text-align: right; min-width: 28px; }
+/* Remaining row highlight */
+.wv-occ-br-remain { background: #ffefe6; border-radius: 3px; padding: 4px 4px !important; margin: 2px -4px 0; border-bottom: none !important; }
 .wv-occ-br-remain .wv-occ-br-lbl { color: #388C3F; font-weight: 600; }
 .wv-occ-br-remain .wv-occ-br-rms { color: #388C3F; }
 .wv-occ-br-remain .wv-occ-br-pct { color: #388C3F; }
-.wv-remain-count { font-size: 8px !important; font-weight: 700 !important; color: #388C3F !important; }
+.wv-remain-count { color: #388C3F !important; }
 
 /* ── Compare tab view ──────────────────────────────────────── */
 .wv-compare {
