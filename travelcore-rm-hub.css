@@ -2132,8 +2132,8 @@ body.dark .wv-range { color: var(--text-primary); }
   z-index: 3;
 }
 .wvsp-item {
-  display: flex; align-items: center; gap: 6px;
-  padding: 0 10px 0 12px;
+  display: flex; align-items: flex-start; gap: 6px;
+  padding: 12px 10px 0 12px;
   min-height: 44px;
   cursor: pointer;
   background: #fff;
