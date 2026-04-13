@@ -7196,6 +7196,7 @@ body.dark .cal-mfilt-btn.active { background: #1a3535; }
 .wb-sect-val {
   display: flex;
   align-items: center;
+  justify-content: space-between;
 }
 
 /* ── Sub-row label ── */
