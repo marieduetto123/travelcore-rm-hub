@@ -2118,6 +2118,12 @@ body.dark .wv-range { color: var(--text-primary); }
   align-items: stretch;
 }
 
+/* Section panel header spacer — stays fixed with sticky col headers */
+.wvsp-hdr-spacer {
+  position: sticky; top: 40px; z-index: 4;
+  background: #fff; border-bottom: 2px solid #006461; flex-shrink: 0;
+}
+
 /* Left section panel */
 .wv-section-panel {
   width: 154px;
@@ -2201,7 +2207,7 @@ body.dark .wv-range { color: var(--text-primary); }
   display: flex; align-items: center; gap: 6px;
   background: #1a5e5b;
   border-bottom: none; flex-shrink: 0;
-  position: relative;
+  position: sticky; top: 40px; z-index: 5;
 }
 .wv-col-hdr.closed { background: #374151 !important; opacity: 0.9; }
 
@@ -2238,6 +2244,15 @@ body.dark .wv-range { color: var(--text-primary); }
 .wv-col-hdr.seg-occ-2 .wv-col-hdr-date,
 .wv-col-hdr.seg-occ-3 .wv-col-hdr-date,
 .wv-col-hdr.seg-occ-4 .wv-col-hdr-date { color: #374151; }
+/* DBA text — dark on light-coloured headers */
+.wv-col-hdr.hotel-occ-1 .wv-col-hdr-dba,
+.wv-col-hdr.hotel-occ-2 .wv-col-hdr-dba,
+.wv-col-hdr.hotel-occ-3 .wv-col-hdr-dba,
+.wv-col-hdr.hotel-occ-4 .wv-col-hdr-dba,
+.wv-col-hdr.seg-occ-1 .wv-col-hdr-dba,
+.wv-col-hdr.seg-occ-2 .wv-col-hdr-dba,
+.wv-col-hdr.seg-occ-3 .wv-col-hdr-dba,
+.wv-col-hdr.seg-occ-4 .wv-col-hdr-dba { color: #374151 !important; opacity: 1; }
 
 /* Dark TODAY badge background for light headers */
 .wv-col-hdr.hotel-occ-1 .wv-today-badge,
