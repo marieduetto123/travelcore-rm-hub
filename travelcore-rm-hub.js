@@ -1224,82 +1224,91 @@ const ALLOTMENTS = {
 // Closed-out days
 const LOCKED_DAYS = new Set(['2-1', '2-23', '3-3', '3-17', '4-8']);
 
+// Metadata for fully-locked days (who applied the closeout and when)
+const LOCKED_DAYS_META = {
+  '2-1':  { appliedBy: 'Sarah M.',  appliedAt: '2026-01-14T08:47:00' },
+  '2-23': { appliedBy: 'James K.',  appliedAt: '2026-02-06T15:22:00' },
+  '3-3':  { appliedBy: 'Ana L.',    appliedAt: '2026-02-12T09:05:00' },
+  '3-17': { appliedBy: 'Priya T.',  appliedAt: '2026-02-28T11:34:00' },
+  '4-8':  { appliedBy: 'Carlos R.', appliedAt: '2026-03-21T16:58:00' },
+};
+
 // Partial closures: specific TOs, room types, board types closed out per date
 // PARTIAL_CLOSURES: each day has an array of strategies.
-// Each rule: { tos:[], roomTypes:[], boards:[] }
+// Each rule: { tos:[], roomTypes:[], boards:[], appliedBy:'', appliedAt:'' }
 // Empty array = applies to ALL of that dimension.
 // Multiple strategies on same day = independent close-out entries.
 const PARTIAL_CLOSURES = {
   '2-5':  [
-    { tos:['Sunshine Tours'], roomTypes:['Suite','Jr. Suite'], boards:[] },
-    { tos:[],                 roomTypes:['Standard'],           boards:['ro'] },
+    { tos:['Sunshine Tours'], roomTypes:['Suite','Jr. Suite'], boards:[],         appliedBy:'Sarah M.',  appliedAt:'2026-01-22T10:14:00' },
+    { tos:[],                 roomTypes:['Standard'],           boards:['ro'],    appliedBy:'James K.',  appliedAt:'2026-01-22T10:31:00' },
   ],
   '2-12': [
-    { tos:[],                 roomTypes:['Standard','Deluxe'],  boards:['ro','hb'] },
+    { tos:[],                 roomTypes:['Standard','Deluxe'],  boards:['ro','hb'], appliedBy:'Priya T.',  appliedAt:'2026-01-30T14:09:00' },
   ],
   '2-18': [
-    { tos:['Global Adv.','City Breaks'], roomTypes:[], boards:[] },
+    { tos:['Global Adv.','City Breaks'], roomTypes:[], boards:[],                appliedBy:'Carlos R.', appliedAt:'2026-02-03T09:52:00' },
   ],
   '2-25': [
-    { tos:['Adventure'],      roomTypes:['Family'],             boards:['ro'] },
-    { tos:[],                 roomTypes:[],                     boards:['hb'] },
+    { tos:['Adventure'],      roomTypes:['Family'],             boards:['ro'],    appliedBy:'Ana L.',    appliedAt:'2026-02-10T16:41:00' },
+    { tos:[],                 roomTypes:[],                     boards:['hb'],    appliedBy:'Ana L.',    appliedAt:'2026-02-10T16:55:00' },
   ],
   '3-4':  [
-    { tos:['Sunshine Tours','Beach Hols'], roomTypes:[], boards:['ro'] },
+    { tos:['Sunshine Tours','Beach Hols'], roomTypes:[], boards:['ro'],           appliedBy:'Sarah M.',  appliedAt:'2026-02-11T08:30:00' },
   ],
   '3-7':  [
-    { tos:[],                 roomTypes:['Suite','Jr. Suite','Family'], boards:['ai'] },
-    { tos:['Global Adv.'],    roomTypes:['Standard'],           boards:[] },
+    { tos:[],                 roomTypes:['Suite','Jr. Suite','Family'], boards:['ai'], appliedBy:'James K.',  appliedAt:'2026-02-18T11:07:00' },
+    { tos:['Global Adv.'],    roomTypes:['Standard'],           boards:[],        appliedBy:'James K.',  appliedAt:'2026-02-18T11:22:00' },
   ],
   '3-9':  [
-    { tos:['Global Adv.','City Breaks'], roomTypes:['Standard'], boards:[] },
-    { tos:[],                 roomTypes:[],                     boards:['ro'] },
+    { tos:['Global Adv.','City Breaks'], roomTypes:['Standard'], boards:[],       appliedBy:'Priya T.',  appliedAt:'2026-02-20T13:45:00' },
+    { tos:[],                 roomTypes:[],                     boards:['ro'],    appliedBy:'Carlos R.', appliedAt:'2026-02-20T14:03:00' },
   ],
   '3-11': [
-    { tos:[],                 roomTypes:['Deluxe','Suite'],     boards:['ro','hb'] },
+    { tos:[],                 roomTypes:['Deluxe','Suite'],     boards:['ro','hb'], appliedBy:'Sarah M.',  appliedAt:'2026-02-24T09:18:00' },
   ],
   '3-13': [
-    { tos:['Sunshine Tours'], roomTypes:[],                     boards:['ai','ro'] },
-    { tos:[],                 roomTypes:['Jr. Suite'],           boards:[] },
+    { tos:['Sunshine Tours'], roomTypes:[],                     boards:['ai','ro'], appliedBy:'Ana L.',    appliedAt:'2026-02-26T10:44:00' },
+    { tos:[],                 roomTypes:['Jr. Suite'],           boards:[],        appliedBy:'Ana L.',    appliedAt:'2026-02-26T10:57:00' },
   ],
   '3-15': [
-    { tos:['Beach Hols','City Breaks'], roomTypes:['Standard','Superior'], boards:['bb'] },
-    { tos:['Adventure'],      roomTypes:[],                     boards:['ai'] },
+    { tos:['Beach Hols','City Breaks'], roomTypes:['Standard','Superior'], boards:['bb'], appliedBy:'James K.',  appliedAt:'2026-02-28T08:12:00' },
+    { tos:['Adventure'],      roomTypes:[],                     boards:['ai'],    appliedBy:'Priya T.',  appliedAt:'2026-02-28T08:29:00' },
   ],
   '3-18': [
-    { tos:['Global Adv.'],    roomTypes:['Jr. Suite'],           boards:[] },
+    { tos:['Global Adv.'],    roomTypes:['Jr. Suite'],           boards:[],       appliedBy:'Carlos R.', appliedAt:'2026-03-04T15:33:00' },
   ],
   '3-20': [
-    { tos:[],                 roomTypes:['Family'],             boards:['ro','hb'] },
+    { tos:[],                 roomTypes:['Family'],             boards:['ro','hb'], appliedBy:'Sarah M.',  appliedAt:'2026-03-06T11:20:00' },
   ],
   '3-22': [
-    { tos:['Adventure'],      roomTypes:['Suite'],              boards:[] },
-    { tos:[],                 roomTypes:[],                     boards:['bb'] },
+    { tos:['Adventure'],      roomTypes:['Suite'],              boards:[],        appliedBy:'Priya T.',  appliedAt:'2026-03-09T09:05:00' },
+    { tos:[],                 roomTypes:[],                     boards:['bb'],    appliedBy:'Priya T.',  appliedAt:'2026-03-09T09:17:00' },
   ],
   '3-25': [
-    { tos:['Sunshine Tours'], roomTypes:['Standard'],           boards:['ro'] },
-    { tos:['Global Adv.'],    roomTypes:['Deluxe'],             boards:['ro'] },
-    { tos:[],                 roomTypes:[],                     boards:['hb'] },
+    { tos:['Sunshine Tours'], roomTypes:['Standard'],           boards:['ro'],    appliedBy:'James K.',  appliedAt:'2026-03-10T14:48:00' },
+    { tos:['Global Adv.'],    roomTypes:['Deluxe'],             boards:['ro'],    appliedBy:'James K.',  appliedAt:'2026-03-10T15:02:00' },
+    { tos:[],                 roomTypes:[],                     boards:['hb'],    appliedBy:'Ana L.',    appliedAt:'2026-03-11T08:31:00' },
   ],
   '3-28': [
-    { tos:['City Breaks'],    roomTypes:[],                     boards:['ai','fb'] },
+    { tos:['City Breaks'],    roomTypes:[],                     boards:['ai','fb'], appliedBy:'Carlos R.', appliedAt:'2026-03-13T10:19:00' },
   ],
   '4-5':  [
-    { tos:['Sunshine Tours'], roomTypes:[],                     boards:['ai','ro'] },
+    { tos:['Sunshine Tours'], roomTypes:[],                     boards:['ai','ro'], appliedBy:'Sarah M.',  appliedAt:'2026-03-19T09:40:00' },
   ],
   '4-12': [
-    { tos:['Beach Hols'],     roomTypes:['Suite'],              boards:[] },
-    { tos:['Adventure'],      roomTypes:['Family'],             boards:[] },
-    { tos:[],                 roomTypes:[],                     boards:['ro'] },
+    { tos:['Beach Hols'],     roomTypes:['Suite'],              boards:[],        appliedBy:'Ana L.',    appliedAt:'2026-03-25T11:55:00' },
+    { tos:['Adventure'],      roomTypes:['Family'],             boards:[],        appliedBy:'Ana L.',    appliedAt:'2026-03-25T12:08:00' },
+    { tos:[],                 roomTypes:[],                     boards:['ro'],    appliedBy:'James K.',  appliedAt:'2026-03-26T08:44:00' },
   ],
   '4-17': [
-    { tos:[],                 roomTypes:['Standard','Superior','Deluxe'], boards:['ro'] },
+    { tos:[],                 roomTypes:['Standard','Superior','Deluxe'], boards:['ro'], appliedBy:'Priya T.',  appliedAt:'2026-04-01T13:27:00' },
   ],
   '4-20': [
-    { tos:['Global Adv.','City Breaks'], roomTypes:['Jr. Suite'], boards:['hb','bb'] },
+    { tos:['Global Adv.','City Breaks'], roomTypes:['Jr. Suite'], boards:['hb','bb'], appliedBy:'Carlos R.', appliedAt:'2026-04-03T10:06:00' },
   ],
   '4-25': [
-    { tos:['Adventure'],      roomTypes:['Family'],             boards:[] },
+    { tos:['Adventure'],      roomTypes:['Family'],             boards:[],        appliedBy:'Sarah M.',  appliedAt:'2026-04-08T09:33:00' },
   ],
 };
 
@@ -2825,6 +2834,27 @@ function wvAcc(title, section, bodyHtml, badge) {
     + '</div>';
 }
 
+/* ── Close-out metadata helpers ─────────────────────────────────────────── */
+function coFmtDate(iso) {
+  if (!iso) return '';
+  var d = new Date(iso);
+  var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var h = d.getHours(), m = d.getMinutes();
+  return d.getDate() + ' ' + MONTHS[d.getMonth()] + ', ' + (h < 10 ? '0'+h : h) + ':' + (m < 10 ? '0'+m : m);
+}
+function coInitials(name) {
+  return (name || '').split(' ').map(function(p){ return p[0]||''; }).join('').toUpperCase().slice(0,2);
+}
+function coMetaHtml(appliedBy, appliedAt, extraStyle) {
+  if (!appliedBy) return '';
+  var ini = coInitials(appliedBy);
+  var dt  = coFmtDate(appliedAt);
+  return '<div class="co-rule-meta" style="'+(extraStyle||'')+'">'
+    + '<span class="co-meta-avatar">'+ini+'</span>'
+    + '<span class="co-meta-text"><strong>'+appliedBy+'</strong>'+(dt ? ' · '+dt : '')+'</span>'
+    + '</div>';
+}
+
 /* ── Close-out "+N more" toggle ──────────────────────────────────────────── */
 window.coToggleMore = function(uid) {
   var moreSpan = document.getElementById('coh_' + uid);
@@ -2847,8 +2877,11 @@ function buildRoomTypeBoardView(dm, dd, hotel, to, adr, rev, v) {
   const BMAP = {ai:'All Inclusive',bb:'Bed & Breakfast',hb:'Half Board',ro:'Room Only',fb:'Full Board'};
 
   if (isFullyLocked) {
+    var _lm = LOCKED_DAYS_META[dm + '-' + dd] || {};
     return '<div class="wv-closeouts-wrap">'
-      + '<div class="co-full-banner">'+lockSvg+' Full Day Close Out — All inventory closed</div>'
+      + '<div class="co-full-banner">'+lockSvg+' Full Day Close Out — All inventory closed'
+      + coMetaHtml(_lm.appliedBy, _lm.appliedAt, 'margin-top:6px;opacity:.85')
+      + '</div>'
       + '</div>';
   }
 
@@ -2895,7 +2928,7 @@ function buildRoomTypeBoardView(dm, dd, hotel, to, adr, rev, v) {
       : allChip('All Meal Plans');
 
     return '<div class="co-rule-card">'
-      + '<div class="co-rule-num">'+lockSvg+' Strategy</div>'
+      + '<div class="co-rule-num">'+lockSvg+' Strategy ' + (ri+1) + coMetaHtml(rule.appliedBy, rule.appliedAt, 'margin-left:auto') + '</div>'
       + '<div class="co-rule-row">'
       + '<div class="co-rule-dim"><span class="co-rule-dim-lbl">Operator</span><div class="co-chips co-chips-inline">'+toPart+'</div></div>'
       + '<div class="co-rule-sep">+</div>'
@@ -3043,7 +3076,13 @@ function buildCoReportView(days) {
           ? chipsMoreR(rule.boards, function(b){ return chip(BMAP[b]||b, '#7c3aed'); }, 2, 'bd')
           : '<span style="font-size:8px;color:#9ca3af;font-style:italic">All</span>';
 
-        row += '<td style="'+tdStyle+bl+'">'+toPart+'</td>';
+        var metaHtml = rule.appliedBy
+          ? '<div class="co-rule-meta" style="margin-top:4px;padding-top:4px;border-top:1px solid #f0f0f0">'
+            + '<span class="co-meta-avatar" style="width:14px;height:14px;font-size:7px">'+coInitials(rule.appliedBy)+'</span>'
+            + '<span class="co-meta-text" style="font-size:7.5px"><strong>'+rule.appliedBy+'</strong>'+(rule.appliedAt ? '<br>'+coFmtDate(rule.appliedAt) : '')+'</span>'
+            + '</div>'
+          : '';
+        row += '<td style="'+tdStyle+bl+'">'+toPart+metaHtml+'</td>';
         row += '<td style="'+tdStyle+'border-left:1px solid #f3f4f6">'+rtPart+'</td>';
         row += '<td style="'+tdStyle+'border-left:1px solid #f3f4f6">'+bdPart+'</td>';
       }
