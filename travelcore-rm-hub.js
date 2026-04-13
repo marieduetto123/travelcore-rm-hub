@@ -2825,6 +2825,16 @@ function wvAcc(title, section, bodyHtml, badge) {
     + '</div>';
 }
 
+/* ── Close-out "+N more" toggle ──────────────────────────────────────────── */
+window.coToggleMore = function(uid) {
+  var moreSpan = document.getElementById('coh_' + uid);
+  var plusSpan = document.querySelector('[onclick="coToggleMore(\'' + uid + '\')"]');
+  if (!moreSpan || !plusSpan) return;
+  var isHidden = moreSpan.style.display === 'none';
+  moreSpan.style.display = isHidden ? 'inline' : 'none';
+  plusSpan.textContent = isHidden ? '− less' : '+' + plusSpan.dataset.n + ' more';
+};
+
 /* ── Room Type → Meal Plan nested accordion renderer ─────────────────────
    For each room type, shows all board types as sub-accordions.
    Each board type shows the full combined metric set, scaled to that segment.
@@ -2858,19 +2868,30 @@ function buildRoomTypeBoardView(dm, dd, hotel, to, adr, rev, v) {
   function bdChip(b)    { return chip(BMAP[b]||b, '#7c3aed'); }
   function allChip(label) { return chip(label, '#6b7280', '#f3f4f6'); }
 
+  var _coUidSeq = 0;
+  function chipsMore(items, chipFn, max) {
+    if (items.length <= max) return items.map(chipFn).join('');
+    var uid = 'cob_' + dm + dd + '_' + (++_coUidSeq);
+    var shown  = items.slice(0, max).map(chipFn).join('');
+    var hidden = items.slice(max).map(chipFn).join('');
+    return shown
+      + '<span id="coh_' + uid + '" style="display:none">' + hidden + '</span>'
+      + '<span class="co-more-pill" onclick="coToggleMore(\'' + uid + '\')" data-n="' + (items.length - max) + '">+' + (items.length - max) + ' more</span>';
+  }
+
   const ruleCards = rules.map(function(rule, ri) {
     const hasTO = rule.tos.length > 0;
     const hasRT = rule.roomTypes.length > 0;
     const hasBD = rule.boards.length > 0;
 
     const toPart = hasTO
-      ? rule.tos.map(toChip).join('')
+      ? chipsMore(rule.tos, toChip, 2)
       : allChip('All Operators');
     const rtPart = hasRT
-      ? rule.roomTypes.map(rtChip).join('')
+      ? chipsMore(rule.roomTypes, rtChip, 2)
       : allChip('All Room Types');
     const bdPart = hasBD
-      ? rule.boards.map(bdChip).join('')
+      ? chipsMore(rule.boards, bdChip, 2)
       : allChip('All Meal Plans');
 
     return '<div class="co-rule-card">'
@@ -3001,15 +3022,25 @@ function buildCoReportView(days) {
         row += '<td style="'+tdStyle+'color:#15803d;text-align:center;border-left:1px solid #f3f4f6">'+openSvg+'</td>';
         row += '<td style="'+tdStyle+'color:#15803d;text-align:center;border-left:1px solid #f3f4f6">'+openSvg+'</td>';
       } else {
-        // Has a strategy — show chips
+        // Has a strategy — show chips with +N more collapse
+        var _rUid = 0;
+        function chipsMoreR(items, mapFn, max, prefix) {
+          if (items.length <= max) return items.map(mapFn).join('<br>');
+          var uid = 'cor_' + prefix + '_' + si + '_' + (++_rUid);
+          var shown  = items.slice(0, max).map(mapFn).join('<br>');
+          var hidden = items.slice(max).map(mapFn).join('<br>');
+          return shown
+            + '<br><span id="coh_' + uid + '" style="display:none">' + hidden + '</span>'
+            + '<span class="co-more-pill" onclick="coToggleMore(\'' + uid + '\')" data-n="' + (items.length - max) + '">+' + (items.length - max) + ' more</span>';
+        }
         var toPart = rule.tos.length
-          ? rule.tos.map(function(n){ return chip(n, TO_COLORS_MAP[n]||'#dc2626'); }).join('<br>') 
+          ? chipsMoreR(rule.tos, function(n){ return chip(n, TO_COLORS_MAP[n]||'#dc2626'); }, 2, 'to')
           : '<span style="font-size:8px;color:#9ca3af;font-style:italic">All</span>';
         var rtPart = rule.roomTypes.length
-          ? rule.roomTypes.map(function(n){ return chip(n, RT_NAME_COLORS[n]||'#b45309'); }).join('<br>')
+          ? chipsMoreR(rule.roomTypes, function(n){ return chip(n, RT_NAME_COLORS[n]||'#b45309'); }, 2, 'rt')
           : '<span style="font-size:8px;color:#9ca3af;font-style:italic">All</span>';
         var bdPart = rule.boards.length
-          ? rule.boards.map(function(b){ return chip(BMAP[b]||b, '#7c3aed'); }).join('<br>')
+          ? chipsMoreR(rule.boards, function(b){ return chip(BMAP[b]||b, '#7c3aed'); }, 2, 'bd')
           : '<span style="font-size:8px;color:#9ca3af;font-style:italic">All</span>';
 
         row += '<td style="'+tdStyle+bl+'">'+toPart+'</td>';

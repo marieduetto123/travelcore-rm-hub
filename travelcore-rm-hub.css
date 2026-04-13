@@ -6819,3 +6819,15 @@ body.dark .cal-mfilt-btn.active { background: #1a3535; }
   width: 15px; height: 15px; accent-color: #006461; cursor: pointer; flex-shrink: 0;
 }
 
+/* Close-out "+N more" expand pill */
+.co-more-pill {
+  display: inline-flex; align-items: center;
+  font-size: 8px; font-weight: 700;
+  padding: 1px 5px; border-radius: 3px;
+  background: #f3f4f6; color: #6b7280;
+  border: 1px solid #d1d5db; cursor: pointer;
+  white-space: nowrap; margin-left: 2px; margin-top: 2px;
+  vertical-align: middle;
+}
+.co-more-pill:hover { background: #e5e7eb; color: #374151; }
+
