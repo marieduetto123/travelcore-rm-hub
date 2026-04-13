@@ -3393,6 +3393,16 @@ function buildDailyBView(days, month, activeDay) {
       + '</div>';
   }
 
+  // Wrap a bar HTML string with a comparison marker line
+  function wbBarMark(barHtml, compPct) {
+    if (wvCompare === 'none' || compPct == null || isNaN(compPct)) return barHtml;
+    var pct = Math.min(100, Math.max(0, compPct));
+    return '<div style="position:relative">'
+      + barHtml
+      + '<div style="position:absolute;left:'+pct+'%;top:0;height:12px;width:2.5px;background:#c4ff45;transform:translateX(-50%);z-index:2;border-radius:1px;pointer-events:none;box-shadow:0 0 3px rgba(196,255,69,0.6)"></div>'
+      + '</div>';
+  }
+
   // ── Build HTML ─────────────────────────────────────────────────────────────
   var html = '<div class="wb-layout">';
 
@@ -3507,10 +3517,10 @@ function buildDailyBView(days, month, activeDay) {
             var cv = wvCompare==='stly'?d.sdlyH:wvCompare==='ly'?d.lyH:wvCompare==='fcst'?d.fcstH:null;
             cs = cmpSfx(cv!=null?cv+'%':'');
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.hotel+'%'+cs+'</span>'+trendBadge(d.hotel,cv)+'</div>'
-              + '<div class="wv-occ-bar-track">'
-              + '<div style="width:'+d.to+'%;background:#006461;height:12px"></div>'
-              + '<div style="width:'+d.otherPct+'%;background:#47c5bc;height:12px"></div>'
-              + '</div>';
+              + wbBarMark('<div class="wv-occ-bar-track">'
+                + '<div style="width:'+d.to+'%;background:#006461;height:12px"></div>'
+                + '<div style="width:'+d.otherPct+'%;background:#47c5bc;height:12px"></div>'
+                + '</div>', cv);
             break;
           }
           case 'onoff':
@@ -3523,30 +3533,34 @@ function buildDailyBView(days, month, activeDay) {
           case 'adr': {
             var cv = wvCompare==='stly'?d.sdlyA:wvCompare==='ly'?d.lyA:wvCompare==='fcst'?d.fcstA:null;
             cs = cmpSfx(cv!=null?'$'+cv:'');
+            var cvPct = cv!=null?Math.min(90,Math.round(cv/280*100)):null;
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">$'+d.toAdr+cs+'</span>'+trendBadge(d.toAdr,cv)+'</div>'
-              + wbBar(d.adrBar, '#006461');
+              + wbBarMark(wbBar(d.adrBar, '#006461'), cvPct);
             break;
           }
           case 'rev': {
             var cv = wvCompare==='stly'?d.sdlyR:wvCompare==='ly'?d.lyR:wvCompare==='fcst'?d.fcstR:null;
             cs = cmpSfx(cv!=null?d.fR(cv):'');
+            var cvPct = cv!=null?Math.min(90,Math.round(cv/4500000*100)):null;
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.fR(d.toRev)+cs+'</span>'+trendBadge(d.toRev,cv)+'</div>'
-              + wbBar(d.revBar, '#006461');
+              + wbBarMark(wbBar(d.revBar, '#006461'), cvPct);
             break;
           }
           // ── More Metrics ───────────────────────────────────────────────────
           case 'rn': {
             var cv = wvCompare==='stly'?d.sdlyRn:wvCompare==='ly'?d.lyRn:wvCompare==='fcst'?d.fcstRn:null;
             cs = cmpSfx(cv!=null?String(cv):'');
+            var cvPct = cv!=null?Math.round(cv/WV_CAP*100):null;
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.toRn+cs+'</span>'+trendBadge(d.toRn,cv)+'</div>'
-              + wbBar(Math.round(d.toRn/WV_CAP*100), '#006461');
+              + wbBarMark(wbBar(Math.round(d.toRn/WV_CAP*100), '#006461'), cvPct);
             break;
           }
           case 'revpar_s': {
             var cv = wvCompare==='stly'?d.sdlyRevpar:wvCompare==='ly'?d.lyRevpar:null;
             cs = cmpSfx(cv!=null?'$'+cv:'');
+            var cvPct = cv!=null?Math.min(90,Math.round(cv/4)):null;
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">$'+d.revpar+cs+'</span>'+trendBadge(d.revpar,cv)+'</div>'
-              + wbBar(Math.min(90,Math.round(d.revpar/4)), '#006461');
+              + wbBarMark(wbBar(Math.min(90,Math.round(d.revpar/4)), '#006461'), cvPct);
             break;
           }
           case 'pickup_s':
