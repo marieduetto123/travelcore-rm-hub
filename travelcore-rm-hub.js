@@ -3650,21 +3650,21 @@ function initDailyHGrid(days, activeMonth, activeDay, containerEl) {
   // ── Day column header component factory ───────────────────────────────────
   function makeDayHeader(dv, isActive, isToday, isLocked, dba, evts) {
     var dm = dv.month, dd = dv.day;
-    var bg       = isActive ? '#e8f4f4' : isToday ? '#f0fafa' : '#f8f9fd';
-    var topBorder= isActive ? '3px solid #006461' : isToday ? '3px solid #0d8a87' : isLocked ? '3px solid #dc2626' : '3px solid transparent';
-    var dayClr   = isLocked ? '#dc2626' : isActive ? '#006461' : '#1c1c1c';
-    var subClr   = isLocked ? '#dc262699' : isActive ? '#006461aa' : '#4F5B60';
+    var bg       = isLocked ? '#374151' : isActive ? '#006461' : isToday ? '#125756' : '#1a5e5b';
+    var topBorder= isActive ? '3px solid rgba(255,255,255,0.5)' : isToday ? '3px solid rgba(255,255,255,0.3)' : isLocked ? '3px solid #dc2626' : '3px solid transparent';
+    var dayClr   = isLocked ? '#fca5a5' : '#fff';
+    var subClr   = isLocked ? 'rgba(252,165,165,0.85)' : 'rgba(255,255,255,0.75)';
     var dbaStr   = dba === 0 ? 'Today' : dba > 0 ? dba + 'd' : '';
     function H() {}
     H.prototype.init = function(p) {
       this.gui = document.createElement('div');
-      this.gui.style.cssText = 'background:'+bg+';width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4px 6px;box-sizing:border-box;gap:2px;border-top:'+topBorder+';border-right:1px solid #e0e0e0;';
+      this.gui.style.cssText = 'background:'+bg+';width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4px 6px;box-sizing:border-box;gap:2px;border-top:'+topBorder+';border-right:1px solid rgba(255,255,255,0.12);';
       this.gui.innerHTML =
         '<div style="font-weight:700;font-size:12px;color:'+dayClr+'">'+(isLocked?'🔒 ':'')+DOW_SHORT[new Date(2026,dm-1,dd).getDay()]+' '+dd+'</div>'
         +'<div style="font-size:10px;color:'+subClr+';display:flex;align-items:center;gap:4px">'
         +'<span>'+MNAMES_S[dm]+'</span>'
-        +(dbaStr?'<span style="background:#e5e7eb;border-radius:3px;padding:0 4px;font-size:9px">'+dbaStr+'</span>':'')
-        +(evts?'<span style="width:6px;height:6px;border-radius:50%;background:#006461;display:inline-block"></span>':'')
+        +(dbaStr?'<span style="background:rgba(255,255,255,0.2);border-radius:3px;padding:0 4px;font-size:9px;color:#fff">'+dbaStr+'</span>':'')
+        +(evts?'<span style="width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.9);display:inline-block"></span>':'')
         +'</div>';
     };
     H.prototype.getGui = function() { return this.gui; };

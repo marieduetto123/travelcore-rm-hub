@@ -977,47 +977,47 @@ body.dark .daily-rev-ag-wrap {
   min-height: 200px;
   --ag-font-family: 'Lato', sans-serif;
   --ag-font-size: 12px;
-  --ag-header-background-color: #f8f9fd;
+  --ag-header-background-color: #1a5e5b;
   --ag-row-border-color: #dde1e2;
   --ag-border-color: #dde1e2;
   --ag-cell-horizontal-border: solid #dde1e2;
   --ag-column-border: solid #dde1e2;
   --ag-header-column-separator-display: block;
-  --ag-header-column-separator-color: #dde1e2;
+  --ag-header-column-separator-color: rgba(255,255,255,0.15);
   --ag-wrapper-border-radius: 0;
   --ag-wrapper-border: none;
   --ag-odd-row-background-color: #fff;
   --ag-row-hover-color: rgba(0,100,97,0.04);
 }
-/* Column headers — match Daily's #f8f9fd teal-tinted header */
+/* Column headers — match Daily's dark teal header */
 .daily-h-ag-wrap .ag-header-cell,
 .daily-h-ag-wrap .ag-header-group-cell {
-  background: #f8f9fd !important;
+  background: #1a5e5b !important;
 }
 .daily-h-ag-wrap .ag-header-row {
-  background: #f8f9fd !important;
+  background: #1a5e5b !important;
 }
 .daily-h-ag-wrap .ag-header {
-  border-bottom: 1px solid #dde1e2 !important;
+  border-bottom: 1px solid rgba(255,255,255,0.15) !important;
 }
 .daily-h-ag-wrap .ag-header-cell {
   padding: 0 !important;
 }
 .daily-h-ag-wrap .ag-pinned-left-header {
-  background: #f8f9fd !important;
-  border-right: 2px solid #dde1e2 !important;
+  background: #1a3336 !important;
+  border-right: 2px solid rgba(255,255,255,0.15) !important;
 }
 .daily-h-ag-wrap .ag-pinned-left-header .ag-header-cell-text {
   font-size: 11px !important;
   font-weight: 600 !important;
   text-transform: none !important;
   letter-spacing: 0 !important;
-  color: #4F5B60 !important;
+  color: rgba(255,255,255,0.85) !important;
 }
 .daily-h-ag-wrap .ag-header-cell-text {
   font-size: 12px !important;
   font-weight: 600 !important;
-  color: #1c1c1c !important;
+  color: #fff !important;
   text-transform: none !important;
   letter-spacing: 0 !important;
 }
