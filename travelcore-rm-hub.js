@@ -3766,7 +3766,8 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
       + segs.map(function(s){ return '<div style="width:'+s.p+'%;background:'+s.c+';height:12px"></div>'; }).join('')+'</div>';
   }
   function sCell(val, barHtml) {
-    return '<div style="font-size:14px;font-weight:400;color:#111827;margin-bottom:5px">'+val+'</div>'+barHtml;
+    return '<div style="font-size:14px;font-weight:400;color:#111827;margin-bottom:4px;padding:0 10px">'+val+'</div>'
+      +'<div style="padding:0">'+barHtml+'</div>';
   }
   function rCell(v1, v2, rem) {
     var c = rem ? '#388c3f' : '#111827', c2 = rem ? '#388c3f' : '#6b7280';
@@ -3995,7 +3996,7 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
   // ── Column defs ───────────────────────────────────────────────────────────
   var colDefs = [];
   colDefs.push({
-    field:'_lbl', headerName:'', pinned:'left', lockPinned:true, width:210,
+    field:'_lbl', headerName:'', pinned:'left', lockPinned:true, width:190,
     suppressMovable:true, resizable:false,
     cellRenderer: function(p) {
       var r=p.data;
@@ -4035,7 +4036,7 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
     var dt=new Date(2026,dm-1,dd), dba=Math.round((dt-TODAY_WV)/86400000);
     var evts=(typeof CAL_EVENTS!=='undefined'&&CAL_EVENTS[dm+'-'+dd])?CAL_EVENTS[dm+'-'+dd]:null;
     colDefs.push({
-      field:'day'+di, flex:1, minWidth:110, suppressMovable:true, resizable:false,
+      field:'day'+di, flex:1, minWidth:90, suppressMovable:true, resizable:false,
       headerComponent: makeDayHeader(dv,isActive,isToday,isLocked,dba,evts),
       cellRenderer: function(p) {
         var r=p.data; if(r._type==='grp') return '';
@@ -4043,7 +4044,7 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
       },
       cellStyle: function(p) {
         var r=p.data;
-        if (r._type==='sect') return {background:'#fff',padding:'8px 10px',borderBottom:'1px solid #dde1e2',borderRight:'1px solid #e5e7eb'};
+        if (r._type==='sect') return {background:'#fff',padding:'7px 0 5px',borderBottom:'1px solid #dde1e2',borderRight:'1px solid #e5e7eb'};
         return {background:r._isRem?'#fff8f5':'#fff',padding:'0 10px',borderBottom:'1px solid #f3f4f6',borderRight:'1px solid #e5e7eb',display:'flex',alignItems:'center'};
       },
     });
