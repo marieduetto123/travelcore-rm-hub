@@ -1971,10 +1971,9 @@ body.dark .cal-day.cal-sel-mid { background: rgba(0, 100, 97, 0.20) !important; 
 }
 body.dark .wv-topbar { background: var(--surface-2); border-bottom-color: var(--border); }
 
-/* Three-column layout */
+/* Two-column layout: left grows, right aligns to end */
 .wv-topbar-left  { flex: 1; display: flex; align-items: center; gap: 6px; min-width: 0; }
-.wv-topbar-center { flex: 0 0 auto; display: flex; align-items: center; justify-content: center; }
-.wv-topbar-right { flex: 1; display: flex; align-items: center; gap: 8px; justify-content: flex-end; }
+.wv-topbar-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 
 .wv-topbar-title {
   font-family: 'Lato', sans-serif; font-size: 18px; font-weight: 700;
