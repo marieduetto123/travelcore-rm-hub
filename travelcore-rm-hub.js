@@ -2752,7 +2752,14 @@ let wvCompare = 'stly';    // 'none' | 'stly' | 'ly' | 'fcst'
 
 function wvSetCompare(val) {
   wvCompare = val;
-  // Show/hide the compare dropdown only on combined view
+  // Sync the center select
+  var sel = document.getElementById('wvCmpSelect');
+  if (sel) sel.value = val;
+  // Sync the quick-pill buttons
+  ['stly','ly','fcst','none'].forEach(function(v) {
+    var pill = document.getElementById('wvPill_' + v);
+    if (pill) pill.classList.toggle('active', v === val);
+  });
   buildWeekGrid(wvMonth, wvWeekStart, wvWeekStart);
 }
 
@@ -2826,6 +2833,14 @@ function renderWeekView(month, day) {
   if (backArrow) backArrow.style.display = 'inline-flex';
   var cmpWrap = document.getElementById('wvCmpWrap');
   if (cmpWrap) cmpWrap.style.display = 'flex';
+  // Show quick compare pills in header-right
+  var quickPills = document.getElementById('wvQuickPills');
+  if (quickPills) quickPills.style.display = 'flex';
+  // Sync pill active state to current compare value
+  ['stly','ly','fcst','none'].forEach(function(v) {
+    var pill = document.getElementById('wvPill_' + v);
+    if (pill) pill.classList.toggle('active', v === wvCompare);
+  });
 
   buildWeekGrid(month, weekStartDay, day);
 }
@@ -3093,6 +3108,7 @@ function buildCoReportView(days) {
 // ── Daily B View ─────────────────────────────────────────────────────────────
 var _wbCollapsed   = {};   // shared collapse state (used by both HTML fallback and AG Grid)
 var _wbAllIds      = [];   // all toggleable row IDs in Daily B (populated on each render)
+var _wbSelectedDays = new Set(); // ISO date strings of days selected for close-out
 var _dailyBGridApi = null;
 var _dbAllRows     = [];
 var _dbGrpRenderrs = [];
@@ -3128,6 +3144,35 @@ function wbSetAll(collapse) {
   _wbAllIds.forEach(function(id) { _wbCollapsed[id] = collapse; });
   buildWeekGrid(wvMonth, wvWeekStart, wvWeekStart);
 }
+
+// Toggle a day's selection for close-out in Daily B
+window.wbDayToggle = function(dateStr) {
+  if (_wbSelectedDays.has(dateStr)) {
+    _wbSelectedDays.delete(dateStr);
+  } else {
+    _wbSelectedDays.add(dateStr);
+  }
+  // Update header cell visual without full rebuild
+  var cell = document.querySelector('.wb-hdr-cell[data-wb-date="' + dateStr + '"]');
+  if (cell) cell.classList.toggle('wb-hdr-selected', _wbSelectedDays.has(dateStr));
+  // Show/hide the close-out button
+  var btn = document.getElementById('wbCloseOutBtn');
+  if (btn) {
+    var n = _wbSelectedDays.size;
+    btn.style.display = n > 0 ? '' : 'none';
+    btn.textContent = 'Close Out ' + n + ' Day' + (n > 1 ? 's' : '');
+  }
+};
+
+// Open close-out modal pre-populated with selected days
+window.wbOpenCloseOut = function() {
+  var dates = Array.from(_wbSelectedDays).sort();
+  if (dates.length === 0) return;
+  var from = dates[0], to = dates[dates.length - 1];
+  if (typeof window._coOpenModal === 'function') {
+    window._coOpenModal(from, to);
+  }
+};
 
 function buildDailyBView(days, month, activeDay) {
   var DOW_SHORT  = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
@@ -3417,10 +3462,15 @@ function buildDailyBView(days, month, activeDay) {
     var isAct = dv.day === activeDay && dv.month === month;
     var dba  = Math.round((dt - TODAY_WV) / 86400000);
     var dbaStr = dba === 0 ? 'Today' : dba > 0 ? dba + 'd' : '';
-    html += '<div class="wb-data-cell wb-hdr-cell' + (isAct ? ' wb-hdr-active' : '') + '">'
+    var mm = String(dv.month).padStart(2,'0'), dd2 = String(dv.day).padStart(2,'0');
+    var isoDate = '2026-' + mm + '-' + dd2;
+    var isSel = _wbSelectedDays.has(isoDate);
+    html += '<div class="wb-data-cell wb-hdr-cell' + (isAct ? ' wb-hdr-active' : '') + (isSel ? ' wb-hdr-selected' : '') + '"'
+          + ' data-wb-date="' + isoDate + '" onclick="wbDayToggle(\'' + isoDate + '\')">'
           + '<span class="wb-hdr-dow">' + dow + '</span>'
           + '<span class="wb-hdr-date">' + dv.day + '/' + dv.month + '</span>'
           + (dbaStr ? '<span style="font-size:10px;background:rgba(255,255,255,0.2);border-radius:3px;padding:0 4px;color:#fff;white-space:nowrap">'+dbaStr+'</span>' : '')
+          + '<span class="wb-hdr-close-icon" title="Select for close-out"><svg viewBox="0 0 12 14" fill="none" stroke="currentColor" stroke-width="1.3" width="11" height="13"><rect x="1" y="5" width="10" height="9" rx="1"/><path d="M3.5 5V3a2.5 2.5 0 0 1 5 0v2"/></svg></span>'
           + '</div>';
   });
   html += '</div>';
@@ -7146,15 +7196,20 @@ document.querySelectorAll('.wv-groupby-btn').forEach(function(btn) {
   });
 });
 
-// Week nav + back
-document.getElementById('wvBack')?.addEventListener('click', () => {
+// Go back to monthly view
+window.goToMonthView = function() {
   document.getElementById('demand-calendar').style.display = '';
   document.getElementById('weekView').classList.remove('visible');
   var backArrow = document.getElementById('wvBack');
   if (backArrow) backArrow.style.display = 'none';
   var cmpWrap = document.getElementById('wvCmpWrap');
   if (cmpWrap) cmpWrap.style.display = 'none';
-});
+  var quickPills = document.getElementById('wvQuickPills');
+  if (quickPills) quickPills.style.display = 'none';
+};
+
+// Week nav + back
+document.getElementById('wvBack')?.addEventListener('click', goToMonthView);
 document.getElementById('wvPrev')?.addEventListener('click', () => {
   const dim = [0,31,28,31,30,31,30,31,31,30,31,30,31];
   wvWeekStart -= 1;

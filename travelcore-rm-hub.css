@@ -2046,6 +2046,21 @@ body.dark .wv-groupby-bar { background: var(--surface-2); border-bottom-color: v
 .wv-groupby-btn:not(.active):hover { background: rgba(0,100,97,0.06); }
 body.dark .wv-groupby-btn { color: #4dd8d4; }
 body.dark .wv-groupby-btn.active { background: #1a2f31; color: #5ceade; }
+.wv-groupby-btn--month { color: #6b7280; font-size: 13px; padding: 4px 12px; }
+.wv-groupby-btn--month:hover { color: #111827; background: rgba(0,0,0,0.04); }
+.wv-groupby-divider { width: 1px; height: 20px; background: #e5e7eb; margin: 0 4px; align-self: center; }
+
+/* Quick compare pills in cal-header-right */
+.wv-quick-pill {
+  font-family: 'Lato', sans-serif; font-size: 13px; font-weight: 600;
+  padding: 4px 10px; height: 30px;
+  border: 1px solid #d1d5db; border-radius: 6px;
+  background: #fff; color: #374151;
+  cursor: pointer; white-space: nowrap;
+  transition: background 0.1s, color 0.1s, border-color 0.1s;
+}
+.wv-quick-pill.active { background: #006461; color: #fff; border-color: #006461; }
+.wv-quick-pill:not(.active):hover { background: #f0fdf4; border-color: #006461; color: #006461; }
 
 /* Compare-against dropdown */
 .wv-cmp-wrap {
@@ -7141,13 +7156,25 @@ body.dark .cal-mfilt-btn.active { background: #1a3535; }
 }
 .wb-hdr-cell {
   background: #1a5e5b;
-  height: 40px;
+  height: 48px;
   display: flex;
   align-items: center;
   gap: 6px;
   padding: 0 10px;
+  cursor: pointer;
+  transition: background 0.12s;
+  position: relative;
 }
+.wb-hdr-cell:hover { background: #155350; }
 .wb-hdr-active { background: #006461; border-left: 2px solid #c4ff45; }
+.wb-hdr-selected { background: #4b0b2e !important; border-bottom: 3px solid #f43f5e; }
+.wb-hdr-selected .wb-hdr-dow, .wb-hdr-selected .wb-hdr-date { color: #fda4af; }
+.wb-hdr-close-icon {
+  margin-left: auto; color: rgba(255,255,255,0.4); line-height: 0;
+  transition: color 0.12s;
+}
+.wb-hdr-cell:hover .wb-hdr-close-icon { color: rgba(255,255,255,0.8); }
+.wb-hdr-selected .wb-hdr-close-icon { color: #f43f5e; }
 .wb-hdr-dow  { font-family: 'Lato', sans-serif; font-size: 14px; font-weight: 700; color: #fff; }
 .wb-hdr-date { font-family: 'Lato', sans-serif; font-size: 14px; font-weight: 400; color: rgba(255,255,255,.7); }
 
