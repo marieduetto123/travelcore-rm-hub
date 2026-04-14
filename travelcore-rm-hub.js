@@ -3391,7 +3391,7 @@ function buildDailyBView(days, month, activeDay) {
     grp.g_biz.push({type:'sect', id:'biz',       label:'Channel Mix', parent:'g_biz'});
     grp.g_biz.push({type:'sub',  id:'biz_to',    label:'TO',          dot:'#004948', parent:'biz'});
     grp.g_biz.push({type:'sub',  id:'biz_dir',   label:'Direct',      dot:'#52d9ce', parent:'biz'});
-    grp.g_biz.push({type:'sub',  id:'biz_ota',   label:'OTA',         dot:'#d7f7ed', parent:'biz'});
+    grp.g_biz.push({type:'sub',  id:'biz_ota',   label:'OTA',         dot:'#445e0d', parent:'biz'});
     grp.g_biz.push({type:'sub',  id:'biz_other', label:'Other',       dot:'#9ca3af', parent:'biz'});
   }
 
@@ -3402,8 +3402,8 @@ function buildDailyBView(days, month, activeDay) {
       grp.g_avail.push({type:'sect', id:'avrt'+i,       label:name,        parent:'g_avail', rtIdx:i});
       grp.g_avail.push({type:'sub',  id:'avrt'+i+'_to', label:'TO Sold',   dot:'#004948', parent:'avrt'+i, rtIdx:i, rtSub:'to'});
       grp.g_avail.push({type:'sub',  id:'avrt'+i+'_ot', label:'Other',     dot:'#52d9ce', parent:'avrt'+i, rtIdx:i, rtSub:'other'});
-      grp.g_avail.push({type:'sub',  id:'avrt'+i+'_al', label:'Alloc Rem.',dot:'#d7f7ed', parent:'avrt'+i, rtIdx:i, rtSub:'alloc'});
-      grp.g_avail.push({type:'sub',  id:'avrt'+i+'_av', label:'Available', dot:'#16a34a', parent:'avrt'+i, rtIdx:i, rtSub:'avail'});
+      grp.g_avail.push({type:'sub',  id:'avrt'+i+'_al', label:'Alloc Rem.',dot:'#445e0d', parent:'avrt'+i, rtIdx:i, rtSub:'alloc'});
+      grp.g_avail.push({type:'sub',  id:'avrt'+i+'_av', label:'Remaining', dot:'#445e0d', parent:'avrt'+i, rtIdx:i, rtSub:'avail', isRem:true});
     });
   }
 
@@ -3594,7 +3594,7 @@ function buildDailyBView(days, month, activeDay) {
             + '<div class="wv-occ-bar-track">'
             + '<div style="width:'+toP+'%;background:'+wbGrad('#004948')+';height:6px"></div>'
             + '<div style="width:'+otP+'%;background:'+wbGrad('#52d9ce')+';height:6px"></div>'
-            + '<div style="width:'+alP+'%;background:'+wbGrad('#d7f7ed')+';height:6px"></div>'
+            + '<div style="width:'+alP+'%;background:'+wbGrad('#445e0d')+';height:6px"></div>'
             + '<div style="width:'+avP+'%;background:'+wbGrad('#d7f7ed')+';height:6px"></div>'
             + '</div>';
 
@@ -3739,21 +3739,21 @@ function buildDailyBView(days, month, activeDay) {
               + wbBar(tPct_ro, '#004948') + wbBar(d.roPct, '#52d9ce'); }
             break;
           case 'mp_sum':
-            cellContent = wbStackBar([{p:d.aiPct,c:'#004948'},{p:d.bbPct,c:'#52d9ce'},{p:d.hbPct,c:'#d7f7ed'},{p:d.roPct,c:'#d7f7ed'}])
+            cellContent = wbStackBar([{p:d.aiPct,c:'#004948'},{p:d.bbPct,c:'#52d9ce'},{p:d.hbPct,c:'#445e0d'},{p:d.roPct,c:'#d7f7ed'}])
               + '<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:3px">'
               + '<span style="font-size:12px;font-family:Lato,sans-serif;color:#004948">AI '+d.aiPct+'%</span>'
               + '<span style="font-size:12px;font-family:Lato,sans-serif;color:#52d9ce">BB '+d.bbPct+'%</span>'
-              + '<span style="font-size:12px;font-family:Lato,sans-serif;color:#d7f7ed">HB '+d.hbPct+'%</span>'
+              + '<span style="font-size:12px;font-family:Lato,sans-serif;color:#445e0d">HB '+d.hbPct+'%</span>'
               + '<span style="font-size:12px;font-family:Lato,sans-serif;color:#6b7280">RO '+d.roPct+'%</span>'
               + '</div>';
             break;
           // ── Business Mix — stacked using sub-row dot colors ─────────────────
           case 'biz':
-            cellContent = wbStackBar([{p:d.toMix,c:'#004948'},{p:d.dirMix,c:'#52d9ce'},{p:d.otaMix,c:'#d7f7ed'},{p:d.otherMix,c:'#9ca3af'}])
+            cellContent = wbStackBar([{p:d.toMix,c:'#004948'},{p:d.dirMix,c:'#52d9ce'},{p:d.otaMix,c:'#445e0d'},{p:d.otherMix,c:'#9ca3af'}])
               + '<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:3px">'
               + '<span style="font-size:12px;font-family:Lato,sans-serif;color:#004948">TO '+d.toMix+'%</span>'
               + '<span style="font-size:12px;font-family:Lato,sans-serif;color:#52d9ce">D '+d.dirMix+'%</span>'
-              + '<span style="font-size:12px;font-family:Lato,sans-serif;color:#d7f7ed">OTA '+d.otaMix+'%</span>'
+              + '<span style="font-size:12px;font-family:Lato,sans-serif;color:#445e0d">OTA '+d.otaMix+'%</span>'
               + '<span style="font-size:12px;font-family:Lato,sans-serif;color:#9ca3af">Oth '+d.otherMix+'%</span>'
               + '</div>';
             break;
@@ -3934,7 +3934,7 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
   });
 
   // ── Render helpers ────────────────────────────────────────────────────────
-  var C1='#004948', C2='#52d9ce', C3='#d7f7ed', C4='#d7f7ed', CSTLY='#c4ff45', CREM='#445e0d';
+  var C1='#004948', C2='#52d9ce', C3='#445e0d', C4='#d7f7ed', CSTLY='#c4ff45', CREM='#445e0d';
   function cmpSfx(s, curr, comp) {
     if (!s || wvCompare === 'none') return '';
     var clr = '#9ca3af';
@@ -4127,7 +4127,7 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
       }; })(inv,rtI));
       sub('TO Sold', C1, false, (function(inv){ return function(d){ var s=Math.min(inv,Math.floor(inv*d.hotel/110)); return rCell(Math.min(s,Math.round(s*d.to/Math.max(1,d.hotel)))+' rm'); }; })(inv));
       sub('Other',   C2, false, (function(inv){ return function(d){ var s=Math.min(inv,Math.floor(inv*d.hotel/110)); var t=Math.min(s,Math.round(s*d.to/Math.max(1,d.hotel))); return rCell((s-t)+' rm'); }; })(inv));
-      sub('Available', '#16a34a', false, (function(inv){ return function(d){ var avRm=Math.max(0,inv-Math.min(inv,Math.floor(inv*d.hotel/110))); return sCell(avRm+' rm', bar(Math.min(90,Math.round(avRm/inv*100)),'#16a34a')); }; })(inv));
+      sub('Remaining', CREM, true, (function(inv){ return function(d){ var avRm=Math.max(0,inv-Math.min(inv,Math.floor(inv*d.hotel/110))); return sCell(avRm+' rm', bar(Math.min(90,Math.round(avRm/inv*100)),'#16a34a')); }; })(inv));
     });
   }
 
