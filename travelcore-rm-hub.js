@@ -1032,19 +1032,26 @@ function updateChart() {
     // ── Lines mode: fill area, smooth lines, dots ────────────────────────
     if (colSeries.length > 0) {
       const fc = colSeries[0];
-      // Split fill: above-parity teal, below-parity orange
-      mainSvg += `<path d="${smoothPath(fc.pts, xs)} L${svgW},${svgH} L0,${svgH} Z" fill="#004948" opacity="0.07"/>`;
+      // Positive yield: teal fill above refY
+      mainSvg += `<clipPath id="aboveClip"><rect x="0" y="0" width="${svgW}" height="${refY}"/></clipPath>`;
+      mainSvg += `<path d="${smoothPath(fc.pts, xs)} L${svgW},${svgH} L0,${svgH} Z" fill="#52d9ce" opacity="0.15" clip-path="url(#aboveClip)"/>`;
+      // Net leak: pink fill below refY
+      mainSvg += `<clipPath id="belowClip"><rect x="0" y="${refY}" width="${svgW}" height="${svgH - refY}"/></clipPath>`;
+      mainSvg += `<path d="${smoothPath(fc.pts, xs)} L${svgW},${svgH} L0,${svgH} Z" fill="#f4894b" opacity="0.12" clip-path="url(#belowClip)"/>`;
     }
     allSeries.forEach(function(s, ai) {
       const st       = s.style || SERIES_STYLES[ai % SERIES_STYLES.length];
-      const dashStr  = s.isCol ? '' : (s.dash || st.dash || '');
+      const isComp   = !s.isCol;
+      const dashStr  = isComp ? (s.dash || '6 4') : '';
       const dashAttr = dashStr ? ` stroke-dasharray="${dashStr}"` : '';
       const op       = s.forceOpacity || 1;
       const opAttr   = op < 1 ? ` opacity="${op}"` : '';
       const sw       = s.isCol ? 2.5 : 1.5;
-      const r        = s.isCol ? 4.5 : 3.5;
-      const mtype    = s.isCol ? (st.marker || 'circle') : 'circle';
+      const r        = s.isCol ? 4 : 3.5;
       const markers  = xs.map(function(x, i) {
+        if (isComp) {
+          return `<circle cx="${x}" cy="${(s.pts[i]||refY).toFixed(1)}" r="${r}" fill="#fff" stroke="${s.color}" stroke-width="2"/>`;
+        }
         return `<circle cx="${x}" cy="${(s.pts[i]||refY).toFixed(1)}" r="${r}" fill="${s.color}" stroke="#fff" stroke-width="1.5"/>`;
       }).join('');
       mainSvg += `<path d="${smoothPath(s.pts, xs)}" fill="none" stroke="${s.color}" stroke-width="${sw}"${dashAttr}${opAttr}/>${markers}`;
