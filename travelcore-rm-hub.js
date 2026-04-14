@@ -980,11 +980,11 @@ function updateChart() {
         if (py < refY) {
           // Above parity → bar grows upward from refY, blue
           const h = (refY - py).toFixed(1);
-          mainSvg += `<rect x="${left}" y="${py.toFixed(1)}" width="${barW.toFixed(1)}" height="${h}" fill="#5B8FF9" opacity="0.45" rx="2"/>`;
+          mainSvg += `<rect x="${left}" y="${py.toFixed(1)}" width="${barW.toFixed(1)}" height="${h}" fill="#004948" opacity="0.55" rx="2"/>`;
         } else if (py > refY) {
           // Below parity → bar grows downward from refY, orange
           const h = (py - refY).toFixed(1);
-          mainSvg += `<rect x="${left}" y="${refY}" width="${barW.toFixed(1)}" height="${h}" fill="#F4894B" opacity="0.45" rx="2"/>`;
+          mainSvg += `<rect x="${left}" y="${refY}" width="${barW.toFixed(1)}" height="${h}" fill="#52d9ce" opacity="0.55" rx="2"/>`;
         }
       }
       // Additional series as narrower stacked bars behind primary
@@ -995,7 +995,7 @@ function updateChart() {
           const cx  = xs[xi] + off;
           const lft = (cx - bw2 / 2).toFixed(1);
           const py  = s.pts[xi] || refY;
-          const clr = py < refY ? '#5B8FF9' : '#F4894B';
+          const clr = py < refY ? '#004948' : '#52d9ce';
           const yR  = py < refY ? py : refY;
           const hR  = Math.abs(py - refY).toFixed(1);
           mainSvg += `<rect x="${lft}" y="${yR.toFixed(1)}" width="${bw2.toFixed(1)}" height="${hR}" fill="${clr}" opacity="0.28" rx="1"/>`;
@@ -1033,7 +1033,7 @@ function updateChart() {
     if (colSeries.length > 0) {
       const fc = colSeries[0];
       // Split fill: above-parity teal, below-parity orange
-      mainSvg += `<path d="${smoothPath(fc.pts, xs)} L${svgW},${svgH} L0,${svgH} Z" fill="#5B8FF9" opacity="0.07"/>`;
+      mainSvg += `<path d="${smoothPath(fc.pts, xs)} L${svgW},${svgH} L0,${svgH} Z" fill="#004948" opacity="0.07"/>`;
     }
     allSeries.forEach(function(s, ai) {
       const st       = s.style || SERIES_STYLES[ai % SERIES_STYLES.length];
@@ -1075,8 +1075,8 @@ function updateChart() {
     const DOT_COLORS2 = ['#42C9D3','#FFB90F','#9AA300','#DA3083','#4A3FD7','#AF75D9','#F4894B','#5B8FF9'];
     let legendHtml = '';
     if (revChartMode === 'histogram') {
-      legendHtml += `<div class="legend-item"><svg viewBox="0 0 14 10" width="14" height="10"><rect x="0" y="1" width="14" height="8" fill="#5B8FF9" opacity="0.55" rx="1"/></svg>Above parity</div>`;
-      legendHtml += `<div class="legend-item"><svg viewBox="0 0 14 10" width="14" height="10"><rect x="0" y="1" width="14" height="8" fill="#F4894B" opacity="0.55" rx="1"/></svg>Below parity</div>`;
+      legendHtml += `<div class="legend-item"><svg viewBox="0 0 14 10" width="14" height="10"><rect x="0" y="1" width="14" height="8" fill="#004948" opacity="0.55" rx="1"/></svg>Above parity</div>`;
+      legendHtml += `<div class="legend-item"><svg viewBox="0 0 14 10" width="14" height="10"><rect x="0" y="1" width="14" height="8" fill="#52d9ce" opacity="0.55" rx="1"/></svg>Below parity</div>`;
       legendHtml += `<div class="legend-item"><svg viewBox="0 0 28 10" width="28" height="10"><line x1="0" y1="5" x2="28" y2="5" stroke="#7B5EA7" stroke-width="2"/></svg>Trend</div>`;
       legendHtml += `<div class="legend-item"><svg viewBox="0 0 28 10" width="28" height="10"><line x1="0" y1="5" x2="28" y2="5" stroke="#00298C" stroke-width="1.5" stroke-dasharray="6 4" opacity="0.7"/></svg>Benchmark</div>`;
     }
@@ -1614,7 +1614,8 @@ function renderCalendar() {
             }).join('')
           + '</div>'
         : '';
-      cells += `<div class="${classes}" data-month="${m.month}" data-day="${d}" title="${isLocked ? 'Closed Out' : `Hotel: ${hotel}% (${hotelRooms} rooms) · TO: ${to}% (${toRoomsSold} rooms)`}">
+      const capTipAttr = isLocked ? '' : ` onmouseenter="calShowCapTip(event,${hotel},${hotelRooms},${to},${toRoomsSold},${210-hotelRooms-toRoomsSold})" onmouseleave="calHideCapTip()"`;
+      cells += `<div class="${classes}" data-month="${m.month}" data-day="${d}"${capTipAttr}>
         <div class="cell-day-hdr">
           <div style="display:flex;align-items:center;gap:3px">
             <span class="day-num${isLocked ? ' day-muted' : ''}">${d}${isLocked && !(typeof window.hmIsStopSales === 'function' && window.hmIsStopSales()) ? `<svg style="margin-left:3px;vertical-align:middle;opacity:.55" viewBox="0 0 10 12" fill="none" stroke="currentColor" stroke-width="1.6" width="9" height="11"><rect x="1" y="5" width="8" height="7" rx="1"/><path d="M3 5V3.5a2 2 0 0 1 4 0V5"/></svg>` : ''}</span>
@@ -2113,12 +2114,9 @@ window.calSetDisplayView = function(n) {
   calDisplayView = n;
   calView = n;
 
-  // Update button styles
-  [1,2,3,6,12].forEach(function(v) {
-    var btn = document.getElementById('calVBtn' + v);
-    if (!btn) return;
-    btn.classList.toggle('active', v === n);
-  });
+  // Update select value
+  var selEl = document.getElementById('calViewSelect');
+  if (selEl) selEl.value = String(n);
 
   // Show/hide Cell Metrics control (hidden in 6/12 mode — heatmap only)
   var metricsWrap = document.getElementById('calMetricsWrap');
@@ -3411,9 +3409,15 @@ function buildDailyBView(days, month, activeDay) {
 
   var TODAY_WV = new Date(2026, 2, 9);
 
-  function cmpSfx(cmpStr) {
+  function cmpSfx(cmpStr, curr, comp) {
     if (!cmpStr || wvCompare === 'none') return '';
-    return '<span class="wv-cmp-sep"> / </span><span class="wv-cmp-val-txt">' + cmpStr + '</span>';
+    var clr = '#9ca3af';
+    if (curr != null && comp != null && !isNaN(parseFloat(curr)) && !isNaN(parseFloat(comp))) {
+      var c = parseFloat(curr), p = parseFloat(comp);
+      if (c > p) clr = '#16a34a';
+      else if (c < p) clr = '#dc2626';
+    }
+    return '<span class="wv-cmp-sep"> / </span><span class="wv-cmp-val-txt" style="color:' + clr + '">' + cmpStr + '</span>';
   }
 
   function trendBadge(curr, comp) {
@@ -3584,7 +3588,7 @@ function buildDailyBView(days, month, activeDay) {
           // ── Daily Metrics ──────────────────────────────────────────────────
           case 'occ': {
             var cv = wvCompare==='stly'?d.sdlyH:wvCompare==='ly'?d.lyH:wvCompare==='fcst'?d.fcstH:null;
-            cs = cmpSfx(cv!=null?cv+'%':'');
+            cs = cmpSfx(cv!=null?cv+'%':'', d.hotel, cv);
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.hotel+'%'+cs+'</span>'+trendBadge(d.hotel,cv)+'</div>'
               + wbBarMark('<div class="wv-occ-bar-track">'
                 + '<div style="width:'+d.to+'%;background:'+wbGrad('#004948')+';height:6px"></div>'
@@ -3601,7 +3605,7 @@ function buildDailyBView(days, month, activeDay) {
             break;
           case 'adr': {
             var cv = wvCompare==='stly'?d.sdlyA:wvCompare==='ly'?d.lyA:wvCompare==='fcst'?d.fcstA:null;
-            cs = cmpSfx(cv!=null?'$'+cv:'');
+            cs = cmpSfx(cv!=null?'$'+cv:'', d.toAdr, cv);
             var cvPct = cv!=null?Math.min(90,Math.round(cv/280*100)):null;
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">$'+d.toAdr+cs+'</span>'+trendBadge(d.toAdr,cv)+'</div>'
               + wbBarMark(wbBar(d.adrBar, '#004948'), cvPct);
@@ -3609,7 +3613,7 @@ function buildDailyBView(days, month, activeDay) {
           }
           case 'rev': {
             var cv = wvCompare==='stly'?d.sdlyR:wvCompare==='ly'?d.lyR:wvCompare==='fcst'?d.fcstR:null;
-            cs = cmpSfx(cv!=null?d.fR(cv):'');
+            cs = cmpSfx(cv!=null?d.fR(cv):'', d.toRev, cv);
             var cvPct = cv!=null?Math.min(90,Math.round(cv/4500000*100)):null;
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.fR(d.toRev)+cs+'</span>'+trendBadge(d.toRev,cv)+'</div>'
               + wbBarMark(wbBar(d.revBar, '#004948'), cvPct);
@@ -3618,7 +3622,7 @@ function buildDailyBView(days, month, activeDay) {
           // ── More Metrics ───────────────────────────────────────────────────
           case 'rn': {
             var cv = wvCompare==='stly'?d.sdlyRn:wvCompare==='ly'?d.lyRn:wvCompare==='fcst'?d.fcstRn:null;
-            cs = cmpSfx(cv!=null?String(cv):'');
+            cs = cmpSfx(cv!=null?String(cv):'', d.toRn, cv);
             var cvPct = cv!=null?Math.round(cv/WV_CAP*100):null;
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.toRn+cs+'</span>'+trendBadge(d.toRn,cv)+'</div>'
               + wbBarMark(wbBar(Math.round(d.toRn/WV_CAP*100), '#004948'), cvPct);
@@ -3626,7 +3630,7 @@ function buildDailyBView(days, month, activeDay) {
           }
           case 'revpar_s': {
             var cv = wvCompare==='stly'?d.sdlyRevpar:wvCompare==='ly'?d.lyRevpar:null;
-            cs = cmpSfx(cv!=null?'$'+cv:'');
+            cs = cmpSfx(cv!=null?'$'+cv:'', d.revpar, cv);
             var cvPct = cv!=null?Math.min(90,Math.round(cv/4)):null;
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">$'+d.revpar+cs+'</span>'+trendBadge(d.revpar,cv)+'</div>'
               + wbBarMark(wbBar(Math.min(90,Math.round(d.revpar/4)), '#004948'), cvPct);
@@ -3886,9 +3890,15 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
 
   // ── Render helpers ────────────────────────────────────────────────────────
   var C1='#004948', C2='#52d9ce', C3='#d7f7ed', C4='#d7f7ed', CSTLY='#c4ff45', CREM='#445e0d';
-  function cmpSfx(s) {
+  function cmpSfx(s, curr, comp) {
     if (!s || wvCompare === 'none') return '';
-    return '<span class="wv-cmp-sep"> / </span><span class="wv-cmp-val-txt">'+s+'</span>';
+    var clr = '#9ca3af';
+    if (curr != null && comp != null && !isNaN(parseFloat(curr)) && !isNaN(parseFloat(comp))) {
+      var c = parseFloat(curr), p = parseFloat(comp);
+      if (c > p) clr = '#16a34a';
+      else if (c < p) clr = '#dc2626';
+    }
+    return '<span class="wv-cmp-sep"> / </span><span class="wv-cmp-val-txt" style="color:'+clr+'">'+s+'</span>';
   }
   function wbGrad2(clr) {
     if (clr==='#004948') return 'linear-gradient(to right,#004948,#007a75)';
@@ -3925,7 +3935,7 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
   // ── Daily Metrics ─────────────────────────────────────────────────────────
   grp('Daily Metrics', C1);
   if (wvMetricState.capacity) {
-    sect('Occupancy', C1, C1, function(d){ var cs=cmpSfx(wvCompare==='stly'?d.sdlyH+'%':wvCompare==='ly'?d.lyH+'%':wvCompare==='fcst'?d.fcstH+'%':''); return sCell(d.hotel+'%'+cs, sBar([{p:d.to,c:C1},{p:d.otherPct,c:C2}])); });
+    sect('Occupancy', C1, C1, function(d){ var cv=wvCompare==='stly'?d.sdlyH:wvCompare==='ly'?d.lyH:wvCompare==='fcst'?d.fcstH:null; var cs=cmpSfx(cv!=null?cv+'%':'',d.hotel,cv); return sCell(d.hotel+'%'+cs, sBar([{p:d.to,c:C1},{p:d.otherPct,c:C2}])); });
     sub('Travel Distribution Hubs', C1, false, function(d){ return rCell(d.toRn+' rms',d.to+'%'); });
     sub('Other Segments', C2, false, function(d){ return rCell(d.otherRms+' rms',d.otherPct+'%'); });
     sub('STLY', CSTLY, false, function(d){ return rCell(d.sdlyRn+' rms',d.sdlyH+'%'); });
@@ -3937,13 +3947,13 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
     sub('Offline', C2, false, function(d){ return rCell((100-d.onlinePct)+'%'); });
   }
   if (wvMetricState.adr) {
-    sect('ADR', C1, C1, function(d){ var cs=cmpSfx(wvCompare==='stly'?'$'+d.sdlyA:wvCompare==='ly'?'$'+d.lyA:wvCompare==='fcst'?'$'+d.fcstA:''); return sCell('$'+d.toAdr+cs, bar(d.adrBar,C1)); });
+    sect('ADR', C1, C1, function(d){ var cv=wvCompare==='stly'?d.sdlyA:wvCompare==='ly'?d.lyA:wvCompare==='fcst'?d.fcstA:null; var cs=cmpSfx(cv!=null?'$'+cv:'',d.toAdr,cv); return sCell('$'+d.toAdr+cs, bar(d.adrBar,C1)); });
     sub('T ADR',    C1,    false, function(d){ return rCell('$'+d.toAdr); });
     sub('Hotel ADR', C2,   false, function(d){ return rCell('$'+d.adr); });
     sub('STLY',     CSTLY, false, function(d){ return rCell('$'+d.sdlyA); });
   }
   if (wvMetricState.revenue) {
-    sect('Revenue', C1, C1, function(d){ var cs=cmpSfx(wvCompare==='stly'?d.fR(d.sdlyR):wvCompare==='ly'?d.fR(d.lyR):wvCompare==='fcst'?d.fR(d.fcstR):''); return sCell(d.fR(d.toRev)+cs, bar(d.revBar,C1)); });
+    sect('Revenue', C1, C1, function(d){ var cv=wvCompare==='stly'?d.sdlyR:wvCompare==='ly'?d.lyR:wvCompare==='fcst'?d.fcstR:null; var cs=cmpSfx(cv!=null?d.fR(cv):'',d.toRev,cv); return sCell(d.fR(d.toRev)+cs, bar(d.revBar,C1)); });
     sub('T Revenue',     C1,    false, function(d){ return rCell(d.fR(d.toRev)); });
     sub('Hotel Revenue', C2,    false, function(d){ return rCell(d.fR(d.hnRev)); });
     sub('STLY',          CSTLY, false, function(d){ return rCell(d.fR(d.sdlyR)); });
@@ -3957,13 +3967,13 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
   if (hasMore) {
     grp('More Metrics', C1);
     if (wvMetricState.dm_rnSold) {
-      sect('RN Sold', C1, C1, function(d){ var cs=cmpSfx(wvCompare==='stly'?String(d.sdlyRn):wvCompare==='ly'?String(d.lyRn):wvCompare==='fcst'?String(d.fcstRn):''); return sCell(d.toRn+cs, bar(Math.round(d.toRn/WV_CAP*100),C1)); });
+      sect('RN Sold', C1, C1, function(d){ var cv=wvCompare==='stly'?d.sdlyRn:wvCompare==='ly'?d.lyRn:wvCompare==='fcst'?d.fcstRn:null; var cs=cmpSfx(cv!=null?String(cv):'',d.toRn,cv); return sCell(d.toRn+cs, bar(Math.round(d.toRn/WV_CAP*100),C1)); });
       sub('T RN',     C1,    false, function(d){ return rCell(d.toRn+' rms'); });
       sub('Hotel RN', C2,    false, function(d){ return rCell(d.hnRn+' rms'); });
       sub('STLY',     CSTLY, false, function(d){ return rCell(d.sdlyRn+' rms'); });
     }
     if (wvMetricState.dm_trevpar) {
-      sect('REVPAR', C1, C1, function(d){ var cs=cmpSfx(wvCompare==='stly'?'$'+d.sdlyRevpar:wvCompare==='ly'?'$'+d.lyRevpar:''); return sCell('$'+d.revpar+cs, bar(Math.min(90,Math.round(d.revpar/4)),C1)); });
+      sect('REVPAR', C1, C1, function(d){ var cv=wvCompare==='stly'?d.sdlyRevpar:wvCompare==='ly'?d.lyRevpar:null; var cs=cmpSfx(cv!=null?'$'+cv:'',d.revpar,cv); return sCell('$'+d.revpar+cs, bar(Math.min(90,Math.round(d.revpar/4)),C1)); });
       sub('T REVPAR', C1,    false, function(d){ return rCell('$'+d.revpar); });
       sub('STLY',     CSTLY, false, function(d){ return rCell('$'+d.sdlyRevpar); });
     }
@@ -12086,6 +12096,24 @@ setTimeout(function() {
 
   // Also hide on scroll
   window.addEventListener('scroll', window.calHideEventTip, true);
+
+window.calShowCapTip = function(e, hotel, hotelRooms, to, toRooms, avail) {
+  var tip = document.getElementById('calCapTip');
+  if (!tip) return;
+  tip.innerHTML = '<div style="font-size:12px;font-weight:600;color:#1c1c1c;margin-bottom:2px">Hotel Bookings: '+hotel+'% ('+hotelRooms+' rooms)</div>'
+    +'<div style="font-size:12px;color:#374151;margin-bottom:2px">TO Bookings: '+to+'% ('+toRooms+' rooms)</div>'
+    +'<div style="font-size:12px;color:#374151">'+avail+' Rooms available</div>';
+  tip.style.display = 'block';
+  var x = e.clientX + 14, y = e.clientY - 10;
+  if (x + 220 > window.innerWidth) x = e.clientX - 226;
+  if (y + 80 > window.innerHeight) y = e.clientY - 90;
+  tip.style.left = x + 'px';
+  tip.style.top  = y + 'px';
+};
+window.calHideCapTip = function() {
+  var tip = document.getElementById('calCapTip');
+  if (tip) tip.style.display = 'none';
+};
 })();
 
 

@@ -509,13 +509,15 @@
                 </div>
               </div>
             </div>
-            <!-- Month View Toggle: 1 / 3 / 6 / 12 -->
+            <!-- Month View Toggle: select -->
             <div id="calViewToggleWrap" class="cal-view-toggle-wrap">
-              <button onclick="calSetDisplayView(1)"  id="calVBtn1"  class="cal-view-btn">1M</button>
-              <button onclick="calSetDisplayView(2)"  id="calVBtn2"  class="cal-view-btn">2M</button>
-              <button onclick="calSetDisplayView(3)"  id="calVBtn3"  class="cal-view-btn">3M</button>
-              <button onclick="calSetDisplayView(6)"  id="calVBtn6"  class="cal-view-btn">6M</button>
-              <button onclick="calSetDisplayView(12)" id="calVBtn12" class="cal-view-btn">12M</button>
+              <select class="wv-cmp-select" id="calViewSelect" onchange="calSetDisplayView(parseInt(this.value))">
+                <option value="1">1 month</option>
+                <option value="2">2 months</option>
+                <option value="3" selected>3 months</option>
+                <option value="6">6 months</option>
+                <option value="12">12 months</option>
+              </select>
             </div>
             <!-- Cell metrics selector -->
             <div class="cal-metrics-wrap" id="calMetricsWrap">
@@ -3266,4 +3268,5 @@
 
 
   <script src="travelcore-rm-hub.js?v=14"></script>
+<div id="calCapTip" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #e2e8f0;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.12);padding:10px 14px;pointer-events:none;max-width:230px"></div>
 </body>
