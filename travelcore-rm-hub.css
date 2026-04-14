@@ -1246,6 +1246,12 @@ body.dark .daily-b-ag-wrap {
 }
 .ts-btn-cancel:hover, .ts-btn-apply:hover { background: #004948; }
 
+/* Table Settings inline button (next to Filters) */
+.wv-table-settings-inline {
+  gap: 8px; color: #4F5B60;
+}
+.wv-table-settings-inline svg { flex-shrink: 0; }
+
 /* ── Daily X AG Grid ── */
 
 /* ── Close Out Report AG Grid ── */

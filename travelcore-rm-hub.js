@@ -7170,6 +7170,29 @@ document.getElementById('wvRtOpenAll')?.addEventListener('click',  function() { 
 
 // ── Reorder Modal (shared across Daily, Daily H, Daily R) ─────────────────
 var _tsDragEl = null;
+
+// Mapping: sect/group IDs → wvMetricState keys
+var _tsMetricMap = {
+  // Group-level (top)
+  g_daily:   ['capacity','onlineOffline','adr','revenue'],
+  g_more:    ['dm_rnSold','dm_trevpar','dm_pickup','dm_avgAdults','dm_avgChildren',
+              'dm_totalAdults','dm_totalChildren','dm_totalGuests','dm_avgLos','dm_avgLeadTime',
+              'dm_availRooms','dm_availGuar'],
+  g_meals:   ['mealsSummary'],
+  g_biz:     ['bizMix'],
+  g_avail:   ['avail','availAlloc'],
+  g_torates: ['toRates'],
+  // Sect-level (child)
+  occ: ['capacity'], onoff: ['onlineOffline'], adr: ['adr'], rev: ['revenue'],
+  rn: ['dm_rnSold'], revpar_s: ['dm_trevpar'], pickup_s: ['dm_pickup'],
+  avga_s: ['dm_avgAdults'], avgc_s: ['dm_avgChildren'],
+  tota_s: ['dm_totalAdults'], totc_s: ['dm_totalChildren'],
+  totg_s: ['dm_totalGuests'], los_s: ['dm_avgLos'], lead_s: ['dm_avgLeadTime'],
+  avail_s: ['dm_availRooms'], availg_s: ['dm_availGuar'],
+  biz: ['bizMix'],
+  mp_ai: ['mealsSummary'], mp_bb: ['mealsSummary'], mp_hb: ['mealsSummary'],
+  mp_ro: ['mealsSummary'], mp_sum: ['mealsSummary']
+};
 var _tsCheckSvg = '<svg viewBox="0 0 18 18" width="14" height="14" fill="none"><path d="M3.5 9l3.5 3.5 7-7" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 var _tsDragSvg = '<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">'
   + '<circle cx="9" cy="5" r="1.5"/><circle cx="15" cy="5" r="1.5"/>'
@@ -7182,7 +7205,8 @@ function _tsToggleCb(cb) {
   cb.innerHTML = cb.classList.contains('unchecked') ? '' : _tsCheckSvg;
 }
 
-function _tsAddRow(list, key, label, depth, draggable) {
+function _tsAddRow(list, key, label, depth, draggable, checked) {
+  if (checked === undefined) checked = true;
   var row = document.createElement('div');
   row.className = 'ts-tree-row';
   row.style.paddingLeft = (8 + depth * 24) + 'px';
@@ -7192,8 +7216,8 @@ function _tsAddRow(list, key, label, depth, draggable) {
 
   // Checkbox
   var cb = document.createElement('span');
-  cb.className = 'ts-checkbox';
-  cb.innerHTML = _tsCheckSvg;
+  cb.className = 'ts-checkbox' + (checked ? '' : ' unchecked');
+  cb.innerHTML = checked ? _tsCheckSvg : '';
   cb.addEventListener('click', function(e) {
     e.stopPropagation();
     _tsToggleCb(cb);
@@ -7258,17 +7282,26 @@ function _tsAddRow(list, key, label, depth, draggable) {
   return row;
 }
 
+function _tsIsChecked(key) {
+  var mks = _tsMetricMap[key];
+  if (!mks) return true;
+  for (var i = 0; i < mks.length; i++) {
+    if (wvMetricState[mks[i]]) return true;
+  }
+  return false;
+}
+
 function _buildReorderList(list, items) {
   // items: [{ key, lbl, children: [{ key, lbl, children: [...] }] }]
   list.innerHTML = '';
   items.forEach(function(p) {
-    _tsAddRow(list, p.key, p.lbl, 0, true);
+    _tsAddRow(list, p.key, p.lbl, 0, true, _tsIsChecked(p.key));
     if (p.children) {
       p.children.forEach(function(c) {
-        _tsAddRow(list, c.key, c.lbl, 1, false);
+        _tsAddRow(list, c.key, c.lbl, 1, false, _tsIsChecked(c.key));
         if (c.children) {
           c.children.forEach(function(sc) {
-            _tsAddRow(list, sc.key, sc.lbl, 2, false);
+            _tsAddRow(list, sc.key, sc.lbl, 2, false, _tsIsChecked(sc.key));
           });
         }
       });
@@ -7367,6 +7400,19 @@ window.dhApplyReorder = function() {
   var list = document.getElementById('dhReorderList');
   var order = [];
   list.querySelectorAll('.ts-tree-row[data-depth="0"]').forEach(function(li) { order.push(li.dataset.parKey); });
+
+  // Update wvMetricState from checkbox states (dailyB only for now)
+  if (wvGroupBy === 'dailyB') {
+    list.querySelectorAll('.ts-tree-row').forEach(function(row) {
+      var key = row.dataset.parKey;
+      var isChecked = !row.querySelector('.ts-checkbox').classList.contains('unchecked');
+      var metricKeys = _tsMetricMap[key];
+      if (metricKeys) {
+        metricKeys.forEach(function(mk) { wvMetricState[mk] = isChecked; });
+      }
+    });
+  }
+
   document.getElementById('dhReorderModal').style.display = 'none';
   if (wvGroupBy === 'dailyH') {
     _dhMetricOrder = order;
