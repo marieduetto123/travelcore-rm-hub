@@ -3288,13 +3288,13 @@ function buildDailyBView(days, month, activeDay) {
   // Group: Close Outs Summary
   grp.g_closeouts.push({type:'top', id:'g_closeouts', label:'Close Outs'});
   grp.g_closeouts.push({type:'sect', id:'co_summary', label:'Summary', parent:'g_closeouts'});
-  grp.g_closeouts.push({type:'sub', id:'co_full',     label:'Full Day Close Outs', dot:'#dc2626', parent:'co_summary'});
-  grp.g_closeouts.push({type:'sub', id:'co_partial',  label:'Partial Close Outs',  dot:'#f59e0b', parent:'co_summary'});
-  grp.g_closeouts.push({type:'sub', id:'co_open',     label:'Open Channels',       dot:'#16a34a', parent:'co_summary'});
+  grp.g_closeouts.push({type:'sub', id:'co_full',     label:'Full Day Close Outs', dot:'#6b7280', parent:'co_summary'});
+  grp.g_closeouts.push({type:'sub', id:'co_partial',  label:'Partial Close Outs',  dot:'#6b7280', parent:'co_summary'});
+  grp.g_closeouts.push({type:'sub', id:'co_open',     label:'Open Channels',       dot:'#6b7280', parent:'co_summary'});
   grp.g_closeouts.push({type:'sect', id:'co_details', label:'Details', parent:'g_closeouts'});
-  grp.g_closeouts.push({type:'sub', id:'co_rooms',    label:'Room Types',          dot:'#6366f1', parent:'co_details'});
-  grp.g_closeouts.push({type:'sub', id:'co_boards',   label:'Board Types',         dot:'#0891b2', parent:'co_details'});
-  grp.g_closeouts.push({type:'sub', id:'co_tos',      label:'Tour Operators',      dot:'#d97706', parent:'co_details'});
+  grp.g_closeouts.push({type:'sub', id:'co_rooms',    label:'Room Types',          dot:'#6b7280', parent:'co_details'});
+  grp.g_closeouts.push({type:'sub', id:'co_boards',   label:'Board Types',         dot:'#6b7280', parent:'co_details'});
+  grp.g_closeouts.push({type:'sub', id:'co_tos',      label:'Tour Operators',      dot:'#6b7280', parent:'co_details'});
 
   // Group: Daily Metrics
   grp.g_daily.push({type:'top', id:'g_daily', label:'Daily Metrics'});
@@ -3775,13 +3775,14 @@ function buildDailyBView(days, month, activeDay) {
             var isFullLock = LOCKED_DAYS.has(d.dm+'-'+d.dd);
             var partialRules = PARTIAL_CLOSURES[d.dm+'-'+d.dd] || [];
             var lockSvg2 = '<svg viewBox="0 0 10 12" fill="none" stroke="currentColor" stroke-width="1.6" width="11" height="13"><rect x="1" y="5" width="8" height="7" rx="1"/><path d="M3 5V3.5a2 2 0 0 1 4 0V5"/></svg>';
-            var checkSvg2 = '<svg viewBox="0 0 14 14" fill="none" stroke="#16a34a" stroke-width="1.6" width="12" height="12"><path d="M2 7l4 4 6-6"/></svg>';
+            var checkSvg2 = '<svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" width="12" height="12"><path d="M2 7l4 4 6-6"/></svg>';
+            var _txtClr = 'var(--text-primary)';
             if (isFullLock) {
-              cellContent = '<div class="wb-sect-val" style="gap:5px"><span style="color:#dc2626">'+lockSvg2.replace('currentColor','#dc2626')+'</span><span style="font-size:13px;font-weight:600;color:#dc2626">Full Close Out</span></div>';
+              cellContent = '<div class="wb-sect-val" style="gap:5px">'+lockSvg2.replace(/currentColor/g,'var(--text-primary)')+'<span style="font-size:13px;font-weight:600;color:'+_txtClr+'">Full Close Out</span></div>';
             } else if (partialRules.length > 0) {
-              cellContent = '<div class="wb-sect-val" style="gap:5px"><span style="color:#f59e0b">'+lockSvg2.replace('currentColor','#f59e0b')+'</span><span style="font-size:13px;color:#f59e0b;font-weight:600">'+partialRules.length+' rule'+(partialRules.length>1?'s':'')+'</span></div>';
+              cellContent = '<div class="wb-sect-val" style="gap:5px">'+lockSvg2.replace(/currentColor/g,'var(--text-primary)')+'<span style="font-size:13px;font-weight:600;color:'+_txtClr+'">'+partialRules.length+' rule'+(partialRules.length>1?'s':'')+'</span></div>';
             } else {
-              cellContent = '<div class="wb-sect-val" style="gap:5px">'+checkSvg2+'<span style="font-size:13px;color:#16a34a">Open</span></div>';
+              cellContent = '<div class="wb-sect-val" style="gap:5px">'+checkSvg2.replace(/currentColor/g,'var(--text-primary)')+'<span style="font-size:13px;color:'+_txtClr+'">Open</span></div>';
             }
             break;
           }
@@ -3791,7 +3792,7 @@ function buildDailyBView(days, month, activeDay) {
             var _coFull = LOCKED_DAYS.has(_coKey);
             var _coRules = PARTIAL_CLOSURES[_coKey] || [];
             if (_coFull) {
-              cellContent = '<div class="wb-sect-val" style="gap:5px"><span style="font-size:12px;font-weight:600;color:#dc2626">All closed</span></div>';
+              cellContent = '<div class="wb-sect-val" style="gap:5px"><span style="font-size:12px;font-weight:600;color:var(--text-primary)">All closed</span></div>';
             } else if (_coRules.length > 0) {
               var _allRt = [], _allBd = [], _allTo = [];
               _coRules.forEach(function(r){ _allRt = _allRt.concat(r.roomTypes); _allBd = _allBd.concat(r.boards); _allTo = _allTo.concat(r.tos); });
@@ -3802,9 +3803,9 @@ function buildDailyBView(days, month, activeDay) {
               if (_uRt.length) parts.push(_uRt.length+' rm type'+ (_uRt.length>1?'s':''));
               if (_uBd.length) parts.push(_uBd.length+' board');
               if (_uTo.length) parts.push(_uTo.length+' TO'+ (_uTo.length>1?'s':''));
-              cellContent = '<div class="wb-sect-val"><span style="font-size:12px;color:#f59e0b;font-weight:500">'+(parts.join(', ') || 'Rules active')+'</span></div>';
+              cellContent = '<div class="wb-sect-val"><span style="font-size:12px;color:var(--text-primary);font-weight:500">'+(parts.join(', ') || 'Rules active')+'</span></div>';
             } else {
-              cellContent = '<div class="wb-sect-val"><span style="font-size:12px;color:#16a34a">—</span></div>';
+              cellContent = '<div class="wb-sect-val"><span style="font-size:12px;color:var(--text-primary)">—</span></div>';
             }
             break;
           }
@@ -4080,30 +4081,30 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
   sect('Summary', '#dc2626', '#dc2626', function(d){
     var isFullLock = LOCKED_DAYS.has(d.dm+'-'+d.dd);
     var partialRules = PARTIAL_CLOSURES[d.dm+'-'+d.dd] || [];
-    if (isFullLock) return '<div style="display:flex;align-items:center;gap:5px"><svg viewBox="0 0 10 12" fill="none" stroke="#dc2626" stroke-width="1.6" width="11" height="13"><rect x="1" y="5" width="8" height="7" rx="1"/><path d="M3 5V3.5a2 2 0 0 1 4 0V5"/></svg><span style="font-size:13px;font-weight:600;color:#dc2626">Full Day Close Out</span></div>';
-    if (partialRules.length > 0) return '<div style="display:flex;align-items:center;gap:5px"><svg viewBox="0 0 10 12" fill="none" stroke="#f59e0b" stroke-width="1.6" width="11" height="13"><rect x="1" y="5" width="8" height="7" rx="1"/><path d="M3 5V3.5a2 2 0 0 1 4 0V5"/></svg><span style="font-size:13px;color:#f59e0b;font-weight:600">'+partialRules.length+' rule'+(partialRules.length>1?'s':'')+'</span></div>';
-    return '<div style="display:flex;align-items:center;gap:5px"><svg viewBox="0 0 14 14" fill="none" stroke="#16a34a" stroke-width="1.6" width="12" height="12"><path d="M2 7l4 4 6-6"/></svg><span style="font-size:13px;color:#16a34a">Open</span></div>';
+    if (isFullLock) return '<div style="display:flex;align-items:center;gap:5px"><svg viewBox="0 0 10 12" fill="none" stroke="#111827" stroke-width="1.6" width="11" height="13"><rect x="1" y="5" width="8" height="7" rx="1"/><path d="M3 5V3.5a2 2 0 0 1 4 0V5"/></svg><span style="font-size:13px;font-weight:600;color:#111827">Full Close Out</span></div>';
+    if (partialRules.length > 0) return '<div style="display:flex;align-items:center;gap:5px"><svg viewBox="0 0 10 12" fill="none" stroke="#111827" stroke-width="1.6" width="11" height="13"><rect x="1" y="5" width="8" height="7" rx="1"/><path d="M3 5V3.5a2 2 0 0 1 4 0V5"/></svg><span style="font-size:13px;font-weight:600;color:#111827">'+partialRules.length+' rule'+(partialRules.length>1?'s':'')+'</span></div>';
+    return '<div style="display:flex;align-items:center;gap:5px"><svg viewBox="0 0 14 14" fill="none" stroke="#111827" stroke-width="1.6" width="12" height="12"><path d="M2 7l4 4 6-6"/></svg><span style="font-size:13px;color:#111827">Open</span></div>';
   });
-  sub('Full Day Close Outs', '#dc2626', false, function(d){
+  sub('Full Day Close Outs', '#6b7280', false, function(d){
     var isFullLock = LOCKED_DAYS.has(d.dm+'-'+d.dd);
-    return rCell(isFullLock ? '🔒 Yes' : '—');
+    return rCell(isFullLock ? 'Yes' : '—');
   });
-  sub('Partial Close Outs', '#f59e0b', false, function(d){
+  sub('Partial Close Outs', '#6b7280', false, function(d){
     var rules = PARTIAL_CLOSURES[d.dm+'-'+d.dd] || [];
     return rCell(rules.length > 0 ? rules.length+' rule'+(rules.length>1?'s':'') : '—');
   });
-  sub('Open Channels', '#16a34a', false, function(d){
+  sub('Open Channels', '#6b7280', false, function(d){
     var isFullLock = LOCKED_DAYS.has(d.dm+'-'+d.dd);
-    if (isFullLock) return rCell('<span style="color:#dc2626">None</span>');
+    if (isFullLock) return rCell('None');
     var rules = PARTIAL_CLOSURES[d.dm+'-'+d.dd] || [];
     return rCell(rules.length === 0 ? 'All open' : 'Partial');
   });
   var bdMap = {ai:'AI',bb:'B&B',hb:'HB',ro:'RO'};
-  sect('Details', '#f59e0b', '#f59e0b', function(d){
+  sect('Details', '#6b7280', '#6b7280', function(d){
     var k=d.dm+'-'+d.dd;
-    if (LOCKED_DAYS.has(k)) return '<div style="font-size:12px;font-weight:600;color:#dc2626">All closed</div>';
+    if (LOCKED_DAYS.has(k)) return '<div style="font-size:12px;font-weight:600;color:#111827">All closed</div>';
     var rules=PARTIAL_CLOSURES[k]||[];
-    if (!rules.length) return '<div style="font-size:12px;color:#16a34a">—</div>';
+    if (!rules.length) return '<div style="font-size:12px;color:#111827">—</div>';
     var rt=[],bd=[],to=[];
     rules.forEach(function(r){rt=rt.concat(r.roomTypes);bd=bd.concat(r.boards);to=to.concat(r.tos);});
     rt=rt.filter(function(v,i,a){return a.indexOf(v)===i;});
@@ -4113,7 +4114,7 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
     if(rt.length)p.push(rt.length+' rm type'+(rt.length>1?'s':''));
     if(bd.length)p.push(bd.length+' board');
     if(to.length)p.push(to.length+' TO'+(to.length>1?'s':''));
-    return '<div style="font-size:12px;color:#f59e0b;font-weight:500">'+(p.join(', ')||'Rules active')+'</div>';
+    return '<div style="font-size:12px;color:#111827;font-weight:500">'+(p.join(', ')||'Rules active')+'</div>';
   });
   sub('Room Types', '#6366f1', false, function(d){
     var k=d.dm+'-'+d.dd;
