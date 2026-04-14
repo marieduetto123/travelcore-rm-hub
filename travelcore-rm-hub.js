@@ -3179,7 +3179,11 @@ function wbToggle(id) {
   buildWeekGrid(wvMonth, wvWeekStart, wvWeekStart);
 }
 function wbSetAll(collapse) {
+  // Set ALL tracked IDs and any keys already in the collapse map
   _wbAllIds.forEach(function(id) { _wbCollapsed[id] = collapse; });
+  for (var k in _wbCollapsed) {
+    if (_wbCollapsed.hasOwnProperty(k)) _wbCollapsed[k] = collapse;
+  }
   buildWeekGrid(wvMonth, wvWeekStart, wvWeekStart);
 }
 
@@ -4697,10 +4701,15 @@ function _toggleDHPar(parKey) {
   if (_dailyHGridApi) _dailyHGridApi.setGridOption('rowData', _getDHVisibleRowData());
 }
 function dhSetAll(collapse) {
+  // Set all known rows
   _dhAllRows.forEach(function(r) {
     if (r.type === 'sec') _dhCollapsed[r.secKey] = collapse;
     if (r.type === 'par') _dhCollapsed[r.parKey] = collapse;
   });
+  // Also set any keys already in the collapse map to catch stragglers
+  for (var k in _dhCollapsed) {
+    if (_dhCollapsed.hasOwnProperty(k)) _dhCollapsed[k] = collapse;
+  }
   // Sync chevrons on still-visible sec/par renderers before rebuilding rowData
   _dhSecRenderers.forEach(function(sr) { sr._syncChevron(); });
   _dhParCells.forEach(function(pc) {
@@ -7131,6 +7140,10 @@ function setAllAccordions(collapse) {
   }
   if (wvGroupBy === 'combined') {
     COMBINED_SECTIONS.forEach(function(k) { wvCollapsed[k] = collapse; });
+    // Also set any other keys in wvCollapsed so inner accordions collapse too
+    for (var ck in wvCollapsed) {
+      if (wvCollapsed.hasOwnProperty(ck)) wvCollapsed[ck] = collapse;
+    }
   } else {
     // RT level
     [0,1,2,3,4,5].forEach(function(ri) {
@@ -12783,7 +12796,7 @@ window.calHideCapTip = function() {
   window.hmSelectType = function(type) {
     hmState.type = type;
     // Update card active state
-    document.querySelectorAll('.hm-type-card').forEach(function(c) {
+    document.querySelectorAll('.hm-type-option').forEach(function(c) {
       c.classList.toggle('active', c.dataset.hmtype === type);
     });
     hmRenderColours(type);
@@ -12796,7 +12809,7 @@ window.calHideCapTip = function() {
     var section = document.getElementById('hmColourSection');
     var rows    = document.getElementById('hmColourRows');
     if (!section || !rows) return;
-    section.style.display = 'flex';
+    section.style.display = '';
 
     // Show condition section and restore its state
     var condSection = document.getElementById('hmConditionSection');
@@ -12812,36 +12825,38 @@ window.calHideCapTip = function() {
     var condVal = document.getElementById('hmCondValue');
     if (condVal) condVal.value = hmState.condition.value;
 
-    // Stop Sales uses semantic red/yellow/green labels
+    // Figma 2026 swatches
     var isStopSales = type === 'stopsales';
     var colours = [
-      { key: 'grey',  swatch: isStopSales ? '#ef4444' : '#9ca3af', label: isStopSales ? 'Closed'  : 'Grey',  cfg: def.grey  },
-      { key: 'green', swatch: isStopSales ? '#22c55e' : '#4ade80', label: isStopSales ? 'Open'    : 'Green', cfg: def.green },
-      { key: 'blue',  swatch: isStopSales ? '#eab308' : '#22d3ee', label: isStopSales ? 'Partial' : 'Blue',  cfg: def.blue  }
+      { key: 'grey',  swatch: isStopSales ? '#D33030' : '#D9D9D9', label: isStopSales ? 'Closed'  : 'Grey',  cfg: def.grey  },
+      { key: 'blue',  swatch: isStopSales ? '#FDCF61' : '#D7F7ED', label: isStopSales ? 'Partial' : 'Blue',  cfg: def.blue  },
+      { key: 'green', swatch: isStopSales ? '#CEF2D1' : '#388C3F', label: isStopSales ? 'Open'    : 'Green', cfg: def.green }
     ];
 
     rows.innerHTML = colours.map(function(c) {
-      var inputHtml = '';
+      var bodyHtml = '';
       if (c.cfg.input) {
         var val = hmState[c.key][c.cfg.input.param] !== undefined
           ? hmState[c.key][c.cfg.input.param]
           : c.cfg.input.def;
-        inputHtml = '<div style="display:flex;align-items:center;gap:6px;margin-top:4px">'
+        bodyHtml = '<div class="hm-threshold-body">'
+          + '<div class="hm-threshold-name">' + c.label + '</div>'
+          + '<div class="hm-threshold-field">'
+          + '<div class="hm-threshold-field-label">' + c.cfg.desc + '</div>'
           + '<input type="number" class="hm-input" min="0" max="9999" value="' + val + '"'
           + ' data-hm-color="' + c.key + '" data-hm-param="' + c.cfg.input.param + '"'
-          + ' onchange="hmParamChange(this)">'
-          + '<span style="font-size:11px;color:#6b7280">' + c.cfg.input.unit + '</span>'
+          + ' onchange="hmParamChange(this)" placeholder="' + c.cfg.input.def + ' ' + c.cfg.input.unit + '">'
+          + '</div></div>';
+      } else {
+        bodyHtml = '<div class="hm-threshold-body">'
+          + '<div class="hm-threshold-name">' + c.label + '</div>'
+          + '<div class="hm-threshold-between">' + c.cfg.desc + '</div>'
           + '</div>';
-      } else if (c.key === 'blue') {
-        inputHtml = '<div class="hm-colour-between">' + c.cfg.desc + '</div>';
       }
-      return '<div class="hm-colour-row">'
-        + '<div class="hm-colour-swatch" style="background:' + c.swatch + '"></div>'
-        + '<div class="hm-colour-body">'
-        + '<div class="hm-colour-name">' + c.label + '</div>'
-        + (c.key !== 'blue' ? '<div class="hm-colour-desc">' + c.cfg.desc + '</div>' : '')
-        + inputHtml
-        + '</div></div>';
+      return '<div class="hm-threshold-row">'
+        + '<div class="hm-threshold-swatch" style="background:' + c.swatch + '"></div>'
+        + bodyHtml
+        + '</div>';
     }).join('');
   }
 
@@ -12910,7 +12925,7 @@ window.calHideCapTip = function() {
   window.hmReset = function() {
     hmState = { type: '', grey: { params:{} }, green: { params:{} }, blue: { params:{} }, enabled: false,
                 condition: { enabled: false, metric: 'hotel', op: '>', value: 50 } };
-    document.querySelectorAll('.hm-type-card').forEach(function(c) { c.classList.remove('active'); });
+    document.querySelectorAll('.hm-type-option').forEach(function(c) { c.classList.remove('active'); });
     var section = document.getElementById('hmColourSection');
     if (section) section.style.display = 'none';
     var rows = document.getElementById('hmColourRows');

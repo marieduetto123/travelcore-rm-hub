@@ -7035,62 +7035,123 @@ body.dark .cal-mfilt-btn.active { background: #1a3535; }
 
 
 
-/* ── Heatmap configurator ── */
-.hm-color-row {
-  display: flex; gap: 12px; align-items: flex-start;
-  padding: 12px 14px; border: 1px solid #e5e7eb;
-  border-radius: 10px; background: #fafafa;
+/* ── Heatmap modal (Figma 2026) ── */
+.hm-modal-overlay {
+  display: none; position: fixed; inset: 0; z-index: 9998;
+  background: rgba(0,0,0,.35); align-items: flex-start; justify-content: center;
+  padding-top: 60px;
 }
-.hm-color-swatch {
-  width: 22px; height: 22px; border-radius: 6px;
-  flex-shrink: 0; margin-top: 3px;
+.hm-modal {
+  background: #FAFAFA; border-radius: 4px; width: 660px; max-width: 95vw;
+  max-height: 85vh; overflow-y: auto; display: flex; flex-direction: column;
+  padding: 24px; gap: 24px;
+  box-shadow: 0 4px 4px rgba(0,0,0,.25);
+  font-family: Lato, sans-serif;
 }
-.hm-color-body { flex: 1; display: flex; flex-direction: column; gap: 6px; }
-.hm-color-label { font-size: 11px; font-weight: 800; color: #374151; text-transform: uppercase; letter-spacing: .4px; }
-.hm-select {
-  width: 100%; padding: 6px 8px; border: 1px solid #d1d5db;
-  border-radius: 6px; font-size: 12px; color: #374151;
-  background: #fff; cursor: pointer; font-family: inherit;
-}
-.hm-config { display: flex; flex-direction: column; gap: 6px; margin-top: 2px; }
-.hm-config-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-.hm-config-lbl { font-size: 11px; color: #6b7280; min-width: 120px; }
-.hm-input {
-  width: 72px; padding: 5px 8px; border: 1px solid #d1d5db;
-  border-radius: 5px; font-size: 12px; font-family: inherit;
-}
-.hm-check-group { display: flex; flex-wrap: wrap; gap: 4px; }
-.hm-chip {
-  display: inline-flex; align-items: center; gap: 4px;
-  padding: 3px 8px; border: 1px solid #d1d5db; border-radius: 20px;
-  font-size: 11px; cursor: pointer; background: #fff; transition: all .12s;
-}
-.hm-chip input { display: none; }
-.hm-chip.active { background: #006461; border-color: #006461; color: #fff; }
 
-/* Heatmap type cards */
-.hm-type-card {
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 5px; padding: 10px 8px; border: 1.5px solid #e5e7eb;
-  border-radius: 10px; background: #fafafa; cursor: pointer;
-  font-size: 12px; font-weight: 600; color: #374151; font-family: inherit;
+/* Title bar */
+.hm-modal-title {
+  display: flex; align-items: center; gap: 8px;
+}
+.hm-modal-title-text {
+  flex: 1; font-size: 20px; font-weight: 400; color: #1C1C1C;
+  font-family: Lato, sans-serif;
+}
+.hm-modal-close {
+  width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
+  background: none; border: none; cursor: pointer; padding: 0; flex-shrink: 0;
+}
+.hm-modal-close:hover svg { stroke: #1C1C1C; }
+
+/* Content area */
+.hm-modal-content { display: flex; flex-direction: column; gap: 8px; }
+.hm-modal-subtitle { font-size: 14px; font-weight: 400; color: #1C1C1C; font-family: Lato, sans-serif; }
+.hm-modal-divider { height: 1px; background: #DDE1E2; flex-shrink: 0; }
+.hm-modal-section { display: flex; flex-direction: column; gap: 8px; }
+.hm-modal-section-heading { font-size: 16px; font-weight: 700; color: #1C1C1C; font-family: Lato, sans-serif; }
+
+/* Type of Heatmap — radio grid */
+.hm-type-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+}
+.hm-type-option {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px; border: 1px solid #DDE1E2; border-radius: 4px;
+  background: transparent; cursor: pointer; font-family: Lato, sans-serif;
   transition: border-color .15s, background .15s;
-  text-align: center; min-height: 68px;
 }
-.hm-type-card:hover { border-color: #006461; background: #f0fffe; }
-.hm-type-card.active { border-color: #006461; background: #ecfdf5; color: #006461; box-shadow: 0 0 0 2px rgba(0,100,97,.12); }
-.hm-colour-row {
-  display: flex; gap: 12px; align-items: flex-start;
-  padding: 12px 14px; border: 1px solid #e5e7eb;
-  border-radius: 10px; background: #fafafa;
+.hm-type-option:hover { border-color: #006461; }
+.hm-type-option.active { border-color: #006461; background: rgba(0,100,97,.04); }
+.hm-type-radio {
+  width: 18px; height: 18px; border-radius: 50%; border: 2px solid #DDE1E2;
+  flex-shrink: 0; position: relative; transition: border-color .15s;
 }
-.hm-colour-swatch {
-  width: 22px; height: 22px; border-radius: 6px; flex-shrink: 0; margin-top: 2px;
+.hm-type-option.active .hm-type-radio {
+  border-color: #006461;
 }
-.hm-colour-body { flex: 1; display: flex; flex-direction: column; gap: 5px; }
-.hm-colour-name { font-size: 11px; font-weight: 800; color: #374151; text-transform: uppercase; letter-spacing: .4px; }
-.hm-colour-desc { font-size: 12px; color: #374151; }
-.hm-colour-between { font-size: 11px; color: #6b7280; font-style: italic; padding: 4px 0; }
+.hm-type-option.active .hm-type-radio::after {
+  content: ''; position: absolute; inset: 3px; border-radius: 50%; background: #006461;
+}
+.hm-type-icon { flex-shrink: 0; }
+.hm-type-label { font-size: 14px; font-weight: 700; color: #1C1C1C; white-space: nowrap; }
+
+/* Colour threshold rows */
+.hm-threshold-rows { display: flex; flex-direction: column; gap: 12px; }
+.hm-threshold-row {
+  display: flex; align-items: center; gap: 27px; padding: 8px;
+  border: 1px solid #006461; border-radius: 4px;
+}
+.hm-threshold-swatch {
+  width: 23px; height: 23px; border-radius: 50%; flex-shrink: 0;
+}
+.hm-threshold-body { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+.hm-threshold-name { font-size: 14px; font-weight: 700; color: #1C1C1C; font-family: Lato, sans-serif; }
+.hm-threshold-desc { font-size: 14px; font-weight: 400; color: #585858; font-family: Lato, sans-serif; }
+.hm-threshold-between { font-size: 14px; font-weight: 400; color: #585858; font-family: Lato, sans-serif; }
+.hm-threshold-field { display: flex; flex-direction: column; gap: 2px; }
+.hm-threshold-field-label { font-size: 14px; font-weight: 400; color: #585858; font-family: Lato, sans-serif; }
+.hm-input {
+  width: 215px; padding: 6px 8px; border: 1px solid #E0E0E0; border-radius: 4px;
+  font-size: 14px; color: #1C1C1C; font-family: Lato, sans-serif; background: #fff;
+}
+.hm-input:focus { outline: none; border-color: #006461; }
+
+/* Condition controls */
+.hm-cond-toggle {
+  display: flex; align-items: center; gap: 8px; cursor: pointer; margin-top: 8px;
+}
+.hm-cond-toggle input { accent-color: #006461; width: 16px; height: 16px; cursor: pointer; }
+.hm-cond-label { font-size: 14px; font-weight: 700; color: #1C1C1C; font-family: Lato, sans-serif; }
+.hm-cond-hint { font-size: 14px; font-weight: 400; color: #585858; font-family: Lato, sans-serif; }
+.hm-cond-controls {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  margin-top: 10px; padding: 12px; background: #fff; border-radius: 4px;
+  border: 1px solid #E0E0E0;
+}
+.hm-cond-select {
+  padding: 6px 8px; border: 1px solid #E0E0E0; border-radius: 4px;
+  font-size: 14px; color: #1C1C1C; background: #fff; font-family: Lato, sans-serif;
+}
+.hm-cond-input {
+  width: 80px; padding: 6px 8px; border: 1px solid #E0E0E0; border-radius: 4px;
+  font-size: 14px; color: #1C1C1C; font-family: Lato, sans-serif;
+}
+
+/* Actions / footer */
+.hm-modal-actions { display: flex; flex-direction: column; gap: 24px; }
+.hm-modal-buttons { display: flex; justify-content: flex-end; gap: 16px; }
+.hm-btn-reset {
+  padding: 8px 16px; border-radius: 4px; border: none; background: transparent;
+  font-size: 14px; font-weight: 400; color: #006461; cursor: pointer;
+  font-family: Lato, sans-serif;
+}
+.hm-btn-reset:hover { background: rgba(0,100,97,.06); }
+.hm-btn-apply {
+  padding: 8px 16px; border-radius: 4px; border: none; background: #006461;
+  font-size: 14px; font-weight: 400; color: #fff; cursor: pointer;
+  font-family: Lato, sans-serif;
+}
+.hm-btn-apply:hover { background: #00524f; }
 /* Day cell heatmap colours (Figma 2026) */
 .cal-day.hm-grey  { background: #F5F5F5 !important; border-left: 3px solid #DDE1E2 !important; }
 .cal-day.hm-green { background: #E8F5E9 !important; border-left: 3px solid #CEF2D1 !important; }

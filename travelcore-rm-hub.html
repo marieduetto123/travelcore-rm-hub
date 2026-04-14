@@ -672,84 +672,94 @@
               </button>
             </div>
 
-            <!-- Heatmap modal (fixed, escapes overflow:hidden) -->
-            <div id="hmModal" style="display:none;position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,.35);align-items:flex-start;justify-content:center;padding-top:70px" onclick="hmModalBg(event)">
-              <div style="background:#fff;border-radius:12px;box-shadow:0 16px 48px rgba(0,0,0,.2);width:540px;max-width:95vw;max-height:82vh;overflow-y:auto;display:flex;flex-direction:column">
+            <!-- Heatmap modal (Figma 2026 design) -->
+            <div id="hmModal" class="hm-modal-overlay" onclick="hmModalBg(event)">
+              <div class="hm-modal">
 
-                <!-- Header -->
-                <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px 10px;border-bottom:1px solid #e5e7eb;position:sticky;top:0;background:#fff;z-index:1">
-                  <div>
-                    <div style="font-size:14px;font-weight:800;color:#111827">Heatmap</div>
-                    <div style="font-size:11px;color:#6b7280;margin-top:2px">Select a heatmap type, then configure each colour threshold</div>
+                <!-- Title bar -->
+                <div class="hm-modal-title">
+                  <span class="hm-modal-title-text">Heatmap</span>
+                  <button class="hm-modal-close" onclick="hmToggle()">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#4F5B60" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                  </button>
+                </div>
+
+                <!-- Content area -->
+                <div class="hm-modal-content">
+                  <div class="hm-modal-subtitle">Select a heatmap type, then configure each colour threshold</div>
+                  <div class="hm-modal-divider"></div>
+
+                  <!-- Type of Heatmap -->
+                  <div class="hm-modal-section">
+                    <div class="hm-modal-section-heading">Type of Heatmap</div>
+                    <div class="hm-type-grid" id="hmTypeCards">
+                      <button type="button" class="hm-type-option" data-hmtype="stopsales" onclick="hmSelectType('stopsales')">
+                        <span class="hm-type-radio"></span>
+                        <svg class="hm-type-icon" viewBox="0 0 24 24" fill="#006461" width="18" height="18"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM12 17c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zM15.1 8H8.9V6c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2z"/></svg>
+                        <span class="hm-type-label">Stop Sales</span>
+                      </button>
+                      <button type="button" class="hm-type-option" data-hmtype="hotelocc" onclick="hmSelectType('hotelocc')">
+                        <span class="hm-type-radio"></span>
+                        <svg class="hm-type-icon" viewBox="0 0 24 24" fill="#006461" width="18" height="18"><path d="M7 13c1.66 0 3-1.34 3-3S8.66 7 7 7s-3 1.34-3 3 1.34 3 3 3zm12-6h-8v7H3V5H1v15h2v-3h18v3h2v-9c0-2.21-1.79-4-4-4z"/></svg>
+                        <span class="hm-type-label">Hotel Occupancy</span>
+                      </button>
+                      <button type="button" class="hm-type-option" data-hmtype="remaining" onclick="hmSelectType('remaining')">
+                        <span class="hm-type-radio"></span>
+                        <svg class="hm-type-icon" viewBox="0 0 24 24" fill="#006461" width="18" height="18"><path d="M19 7h-8v7H3V5H1v15h2v-3h18v3h2V11c0-2.21-1.79-4-4-4z"/></svg>
+                        <span class="hm-type-label">Remaining Rooms</span>
+                      </button>
+                      <button type="button" class="hm-type-option" data-hmtype="mealplan" onclick="hmSelectType('mealplan')">
+                        <span class="hm-type-radio"></span>
+                        <svg class="hm-type-icon" viewBox="0 0 24 24" fill="#006461" width="18" height="18"><path d="M8.1 13.34l2.83-2.83L3.91 3.5c-1.56 1.56-1.56 4.09 0 5.66l4.19 4.18zm6.78-1.81c1.53.71 3.68.21 5.27-1.38 1.91-1.91 2.28-4.65.81-6.12-1.46-1.46-4.2-1.1-6.12.81-1.59 1.59-2.09 3.74-1.38 5.27L3.7 19.87l1.41 1.41L12 14.41l6.88 6.88 1.41-1.41L13.41 13l1.47-1.47z"/></svg>
+                        <span class="hm-type-label">Meal Plan Guests</span>
+                      </button>
+                      <button type="button" class="hm-type-option" data-hmtype="toforecast" onclick="hmSelectType('toforecast')">
+                        <span class="hm-type-radio"></span>
+                        <svg class="hm-type-icon" viewBox="0 0 24 24" fill="#006461" width="18" height="18"><path d="M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z"/></svg>
+                        <span class="hm-type-label">TO Forecast</span>
+                      </button>
+                    </div>
                   </div>
-                  <button onclick="hmToggle()" style="border:none;background:none;cursor:pointer;color:#9ca3af;font-size:20px;line-height:1">&times;</button>
-                </div>
 
-                <!-- Step 1: Heatmap type selector -->
-                <div style="padding:16px 18px 0">
-                  <div style="font-size:11px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Type of Heatmap</div>
-                  <div id="hmTypeCards" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
-                    <button type="button" class="hm-type-card" data-hmtype="stopsales" onclick="hmSelectType('stopsales')">
-                      <span style="font-size:18px">🔒</span>
-                      <span>Stop Sales</span>
-                    </button>
-                    <button type="button" class="hm-type-card" data-hmtype="hotelocc" onclick="hmSelectType('hotelocc')">
-                      <span style="font-size:18px">🏨</span>
-                      <span>Hotel Occupancy</span>
-                    </button>
-                    <button type="button" class="hm-type-card" data-hmtype="remaining" onclick="hmSelectType('remaining')">
-                      <span style="font-size:18px">🛏</span>
-                      <span>Remaining Rooms</span>
-                    </button>
-                    <button type="button" class="hm-type-card" data-hmtype="mealplan" onclick="hmSelectType('mealplan')">
-                      <span style="font-size:18px">🍽</span>
-                      <span>Meal Plan Guests</span>
-                    </button>
-                    <button type="button" class="hm-type-card" data-hmtype="toforecast" onclick="hmSelectType('toforecast')">
-                      <span style="font-size:18px">📊</span>
-                      <span>TO Forecast</span>
-                    </button>
+                  <!-- Colour Thresholds -->
+                  <div class="hm-modal-section" id="hmColourSection" style="display:none">
+                    <div class="hm-modal-section-heading">Colour Thresholds</div>
+                    <div id="hmColourRows" class="hm-threshold-rows"></div>
                   </div>
-                </div>
 
-                <!-- Step 2: Colour thresholds (rendered by JS) -->
-                <div id="hmColourSection" style="display:none;padding:16px 18px;display:none;flex-direction:column;gap:12px">
-                  <div style="font-size:11px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px">Colour Thresholds</div>
-                  <div id="hmColourRows" style="display:flex;flex-direction:column;gap:10px"></div>
-                </div>
-
-                <!-- Step 3: Condition (optional) -->
-                <div id="hmConditionSection" style="display:none;padding:0 18px 14px">
-                  <div style="height:1px;background:#e5e7eb;margin-bottom:12px"></div>
-                  <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
-                    <input type="checkbox" id="hmCondEnabled" onchange="hmCondToggle(this)" style="accent-color:#006461;width:14px;height:14px;cursor:pointer">
-                    <span style="font-size:11px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.5px">Condition</span>
-                    <span style="font-size:11px;color:#9ca3af">— only colour cells when…</span>
-                  </label>
-                  <div id="hmCondControls" style="display:none;margin-top:10px;padding:10px 12px;background:#f8f9fd;border-radius:8px;border:1px solid #dde1e2">
-                    <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap">
-                      <select id="hmCondMetric" style="padding:5px 8px;border:1px solid #dde1e2;border-radius:6px;font-size:12px;color:#374151;background:#fff;font-family:inherit">
+                  <!-- Condition (optional) -->
+                  <div id="hmConditionSection" style="display:none">
+                    <div class="hm-modal-divider"></div>
+                    <label class="hm-cond-toggle">
+                      <input type="checkbox" id="hmCondEnabled" onchange="hmCondToggle(this)">
+                      <span class="hm-cond-label">Condition</span>
+                      <span class="hm-cond-hint">— only colour cells when…</span>
+                    </label>
+                    <div id="hmCondControls" class="hm-cond-controls" style="display:none">
+                      <select id="hmCondMetric" class="hm-cond-select">
                         <option value="hotel">Hotel Occ (%)</option>
                         <option value="remainRooms">Remaining Rooms</option>
                         <option value="totalGuests">Meal Plan Guests</option>
                         <option value="toOtb">TO OTB (rooms)</option>
                       </select>
-                      <select id="hmCondOp" style="padding:5px 8px;border:1px solid #dde1e2;border-radius:6px;font-size:12px;color:#374151;background:#fff;font-family:inherit">
+                      <select id="hmCondOp" class="hm-cond-select">
                         <option value=">">&gt; above</option>
                         <option value=">=">&gt;= at least</option>
                         <option value="<">&lt; below</option>
                         <option value="<=">&lt;= at most</option>
                       </select>
-                      <input type="number" id="hmCondValue" value="50" min="0" max="9999"
-                        style="width:64px;padding:5px 8px;border:1px solid #dde1e2;border-radius:6px;font-size:12px;color:#374151;font-family:inherit">
+                      <input type="number" id="hmCondValue" value="50" min="0" max="9999" class="hm-cond-input">
                     </div>
                   </div>
                 </div>
 
-                <!-- Footer -->
-                <div style="padding:12px 18px;border-top:1px solid #e5e7eb;display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0;background:#fff">
-                  <button onclick="hmReset()" style="padding:7px 14px;border:1px solid #e5e7eb;background:transparent;color:#6b7280;border-radius:7px;font-size:12px;cursor:pointer;font-family:inherit">Reset</button>
-                  <button onclick="hmApply()" style="padding:7px 20px;background:#006461;color:#fff;border:none;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">Apply</button>
+                <!-- Actions / footer -->
+                <div class="hm-modal-actions">
+                  <div class="hm-modal-divider"></div>
+                  <div class="hm-modal-buttons">
+                    <button class="hm-btn-reset" onclick="hmReset()">Reset</button>
+                    <button class="hm-btn-apply" onclick="hmApply()">Apply</button>
+                  </div>
                 </div>
 
               </div>
