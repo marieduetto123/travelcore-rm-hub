@@ -3477,6 +3477,7 @@ function buildDailyBView(days, month, activeDay) {
     if (clr==='#004948') return 'linear-gradient(to right,#004948,#007a75)';
     if (clr==='#52d9ce') return 'linear-gradient(to right,#52d9ce,#8aeee8)';
     if (clr==='#445e0d') return 'linear-gradient(to right,#445e0d,#6a9014)';
+    if (clr==='#16a34a') return 'linear-gradient(to right,#16a34a,#22c55e)';
     return clr;
   }
   function wbStackBar(segs) {
@@ -3700,7 +3701,7 @@ function buildDailyBView(days, month, activeDay) {
             break;
           case 'avail_s':
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.availRooms+' rm</span></div>'
-              + wbBar(Math.min(90,Math.round(d.availRooms/WV_CAP*100)), '#004948');
+              + wbBar(Math.min(90,Math.round(d.availRooms/WV_CAP*100)), '#16a34a');
             break;
           case 'availg_s':
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.availGuar+' rm</span></div>'
@@ -3934,6 +3935,7 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
     if (clr==='#004948') return 'linear-gradient(to right,#004948,#007a75)';
     if (clr==='#52d9ce') return 'linear-gradient(to right,#52d9ce,#8aeee8)';
     if (clr==='#445e0d') return 'linear-gradient(to right,#445e0d,#6a9014)';
+    if (clr==='#16a34a') return 'linear-gradient(to right,#16a34a,#22c55e)';
     return clr;
   }
   function bar(pct, clr) {
@@ -4048,7 +4050,7 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
       sub('Hotel', C2, false, function(d){ return sCell(d.hLead, bar(Math.min(90,parseInt(d.hLead)/90*100),C2)); });
     }
     if (wvMetricState.dm_availRooms) {
-      sect('Avail Rooms', C1, C1, function(d){ return sCell(d.availRooms+' rm', bar(Math.min(90,Math.round(d.availRooms/WV_CAP*100)),C1)); });
+      sect('Avail Rooms', '#16a34a', '#16a34a', function(d){ return sCell(d.availRooms+' rm', bar(Math.min(90,Math.round(d.availRooms/WV_CAP*100)),'#16a34a')); });
     }
     if (wvMetricState.dm_availGuar) {
       sect('Avail Guar.', C1, C1, function(d){ return sCell(d.availGuar+' rm', bar(Math.min(90,Math.round(d.availGuar/20*100)),C1)); });
@@ -6682,7 +6684,7 @@ function buildWeekGrid(month, weekStart, activeDay) {
             ['Total Adults',   dmTotalAdults,  null,  null,  null,  '#2e65e8', Math.min(92, 60+v%28),               'dm_totalAdults',  hotelTotalAdults,  Math.min(92, 60+v%28+8)],
             ['Total Children', dmTotalChildren,null,  null,  null,  '#d33030', Math.min(92, 15+v%35),               'dm_totalChildren',hotelTotalChildren,Math.min(92, 15+v%35+8)],
             ['REVPAR',         '$'+dmToTrev,   '$'+S.trev, '$'+L.trev, null,  '#2e65e8', Math.min(92, 65+v%25),    'dm_trevpar',      '$'+(adr+80),      Math.min(92, 65+v%25+10)],
-            ['Avail Rooms',    availRooms,     null,  null,  null,  '#2e65e8', Math.min(92, Math.max(5, hotel*0.8)),'dm_availRooms',   '__hotelOnly',     null],
+            ['Avail Rooms',    availRooms,     null,  null,  null,  '#16a34a', Math.min(92, Math.max(5, hotel*0.8)),'dm_availRooms',   '__hotelOnly',     null],
             ['Avail Guar.',    Math.floor(8+v%5), null,null, null,  '#2e65e8', Math.min(92, 10+v%50),               'dm_availGuar',    null,              null],
             ['Avg LOS',        (2.8+v%5*.3).toFixed(1)+'n', null,null,null,'#0891b2', Math.min(92, 40+v%40), 'dm_avgLos',       hotelAvgLos,       Math.min(92, 40+v%40+8)],
             ['Avg Lead Time',  (18+v%60)+'d',               null,null,null,'#6366f1', Math.min(92, 25+v%55), 'dm_avgLeadTime',  hotelAvgLeadTime,  Math.min(92, 25+v%55+8)],
