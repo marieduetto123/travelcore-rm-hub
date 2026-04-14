@@ -7349,6 +7349,12 @@ body.dark .cal-mfilt-btn.active { background: #1a3535; }
 .wb-hdr-selected { background: #7f1d1d !important; border-bottom: 2px solid #f43f5e; }
 .wb-hdr-selected .wb-hdr-dow,
 .wb-hdr-selected .wb-hdr-date { color: #fda4af; }
+.wb-hdr-co-badge {
+  font-size: 9px; font-weight: 700; letter-spacing: 0.3px; text-transform: uppercase;
+  padding: 1px 5px; border-radius: 3px; white-space: nowrap; line-height: 1.4;
+}
+.wb-hdr-co-full { background: rgba(255,255,255,0.22); color: #fca5a5; }
+.wb-hdr-co-part { background: rgba(255,255,255,0.18); color: #fde68a; }
 .wb-hdr-sel-icon { margin-left: auto; line-height: 0; flex-shrink: 0; }
 .wb-hdr-dow  { font-family: 'Lato', sans-serif; font-size: 14px; font-weight: 700; color: #fff; }
 .wb-hdr-date { font-family: 'Lato', sans-serif; font-size: 14px; font-weight: 400; color: rgba(255,255,255,.7); }
