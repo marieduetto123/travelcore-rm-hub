@@ -2023,6 +2023,11 @@ body.dark .wv-topbar-title { color: var(--text-primary); }
   transition: background 0.12s;
 }
 .wv-acc-action-btn:hover { background: #f0fdfb; }
+/* Table Settings button (Figma 2026) */
+.wv-table-settings-btn {
+  color: #4F5B60; gap: 8px; padding: 8px 16px; height: auto;
+}
+.wv-table-settings-btn:hover { background: #f3f4f6; }
 /* Teal outline button (Filters, Metrics) */
 .wv-outline-btn {
   display: inline-flex; align-items: center; gap: 6px;
