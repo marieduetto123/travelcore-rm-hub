@@ -950,19 +950,19 @@ function updateChart() {
     `<line x1="0" y1="${y}" x2="${svgW}" y2="${y}" stroke="#d4d4d4" stroke-width="0.8"/>`
   ).join('');
 
-  // ── 3. Neutral zone band (±8px around parity — very subtle) ─────────────
-  const neutralZone = `<rect x="0" y="${refY - 8}" width="${svgW}" height="16" fill="#e8e8e8" opacity="0.4"/>`;
+  // ── 3. Neutral zone — removed ────────────────────────────────────────────
+  const neutralZone = '';
 
-  // ── 4. Benchmark / goal line (dashed, above parity) ─────────────────────
+  // ── 4. Benchmark / goal line (dashed) ───────────────────────────────────
   const goalY = refY - 70;
   const benchmarkLine = `<line x1="0" y1="${goalY}" x2="${svgW}" y2="${goalY}" stroke="#004948" stroke-width="1.5" stroke-dasharray="6 4" opacity="0.5"/>`;
 
-  // ── 5. Parity reference line (solid, darker) ───────────────────────────
-  const parityLine = `<line x1="0" y1="${refY}" x2="${svgW}" y2="${refY}" stroke="#6b7280" stroke-width="1.5"/>`;
+  // ── 5. Parity reference line — removed ──────────────────────────────────
+  const parityLine = '';
 
-  // ── 6. "Above" / "Below" right-side labels ──────────────────────────────
-  const aboveLabel = `<text x="${svgW - 6}" y="${refY - 16}" font-family="Lato,sans-serif" font-size="11" fill="#004948" text-anchor="end" font-weight="700">Above</text>`;
-  const belowLabel = `<text x="${svgW - 6}" y="${refY + 24}" font-family="Lato,sans-serif" font-size="11" fill="#dc2626" text-anchor="end" font-weight="700">Below</text>`;
+  // ── 6. Above / Below labels — removed ───────────────────────────────────
+  const aboveLabel = '';
+  const belowLabel = '';
 
   let mainSvg = '';
 
@@ -1082,8 +1082,6 @@ function updateChart() {
     const DOT_COLORS2 = ['#004948','#0891b2','#6366f1','#dc2626','#f59e0b','#ec4899','#10b981','#8b5cf6'];
     let legendHtml = '';
     if (revChartMode === 'histogram') {
-      legendHtml += `<div class="legend-item"><svg viewBox="0 0 14 10" width="14" height="10"><rect x="0" y="1" width="14" height="8" fill="#004948" opacity="0.85" rx="2"/></svg>Above parity</div>`;
-      legendHtml += `<div class="legend-item"><svg viewBox="0 0 14 10" width="14" height="10"><rect x="0" y="1" width="14" height="8" fill="#e85d4a" opacity="0.75" rx="2"/></svg>Below parity</div>`;
       legendHtml += `<div class="legend-item"><svg viewBox="0 0 28 10" width="28" height="10"><line x1="0" y1="5" x2="28" y2="5" stroke="#1e293b" stroke-width="2.5"/></svg>Trend</div>`;
       legendHtml += `<div class="legend-item"><svg viewBox="0 0 28 10" width="28" height="10"><line x1="0" y1="5" x2="28" y2="5" stroke="#004948" stroke-width="1.5" stroke-dasharray="6 4" opacity="0.6"/></svg>Benchmark</div>`;
     }
