@@ -12853,7 +12853,8 @@ window.calHideCapTip = function() {
           + '<div class="hm-threshold-between">' + c.cfg.desc + '</div>'
           + '</div>';
       }
-      return '<div class="hm-threshold-row">'
+      var rowCls = 'hm-threshold-row' + (!c.cfg.input ? ' hm-threshold-no-input' : '');
+      return '<div class="' + rowCls + '">'
         + '<div class="hm-threshold-swatch" style="background:' + c.swatch + '"></div>'
         + bodyHtml
         + '</div>';

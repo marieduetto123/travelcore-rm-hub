@@ -7072,7 +7072,7 @@ body.dark .cal-mfilt-btn.active { background: #1a3535; }
 
 /* Type of Heatmap — radio grid */
 .hm-type-grid {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+  display: grid; grid-template-columns: repeat(3, 196px); gap: 8px 12px;
 }
 .hm-type-option {
   display: flex; align-items: center; gap: 8px;
@@ -7081,16 +7081,17 @@ body.dark .cal-mfilt-btn.active { background: #1a3535; }
   transition: border-color .15s, background .15s;
 }
 .hm-type-option:hover { border-color: #006461; }
-.hm-type-option.active { border-color: #006461; background: rgba(0,100,97,.04); }
+.hm-type-option.active { border-color: #006461; background: transparent; }
 .hm-type-radio {
-  width: 18px; height: 18px; border-radius: 50%; border: 2px solid #DDE1E2;
+  width: 18px; height: 18px; border-radius: 10px; border: 2px solid #4F5B60;
   flex-shrink: 0; position: relative; transition: border-color .15s;
+  background: #fff;
 }
 .hm-type-option.active .hm-type-radio {
   border-color: #006461;
 }
 .hm-type-option.active .hm-type-radio::after {
-  content: ''; position: absolute; inset: 3px; border-radius: 50%; background: #006461;
+  content: ''; position: absolute; inset: 3px; border-radius: 8px; background: #006461;
 }
 .hm-type-icon { flex-shrink: 0; }
 .hm-type-label { font-size: 14px; font-weight: 700; color: #1C1C1C; white-space: nowrap; }
@@ -7098,8 +7099,11 @@ body.dark .cal-mfilt-btn.active { background: #1a3535; }
 /* Colour threshold rows */
 .hm-threshold-rows { display: flex; flex-direction: column; gap: 12px; }
 .hm-threshold-row {
-  display: flex; align-items: center; gap: 27px; padding: 8px;
-  border: 1px solid #006461; border-radius: 4px;
+  display: flex; align-items: center; gap: 12px; padding: 16px 8px;
+  border: 1px solid #DDE1E2; border-radius: 4px;
+}
+.hm-threshold-row.hm-threshold-no-input {
+  padding: 8px; gap: 16px;
 }
 .hm-threshold-swatch {
   width: 23px; height: 23px; border-radius: 50%; flex-shrink: 0;
