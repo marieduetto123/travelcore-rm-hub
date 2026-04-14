@@ -12743,6 +12743,7 @@ window.calHideCapTip = function() {
     stopsales: {
       label: 'Stop Sales',
       icon: '🔒',
+      svgPath: 'M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM12 17c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zM15.1 8H8.9V6c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2z',
       grey:  { desc: 'Full close out day',              input: null },
       green: { desc: 'No stop sale',                    input: null },
       blue:  { desc: 'At least 1 partial close out',    input: null }
@@ -12750,6 +12751,7 @@ window.calHideCapTip = function() {
     hotelocc: {
       label: 'Hotel Occupancy',
       icon: '🏨',
+      svgPath: 'M7 13c1.66 0 3-1.34 3-3S8.66 7 7 7s-3 1.34-3 3 1.34 3 3 3zm12-6h-8v7H3V5H1v15h2v-3h18v3h2v-9c0-2.21-1.79-4-4-4z',
       grey:  { desc: 'Occupancy above',  input: { param: 'greyT',  def: 85, unit: '%' } },
       green: { desc: 'Occupancy below',  input: { param: 'greenT', def: 60, unit: '%' } },
       blue:  { desc: 'Between Grey & Green thresholds', input: null }
@@ -12757,6 +12759,7 @@ window.calHideCapTip = function() {
     remaining: {
       label: 'Remaining Rooms',
       icon: '🛏',
+      svgPath: 'M19 7h-8v7H3V5H1v15h2v-3h18v3h2V11c0-2.21-1.79-4-4-4z',
       grey:  { desc: 'Remaining rooms less than',  input: { param: 'greyT',  def: 10, unit: 'rooms' } },
       green: { desc: 'Remaining rooms more than',  input: { param: 'greenT', def: 50, unit: 'rooms' } },
       blue:  { desc: 'Between Grey & Green thresholds', input: null }
@@ -12764,6 +12767,7 @@ window.calHideCapTip = function() {
     mealplan: {
       label: 'Meal Plan Guests',
       icon: '🍽',
+      svgPath: 'M8.1 13.34l2.83-2.83L3.91 3.5c-1.56 1.56-1.56 4.09 0 5.66l4.19 4.18zm6.78-1.81c1.53.71 3.68.21 5.27-1.38 1.91-1.91 2.28-4.65.81-6.12-1.46-1.46-4.2-1.1-6.12.81-1.59 1.59-2.09 3.74-1.38 5.27L3.7 19.87l1.41 1.41L12 14.41l6.88 6.88 1.41-1.41L13.41 13l1.47-1.47z',
       grey:  { desc: 'Total guests above', input: { param: 'greyT',  def: 200, unit: 'guests' } },
       green: { desc: 'Total guests below', input: { param: 'greenT', def: 100, unit: 'guests' } },
       blue:  { desc: 'Between Grey & Green thresholds', input: null }
@@ -12771,6 +12775,7 @@ window.calHideCapTip = function() {
     toforecast: {
       label: 'TO Forecast',
       icon: '📊',
+      svgPath: 'M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z',
       grey:  { desc: 'OTB/Commit above forecast by', input: { param: 'greyT',  def: 20, unit: 'rooms' } },
       green: { desc: 'OTB/Commit below forecast by', input: { param: 'greenT', def: 20, unit: 'rooms' } },
       blue:  { desc: 'Between Grey & Green thresholds', input: null }
@@ -12908,14 +12913,17 @@ window.calHideCapTip = function() {
     if (!labelEl) return;
     if (hmState.enabled && hmState.type && HM_TYPES[hmState.type]) {
       var def = HM_TYPES[hmState.type];
-      // Show emoji icon, hide SVG icon
-      if (iconEl)        { iconEl.textContent = def.icon; iconEl.style.display = 'inline'; }
+      // Show SVG icon inside a hollow chip
+      if (iconEl) {
+        iconEl.innerHTML = '<span class="hm-btn-chip"><svg viewBox="0 0 24 24" fill="#006461" width="14" height="14"><path d="' + def.svgPath + '"/></svg></span>';
+        iconEl.style.display = 'inline-flex';
+      }
       if (defaultIconEl) defaultIconEl.style.display = 'none';
       labelEl.textContent = 'Heatmap';
       if (btn) btn.classList.add('active');
     } else {
       // Restore defaults
-      if (iconEl)        { iconEl.textContent = ''; iconEl.style.display = 'none'; }
+      if (iconEl)        { iconEl.innerHTML = ''; iconEl.style.display = 'none'; }
       if (defaultIconEl) defaultIconEl.style.display = '';
       labelEl.textContent = 'Heatmap';
       if (btn) btn.classList.remove('active');

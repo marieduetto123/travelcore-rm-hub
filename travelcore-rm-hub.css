@@ -7141,8 +7141,21 @@ body.dark .cal-mfilt-btn.active { background: #1a3535; }
   font-size: 14px; color: #1C1C1C; font-family: Lato, sans-serif;
 }
 
+/* Heatmap button icon chip */
+.hm-btn-chip {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px; border-radius: 12px;
+  border: 1.5px solid #006461; background: transparent;
+}
+.hm-btn-chip svg { display: block; }
+
 /* Actions / footer */
-.hm-modal-actions { display: flex; flex-direction: column; gap: 24px; }
+.hm-modal-actions {
+  display: flex; flex-direction: column; gap: 24px;
+  position: sticky; bottom: -24px; background: #FAFAFA;
+  padding-top: 0; margin: 0 -24px -24px; padding: 0 24px 24px;
+  z-index: 1;
+}
 .hm-modal-buttons { display: flex; justify-content: flex-end; gap: 16px; }
 .hm-btn-reset {
   padding: 8px 16px; border-radius: 4px; border: none; background: transparent;
