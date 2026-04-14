@@ -3451,7 +3451,7 @@ function buildDailyBView(days, month, activeDay) {
     var pct = Math.min(100, Math.max(0, compPct));
     return '<div style="position:relative">'
       + barHtml
-      + '<div style="position:absolute;left:'+pct+'%;top:0;height:12px;width:2.5px;background:#c4ff45;transform:translateX(-50%);z-index:2;border-radius:1px;pointer-events:none;box-shadow:0 0 3px rgba(196,255,69,0.6)"></div>'
+      + '<div style="position:absolute;left:'+pct+'%;top:0;height:6px;width:2.5px;background:#c4ff45;transform:translateX(-50%);z-index:2;border-radius:1px;pointer-events:none;box-shadow:0 0 3px rgba(196,255,69,0.6)"></div>'
       + '</div>';
   }
 
@@ -3541,10 +3541,10 @@ function buildDailyBView(days, month, activeDay) {
             + (avRm === 0 ? 'SOLD OUT' : avRm+' avail') + '</span>'
             + '<span style="font-size:12px;color:#9ca3af;margin-left:4px">/ '+inv+'</span></div>'
             + '<div class="wv-occ-bar-track">'
-            + '<div style="width:'+toP+'%;background:#006461;height:12px"></div>'
-            + '<div style="width:'+otP+'%;background:#47c5bc;height:12px"></div>'
-            + '<div style="width:'+alP+'%;background:#b1d8b7;height:12px"></div>'
-            + '<div style="width:'+avP+'%;background:#d1fae5;height:12px"></div>'
+            + '<div style="width:'+toP+'%;background:#006461;height:6px"></div>'
+            + '<div style="width:'+otP+'%;background:#47c5bc;height:6px"></div>'
+            + '<div style="width:'+alP+'%;background:#b1d8b7;height:6px"></div>'
+            + '<div style="width:'+avP+'%;background:#d1fae5;height:6px"></div>'
             + '</div>';
 
         // ── Travel Co. Rates (dynamic toIdx) ──────────────────────────────────
@@ -3562,17 +3562,17 @@ function buildDailyBView(days, month, activeDay) {
             + '<span style="font-size:12px;color:#9ca3af">'+toRem+'r</span>'
             + '<span style="font-size:11px;font-weight:700;padding:1px 5px;border-radius:3px;background:'+promoClr+'22;color:'+promoClr+';border:1px solid '+promoClr+'44">'+promoTxt+'</span>'
             + '</div>'
-            + '<div class="wv-occ-bar-track"><div style="width:'+barPct+'%;background:#006461;height:12px"></div></div>';
+            + '<div class="wv-occ-bar-track"><div style="width:'+barPct+'%;background:#006461;height:6px"></div></div>';
 
         } else if (row.toBase) {
           var baseRate = d.adr + 8;
           cellContent = '<div class="wb-sect-val"><span class="wv-occ-total" style="font-weight:700">$'+baseRate+'</span></div>'
-            + '<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,Math.round(baseRate/280*100))+'%;background:#006461;height:12px"></div></div>';
+            + '<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,Math.round(baseRate/280*100))+'%;background:#006461;height:6px"></div></div>';
 
         } else {
         // colors are read from the first sub-row's dot for each section
         function wbBar(pct, clr) {
-          return '<div class="wv-occ-bar-track"><div style="width:'+pct+'%;background:'+clr+';height:12px"></div></div>';
+          return '<div class="wv-occ-bar-track"><div style="width:'+pct+'%;background:'+clr+';height:6px"></div></div>';
         }
         switch (row.id) {
           // ── Daily Metrics ──────────────────────────────────────────────────
@@ -3581,16 +3581,16 @@ function buildDailyBView(days, month, activeDay) {
             cs = cmpSfx(cv!=null?cv+'%':'');
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.hotel+'%'+cs+'</span>'+trendBadge(d.hotel,cv)+'</div>'
               + wbBarMark('<div class="wv-occ-bar-track">'
-                + '<div style="width:'+d.to+'%;background:#006461;height:12px"></div>'
-                + '<div style="width:'+d.otherPct+'%;background:#47c5bc;height:12px"></div>'
+                + '<div style="width:'+d.to+'%;background:#006461;height:6px"></div>'
+                + '<div style="width:'+d.otherPct+'%;background:#47c5bc;height:6px"></div>'
                 + '</div>', cv);
             break;
           }
           case 'onoff':
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.onlinePct+'%</span></div>'
               + '<div class="wv-occ-bar-track">'
-              + '<div style="width:'+d.onlinePct+'%;background:#006461;height:12px"></div>'
-              + '<div style="width:'+(100-d.onlinePct)+'%;background:#47c5bc;height:12px"></div>'
+              + '<div style="width:'+d.onlinePct+'%;background:#006461;height:6px"></div>'
+              + '<div style="width:'+(100-d.onlinePct)+'%;background:#47c5bc;height:6px"></div>'
               + '</div>';
             break;
           case 'adr': {
@@ -3885,11 +3885,11 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
     return '<span class="wv-cmp-sep"> / </span><span class="wv-cmp-val-txt">'+s+'</span>';
   }
   function bar(pct, clr) {
-    return '<div class="wv-occ-bar-track"><div style="width:'+pct+'%;background:'+clr+';height:12px"></div></div>';
+    return '<div class="wv-occ-bar-track"><div style="width:'+pct+'%;background:'+clr+';height:6px"></div></div>';
   }
   function sBar(segs) {
     return '<div class="wv-occ-bar-track">'
-      + segs.map(function(s){ return '<div style="width:'+s.p+'%;background:'+s.c+';height:12px"></div>'; }).join('')+'</div>';
+      + segs.map(function(s){ return '<div style="width:'+s.p+'%;background:'+s.c+';height:6px"></div>'; }).join('')+'</div>';
   }
   function sCell(val, barHtml) {
     return '<div style="font-size:14px;font-weight:400;color:#111827;margin-bottom:4px;padding:0 10px">'+val+'</div>'

@@ -2753,6 +2753,8 @@ body.dark .wv-acc-title { color: #fff; }
   display: flex; height: 12px; border-radius: 12px; overflow: hidden;
   background: #e5e7eb; width: 100%;
 }
+/* Daily B — slimmer bars */
+.wb-row .wv-occ-bar-track { height: 6px; border-radius: 6px; }
 .wv-occ-seg { height: 100%; transition: width 0.2s; }
 .wv-occ-to    { background: #006461; }
 .wv-occ-other { background: #47c5bc; }
