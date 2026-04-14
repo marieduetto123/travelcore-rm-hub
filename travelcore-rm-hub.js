@@ -3517,7 +3517,7 @@ function buildDailyBView(days, month, activeDay) {
     var dow  = DOW_SHORT[dt.getDay()];
     var isAct = dv.day === activeDay && dv.month === month;
     var dba  = Math.round((dt - TODAY_WV) / 86400000);
-    var dbaStr = dba === 0 ? 'Today' : dba > 0 ? dba + 'd' : '';
+    var dbaStr = dba === 0 ? 'Today' : dba > 0 ? dba + ' DBA' : '';
     var mm2 = String(dv.month).padStart(2,'0'), dd2 = String(dv.day).padStart(2,'0');
     var isoDate = '2026-' + mm2 + '-' + dd2;
     var isSel = _wbSelectedDays.has(isoDate);
@@ -4179,7 +4179,7 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
     var bg=isLocked?'#374151':isActive?'#006461':isToday?'#125756':'#1a5e5b';
     var tb=isActive?'3px solid rgba(255,255,255,0.5)':isToday?'3px solid rgba(255,255,255,0.3)':isLocked?'3px solid #dc2626':'3px solid transparent';
     var dc=isLocked?'#fca5a5':'#fff', sc=isLocked?'rgba(252,165,165,0.85)':'rgba(255,255,255,0.75)';
-    var dbaStr=dba===0?'Today':dba>0?dba+'d':'';
+    var dbaStr=dba===0?'Today':dba>0?dba+' DBA':'';
     function H(){}
     H.prototype.init=function(){ this.gui=document.createElement('div'); this.gui.style.cssText='background:'+bg+';width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4px 6px;box-sizing:border-box;gap:2px;border-top:'+tb+';border-right:1px solid rgba(255,255,255,0.12);'; this.gui.innerHTML='<div style="font-weight:700;font-size:13px;color:'+dc+'">'+(isLocked?'🔒 ':'')+DOW_SHORT[new Date(2026,dm-1,dd).getDay()]+' '+dd+'</div><div style="font-size:11px;color:'+sc+';display:flex;align-items:center;gap:4px"><span>'+MNAMES_S[dm]+'</span>'+(dbaStr?'<span style="background:rgba(255,255,255,0.2);border-radius:3px;padding:0 4px;font-size:10px;color:#fff">'+dbaStr+'</span>':'')+(evts?'<span style="width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.9);display:inline-block"></span>':'')+'</div>'; };
     H.prototype.getGui=function(){ return this.gui; };
@@ -4941,7 +4941,7 @@ function initDailyHGrid(days, activeMonth, activeDay, containerEl) {
     var topBorder= isActive ? '3px solid rgba(255,255,255,0.5)' : isToday ? '3px solid rgba(255,255,255,0.3)' : isLocked ? '3px solid #dc2626' : '3px solid transparent';
     var dayClr   = isLocked ? '#fca5a5' : '#fff';
     var subClr   = isLocked ? 'rgba(252,165,165,0.85)' : 'rgba(255,255,255,0.75)';
-    var dbaStr   = dba === 0 ? 'Today' : dba > 0 ? dba + 'd' : '';
+    var dbaStr   = dba === 0 ? 'Today' : dba > 0 ? dba + ' DBA' : '';
     function H() {}
     H.prototype.init = function(p) {
       this.gui = document.createElement('div');
