@@ -3544,9 +3544,8 @@ function buildDailyBView(days, month, activeDay) {
     var _coKey2 = dv.month+'-'+dv.day;
     var _coFull2 = LOCKED_DAYS.has(_coKey2);
     var _coPart2 = (PARTIAL_CLOSURES[_coKey2] || []).length > 0;
-    var _coBadge = '';
-    if (_coFull2) _coBadge = '<span class="wb-hdr-co-badge wb-hdr-co-full">Full</span>';
-    else if (_coPart2) _coBadge = '<span class="wb-hdr-co-badge wb-hdr-co-part">Partial</span>';
+    var _lockColor = isSel ? '#f43f5e' : _coFull2 ? '#fca5a5' : _coPart2 ? '#fde68a' : 'rgba(255,255,255,0.35)';
+    var _lockWidth = (isSel || _coFull2 || _coPart2) ? '1.5' : '1.3';
     html += '<div class="wb-data-cell wb-hdr-cell'
           + (isAct ? ' wb-hdr-active' : '')
           + (isSel ? ' wb-hdr-selected' : '')
@@ -3554,11 +3553,8 @@ function buildDailyBView(days, month, activeDay) {
           + '<span class="wb-hdr-dow">' + dow + '</span>'
           + '<span class="wb-hdr-date">' + dv.day + '/' + dv.month + '</span>'
           + (dbaStr ? '<span style="font-size:10px;background:rgba(255,255,255,0.2);border-radius:3px;padding:0 4px;color:#fff;white-space:nowrap">'+dbaStr+'</span>' : '')
-          + _coBadge
           + '<span class="wb-hdr-sel-icon">'
-          + (isSel
-            ? '<svg viewBox="0 0 12 14" fill="none" stroke="#f43f5e" stroke-width="1.5" width="11" height="13"><rect x="1" y="5" width="10" height="9" rx="1"/><path d="M3.5 5V3a2.5 2.5 0 0 1 5 0v2"/></svg>'
-            : '<svg viewBox="0 0 12 14" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.3" width="11" height="13"><rect x="1" y="5" width="10" height="9" rx="1"/><path d="M3.5 5V3a2.5 2.5 0 0 1 5 0v2"/></svg>')
+          + '<svg viewBox="0 0 12 14" fill="none" stroke="'+_lockColor+'" stroke-width="'+_lockWidth+'" width="11" height="13"><rect x="1" y="5" width="10" height="9" rx="1"/><path d="M3.5 5V3a2.5 2.5 0 0 1 5 0v2"/></svg>'
           + '</span>'
           + '</div>';
   });
