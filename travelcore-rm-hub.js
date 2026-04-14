@@ -3388,19 +3388,15 @@ function buildDailyBView(days, month, activeDay) {
     grp.g_meals.push({type:'sect', id:'mp_ai',   label:'All Inclusive',   parent:'g_meals'});
     grp.g_meals.push({type:'sub',  id:'mp_ai_t', label:'TO % of hotel',            dot:'#004948', parent:'mp_ai'});
     grp.g_meals.push({type:'sub',  id:'mp_ai_h', label:'Hotel %',         dot:'#52d9ce', parent:'mp_ai'});
-    grp.g_meals.push({type:'sub',  id:'mp_ai_rn', label:'Room Nights',    dot:'#6b7280', parent:'mp_ai'});
     grp.g_meals.push({type:'sect', id:'mp_bb',   label:'Bed & Breakfast', parent:'g_meals'});
     grp.g_meals.push({type:'sub',  id:'mp_bb_t', label:'TO % of hotel',            dot:'#004948', parent:'mp_bb'});
     grp.g_meals.push({type:'sub',  id:'mp_bb_h', label:'Hotel %',         dot:'#52d9ce', parent:'mp_bb'});
-    grp.g_meals.push({type:'sub',  id:'mp_bb_rn', label:'Room Nights',    dot:'#6b7280', parent:'mp_bb'});
     grp.g_meals.push({type:'sect', id:'mp_hb',   label:'Half Board',      parent:'g_meals'});
     grp.g_meals.push({type:'sub',  id:'mp_hb_t', label:'TO % of hotel',            dot:'#004948', parent:'mp_hb'});
     grp.g_meals.push({type:'sub',  id:'mp_hb_h', label:'Hotel %',         dot:'#52d9ce', parent:'mp_hb'});
-    grp.g_meals.push({type:'sub',  id:'mp_hb_rn', label:'Room Nights',    dot:'#6b7280', parent:'mp_hb'});
     grp.g_meals.push({type:'sect', id:'mp_ro',   label:'Room Only',       parent:'g_meals'});
     grp.g_meals.push({type:'sub',  id:'mp_ro_t', label:'TO % of hotel',            dot:'#004948', parent:'mp_ro'});
     grp.g_meals.push({type:'sub',  id:'mp_ro_h', label:'Hotel %',         dot:'#52d9ce', parent:'mp_ro'});
-    grp.g_meals.push({type:'sub',  id:'mp_ro_rn', label:'Room Nights',    dot:'#6b7280', parent:'mp_ro'});
     grp.g_meals.push({type:'sect', id:'mp_sum',  label:'Summary',         parent:'g_meals'});
   }
 
@@ -3864,20 +3860,15 @@ function buildDailyBView(days, month, activeDay) {
           case 'los_h':      v1 = d.hLos;                                                   break;
           case 'lead_t':     v1 = d.avgLead;                                                break;
           case 'lead_h':     v1 = d.hLead;                                                  break;
-          // meal plans
-          case 'mp_ai_h':    v1 = d.aiPct+'%';                                              break;
+          // meal plans (% · rooms)
+          case 'mp_ai_h':    v1 = d.aiPct+'% · '+Math.round(d.hnRn*d.aiPct/100)+' rms';   break;
           case 'mp_ai_t':    v1 = Math.max(0,Math.round(d.aiPct*d.toPct*0.9))+'%';         break;
-          case 'mp_bb_h':    v1 = d.bbPct+'%';                                              break;
+          case 'mp_bb_h':    v1 = d.bbPct+'% · '+Math.round(d.hnRn*d.bbPct/100)+' rms';   break;
           case 'mp_bb_t':    v1 = Math.max(0,Math.round(d.bbPct*d.toPct*0.9))+'%';         break;
-          case 'mp_hb_h':    v1 = d.hbPct+'%';                                              break;
+          case 'mp_hb_h':    v1 = d.hbPct+'% · '+Math.round(d.hnRn*d.hbPct/100)+' rms';   break;
           case 'mp_hb_t':    v1 = Math.max(0,Math.round(d.hbPct*d.toPct*0.9))+'%';         break;
-          case 'mp_ro_h':    v1 = d.roPct+'%';                                              break;
+          case 'mp_ro_h':    v1 = d.roPct+'% · '+Math.round(d.hnRn*d.roPct/100)+' rms';   break;
           case 'mp_ro_t':    v1 = Math.max(0,Math.round(d.roPct*d.toPct*0.9))+'%';         break;
-          // meal plan room nights
-          case 'mp_ai_rn':   v1 = Math.round(d.hnRn * d.aiPct / 100)+' rms';              break;
-          case 'mp_bb_rn':   v1 = Math.round(d.hnRn * d.bbPct / 100)+' rms';              break;
-          case 'mp_hb_rn':   v1 = Math.round(d.hnRn * d.hbPct / 100)+' rms';              break;
-          case 'mp_ro_rn':   v1 = Math.round(d.hnRn * d.roPct / 100)+' rms';              break;
           // business mix
           case 'biz_to':     v1 = d.toMix+'%';                                              break;
           case 'biz_dir':    v1 = d.dirMix+'%';                                             break;
@@ -4152,8 +4143,7 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
       var k=mp[1];
       sect(mp[0], C1, C1, (function(k){ return function(d){ var tPct=Math.max(0,Math.round(d[k]*d.toPct*0.9)); var rn=Math.round(d.hnRn*d[k]/100); return sCell(d[k]+'% · '+rn+' rms', bar(d[k],C2))+'<div style="margin-top:2px">'+bar(tPct,C1)+'</div>'; }; })(k));
       sub('TO % of hotel', C1, false, (function(k){ return function(d){ var pct=Math.max(0,Math.round(d[k]*d.toPct*0.9)); return sCell(pct+'%', bar(pct,C1)); }; })(k));
-      sub('Hotel %', C2, false, (function(k){ return function(d){ return sCell(d[k]+'%', bar(d[k],C2)); }; })(k));
-      sub('Room Nights', '#6b7280', false, (function(k){ return function(d){ return rCell(Math.round(d.hnRn*d[k]/100)+' rms'); }; })(k));
+      sub('Hotel %', C2, false, (function(k){ return function(d){ var rn=Math.round(d.hnRn*d[k]/100); return sCell(d[k]+'% · '+rn+' rms', bar(d[k],C2)); }; })(k));
     });
     sect('Summary', C1, C1, function(d){
       var _aiR=Math.round(d.hnRn*d.aiPct/100), _bbR=Math.round(d.hnRn*d.bbPct/100), _hbR=Math.round(d.hnRn*d.hbPct/100), _roR=Math.round(d.hnRn*d.roPct/100);
