@@ -6214,6 +6214,11 @@ body.dark .figma-tb-info-tag { background: #222; border-color: #2a2a2a; }
 
 /* ── Monthly cell metrics selector ── */
 .cal-metrics-wrap { position: relative; }
+.cal-metrics-disabled .cal-hdr-btn {
+  opacity: 0.45;
+  pointer-events: none;
+  cursor: not-allowed;
+}
 .cal-metrics-dropdown {
   position: fixed; z-index: 9999;
   width: 320px; background: #fff; border: 1px solid #e5e7eb;

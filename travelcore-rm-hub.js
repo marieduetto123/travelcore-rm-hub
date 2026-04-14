@@ -2148,9 +2148,19 @@ window.calSetDisplayView = function(n) {
   var selEl = document.getElementById('calViewSelect');
   if (selEl) selEl.value = String(n);
 
-  // Show/hide Cell Metrics control (hidden in 6/12 mode — heatmap only)
+  // Disable Cell Metrics control in 6/12 mode (heatmap only — no cell content)
   var metricsWrap = document.getElementById('calMetricsWrap');
-  if (metricsWrap) metricsWrap.style.display = (n === 6 || n === 12) ? 'none' : '';
+  var metricsBtn  = document.getElementById('calMetricsBtn');
+  if (metricsWrap && metricsBtn) {
+    var isCompact = (n === 6 || n === 12);
+    metricsBtn.disabled = isCompact;
+    metricsWrap.classList.toggle('cal-metrics-disabled', isCompact);
+    // Close dropdown if open
+    if (isCompact) {
+      var dd = document.getElementById('calMetricsDropdown');
+      if (dd) dd.style.display = 'none';
+    }
+  }
 
   // Apply compact CSS class
   var grid = document.getElementById('calMonths');
