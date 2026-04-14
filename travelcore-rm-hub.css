@@ -773,14 +773,12 @@ body.dark .cal-nav-btn:hover { background: rgba(196,255,69,0.07); border-color: 
 
 /* Day cells — tall with occ content */
 .cal-day {
-  min-height: 111px; min-width: 0;
+  height: 84px; min-width: 0;
   display: flex; flex-direction: column;
   position: relative; border-radius: 3px;
   cursor: pointer; transition: box-shadow .1s;
   background: var(--hotel-bg, var(--seg-bg, var(--surface-3)));
   overflow: hidden;
-  border: 1px solid #dde1e2;
-  padding: 8px;
 }
 /* Content layers */
 .cal-day .cell-day-hdr,
@@ -792,11 +790,11 @@ body.dark .cal-nav-btn:hover { background: rgba(196,255,69,0.07); border-color: 
 /* Day number row */
 .cell-day-hdr {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 0;
+  padding: 4px 4px 0;
   flex-shrink: 0;
 }
 .day-num {
-  font-family: 'Lato', sans-serif; font-size: 12px; font-weight: 400; color: #1c1c1c; line-height: 1;
+  font-size: 10px; font-weight: 700; color: var(--text-primary);
 }
 .day-muted { color: #8a9096; }
 .cell-lock {
@@ -812,8 +810,8 @@ body.dark .cal-nav-btn:hover { background: rgba(196,255,69,0.07); border-color: 
 
 /* Occ content */
 .cell-content {
-  padding: 0;
-  display: flex; flex-direction: column; gap: 4px;
+  padding: 2px 4px 4px;
+  display: flex; flex-direction: column; gap: 2px;
   flex: 1; overflow: hidden;
 }
 .cell-occ-row {
@@ -852,42 +850,6 @@ body.dark .cal-nav-btn:hover { background: rgba(196,255,69,0.07); border-color: 
 body.dark .cell-occ-bar { background: rgba(255,255,255,0.10); }
 body.dark .cell-occ-bar-to { background: #C4FF45; }
 body.dark .cell-occ-bar-other { background: #4374EB; }
-
-/* Figma calendar cell: price / vs / delta */
-.cal-cell-price {
-  font-family: 'Lato', sans-serif;
-  font-size: 16px;
-  font-weight: 700;
-  color: #1c1c1c;
-  line-height: 1;
-}
-.cal-cell-vs {
-  font-family: 'Lato', sans-serif;
-  font-size: 12px;
-  font-weight: 400;
-  color: #1c1c1c;
-  line-height: 1;
-}
-.cal-cell-delta {
-  font-family: 'Lato', sans-serif;
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 1;
-}
-.cal-cell-sld {
-  background: #8a9096;
-  color: #fff;
-  font-size: 14px;
-  font-weight: 400;
-  padding: 4px 8px;
-  border-radius: 12px;
-  display: inline-block;
-}
-body.dark .cal-cell-price { color: var(--text-primary); }
-body.dark .cal-cell-vs { color: var(--text-primary); }
-body.dark .cal-cell-delta { color: var(--text-primary); }
-body.dark .day-num { color: var(--text-primary); }
-body.dark .cal-day { border-color: rgba(255,255,255,0.1); }
 
 /* Light bg (occ 1–4) → Figma Grey-500 text #8a9096 */
 .cal-day.hotel-occ-1 .day-num, .cal-day.hotel-occ-2 .day-num,

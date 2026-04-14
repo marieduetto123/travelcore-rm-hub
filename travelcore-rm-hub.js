@@ -1525,27 +1525,29 @@ function renderCalendar() {
         rateBase:     Math.round(cellAdr * 1.08),
         totalGuests:  Math.round(hotel * HOTEL_CAPACITY / 100 * (cellAvgAdults + cellAvgChildren)),
       };
-      // Month view: Figma-style price / vs / delta layout
+      // Month view: label + value only, no progress bar
       const metricRows = (function() {
-        const isSoldOut = (hotel >= 100);
-        if (isSoldOut) {
-          return '<span class="cal-cell-sld">SLD</span>';
+        // Use new cmBuildRows engine if available
+        if (typeof window.cmBuildRows === 'function') {
+          var rows = window.cmBuildRows(cellMetricVals);
+          return rows.map(function(r) {
+            return '<div class="cell-occ-row">'
+              + '<span class="cell-occ-label" style="color:' + r.color + '">' + r.label + '</span>'
+              + '<span class="cell-occ-pct">' + r.value + '</span>'
+              + '</div>';
+          }).join('');
         }
-        const curAdr = cellMetricVals.hotelAdr;
-        const compAdr = (wvCompare === 'fcst') ? cellMetricVals.fcstAdr
-                      : (wvCompare === 'ly')   ? cellMetricVals.lyAdr
-                      : cellMetricVals.lyAdr; // stly defaults to lyAdr
-        const priceHtml = '<div class="cal-cell-price">$' + curAdr + '</div>';
-        let vsHtml = '';
-        let deltaHtml = '';
-        if (wvCompare !== 'none' && compAdr && compAdr > 0) {
-          vsHtml = '<div class="cal-cell-vs">vs $' + compAdr + '</div>';
-          const deltaPct = Math.round((curAdr - compAdr) / compAdr * 100);
-          const deltaColor = deltaPct < 0 ? '#2E65E8' : deltaPct > 0 ? '#D33030' : '#1c1c1c';
-          const deltaSign = deltaPct > 0 ? '+' : '';
-          deltaHtml = '<div class="cal-cell-delta" style="color:' + deltaColor + '">' + deltaSign + deltaPct + '%</div>';
-        }
-        return priceHtml + vsHtml + deltaHtml;
+        // Fallback to old engine
+        return calCellMetrics.map(function(key) {
+          var def = CAL_METRIC_DEFS[key];
+          if (!def) return '';
+          var val = cellMetricVals[key];
+          if (val === undefined) return '';
+          return '<div class="cell-occ-row">'
+            + '<span class="cell-occ-label">' + def.label + '</span>'
+            + '<span class="cell-occ-pct">' + def.fmt(val) + '</span>'
+            + '</div>';
+        }).join('');
       })();
 
       let allotBadge = '';
