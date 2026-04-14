@@ -3998,54 +3998,54 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
     grp('More Metrics', C1);
     if (wvMetricState.dm_rnSold) {
       sect('RN Sold', C1, C1, function(d){ var cv=wvCompare==='stly'?d.sdlyRn:wvCompare==='ly'?d.lyRn:wvCompare==='fcst'?d.fcstRn:null; var cs=cmpSfx(cv!=null?String(cv):'',d.toRn,cv); return sCell(d.toRn+cs, bar(Math.round(d.toRn/WV_CAP*100),C1)); });
-      sub('T RN',     C1,    false, function(d){ return rCell(d.toRn+' rms'); });
-      sub('Hotel RN', C2,    false, function(d){ return rCell(d.hnRn+' rms'); });
-      sub('STLY',     CSTLY, false, function(d){ return rCell(d.sdlyRn+' rms'); });
+      sub('T RN',     C1,    false, function(d){ return sCell(d.toRn+' rms', bar(Math.round(d.toRn/WV_CAP*100),C1)); });
+      sub('Hotel RN', C2,    false, function(d){ return sCell(d.hnRn+' rms', bar(Math.round(d.hnRn/WV_CAP*100),C2)); });
+      sub('STLY',     CSTLY, false, function(d){ return sCell(d.sdlyRn+' rms', bar(Math.round(d.sdlyRn/WV_CAP*100),CSTLY)); });
     }
     if (wvMetricState.dm_trevpar) {
       sect('REVPAR', C1, C1, function(d){ var cv=wvCompare==='stly'?d.sdlyRevpar:wvCompare==='ly'?d.lyRevpar:null; var cs=cmpSfx(cv!=null?'$'+cv:'',d.revpar,cv); return sCell('$'+d.revpar+cs, bar(Math.min(90,Math.round(d.revpar/4)),C1)); });
-      sub('T REVPAR', C1,    false, function(d){ return rCell('$'+d.revpar); });
-      sub('STLY',     CSTLY, false, function(d){ return rCell('$'+d.sdlyRevpar); });
+      sub('T REVPAR', C1,    false, function(d){ return sCell('$'+d.revpar, bar(Math.min(90,Math.round(d.revpar/4)),C1)); });
+      sub('STLY',     CSTLY, false, function(d){ return sCell('$'+d.sdlyRevpar, bar(Math.min(90,Math.round(d.sdlyRevpar/4)),CSTLY)); });
     }
     if (wvMetricState.dm_pickup) {
       sect('Pickup', C1, C1, function(d){ return sCell('+'+d.pickup, bar(Math.min(90,d.pickup*3),C1)); });
-      sub('T Pickup',     C1, false, function(d){ return rCell('+'+d.pickup); });
-      sub('Hotel Pickup', C2, false, function(d){ return rCell('+'+d.hPickup); });
+      sub('T Pickup',     C1, false, function(d){ return sCell('+'+d.pickup, bar(Math.min(90,d.pickup*3),C1)); });
+      sub('Hotel Pickup', C2, false, function(d){ return sCell('+'+d.hPickup, bar(Math.min(90,d.hPickup*3),C2)); });
     }
     if (wvMetricState.dm_avgAdults) {
       sect('Avg Adults', C1, C1, function(d){ return sCell(d.avgA, bar(Math.min(90,parseFloat(d.avgA)/3*100),C1)); });
-      sub('T', C1, false, function(d){ return rCell(d.avgA); });
-      sub('Hotel', C2, false, function(d){ return rCell(d.hAvgA); });
+      sub('T', C1, false, function(d){ return sCell(d.avgA, bar(Math.min(90,parseFloat(d.avgA)/3*100),C1)); });
+      sub('Hotel', C2, false, function(d){ return sCell(d.hAvgA, bar(Math.min(90,parseFloat(d.hAvgA)/3*100),C2)); });
     }
     if (wvMetricState.dm_avgChildren) {
       sect('Avg Children', C1, C1, function(d){ return sCell(d.avgC, bar(Math.min(90,parseFloat(d.avgC)/2*100),C1)); });
-      sub('T', C1, false, function(d){ return rCell(d.avgC); });
-      sub('Hotel', C2, false, function(d){ return rCell(d.hAvgC); });
+      sub('T', C1, false, function(d){ return sCell(d.avgC, bar(Math.min(90,parseFloat(d.avgC)/2*100),C1)); });
+      sub('Hotel', C2, false, function(d){ return sCell(d.hAvgC, bar(Math.min(90,parseFloat(d.hAvgC)/2*100),C2)); });
     }
     if (wvMetricState.dm_totalAdults) {
       sect('Total Adults', C1, C1, function(d){ return sCell(String(d.totAT), bar(Math.min(90,Math.round(d.totAT/500*100)),C1)); });
-      sub('T', C1, false, function(d){ return rCell(String(d.totAT)); });
-      sub('Hotel', C2, false, function(d){ return rCell(String(d.totAH)); });
+      sub('T', C1, false, function(d){ return sCell(String(d.totAT), bar(Math.min(90,Math.round(d.totAT/500*100)),C1)); });
+      sub('Hotel', C2, false, function(d){ return sCell(String(d.totAH), bar(Math.min(90,Math.round(d.totAH/500*100)),C2)); });
     }
     if (wvMetricState.dm_totalChildren) {
       sect('Total Children', C1, C1, function(d){ return sCell(String(d.totCT), bar(Math.min(90,Math.round(d.totCT/100*100)),C1)); });
-      sub('T', C1, false, function(d){ return rCell(String(d.totCT)); });
-      sub('Hotel', C2, false, function(d){ return rCell(String(d.totCH)); });
+      sub('T', C1, false, function(d){ return sCell(String(d.totCT), bar(Math.min(90,Math.round(d.totCT/100*100)),C1)); });
+      sub('Hotel', C2, false, function(d){ return sCell(String(d.totCH), bar(Math.min(90,Math.round(d.totCH/100*100)),C2)); });
     }
     if (wvMetricState.dm_totalGuests) {
       sect('Total Guests', C1, C1, function(d){ return sCell(String(d.totG), bar(Math.min(90,Math.round(d.totG/600*100)),C1)); });
-      sub('T', C1, false, function(d){ return rCell(String(d.totG)); });
-      sub('Hotel', C2, false, function(d){ return rCell(String(d.hTotG)); });
+      sub('T', C1, false, function(d){ return sCell(String(d.totG), bar(Math.min(90,Math.round(d.totG/600*100)),C1)); });
+      sub('Hotel', C2, false, function(d){ return sCell(String(d.hTotG), bar(Math.min(90,Math.round(d.hTotG/600*100)),C2)); });
     }
     if (wvMetricState.dm_avgLos) {
       sect('Avg LOS', C1, C1, function(d){ return sCell(d.avgLos, bar(Math.min(90,parseFloat(d.avgLos)/10*100),C1)); });
-      sub('T', C1, false, function(d){ return rCell(d.avgLos); });
-      sub('Hotel', C2, false, function(d){ return rCell(d.hLos); });
+      sub('T', C1, false, function(d){ return sCell(d.avgLos, bar(Math.min(90,parseFloat(d.avgLos)/10*100),C1)); });
+      sub('Hotel', C2, false, function(d){ return sCell(d.hLos, bar(Math.min(90,parseFloat(d.hLos)/10*100),C2)); });
     }
     if (wvMetricState.dm_avgLeadTime) {
       sect('Lead Time', C1, C1, function(d){ return sCell(d.avgLead, bar(Math.min(90,parseInt(d.avgLead)/90*100),C1)); });
-      sub('T', C1, false, function(d){ return rCell(d.avgLead); });
-      sub('Hotel', C2, false, function(d){ return rCell(d.hLead); });
+      sub('T', C1, false, function(d){ return sCell(d.avgLead, bar(Math.min(90,parseInt(d.avgLead)/90*100),C1)); });
+      sub('Hotel', C2, false, function(d){ return sCell(d.hLead, bar(Math.min(90,parseInt(d.hLead)/90*100),C2)); });
     }
     if (wvMetricState.dm_availRooms) {
       sect('Avail Rooms', C1, C1, function(d){ return sCell(d.availRooms+' rm', bar(Math.min(90,Math.round(d.availRooms/WV_CAP*100)),C1)); });
@@ -4061,8 +4061,8 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
     [['All Inclusive','aiPct',C1],['Bed & Breakfast','bbPct',C2],['Half Board','hbPct',C3],['Room Only','roPct',C4]].forEach(function(mp){
       var k=mp[1], c=mp[2];
       sect(mp[0], c, c, (function(k,c){ return function(d){ return sCell(d[k]+'%', bar(d[k],c)); }; })(k,c));
-      sub('Hotel %', c, false, (function(k){ return function(d){ return rCell(d[k]+'%'); }; })(k));
-      sub('TO %', C2, false, (function(k){ return function(d){ return rCell(Math.max(0,Math.round(d[k]*d.toPct*0.9))+'%'); }; })(k));
+      sub('Hotel %', c, false, (function(k,c){ return function(d){ return sCell(d[k]+'%', bar(d[k],c)); }; })(k,c));
+      sub('TO %', C2, false, (function(k){ return function(d){ var pct=Math.max(0,Math.round(d[k]*d.toPct*0.9)); return sCell(pct+'%', bar(pct,C2)); }; })(k));
     });
     sect('Summary', C1, C1, function(d){
       return sBar([{p:d.aiPct,c:C1},{p:d.bbPct,c:C2},{p:d.hbPct,c:C3},{p:d.roPct,c:C4}])
