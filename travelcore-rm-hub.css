@@ -2052,6 +2052,7 @@ body.dark .wv-topbar-title { color: var(--text-primary); }
   background: #fff;
   border-bottom: 1px solid #e0e3e5;
   padding: 8px 8px 0;   /* top gap between line above and tabs */
+  margin-bottom: 4px;
 }
 body.dark .wv-groupby-bar { background: var(--surface-2); border-bottom-color: var(--border); }
 
@@ -2242,6 +2243,7 @@ body.dark .wv-range { color: var(--text-primary); }
 .wv-week-layout {
   display: flex;
   align-items: stretch;
+  margin-bottom: 4px;
 }
 
 
