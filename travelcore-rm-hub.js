@@ -3289,9 +3289,6 @@ function buildDailyBView(days, month, activeDay) {
   // Group: Close Outs Summary
   grp.g_closeouts.push({type:'top', id:'g_closeouts', label:'Close Outs'});
   grp.g_closeouts.push({type:'sect', id:'co_summary', label:'Summary', parent:'g_closeouts'});
-  grp.g_closeouts.push({type:'sub', id:'co_full',     label:'Full Day Close Outs', dot:'#6b7280', parent:'co_summary'});
-  grp.g_closeouts.push({type:'sub', id:'co_partial',  label:'Partial Close Outs',  dot:'#6b7280', parent:'co_summary'});
-  grp.g_closeouts.push({type:'sub', id:'co_open',     label:'Open Channels',       dot:'#6b7280', parent:'co_summary'});
   grp.g_closeouts.push({type:'sub', id:'co_rooms',    label:'Room Types',          dot:'#6b7280', parent:'co_summary'});
   grp.g_closeouts.push({type:'sub', id:'co_boards',   label:'Board Types',         dot:'#6b7280', parent:'co_summary'});
   grp.g_closeouts.push({type:'sub', id:'co_tos',      label:'Tour Operators',      dot:'#6b7280', parent:'co_summary'});
@@ -3820,9 +3817,6 @@ function buildDailyBView(days, month, activeDay) {
         } else {
         switch (row.id) {
           // close outs
-          case 'co_full':    { var _ifl = LOCKED_DAYS.has(d.dm+'-'+d.dd); v1 = _ifl ? '🔒 Yes' : '—'; } break;
-          case 'co_partial': { var _pr = PARTIAL_CLOSURES[d.dm+'-'+d.dd] || []; v1 = _pr.length > 0 ? _pr.length+' rule'+(_pr.length>1?'s':'') : '—'; } break;
-          case 'co_open':    { var _ifl2 = LOCKED_DAYS.has(d.dm+'-'+d.dd); var _pr2 = PARTIAL_CLOSURES[d.dm+'-'+d.dd] || []; v1 = _ifl2 ? 'None' : (_pr2.length === 0 ? 'All open' : 'Partial'); } break;
           // close out details
           case 'co_rooms': {
             var _crKey = d.dm+'-'+d.dd;
@@ -4064,20 +4058,6 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
     if (isFullLock) return '<div style="display:flex;align-items:center;gap:5px"><svg viewBox="0 0 10 12" fill="none" stroke="#111827" stroke-width="1.6" width="11" height="13"><rect x="1" y="5" width="8" height="7" rx="1"/><path d="M3 5V3.5a2 2 0 0 1 4 0V5"/></svg><span style="font-size:13px;font-weight:600;color:#111827">Full Close Out</span></div>';
     if (partialRules.length > 0) return '<div style="display:flex;align-items:center;gap:5px"><svg viewBox="0 0 10 12" fill="none" stroke="#111827" stroke-width="1.6" width="11" height="13"><rect x="1" y="5" width="8" height="7" rx="1"/><path d="M3 5V3.5a2 2 0 0 1 4 0V5"/></svg><span style="font-size:13px;font-weight:600;color:#111827">'+partialRules.length+' rule'+(partialRules.length>1?'s':'')+'</span></div>';
     return '<div style="display:flex;align-items:center;gap:5px"><svg viewBox="0 0 14 14" fill="none" stroke="#111827" stroke-width="1.6" width="12" height="12"><path d="M2 7l4 4 6-6"/></svg><span style="font-size:13px;color:#111827">Open</span></div>';
-  });
-  sub('Full Day Close Outs', '#6b7280', false, function(d){
-    var isFullLock = LOCKED_DAYS.has(d.dm+'-'+d.dd);
-    return rCell(isFullLock ? 'Yes' : '—');
-  });
-  sub('Partial Close Outs', '#6b7280', false, function(d){
-    var rules = PARTIAL_CLOSURES[d.dm+'-'+d.dd] || [];
-    return rCell(rules.length > 0 ? rules.length+' rule'+(rules.length>1?'s':'') : '—');
-  });
-  sub('Open Channels', '#6b7280', false, function(d){
-    var isFullLock = LOCKED_DAYS.has(d.dm+'-'+d.dd);
-    if (isFullLock) return rCell('None');
-    var rules = PARTIAL_CLOSURES[d.dm+'-'+d.dd] || [];
-    return rCell(rules.length === 0 ? 'All open' : 'Partial');
   });
   var bdMap = {ai:'AI',bb:'B&B',hb:'HB',ro:'RO'};
   sub('Room Types', '#6b7280', false, function(d){
