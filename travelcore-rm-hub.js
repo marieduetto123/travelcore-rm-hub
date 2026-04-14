@@ -3336,7 +3336,6 @@ function buildDailyBView(days, month, activeDay) {
     }
     if (wvMetricState.dm_trevpar) {
       grp.g_more.push({type:'sect', id:'revpar_s',    label:'REVPAR',    parent:'g_more'});
-      grp.g_more.push({type:'sub',  id:'revpar_t',    label:'T REVPAR',  dot:'#004948', parent:'revpar_s'});
       grp.g_more.push({type:'sub',  id:'revpar_h',    label:'Hotel',     dot:'#52d9ce', parent:'revpar_s'});
       grp.g_more.push({type:'sub',  id:'revpar_stly', label:compLabel,   dot:'#C4FF45', parent:'revpar_s'});
     }
@@ -3694,9 +3693,8 @@ function buildDailyBView(days, month, activeDay) {
           }
           case 'revpar_s': {
             var cv = wvCompare==='stly'?d.sdlyRevpar:wvCompare==='ly'?d.lyRevpar:null;
-            cs = cmpSfx(cv!=null?'$'+cv:'', d.revpar, cv);
             var cvPct = cv!=null?Math.min(90,Math.round(cv/4)):null;
-            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">$'+d.hRevpar+'</span><span style="font-size:11px;color:#6b7280;margin-left:4px">· T $'+d.revpar+cs+'</span>'+trendBadge(d.revpar,cv)+'</div>'
+            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">$'+d.hRevpar+'</span>'+trendBadge(d.hRevpar,cv)+'</div>'
               + wbBarMark(wbBar(Math.min(90,Math.round(d.hRevpar/4)), '#004948'), cvPct);
             break;
           }
@@ -3870,7 +3868,6 @@ function buildDailyBView(days, month, activeDay) {
           case 'rn_hotel':   v1 = d.hnRn+' rms';                                            break;
           case 'rn_stly':    v1 = (wvCompare==='ly'?d.lyRn:wvCompare==='fcst'?d.fcstRn:d.sdlyRn)+' rms'; break;
           // revpar
-          case 'revpar_t':   v1 = '$'+d.revpar;                                             break;
           case 'revpar_h':   v1 = '$'+d.hRevpar;                                            break;
           case 'revpar_stly':v1 = '$'+(wvCompare==='ly'?d.lyRevpar:d.sdlyRevpar);           break;
           // pickup
@@ -4129,8 +4126,7 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
       sub('STLY',     CSTLY, false, function(d){ return sCell(d.sdlyRn+' rms', bar(Math.round(d.sdlyRn/WV_CAP*100),CSTLY)); });
     }
     if (wvMetricState.dm_trevpar) {
-      sect('REVPAR', C1, C1, function(d){ var cv=wvCompare==='stly'?d.sdlyRevpar:wvCompare==='ly'?d.lyRevpar:null; var cs=cmpSfx(cv!=null?'$'+cv:'',d.revpar,cv); return sCell('$'+d.hRevpar+' · T $'+d.revpar+cs, bar(Math.min(90,Math.round(d.hRevpar/4)),C1)); });
-      sub('T REVPAR', C1,    false, function(d){ return sCell('$'+d.revpar, bar(Math.min(90,Math.round(d.revpar/4)),C1)); });
+      sect('REVPAR', C1, C1, function(d){ var cv=wvCompare==='stly'?d.sdlyRevpar:wvCompare==='ly'?d.lyRevpar:null; return sCell('$'+d.hRevpar, bar(Math.min(90,Math.round(d.hRevpar/4)),C1)); });
       sub('Hotel',    C2,    false, function(d){ return sCell('$'+d.hRevpar, bar(Math.min(90,Math.round(d.hRevpar/4)),C2)); });
       sub('STLY',     CSTLY, false, function(d){ return sCell('$'+d.sdlyRevpar, bar(Math.min(90,Math.round(d.sdlyRevpar/4)),CSTLY)); });
     }
