@@ -2753,8 +2753,8 @@ body.dark .wv-acc-title { color: #fff; }
   display: flex; height: 12px; border-radius: 12px; overflow: hidden;
   background: #e5e7eb; width: 100%;
 }
-/* Daily B — slimmer bars */
-.wb-row .wv-occ-bar-track { height: 6px; border-radius: 6px; }
+/* Daily B — slimmer bars, less rounded */
+.wb-row .wv-occ-bar-track { height: 6px; border-radius: 2px; }
 .wv-occ-seg { height: 100%; transition: width 0.2s; }
 .wv-occ-to    { background: #006461; }
 .wv-occ-other { background: #47c5bc; }
@@ -7200,16 +7200,17 @@ body.dark .cal-mfilt-btn.active { background: #1a3535; }
   padding: 0 13px;
   height: 44px;
   cursor: pointer;
-  background: #fafafa;
+  background: #004948;
   user-select: none;
 }
 .wb-grp-label {
   font-family: 'Lato', sans-serif;
   font-size: 14px;
   font-weight: 600;
-  color: #1c1c1c;
+  color: #fff;
 }
-.wb-row-top .wb-data-cell { background: #fafafa; height: 44px; }
+.wb-chev { color: #52d9ce !important; }
+.wb-row-top .wb-data-cell { background: #004948; height: 44px; }
 
 /* ── Section header row ── */
 .wb-sect-lbl {
