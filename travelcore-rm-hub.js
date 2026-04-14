@@ -3386,17 +3386,17 @@ function buildDailyBView(days, month, activeDay) {
   if (wvMetricState.mealsSummary) {
     grp.g_meals.push({type:'top',  id:'g_meals', label:'Meal Plans'});
     grp.g_meals.push({type:'sect', id:'mp_ai',   label:'All Inclusive',   parent:'g_meals'});
-    grp.g_meals.push({type:'sub',  id:'mp_ai_t', label:'TO % of hotel',            dot:'#004948', parent:'mp_ai'});
-    grp.g_meals.push({type:'sub',  id:'mp_ai_h', label:'Hotel %',         dot:'#52d9ce', parent:'mp_ai'});
+    grp.g_meals.push({type:'sub',  id:'mp_ai_t', label:'TO of hotel',               dot:'#004948', parent:'mp_ai'});
+    grp.g_meals.push({type:'sub',  id:'mp_ai_h', label:'Hotel',             dot:'#52d9ce', parent:'mp_ai'});
     grp.g_meals.push({type:'sect', id:'mp_bb',   label:'Bed & Breakfast', parent:'g_meals'});
-    grp.g_meals.push({type:'sub',  id:'mp_bb_t', label:'TO % of hotel',            dot:'#004948', parent:'mp_bb'});
-    grp.g_meals.push({type:'sub',  id:'mp_bb_h', label:'Hotel %',         dot:'#52d9ce', parent:'mp_bb'});
+    grp.g_meals.push({type:'sub',  id:'mp_bb_t', label:'TO of hotel',               dot:'#004948', parent:'mp_bb'});
+    grp.g_meals.push({type:'sub',  id:'mp_bb_h', label:'Hotel',             dot:'#52d9ce', parent:'mp_bb'});
     grp.g_meals.push({type:'sect', id:'mp_hb',   label:'Half Board',      parent:'g_meals'});
-    grp.g_meals.push({type:'sub',  id:'mp_hb_t', label:'TO % of hotel',            dot:'#004948', parent:'mp_hb'});
-    grp.g_meals.push({type:'sub',  id:'mp_hb_h', label:'Hotel %',         dot:'#52d9ce', parent:'mp_hb'});
+    grp.g_meals.push({type:'sub',  id:'mp_hb_t', label:'TO of hotel',               dot:'#004948', parent:'mp_hb'});
+    grp.g_meals.push({type:'sub',  id:'mp_hb_h', label:'Hotel',             dot:'#52d9ce', parent:'mp_hb'});
     grp.g_meals.push({type:'sect', id:'mp_ro',   label:'Room Only',       parent:'g_meals'});
-    grp.g_meals.push({type:'sub',  id:'mp_ro_t', label:'TO % of hotel',            dot:'#004948', parent:'mp_ro'});
-    grp.g_meals.push({type:'sub',  id:'mp_ro_h', label:'Hotel %',         dot:'#52d9ce', parent:'mp_ro'});
+    grp.g_meals.push({type:'sub',  id:'mp_ro_t', label:'TO of hotel',               dot:'#004948', parent:'mp_ro'});
+    grp.g_meals.push({type:'sub',  id:'mp_ro_h', label:'Hotel',             dot:'#52d9ce', parent:'mp_ro'});
     grp.g_meals.push({type:'sect', id:'mp_sum',  label:'Summary',         parent:'g_meals'});
   }
 
@@ -4142,8 +4142,8 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
     [['All Inclusive','aiPct'],['Bed & Breakfast','bbPct'],['Half Board','hbPct'],['Room Only','roPct']].forEach(function(mp){
       var k=mp[1];
       sect(mp[0], C1, C1, (function(k){ return function(d){ var tPct=Math.max(0,Math.round(d[k]*d.toPct*0.9)); var rn=Math.round(d.hnRn*d[k]/100); return sCell(d[k]+'% · '+rn+' rms', bar(d[k],C2))+'<div style="margin-top:2px">'+bar(tPct,C1)+'</div>'; }; })(k));
-      sub('TO % of hotel', C1, false, (function(k){ return function(d){ var pct=Math.max(0,Math.round(d[k]*d.toPct*0.9)); return sCell(pct+'%', bar(pct,C1)); }; })(k));
-      sub('Hotel %', C2, false, (function(k){ return function(d){ var rn=Math.round(d.hnRn*d[k]/100); return sCell(d[k]+'% · '+rn+' rms', bar(d[k],C2)); }; })(k));
+      sub('TO of hotel', C1, false, (function(k){ return function(d){ var pct=Math.max(0,Math.round(d[k]*d.toPct*0.9)); return sCell(pct+'%', bar(pct,C1)); }; })(k));
+      sub('Hotel', C2, false, (function(k){ return function(d){ var rn=Math.round(d.hnRn*d[k]/100); return sCell(d[k]+'% · '+rn+' rms', bar(d[k],C2)); }; })(k));
     });
     sect('Summary', C1, C1, function(d){
       var _aiR=Math.round(d.hnRn*d.aiPct/100), _bbR=Math.round(d.hnRn*d.bbPct/100), _hbR=Math.round(d.hnRn*d.hbPct/100), _roR=Math.round(d.hnRn*d.roPct/100);
