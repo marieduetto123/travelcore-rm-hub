@@ -1248,8 +1248,10 @@ body.dark .daily-b-ag-wrap {
 
 /* Table Settings inline button (next to Filters) */
 .wv-table-settings-inline {
-  gap: 8px; color: #4F5B60;
+  background: transparent; border: none; gap: 8px;
+  color: #4F5B60; padding: 8px 16px; height: auto;
 }
+.wv-table-settings-inline:hover { background: rgba(79,91,96,0.08); }
 .wv-table-settings-inline svg { flex-shrink: 0; }
 
 /* ── Daily X AG Grid ── */
