@@ -2460,7 +2460,7 @@ function clearCalSelection() {
     var mealPlans = [
       { short:'AI', pct:aiPct, color:'#004948' },
       { short:'BB', pct:bbPct, color:'#52d9ce' },
-      { short:'HB', pct:hbPct, color:'#BDA96E' },
+      { short:'HB', pct:hbPct, color:'#C4FF45' },
       { short:'RO', pct:roPct, color:'#445e0d' },
     ];
     var mealBarHtml = '<div class="wv-meals-bar" style="margin:4px 0 6px">'
@@ -3287,7 +3287,7 @@ function buildDailyBView(days, month, activeDay) {
     grp.g_daily.push({type:'sect', id:'occ',       label:'Occupancy',               parent:'g_daily'});
     grp.g_daily.push({type:'sub',  id:'occ_tdh',   label:'Travel Distribution Hubs',dot:'#004948', parent:'occ'});
     grp.g_daily.push({type:'sub',  id:'occ_other', label:'Other Segments',          dot:'#52d9ce', parent:'occ'});
-    grp.g_daily.push({type:'sub',  id:'occ_stly',  label:compLabel,                 dot:'#BDA96E', parent:'occ'});
+    grp.g_daily.push({type:'sub',  id:'occ_stly',  label:compLabel,                 dot:'#C4FF45', parent:'occ'});
     grp.g_daily.push({type:'sub',  id:'occ_rem',   label:'Remaining',               dot:'#445e0d', parent:'occ', isRem:true});
   }
   if (wvMetricState.onlineOffline) {
@@ -3299,13 +3299,13 @@ function buildDailyBView(days, month, activeDay) {
     grp.g_daily.push({type:'sect', id:'adr',       label:'ADR',          parent:'g_daily'});
     grp.g_daily.push({type:'sub',  id:'adr_t',     label:'T ADR',        dot:'#004948', parent:'adr'});
     grp.g_daily.push({type:'sub',  id:'adr_hotel', label:'Hotel ADR',    dot:'#52d9ce', parent:'adr'});
-    grp.g_daily.push({type:'sub',  id:'adr_stly',  label:compLabel,      dot:'#BDA96E', parent:'adr'});
+    grp.g_daily.push({type:'sub',  id:'adr_stly',  label:compLabel,      dot:'#C4FF45', parent:'adr'});
   }
   if (wvMetricState.revenue) {
     grp.g_daily.push({type:'sect', id:'rev',       label:'Revenue',       parent:'g_daily'});
     grp.g_daily.push({type:'sub',  id:'rev_t',     label:'T Revenue',     dot:'#004948', parent:'rev'});
     grp.g_daily.push({type:'sub',  id:'rev_hotel', label:'Hotel Revenue', dot:'#52d9ce', parent:'rev'});
-    grp.g_daily.push({type:'sub',  id:'rev_stly',  label:compLabel,       dot:'#BDA96E', parent:'rev'});
+    grp.g_daily.push({type:'sub',  id:'rev_stly',  label:compLabel,       dot:'#C4FF45', parent:'rev'});
   }
 
   // Group: More Metrics
@@ -3320,12 +3320,12 @@ function buildDailyBView(days, month, activeDay) {
       grp.g_more.push({type:'sect', id:'rn',       label:'RN Sold',    parent:'g_more'});
       grp.g_more.push({type:'sub',  id:'rn_t',     label:'T RN',       dot:'#004948', parent:'rn'});
       grp.g_more.push({type:'sub',  id:'rn_hotel', label:'Hotel RN',   dot:'#52d9ce', parent:'rn'});
-      grp.g_more.push({type:'sub',  id:'rn_stly',  label:compLabel,    dot:'#BDA96E', parent:'rn'});
+      grp.g_more.push({type:'sub',  id:'rn_stly',  label:compLabel,    dot:'#C4FF45', parent:'rn'});
     }
     if (wvMetricState.dm_trevpar) {
       grp.g_more.push({type:'sect', id:'revpar_s',    label:'REVPAR',    parent:'g_more'});
       grp.g_more.push({type:'sub',  id:'revpar_t',    label:'T REVPAR',  dot:'#004948', parent:'revpar_s'});
-      grp.g_more.push({type:'sub',  id:'revpar_stly', label:compLabel,   dot:'#BDA96E', parent:'revpar_s'});
+      grp.g_more.push({type:'sub',  id:'revpar_stly', label:compLabel,   dot:'#C4FF45', parent:'revpar_s'});
     }
     if (wvMetricState.dm_pickup) {
       grp.g_more.push({type:'sect', id:'pickup_s', label:'Pickup',       parent:'g_more'});
@@ -3492,7 +3492,7 @@ function buildDailyBView(days, month, activeDay) {
     if (clr==='#52d9ce') return 'linear-gradient(to right,#52d9ce,#8aeee8)';
     if (clr==='#445e0d') return 'linear-gradient(to right,#445e0d,#6a9014)';
     if (clr==='#16a34a') return 'linear-gradient(to right,#16a34a,#22c55e)';
-    if (clr==='#BDA96E') return 'linear-gradient(to right,#BDA96E,#ECD090)';
+    if (clr==='#C4FF45') return 'linear-gradient(to right,#C4FF45,#D4FF73)';
     return clr;
   }
   function wbStackBar(segs) {
@@ -3507,7 +3507,7 @@ function buildDailyBView(days, month, activeDay) {
     var pct = Math.min(100, Math.max(0, compPct));
     return '<div style="position:relative">'
       + barHtml
-      + '<div style="position:absolute;left:'+pct+'%;top:0;height:6px;width:2.5px;background:'+wbGrad('#BDA96E')+';transform:translateX(-50%);z-index:2;border-radius:1px;pointer-events:none;box-shadow:0 0 3px rgba(189,169,110,0.6)"></div>'
+      + '<div style="position:absolute;left:'+pct+'%;top:0;height:6px;width:2.5px;background:'+wbGrad('#C4FF45')+';transform:translateX(-50%);z-index:2;border-radius:1px;pointer-events:none;box-shadow:0 0 3px rgba(196,255,69,0.6)"></div>'
       + '</div>';
   }
 
@@ -3939,7 +3939,7 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
   });
 
   // ── Render helpers ────────────────────────────────────────────────────────
-  var C1='#004948', C2='#52d9ce', C3='#445e0d', C4='#d7f7ed', CSTLY='#BDA96E', CREM='#445e0d';
+  var C1='#004948', C2='#52d9ce', C3='#445e0d', C4='#d7f7ed', CSTLY='#C4FF45', CREM='#445e0d';
   function cmpSfx(s, curr, comp) {
     if (!s || wvCompare === 'none') return '';
     var clr = '#9ca3af';
@@ -3955,7 +3955,7 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
     if (clr==='#52d9ce') return 'linear-gradient(to right,#52d9ce,#8aeee8)';
     if (clr==='#445e0d') return 'linear-gradient(to right,#445e0d,#6a9014)';
     if (clr==='#16a34a') return 'linear-gradient(to right,#16a34a,#22c55e)';
-    if (clr==='#BDA96E') return 'linear-gradient(to right,#BDA96E,#ECD090)';
+    if (clr==='#C4FF45') return 'linear-gradient(to right,#C4FF45,#D4FF73)';
     return clr;
   }
   function bar(pct, clr) {
@@ -4564,13 +4564,13 @@ function buildDailyHView(days, activeMonth, activeDay) {
     var dbaStr=dba===0?'Today':dba>0?dba+' DBA':'';
     var evts=(typeof CAL_EVENTS!=='undefined'&&CAL_EVENTS[dm+'-'+dd])?CAL_EVENTS[dm+'-'+dd]:null;
     var bg=isLocked?'#dc2626':isActive?'#006461':isToday?'#0d8a87':'#1a5e5b';
-    var bl=isActive?'2px solid #BDA96E':isToday?'2px solid rgba(255,255,255,.5)':'1px solid rgba(255,255,255,.15)';
+    var bl=isActive?'2px solid #C4FF45':isToday?'2px solid rgba(255,255,255,.5)':'1px solid rgba(255,255,255,.15)';
     hdrRow+='<th style="'+thBase+';background:'+bg+';border-left:'+bl+';min-width:130px;color:#fff;vertical-align:top">'
       +'<div style="font-weight:800;font-size:11px">'+(isLocked?'🔒 ':'')+MNAMES_S[dm]+' '+dd+'</div>'
       +'<div style="display:flex;align-items:center;justify-content:center;gap:4px;font-size:8px;opacity:.85">'
       +'<span>'+DOW_SHORT[dt.getDay()]+'</span>'
       +(dbaStr?'<span>'+dbaStr+'</span>':'')
-      +(evts?'<span style="width:7px;height:7px;border-radius:2px;background:#BDA96E;display:inline-block" title="'+evts.map(function(e){return e.name;}).join(', ')+'"></span>':'')
+      +(evts?'<span style="width:7px;height:7px;border-radius:2px;background:#C4FF45;display:inline-block" title="'+evts.map(function(e){return e.name;}).join(', ')+'"></span>':'')
       +'</div>'
       +'</th>';
   });
@@ -5251,7 +5251,7 @@ function initCoReportGrid(days, containerEl) {
           + '<div style="font-size:9px;color:#6b7280;display:flex;align-items:center;gap:4px;margin-top:1px">'
           + '<span>' + d._dow + '</span>'
           + (d._dba ? '<span style="color:#006461;font-weight:700">' + d._dba + '</span>' : '')
-          + (d._evts ? '<span title="' + d._evts.map(function(e){return e.name;}).join(', ') + '" style="width:7px;height:7px;border-radius:2px;background:#BDA96E;display:inline-block;flex-shrink:0"></span>' : '')
+          + (d._evts ? '<span title="' + d._evts.map(function(e){return e.name;}).join(', ') + '" style="width:7px;height:7px;border-radius:2px;background:#C4FF45;display:inline-block;flex-shrink:0"></span>' : '')
           + '</div>'
           + (d._isToday ? '<div style="width:20px;height:2px;background:#006461;border-radius:1px;margin-top:2px"></div>' : '')
           + '</div>';
@@ -6066,7 +6066,7 @@ function buildReportView(days) {
       +'<span>'+dow+'</span>'
       +(dbaStr?'<span style="color:#006461;font-weight:700">'+dbaStr+'</span>':'')
       +(evts2?'<span title="'+evts2.map(function(e){return e.name;}).join(', ')+'" '
-        +'style="width:8px;height:8px;border-radius:2px;background:#BDA96E;flex-shrink:0;cursor:help;display:inline-block"></span>':'')
+        +'style="width:8px;height:8px;border-radius:2px;background:#C4FF45;flex-shrink:0;cursor:help;display:inline-block"></span>':'')
       +'</div>'
       +(isToday?'<div style="width:24px;height:2px;background:#006461;border-radius:1px;margin-top:2px"></div>':'')
       +'</td>';
@@ -6773,7 +6773,7 @@ function buildWeekGrid(month, weekStart, activeDay) {
           const plans = [
             { name:'All Inclusive',   short:'AI', pct:aiPct, toPct:toAiPct,  color:'#004948' },
             { name:'Bed & Breakfast', short:'BB', pct:bbPct, toPct:toBbPct,  color:'#52d9ce' },
-            { name:'Half Board',      short:'HB', pct:hbPct, toPct:toHbPct,  color:'#BDA96E' },
+            { name:'Half Board',      short:'HB', pct:hbPct, toPct:toHbPct,  color:'#C4FF45' },
             { name:'Room Only',       short:'RO', pct:roPct, toPct:toRoPct,  color:'#445e0d' },
           ];
           const colHdr = '<div style="display:flex;justify-content:flex-end;gap:10px;padding:1px 8px 0;margin-bottom:-2px">'
@@ -6849,7 +6849,7 @@ function buildWeekGrid(month, weekStart, activeDay) {
         const plans2 = [
           { name:'All Inclusive',   short:'AI', pct:aiPct2, toPct: Math.round(aiPct2 * toPct2 * (0.9  + (dm+dd)%3 * 0.05)), color:'#004948' },
           { name:'Bed & Breakfast', short:'BB', pct:bbPct2, toPct: Math.round(bbPct2 * toPct2 * (0.85 + (dm*3+dd)%3 * 0.05)), color:'#52d9ce' },
-          { name:'Half Board',      short:'HB', pct:hbPct2, toPct: Math.round(hbPct2 * toPct2 * (0.8  + (dm+dd*2)%3 * 0.05)), color:'#BDA96E' },
+          { name:'Half Board',      short:'HB', pct:hbPct2, toPct: Math.round(hbPct2 * toPct2 * (0.8  + (dm+dd*2)%3 * 0.05)), color:'#C4FF45' },
           { name:'Room Only',       short:'RO', pct:roPct2, toPct: Math.round(roPct2 * toPct2 * (0.95 + (dm*2+dd)%3 * 0.03)), color:'#445e0d' },
         ];
         const avgAdV2   = 1.8 + (dm*11+dd*7)%3 * 0.1;
@@ -10608,7 +10608,7 @@ document.querySelectorAll('.ds-search-field').forEach(function(wrap) {
   function mealPlanMixCard(toKey){
     const MP_DEFS=[
       {name:'All Inclusive',color:'#004948'},
-      {name:'Half Board',   color:'#BDA96E'},
+      {name:'Half Board',   color:'#C4FF45'},
       {name:'Bed & Breakfast',color:'#52d9ce'},
       {name:'Room Only',    color:'#445e0d'},
       {name:'Full Board',   color:'#d7f7ed'},
@@ -10719,7 +10719,7 @@ document.querySelectorAll('.ds-search-field').forEach(function(wrap) {
     // ── Meal Plan breakdown ────────────────────────────────────────
     const MP_DEFS=[
       {key:'AI',name:'All Inclusive',color:'#004948'},
-      {key:'HB',name:'Half Board',   color:'#BDA96E'},
+      {key:'HB',name:'Half Board',   color:'#C4FF45'},
       {key:'BB',name:'Bed & Breakfast',color:'#52d9ce'},
       {key:'RO',name:'Room Only',    color:'#445e0d'},
       {key:'FB',name:'Full Board',   color:'#d7f7ed'},
@@ -11155,7 +11155,7 @@ document.querySelectorAll('.ds-search-field').forEach(function(wrap) {
             // ── Meal Plan Breakdown — collapsible ─────────────────────
             const MP_DEFS=[
               {key:'AI',name:'All Inclusive',  color:'#004948'},
-              {key:'HB',name:'Half Board',     color:'#BDA96E'},
+              {key:'HB',name:'Half Board',     color:'#C4FF45'},
               {key:'BB',name:'Bed & Breakfast',color:'#52d9ce'},
               {key:'RO',name:'Room Only',      color:'#445e0d'},
               {key:'FB',name:'Full Board',     color:'#d7f7ed'},
