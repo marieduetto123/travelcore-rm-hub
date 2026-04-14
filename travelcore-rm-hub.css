@@ -7200,17 +7200,17 @@ body.dark .cal-mfilt-btn.active { background: #1a3535; }
   padding: 0 13px;
   height: 44px;
   cursor: pointer;
-  background: #004948;
+  background: #fafafa;
   user-select: none;
 }
 .wb-grp-label {
   font-family: 'Lato', sans-serif;
   font-size: 14px;
   font-weight: 600;
-  color: #fff;
+  color: #1c1c1c;
 }
-.wb-chev { color: #52d9ce !important; }
-.wb-row-top .wb-data-cell { background: #004948; height: 44px; }
+.wb-chev { color: #004948 !important; }
+.wb-row-top .wb-data-cell { background: #fafafa; height: 44px; }
 
 /* ── Section header row ── */
 .wb-sect-lbl {
