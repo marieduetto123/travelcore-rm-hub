@@ -1149,37 +1149,102 @@ body.dark .daily-b-ag-wrap {
 }
 
 /* ── Daily-H Metric Reorder Modal ── */
-.dh-reorder-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 14px;
-  border: 1px solid #e5e7eb;
-  border-radius: 9px;
-  background: #fff;
+/* ── Table Settings Modal (Figma 2026) ─────────────────────────────────── */
+.ts-modal-overlay {
+  position: fixed; inset: 0; z-index: 9999;
+  background: rgba(0,0,0,.35);
+  display: flex; align-items: center; justify-content: center;
+}
+.ts-modal {
+  background: #FAFAFA; border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.2), 0 2px 1px rgba(0,0,0,.12), 0 1px 1px rgba(0,0,0,.14);
+  width: 560px; max-width: 94vw; max-height: 85vh;
+  display: flex; flex-direction: column; padding: 24px; gap: 16px;
+  font-family: 'Lato', sans-serif;
+}
+.ts-header {
+  display: flex; align-items: center; justify-content: space-between;
+}
+.ts-title {
+  font-size: 24px; font-weight: 400; color: #1C1C1C; line-height: 1;
+}
+.ts-close {
+  background: none; border: none; cursor: pointer; padding: 0; line-height: 0;
+}
+.ts-close:hover { opacity: .7; }
+.ts-subtitle {
+  font-size: 16px; font-weight: 400; color: #424242;
+  padding-bottom: 8px; border-bottom: 1px solid #DDE1E2;
+  letter-spacing: .15px;
+}
+.ts-divider { height: 1px; background: #DDE1E2; }
+.ts-body { flex: 1; overflow-y: auto; min-height: 120px; }
+.ts-tree-wrap { display: flex; flex-direction: column; gap: 8px; }
+.ts-tree-toolbar {
+  display: flex; gap: 8px; padding: 4px 0;
+}
+.ts-tree-btn {
+  background: none; border: none; cursor: pointer;
+  font-family: inherit; font-size: 12px; color: #006461;
+  padding: 4px 0; text-decoration: underline;
+}
+.ts-tree-btn:hover { color: #004948; }
+.ts-tree-list {
+  border: 1px solid #38AAA3; border-radius: 4px;
+  background: #fff; overflow-y: auto; max-height: 50vh;
+}
+
+/* Tree row */
+.ts-tree-row {
+  display: flex; align-items: center; gap: 6px;
+  padding: 4px 8px; cursor: grab; user-select: none;
+  transition: background .1s, opacity .1s;
+}
+.ts-tree-row:hover { background: #f5f5f5; }
+.ts-tree-row.dragging { opacity: .3; }
+.ts-tree-row.drop-above { border-top: 2.5px solid #006461; }
+.ts-tree-row.drop-below { border-bottom: 2.5px solid #006461; }
+.ts-tree-row:active { cursor: grabbing; }
+
+/* Checkbox — dark green */
+.ts-checkbox {
+  width: 20px; height: 20px; border-radius: 3px; flex-shrink: 0;
+  border: 2px solid #006461; background: #006461; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .12s, border-color .12s;
+}
+.ts-checkbox.unchecked { background: #fff; }
+.ts-checkbox svg { display: block; }
+
+/* Label */
+.ts-tree-lbl {
+  flex: 1; font-size: 14px; color: #1C1C1C;
+  letter-spacing: .15px; line-height: 20px;
+}
+
+/* 6-dot drag handle — on the right */
+.ts-drag-handle {
+  flex-shrink: 0; color: #AEB4BA; display: flex; align-items: center;
   cursor: grab;
-  user-select: none;
-  transition: box-shadow .12s, border-color .12s, opacity .12s;
 }
-.dh-reorder-item:hover { box-shadow: 0 2px 10px rgba(0,0,0,.07); border-color: #d1d5db; }
-.dh-reorder-item:active { cursor: grabbing; }
-.dh-reorder-item.dragging { opacity: 0.3; box-shadow: none; }
-.dh-reorder-item.drop-above { border-top: 2.5px solid #006461; padding-top: 9px; }
-.dh-reorder-item.drop-below { border-bottom: 2.5px solid #006461; padding-bottom: 9px; }
-.dh-reorder-handle { color: #c4c9cf; flex-shrink: 0; display: flex; align-items: center; }
-.dh-reorder-handle svg { display: block; }
-.dh-reorder-sec-badge {
-  font-size: 9.5px;
-  font-weight: 700;
-  letter-spacing: .3px;
-  padding: 3px 9px;
-  border-radius: 20px;
-  flex-shrink: 0;
-  white-space: nowrap;
-  min-width: 96px;
-  text-align: center;
+.ts-drag-handle:active { cursor: grabbing; }
+.ts-drag-handle svg { display: block; }
+
+/* Footer */
+.ts-footer {
+  display: flex; flex-direction: column; gap: 16px;
 }
-.dh-reorder-lbl { font-size: 13px; color: #111827; font-weight: 600; flex: 1; }
+.ts-footer-divider { height: 1px; background: #DDE1E2; }
+.ts-footer-btns {
+  display: flex; justify-content: flex-end; gap: 16px;
+}
+.ts-btn-cancel, .ts-btn-apply {
+  padding: 8px 16px; border-radius: 4px; border: none;
+  font-family: inherit; font-size: 14px; cursor: pointer;
+  background: #006461; color: #fff; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+}
+.ts-btn-cancel:hover, .ts-btn-apply:hover { background: #004948; }
 
 /* ── Daily X AG Grid ── */
 

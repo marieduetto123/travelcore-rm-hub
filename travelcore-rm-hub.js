@@ -3280,6 +3280,7 @@ function buildDailyBView(days, month, activeDay) {
   // ── Row schema (built per group, then assembled in custom order) ──────────
   var compLabel = wvCompare==='ly'?'LY':wvCompare==='fcst'?'Fcst':'STLY';
   var grp = { g_daily:[], g_more:[], g_meals:[], g_biz:[], g_avail:[], g_torates:[] };
+  window._wbGrpData = grp; // expose for Table Settings modal
 
   // Group: Daily Metrics
   grp.g_daily.push({type:'top', id:'g_daily', label:'Daily Metrics'});
@@ -7168,68 +7169,145 @@ document.getElementById('wvRtCloseAll')?.addEventListener('click', function() { 
 document.getElementById('wvRtOpenAll')?.addEventListener('click',  function() { setAllAccordions(false); });
 
 // ── Reorder Modal (shared across Daily, Daily H, Daily R) ─────────────────
-function _buildReorderList(list, items) {
-  // items: [{ key, lbl, badgeLbl, badgeClr }]
-  list.innerHTML = '';
-  var dragging = null;
-  items.forEach(function(p) {
-    var li = document.createElement('div');
-    li.className = 'dh-reorder-item';
-    li.draggable = true;
-    li.dataset.parKey = p.key;
-    li.innerHTML =
-      '<span class="dh-reorder-handle"><svg width="12" height="18" viewBox="0 0 12 18" fill="currentColor"><circle cx="4" cy="3.5" r="1.6"/><circle cx="4" cy="9" r="1.6"/><circle cx="4" cy="14.5" r="1.6"/><circle cx="9" cy="3.5" r="1.6"/><circle cx="9" cy="9" r="1.6"/><circle cx="9" cy="14.5" r="1.6"/></svg></span>'
-      + (p.badgeLbl ? '<span class="dh-reorder-sec-badge" style="background:' + p.badgeClr + '22;color:' + p.badgeClr + '">' + p.badgeLbl + '</span>' : '')
-      + '<span class="dh-reorder-lbl">' + p.lbl + '</span>';
-    li.addEventListener('dragstart', function(e) {
-      dragging = li; li.classList.add('dragging');
+var _tsDragEl = null;
+var _tsCheckSvg = '<svg viewBox="0 0 18 18" width="14" height="14" fill="none"><path d="M3.5 9l3.5 3.5 7-7" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+var _tsDragSvg = '<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">'
+  + '<circle cx="9" cy="5" r="1.5"/><circle cx="15" cy="5" r="1.5"/>'
+  + '<circle cx="9" cy="10" r="1.5"/><circle cx="15" cy="10" r="1.5"/>'
+  + '<circle cx="9" cy="15" r="1.5"/><circle cx="15" cy="15" r="1.5"/>'
+  + '<circle cx="9" cy="20" r="1.5"/><circle cx="15" cy="20" r="1.5"/></svg>';
+
+function _tsToggleCb(cb) {
+  cb.classList.toggle('unchecked');
+  cb.innerHTML = cb.classList.contains('unchecked') ? '' : _tsCheckSvg;
+}
+
+function _tsAddRow(list, key, label, depth, draggable) {
+  var row = document.createElement('div');
+  row.className = 'ts-tree-row';
+  row.style.paddingLeft = (8 + depth * 24) + 'px';
+  if (draggable) row.draggable = true;
+  row.dataset.parKey = key;
+  row.dataset.depth = depth;
+
+  // Checkbox
+  var cb = document.createElement('span');
+  cb.className = 'ts-checkbox';
+  cb.innerHTML = _tsCheckSvg;
+  cb.addEventListener('click', function(e) {
+    e.stopPropagation();
+    _tsToggleCb(cb);
+    // If parent, toggle all children too
+    if (depth === 0) {
+      var isChecked = !cb.classList.contains('unchecked');
+      var sib = row.nextElementSibling;
+      while (sib && parseInt(sib.dataset.depth || 0) > 0) {
+        var childCb = sib.querySelector('.ts-checkbox');
+        if (childCb) {
+          if (isChecked) { childCb.classList.remove('unchecked'); childCb.innerHTML = _tsCheckSvg; }
+          else { childCb.classList.add('unchecked'); childCb.innerHTML = ''; }
+        }
+        sib = sib.nextElementSibling;
+      }
+    }
+  });
+
+  // Label
+  var lbl = document.createElement('span');
+  lbl.className = 'ts-tree-lbl';
+  lbl.textContent = label;
+  if (depth === 0) lbl.style.fontWeight = '600';
+
+  // Drag handle (right side)
+  var handle = document.createElement('span');
+  handle.className = 'ts-drag-handle';
+  handle.innerHTML = _tsDragSvg;
+
+  row.appendChild(cb);
+  row.appendChild(lbl);
+  row.appendChild(handle);
+
+  // Drag events (only for draggable rows)
+  if (draggable) {
+    row.addEventListener('dragstart', function(e) {
+      _tsDragEl = row; row.classList.add('dragging');
       e.dataTransfer.effectAllowed = 'move';
     });
-    li.addEventListener('dragend', function() {
-      li.classList.remove('dragging'); dragging = null;
-      list.querySelectorAll('.dh-reorder-item').forEach(function(i) { i.classList.remove('drop-above','drop-below'); });
+    row.addEventListener('dragend', function() {
+      row.classList.remove('dragging'); _tsDragEl = null;
+      list.querySelectorAll('.ts-tree-row').forEach(function(r) { r.classList.remove('drop-above','drop-below'); });
     });
-    li.addEventListener('dragover', function(e) {
-      e.preventDefault();
-      if (!dragging || dragging === li) return;
-      var mid = li.getBoundingClientRect().top + li.offsetHeight / 2;
-      li.classList.remove('drop-above','drop-below');
-      li.classList.add(e.clientY < mid ? 'drop-above' : 'drop-below');
-    });
-    li.addEventListener('dragleave', function() { li.classList.remove('drop-above','drop-below'); });
-    li.addEventListener('drop', function(e) {
-      e.preventDefault();
-      li.classList.remove('drop-above','drop-below');
-      if (!dragging || dragging === li) return;
-      var mid = li.getBoundingClientRect().top + li.offsetHeight / 2;
-      list.insertBefore(dragging, e.clientY < mid ? li : li.nextSibling);
-    });
-    list.appendChild(li);
+  }
+  row.addEventListener('dragover', function(e) {
+    e.preventDefault();
+    if (!_tsDragEl || _tsDragEl === row) return;
+    var mid = row.getBoundingClientRect().top + row.offsetHeight / 2;
+    row.classList.remove('drop-above','drop-below');
+    row.classList.add(e.clientY < mid ? 'drop-above' : 'drop-below');
+  });
+  row.addEventListener('dragleave', function() { row.classList.remove('drop-above','drop-below'); });
+  row.addEventListener('drop', function(e) {
+    e.preventDefault();
+    row.classList.remove('drop-above','drop-below');
+    if (!_tsDragEl || _tsDragEl === row) return;
+    var mid = row.getBoundingClientRect().top + row.offsetHeight / 2;
+    list.insertBefore(_tsDragEl, e.clientY < mid ? row : row.nextSibling);
+  });
+
+  list.appendChild(row);
+  return row;
+}
+
+function _buildReorderList(list, items) {
+  // items: [{ key, lbl, children: [{ key, lbl, children: [...] }] }]
+  list.innerHTML = '';
+  items.forEach(function(p) {
+    _tsAddRow(list, p.key, p.lbl, 0, true);
+    if (p.children) {
+      p.children.forEach(function(c) {
+        _tsAddRow(list, c.key, c.lbl, 1, false);
+        if (c.children) {
+          c.children.forEach(function(sc) {
+            _tsAddRow(list, sc.key, sc.lbl, 2, false);
+          });
+        }
+      });
+    }
   });
 }
+
+// Select All / Deselect All for Table Settings
+window.tsCheckAll = function(checked) {
+  var list = document.getElementById('dhReorderList');
+  if (!list) return;
+  list.querySelectorAll('.ts-checkbox').forEach(function(cb) {
+    if (checked) { cb.classList.remove('unchecked'); cb.innerHTML = _tsCheckSvg; }
+    else { cb.classList.add('unchecked'); cb.innerHTML = ''; }
+  });
+};
 
 window.dhOpenReorder = function() {
   var modal = document.getElementById('dhReorderModal');
   var list  = document.getElementById('dhReorderList');
   if (!modal || !list) return;
 
-  // Update modal title per view
-  var titleEl = modal.querySelector('[style*="font-size:15px"]');
-  if (titleEl) {
-    titleEl.textContent = 'Table Settings';
-  }
+  // Title is now fixed in HTML as "Table Settings"
 
   if (wvGroupBy === 'dailyH') {
-    // Build items from current Daily H rows
-    var pars = [], curSecLbl = '', curSecClr = '#374151';
+    // Build hierarchical items: sec → par as children
+    var items = [], curSec = null;
     _dhAllRows.forEach(function(r) {
-      if (r.type === 'sec') { curSecLbl = r.lbl; curSecClr = r.clr; }
-      if (r.type === 'par') pars.push({ key: r.parKey, lbl: r.lbl, badgeLbl: curSecLbl, badgeClr: curSecClr });
+      if (r.type === 'sec') {
+        curSec = { key: r.secKey, lbl: r.lbl, children: [] };
+        items.push(curSec);
+      }
+      if (r.type === 'par' && curSec) {
+        curSec.children.push({ key: r.parKey, lbl: r.lbl });
+      }
     });
-    _buildReorderList(list, pars);
+    _buildReorderList(list, items);
 
   } else if (wvGroupBy === 'combined') {
-    // Build items from WV_SECTIONS_DEF; only show sections currently rendered in the grid
     var renderedSecs = {};
     var g = document.getElementById('weekGrid');
     if (g) g.querySelectorAll('.wv-acc-hdr[data-section]').forEach(function(el) { renderedSecs[el.dataset.section] = true; });
@@ -7238,12 +7316,11 @@ window.dhOpenReorder = function() {
     curOrder.forEach(function(k) {
       if (!renderedSecs[k]) return;
       var def = WV_SECTIONS_DEF.filter(function(s){return s.key===k;})[0];
-      if (def) items.push({ key: k, lbl: def.lbl, badgeLbl: 'Section', badgeClr: def.clr });
+      if (def) items.push({ key: k, lbl: def.lbl });
     });
-    // Also append any rendered sections not in curOrder (new ones)
     WV_SECTIONS_DEF.forEach(function(s) {
       if (renderedSecs[s.key] && curOrder.indexOf(s.key) === -1)
-        items.push({ key: s.key, lbl: s.lbl, badgeLbl: 'Section', badgeClr: s.clr });
+        items.push({ key: s.key, lbl: s.lbl });
     });
     _buildReorderList(list, items);
 
@@ -7251,14 +7328,30 @@ window.dhOpenReorder = function() {
     var curOrder = (_drColOrder && _drColOrder.length) ? _drColOrder : DR_GROUPS_DEF.map(function(g){return g.key;});
     var items = curOrder.map(function(k) {
       var def = DR_GROUPS_DEF.filter(function(g){return g.key===k;})[0] || { clr:'#374151' };
-      return { key: k, lbl: k, badgeLbl: 'Group', badgeClr: def.clr };
+      return { key: k, lbl: k };
     });
     _buildReorderList(list, items);
   } else if (wvGroupBy === 'dailyB') {
     var curOrder = (_wbGroupOrder && _wbGroupOrder.length) ? _wbGroupOrder : WB_GROUPS_DEF.map(function(g){return g.key;});
+    var gd = window._wbGrpData || {};
     var items = curOrder.map(function(k) {
       var def = WB_GROUPS_DEF.filter(function(g){return g.key===k;})[0] || { lbl: k, clr: '#374151' };
-      return { key: k, lbl: def.lbl, badgeLbl: 'Group', badgeClr: def.clr };
+      var children = [];
+      var rows = gd[k] || [];
+      // Build sect → sub hierarchy
+      var curSect = null;
+      rows.forEach(function(r) {
+        if (r.type === 'top') return;
+        if (r.type === 'sect') {
+          curSect = { key: r.id, lbl: r.label, children: [] };
+          children.push(curSect);
+        } else if (r.type === 'sub' && curSect) {
+          curSect.children.push({ key: r.id, lbl: r.label });
+        } else if (r.type === 'sub') {
+          children.push({ key: r.id, lbl: r.label });
+        }
+      });
+      return { key: k, lbl: def.lbl, children: children };
     });
     _buildReorderList(list, items);
   }
@@ -7273,7 +7366,7 @@ window.dhReorderModalBg = function(e) {
 window.dhApplyReorder = function() {
   var list = document.getElementById('dhReorderList');
   var order = [];
-  list.querySelectorAll('[data-par-key]').forEach(function(li) { order.push(li.dataset.parKey); });
+  list.querySelectorAll('.ts-tree-row[data-depth="0"]').forEach(function(li) { order.push(li.dataset.parKey); });
   document.getElementById('dhReorderModal').style.display = 'none';
   if (wvGroupBy === 'dailyH') {
     _dhMetricOrder = order;
