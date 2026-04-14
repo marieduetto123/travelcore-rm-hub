@@ -1445,7 +1445,7 @@ const CAL_METRIC_DEFS = {
   avgLeadTime:  { label: 'Lead',  color: '#6366f1', maxVal: 365,   fmt: function(v){ return v + 'd'; },                          name: 'Avg Lead Time',      group: 'Stay Behaviour'},
   bizMixTO:     { label: 'TO%',   color: '#006461', maxVal: 100,   fmt: function(v){ return v + '%'; },                          name: 'TO Mix %',           group: 'Business Mix'  },
   bizMixDirect: { label: 'Dir%',  color: '#0284c7', maxVal: 100,   fmt: function(v){ return v + '%'; },                          name: 'Direct Mix %',       group: 'Business Mix'  },
-  bizMixOTA:    { label: 'OTA%',  color: '#7c3aed', maxVal: 100,   fmt: function(v){ return v + '%'; },                          name: 'OTA Mix %',          group: 'Business Mix'  },
+  bizMixOTA:    { label: 'OTA%',  color: '#445e0d', maxVal: 100,   fmt: function(v){ return v + '%'; },                          name: 'OTA Mix %',          group: 'Business Mix'  },
   rateTO:       { label: 'TO-R',  color: '#0f766e', maxVal: 500,   fmt: function(v){ return '$' + v; },                          name: 'TO Contract Rate',   group: 'Selling Rates' },
   ratePromo:    { label: 'Prmo%', color: '#d97706', maxVal: 50,    fmt: function(v){ return v + '%'; },                          name: 'Promotion %',        group: 'Selling Rates' },
   rateBase:     { label: 'Base',  color: '#9333ea', maxVal: 500,   fmt: function(v){ return '$' + v; },                          name: 'Base Segment Rate',  group: 'Selling Rates' },
@@ -1973,9 +1973,9 @@ function renderCalMonthlySummary() {
     );
 
     var secBizMix = sec('Business Mix', 'biz',
-      sBar([{p:mo.avgToMix,c:'#006461'},{p:mo.avgDirMix,c:'#0284c7'},{p:mo.avgOtaMix,c:'#7c3aed'},{p:mo.avgOtherMix,c:'#9ca3af'}])
+      sBar([{p:mo.avgToMix,c:'#006461'},{p:mo.avgDirMix,c:'#0284c7'},{p:mo.avgOtaMix,c:'#445e0d'},{p:mo.avgOtherMix,c:'#9ca3af'}])
       +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:2px 8px;margin-top:4px">'
-      +[['TO',mo.avgToMix,'#006461'],['Direct',mo.avgDirMix,'#0284c7'],['OTA',mo.avgOtaMix,'#7c3aed'],['Other',mo.avgOtherMix,'#9ca3af']].map(function(p){
+      +[['TO',mo.avgToMix,'#006461'],['Direct',mo.avgDirMix,'#0284c7'],['OTA',mo.avgOtaMix,'#445e0d'],['Other',mo.avgOtherMix,'#9ca3af']].map(function(p){
           return '<div style="display:flex;align-items:center;gap:4px">'
             +'<span style="width:6px;height:6px;border-radius:50%;background:'+p[2]+';flex-shrink:0"></span>'
             +'<span style="font-size:8px;color:#374151">'+p[0]+' '+p[1]+'%</span></div>';
@@ -2091,9 +2091,9 @@ function renderCalMonthlySummary() {
     }).join('')
   );
   var ovCardBiz = ovCard('Business Mix',
-    sBar([{p:ovToMix,c:'#006461'},{p:ovDirMix,c:'#0284c7'},{p:ovOtaMix,c:'#7c3aed'},{p:ovOtherMix,c:'#9ca3af'}])
+    sBar([{p:ovToMix,c:'#006461'},{p:ovDirMix,c:'#0284c7'},{p:ovOtaMix,c:'#445e0d'},{p:ovOtherMix,c:'#9ca3af'}])
     +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:2px 8px;margin-top:4px">'
-    +[['TO',ovToMix,'#006461'],['Direct',ovDirMix,'#0284c7'],['OTA',ovOtaMix,'#7c3aed'],['Other',ovOtherMix,'#9ca3af']].map(function(p){
+    +[['TO',ovToMix,'#006461'],['Direct',ovDirMix,'#0284c7'],['OTA',ovOtaMix,'#445e0d'],['Other',ovOtherMix,'#9ca3af']].map(function(p){
       return '<div style="display:flex;align-items:center;gap:4px"><span style="width:6px;height:6px;border-radius:50%;background:'+p[2]+';flex-shrink:0"></span><span style="font-size:8px;color:#374151">'+p[0]+' '+p[1]+'%</span></div>';
     }).join('')+'</div>'
   );
@@ -4521,11 +4521,11 @@ function buildDailyHView(days, activeMonth, activeDay) {
   sec('Business Mix','#0284c7');
   par('TO / Direct / OTA','#0284c7');
   row('Mix %', function(d){
-    return stackBar([{p:d.toMix,c:'#006461'},{p:d.dirMix,c:'#0284c7'},{p:d.otaMix,c:'#7c3aed'},{p:d.otherMix,c:'#9ca3af'}])
+    return stackBar([{p:d.toMix,c:'#006461'},{p:d.dirMix,c:'#0284c7'},{p:d.otaMix,c:'#445e0d'},{p:d.otherMix,c:'#9ca3af'}])
       +'<div style="display:flex;gap:5px;font-size:8px;flex-wrap:wrap">'
       +'<span style="color:#006461">TO '+d.toMix+'%</span>'
       +'<span style="color:#0284c7">Direct '+d.dirMix+'%</span>'
-      +'<span style="color:#7c3aed">OTA '+d.otaMix+'%</span>'
+      +'<span style="color:#445e0d">OTA '+d.otaMix+'%</span>'
       +'<span style="color:#9ca3af">Other '+d.otherMix+'%</span>'
       +'</div>';
   });
@@ -4928,8 +4928,8 @@ function initDailyHGrid(days, activeMonth, activeDay, containerEl) {
   sec('Business Mix','#0284c7');
   par('TO / Direct / OTA','#0284c7');
   row('Mix %', function(d){
-    return stackBar([{p:d.toMix,c:'#006461'},{p:d.dirMix,c:'#0284c7'},{p:d.otaMix,c:'#7c3aed'},{p:d.otherMix,c:'#9ca3af'}])
-      +'<div style="display:flex;gap:5px;font-size:8px;flex-wrap:wrap"><span style="color:#006461">TO '+d.toMix+'%</span><span style="color:#0284c7">Direct '+d.dirMix+'%</span><span style="color:#7c3aed">OTA '+d.otaMix+'%</span><span style="color:#9ca3af">Other '+d.otherMix+'%</span></div>';
+    return stackBar([{p:d.toMix,c:'#006461'},{p:d.dirMix,c:'#0284c7'},{p:d.otaMix,c:'#445e0d'},{p:d.otherMix,c:'#9ca3af'}])
+      +'<div style="display:flex;gap:5px;font-size:8px;flex-wrap:wrap"><span style="color:#006461">TO '+d.toMix+'%</span><span style="color:#0284c7">Direct '+d.dirMix+'%</span><span style="color:#445e0d">OTA '+d.otaMix+'%</span><span style="color:#9ca3af">Other '+d.otherMix+'%</span></div>';
   });
 
   sec('Travel Co. Rates','#0f766e');
@@ -5513,7 +5513,7 @@ function initDailyRevGrid(days, containerEl) {
     { headerName:'Business Mix', headerClass:'drg-top drg-biz', openByDefault:true, children:[
       {field:'biz_to',  headerName:'TO',     width:75, cellStyle:cs('#006461',true)},
       {field:'biz_dir', headerName:'Direct', width:85, cellStyle:cs('#0284c7',true)},
-      {field:'biz_ota', headerName:'OTA',    width:75, cellStyle:cs('#7c3aed',true)},
+      {field:'biz_ota', headerName:'OTA',    width:75, cellStyle:cs('#445e0d',true)},
       {field:'biz_oth', headerName:'Other',  width:75, cellStyle:cs('#9ca3af')},
     ]},
     'Meal Plans':
@@ -5967,7 +5967,7 @@ function buildReportView(days) {
     { id:'biz', label:'Business Mix', clr:'#0284c7', metrics:[
       { lbl:'TO',     cols:[{child:'%',fn:function(d){return{t:d.toMix+'%',   clr:'#006461',bold:true};}}]},
       { lbl:'Direct', cols:[{child:'%',fn:function(d){return{t:d.dirMix+'%',  clr:'#0284c7',bold:true};}}]},
-      { lbl:'OTA',    cols:[{child:'%',fn:function(d){return{t:d.otaMix+'%',  clr:'#7c3aed',bold:true};}}]},
+      { lbl:'OTA',    cols:[{child:'%',fn:function(d){return{t:d.otaMix+'%',  clr:'#445e0d',bold:true};}}]},
       { lbl:'Other',  cols:[{child:'%',fn:function(d){return{t:d.otherMix+'%',clr:'#9ca3af',bold:true};}}]},
     ]},
 
@@ -6382,8 +6382,8 @@ function buildWeekGrid(month, weekStart, activeDay) {
   );
 
   const secBiz = sumSec('Business Mix',
-    stackBar([{p:avgToMix,c:'#006461'},{p:avgDirMix,c:'#0284c7'},{p:avgOtaMix,c:'#7c3aed'},{p:avgOtherMix,c:'#9ca3af'}])
-    +dotLegend([['TO',avgToMix+'%','#006461'],['Direct',avgDirMix+'%','#0284c7'],['OTA',avgOtaMix+'%','#7c3aed'],['Other',avgOtherMix+'%','#9ca3af']])
+    stackBar([{p:avgToMix,c:'#006461'},{p:avgDirMix,c:'#0284c7'},{p:avgOtaMix,c:'#445e0d'},{p:avgOtherMix,c:'#9ca3af'}])
+    +dotLegend([['TO',avgToMix+'%','#006461'],['Direct',avgDirMix+'%','#0284c7'],['OTA',avgOtaMix+'%','#445e0d'],['Other',avgOtherMix+'%','#9ca3af']])
   );
 
   // Room Types section
@@ -6983,7 +6983,7 @@ function buildWeekGrid(month, weekStart, activeDay) {
         const segments = [
           { name:'Operator', short:'TO',     pct: toMix,    color:'#006461' },
           { name:'Direct',        short:'Direct', pct: directMix,color:'#0284c7' },
-          { name:'OTA',           short:'OTA',    pct: otaMix,   color:'#7c3aed' },
+          { name:'OTA',           short:'OTA',    pct: otaMix,   color:'#445e0d' },
           { name:'Other',         short:'Other',  pct: otherMix, color:'#9ca3af' },
         ];
         const barHtml = '<div class="wv-meals-bar">'
@@ -12351,7 +12351,7 @@ window.calHideCapTip = function() {
     availGuar:   { label:'AvG',       color:'#ea580c', fmt: function(v){ return String(v); },     maxVal:30    },
     bizMixTO:    { label:'TO%',       color:'#006461', fmt: function(v){ return v+'%'; },         maxVal:100   },
     bizMixDirect:{ label:'Dir%',      color:'#0284c7', fmt: function(v){ return v+'%'; },         maxVal:100   },
-    bizMixOTA:   { label:'OTA%',      color:'#7c3aed', fmt: function(v){ return v+'%'; },         maxVal:100   },
+    bizMixOTA:   { label:'OTA%',      color:'#445e0d', fmt: function(v){ return v+'%'; },         maxVal:100   },
     rateTO:      { label:'TO-R',      color:'#0f766e', fmt: function(v){ return '$'+v; },         maxVal:500   },
     ratePromo:   { label:'Prmo%',     color:'#d97706', fmt: function(v){ return v+'%'; },         maxVal:50    },
     rateBase:    { label:'Base',      color:'#9333ea', fmt: function(v){ return '$'+v; },         maxVal:500   },
@@ -12576,7 +12576,7 @@ window.calHideCapTip = function() {
       hly:'#93c5fd', tly:'#6ee7b7', hstly:'#bfdbfe', tstly:'#a7f3d0',
       hfcst:'#fbbf24', tfcst:'#fde68a',
       availRooms:'#16a34a', availGuar:'#ea580c',
-      bizMixTO:'#006461', bizMixDirect:'#0284c7', bizMixOTA:'#7c3aed',
+      bizMixTO:'#006461', bizMixDirect:'#0284c7', bizMixOTA:'#445e0d',
       rateTO:'#0f766e', ratePromo:'#d97706', rateBase:'#9333ea',
     };
     var COMP_MULTS = {
