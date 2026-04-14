@@ -3666,7 +3666,7 @@ function buildDailyBView(days, month, activeDay) {
             cs = cmpSfx(cv!=null?String(cv):'', d.toRn, cv);
             var cvPct = cv!=null?Math.round(cv/WV_CAP*100):null;
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.toRn+cs+'</span>'+trendBadge(d.toRn,cv)+'</div>'
-              + wbBarMark(wbBar(Math.round(d.toRn/WV_CAP*100), '#004948'), cvPct);
+              + wbBarMark(wbBar(Math.round(d.toRn/WV_CAP*100), '#004948'), cvPct) + wbBar(Math.round(d.hnRn/WV_CAP*100), '#52d9ce');
             break;
           }
           case 'revpar_s': {
@@ -3674,40 +3674,40 @@ function buildDailyBView(days, month, activeDay) {
             cs = cmpSfx(cv!=null?'$'+cv:'', d.revpar, cv);
             var cvPct = cv!=null?Math.min(90,Math.round(cv/4)):null;
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">$'+d.revpar+cs+'</span>'+trendBadge(d.revpar,cv)+'</div>'
-              + wbBarMark(wbBar(Math.min(90,Math.round(d.revpar/4)), '#004948'), cvPct);
+              + wbBarMark(wbBar(Math.min(90,Math.round(d.revpar/4)), '#004948'), cvPct) + wbBar(Math.min(90,Math.round((d.revpar+30)/4)), '#52d9ce');
             break;
           }
           case 'pickup_s':
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">+'+d.pickup+'</span></div>'
-              + wbBar(Math.min(90,d.pickup*3), '#004948');
+              + wbBar(Math.min(90,d.pickup*3), '#004948') + wbBar(Math.min(90,d.hPickup*3), '#52d9ce');
             break;
           case 'avga_s':
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.avgA+'</span></div>'
-              + wbBar(Math.min(90,parseFloat(d.avgA)/3*100), '#004948');
+              + wbBar(Math.min(90,parseFloat(d.avgA)/3*100), '#004948') + wbBar(Math.min(90,parseFloat(d.hAvgA)/3*100), '#52d9ce');
             break;
           case 'avgc_s':
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.avgC+'</span></div>'
-              + wbBar(Math.min(90,parseFloat(d.avgC)/2*100), '#004948');
+              + wbBar(Math.min(90,parseFloat(d.avgC)/2*100), '#004948') + wbBar(Math.min(90,parseFloat(d.hAvgC)/2*100), '#52d9ce');
             break;
           case 'tota_s':
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.totAT+'</span></div>'
-              + wbBar(Math.min(90,Math.round(d.totAT/500*100)), '#004948');
+              + wbBar(Math.min(90,Math.round(d.totAT/500*100)), '#004948') + wbBar(Math.min(90,Math.round(d.totAH/500*100)), '#52d9ce');
             break;
           case 'totc_s':
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.totCT+'</span></div>'
-              + wbBar(Math.min(90,Math.round(d.totCT/100*100)), '#004948');
+              + wbBar(Math.min(90,Math.round(d.totCT/100*100)), '#004948') + wbBar(Math.min(90,Math.round(d.totCH/100*100)), '#52d9ce');
             break;
           case 'totg_s':
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.totG+'</span></div>'
-              + wbBar(Math.min(90,Math.round(d.totG/600*100)), '#004948');
+              + wbBar(Math.min(90,Math.round(d.totG/600*100)), '#004948') + wbBar(Math.min(90,Math.round(d.hTotG/600*100)), '#52d9ce');
             break;
           case 'los_s':
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.avgLos+'</span></div>'
-              + wbBar(Math.min(90,parseFloat(d.avgLos)/10*100), '#004948');
+              + wbBar(Math.min(90,parseFloat(d.avgLos)/10*100), '#004948') + wbBar(Math.min(90,parseFloat(d.hLos)/10*100), '#52d9ce');
             break;
           case 'lead_s':
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.avgLead+'</span></div>'
-              + wbBar(Math.min(90,parseInt(d.avgLead)/90*100), '#004948');
+              + wbBar(Math.min(90,parseInt(d.avgLead)/90*100), '#004948') + wbBar(Math.min(90,parseInt(d.hLead)/90*100), '#52d9ce');
             break;
           case 'avail_s':
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.availRooms+' rm</span></div>'
@@ -4013,53 +4013,53 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
   if (hasMore) {
     grp('More Metrics', C1);
     if (wvMetricState.dm_rnSold) {
-      sect('RN Sold', C1, C1, function(d){ var cv=wvCompare==='stly'?d.sdlyRn:wvCompare==='ly'?d.lyRn:wvCompare==='fcst'?d.fcstRn:null; var cs=cmpSfx(cv!=null?String(cv):'',d.toRn,cv); return sCell(d.toRn+cs, bar(Math.round(d.toRn/WV_CAP*100),C1)); });
+      sect('RN Sold', C1, C1, function(d){ var cv=wvCompare==='stly'?d.sdlyRn:wvCompare==='ly'?d.lyRn:wvCompare==='fcst'?d.fcstRn:null; var cs=cmpSfx(cv!=null?String(cv):'',d.toRn,cv); return sCell(d.toRn+cs, bar(Math.round(d.toRn/WV_CAP*100),C1)+'<div style="margin-top:2px">'+bar(Math.round(d.hnRn/WV_CAP*100),C2)+'</div>'); });
       sub('T RN',     C1,    false, function(d){ return sCell(d.toRn+' rms', bar(Math.round(d.toRn/WV_CAP*100),C1)); });
       sub('Hotel RN', C2,    false, function(d){ return sCell(d.hnRn+' rms', bar(Math.round(d.hnRn/WV_CAP*100),C2)); });
       sub('STLY',     CSTLY, false, function(d){ return sCell(d.sdlyRn+' rms', bar(Math.round(d.sdlyRn/WV_CAP*100),CSTLY)); });
     }
     if (wvMetricState.dm_trevpar) {
-      sect('REVPAR', C1, C1, function(d){ var cv=wvCompare==='stly'?d.sdlyRevpar:wvCompare==='ly'?d.lyRevpar:null; var cs=cmpSfx(cv!=null?'$'+cv:'',d.revpar,cv); return sCell('$'+d.revpar+cs, bar(Math.min(90,Math.round(d.revpar/4)),C1)); });
+      sect('REVPAR', C1, C1, function(d){ var cv=wvCompare==='stly'?d.sdlyRevpar:wvCompare==='ly'?d.lyRevpar:null; var cs=cmpSfx(cv!=null?'$'+cv:'',d.revpar,cv); return sCell('$'+d.revpar+cs, bar(Math.min(90,Math.round(d.revpar/4)),C1)+'<div style="margin-top:2px">'+bar(Math.min(90,Math.round((d.revpar+30)/4)),C2)+'</div>'); });
       sub('T REVPAR', C1,    false, function(d){ return sCell('$'+d.revpar, bar(Math.min(90,Math.round(d.revpar/4)),C1)); });
       sub('STLY',     CSTLY, false, function(d){ return sCell('$'+d.sdlyRevpar, bar(Math.min(90,Math.round(d.sdlyRevpar/4)),CSTLY)); });
     }
     if (wvMetricState.dm_pickup) {
-      sect('Pickup', C1, C1, function(d){ return sCell('+'+d.pickup, bar(Math.min(90,d.pickup*3),C1)); });
+      sect('Pickup', C1, C1, function(d){ return sCell('+'+d.pickup, bar(Math.min(90,d.pickup*3),C1)+'<div style="margin-top:2px">'+bar(Math.min(90,d.hPickup*3),C2)+'</div>'); });
       sub('T Pickup',     C1, false, function(d){ return sCell('+'+d.pickup, bar(Math.min(90,d.pickup*3),C1)); });
       sub('Hotel Pickup', C2, false, function(d){ return sCell('+'+d.hPickup, bar(Math.min(90,d.hPickup*3),C2)); });
     }
     if (wvMetricState.dm_avgAdults) {
-      sect('Avg Adults', C1, C1, function(d){ return sCell(d.avgA, bar(Math.min(90,parseFloat(d.avgA)/3*100),C1)); });
+      sect('Avg Adults', C1, C1, function(d){ return sCell(d.avgA, bar(Math.min(90,parseFloat(d.avgA)/3*100),C1)+'<div style="margin-top:2px">'+bar(Math.min(90,parseFloat(d.hAvgA)/3*100),C2)+'</div>'); });
       sub('T', C1, false, function(d){ return sCell(d.avgA, bar(Math.min(90,parseFloat(d.avgA)/3*100),C1)); });
       sub('Hotel', C2, false, function(d){ return sCell(d.hAvgA, bar(Math.min(90,parseFloat(d.hAvgA)/3*100),C2)); });
     }
     if (wvMetricState.dm_avgChildren) {
-      sect('Avg Children', C1, C1, function(d){ return sCell(d.avgC, bar(Math.min(90,parseFloat(d.avgC)/2*100),C1)); });
+      sect('Avg Children', C1, C1, function(d){ return sCell(d.avgC, bar(Math.min(90,parseFloat(d.avgC)/2*100),C1)+'<div style="margin-top:2px">'+bar(Math.min(90,parseFloat(d.hAvgC)/2*100),C2)+'</div>'); });
       sub('T', C1, false, function(d){ return sCell(d.avgC, bar(Math.min(90,parseFloat(d.avgC)/2*100),C1)); });
       sub('Hotel', C2, false, function(d){ return sCell(d.hAvgC, bar(Math.min(90,parseFloat(d.hAvgC)/2*100),C2)); });
     }
     if (wvMetricState.dm_totalAdults) {
-      sect('Total Adults', C1, C1, function(d){ return sCell(String(d.totAT), bar(Math.min(90,Math.round(d.totAT/500*100)),C1)); });
+      sect('Total Adults', C1, C1, function(d){ return sCell(String(d.totAT), bar(Math.min(90,Math.round(d.totAT/500*100)),C1)+'<div style="margin-top:2px">'+bar(Math.min(90,Math.round(d.totAH/500*100)),C2)+'</div>'); });
       sub('T', C1, false, function(d){ return sCell(String(d.totAT), bar(Math.min(90,Math.round(d.totAT/500*100)),C1)); });
       sub('Hotel', C2, false, function(d){ return sCell(String(d.totAH), bar(Math.min(90,Math.round(d.totAH/500*100)),C2)); });
     }
     if (wvMetricState.dm_totalChildren) {
-      sect('Total Children', C1, C1, function(d){ return sCell(String(d.totCT), bar(Math.min(90,Math.round(d.totCT/100*100)),C1)); });
+      sect('Total Children', C1, C1, function(d){ return sCell(String(d.totCT), bar(Math.min(90,Math.round(d.totCT/100*100)),C1)+'<div style="margin-top:2px">'+bar(Math.min(90,Math.round(d.totCH/100*100)),C2)+'</div>'); });
       sub('T', C1, false, function(d){ return sCell(String(d.totCT), bar(Math.min(90,Math.round(d.totCT/100*100)),C1)); });
       sub('Hotel', C2, false, function(d){ return sCell(String(d.totCH), bar(Math.min(90,Math.round(d.totCH/100*100)),C2)); });
     }
     if (wvMetricState.dm_totalGuests) {
-      sect('Total Guests', C1, C1, function(d){ return sCell(String(d.totG), bar(Math.min(90,Math.round(d.totG/600*100)),C1)); });
+      sect('Total Guests', C1, C1, function(d){ return sCell(String(d.totG), bar(Math.min(90,Math.round(d.totG/600*100)),C1)+'<div style="margin-top:2px">'+bar(Math.min(90,Math.round(d.hTotG/600*100)),C2)+'</div>'); });
       sub('T', C1, false, function(d){ return sCell(String(d.totG), bar(Math.min(90,Math.round(d.totG/600*100)),C1)); });
       sub('Hotel', C2, false, function(d){ return sCell(String(d.hTotG), bar(Math.min(90,Math.round(d.hTotG/600*100)),C2)); });
     }
     if (wvMetricState.dm_avgLos) {
-      sect('Avg LOS', C1, C1, function(d){ return sCell(d.avgLos, bar(Math.min(90,parseFloat(d.avgLos)/10*100),C1)); });
+      sect('Avg LOS', C1, C1, function(d){ return sCell(d.avgLos, bar(Math.min(90,parseFloat(d.avgLos)/10*100),C1)+'<div style="margin-top:2px">'+bar(Math.min(90,parseFloat(d.hLos)/10*100),C2)+'</div>'); });
       sub('T', C1, false, function(d){ return sCell(d.avgLos, bar(Math.min(90,parseFloat(d.avgLos)/10*100),C1)); });
       sub('Hotel', C2, false, function(d){ return sCell(d.hLos, bar(Math.min(90,parseFloat(d.hLos)/10*100),C2)); });
     }
     if (wvMetricState.dm_avgLeadTime) {
-      sect('Lead Time', C1, C1, function(d){ return sCell(d.avgLead, bar(Math.min(90,parseInt(d.avgLead)/90*100),C1)); });
+      sect('Lead Time', C1, C1, function(d){ return sCell(d.avgLead, bar(Math.min(90,parseInt(d.avgLead)/90*100),C1)+'<div style="margin-top:2px">'+bar(Math.min(90,parseInt(d.hLead)/90*100),C2)+'</div>'); });
       sub('T', C1, false, function(d){ return sCell(d.avgLead, bar(Math.min(90,parseInt(d.avgLead)/90*100),C1)); });
       sub('Hotel', C2, false, function(d){ return sCell(d.hLead, bar(Math.min(90,parseInt(d.hLead)/90*100),C2)); });
     }
