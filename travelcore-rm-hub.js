@@ -3403,7 +3403,7 @@ function buildDailyBView(days, month, activeDay) {
       grp.g_avail.push({type:'sub',  id:'avrt'+i+'_to', label:'TO Sold',   dot:'#004948', parent:'avrt'+i, rtIdx:i, rtSub:'to'});
       grp.g_avail.push({type:'sub',  id:'avrt'+i+'_ot', label:'Other',     dot:'#52d9ce', parent:'avrt'+i, rtIdx:i, rtSub:'other'});
       grp.g_avail.push({type:'sub',  id:'avrt'+i+'_al', label:'Alloc Rem.',dot:'#d7f7ed', parent:'avrt'+i, rtIdx:i, rtSub:'alloc'});
-      grp.g_avail.push({type:'sub',  id:'avrt'+i+'_av', label:'Available', dot:'#d7f7ed', parent:'avrt'+i, rtIdx:i, rtSub:'avail'});
+      grp.g_avail.push({type:'sub',  id:'avrt'+i+'_av', label:'Available', dot:'#16a34a', parent:'avrt'+i, rtIdx:i, rtSub:'avail'});
     });
   }
 
@@ -4127,7 +4127,7 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
       }; })(inv,rtI));
       sub('TO Sold', C1, false, (function(inv){ return function(d){ var s=Math.min(inv,Math.floor(inv*d.hotel/110)); return rCell(Math.min(s,Math.round(s*d.to/Math.max(1,d.hotel)))+' rm'); }; })(inv));
       sub('Other',   C2, false, (function(inv){ return function(d){ var s=Math.min(inv,Math.floor(inv*d.hotel/110)); var t=Math.min(s,Math.round(s*d.to/Math.max(1,d.hotel))); return rCell((s-t)+' rm'); }; })(inv));
-      sub('Available', C4, false, (function(inv){ return function(d){ return rCell(Math.max(0,inv-Math.min(inv,Math.floor(inv*d.hotel/110)))+' rm'); }; })(inv));
+      sub('Available', '#16a34a', false, (function(inv){ return function(d){ var avRm=Math.max(0,inv-Math.min(inv,Math.floor(inv*d.hotel/110))); return sCell(avRm+' rm', bar(Math.min(90,Math.round(avRm/inv*100)),'#16a34a')); }; })(inv));
     });
   }
 
