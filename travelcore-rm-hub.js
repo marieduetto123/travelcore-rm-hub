@@ -3140,6 +3140,7 @@ var _wbSelectedDays = new Set(); // ISO date strings selected for close-out in D
 var _wbGroupOrder   = null; // null = default; array of group keys for custom Daily B order
 
 var WB_GROUPS_DEF = [
+  { key: 'g_closeouts', lbl: 'Close Outs',      clr: '#dc2626' },
   { key: 'g_daily',   lbl: 'Daily Metrics',    clr: '#006461' },
   { key: 'g_more',    lbl: 'More Metrics',     clr: '#2e65e8' },
   { key: 'g_meals',   lbl: 'Meal Plans',       clr: '#f59e0b' },
@@ -3279,8 +3280,15 @@ function buildDailyBView(days, month, activeDay) {
 
   // ── Row schema (built per group, then assembled in custom order) ──────────
   var compLabel = wvCompare==='ly'?'LY':wvCompare==='fcst'?'Fcst':'STLY';
-  var grp = { g_daily:[], g_more:[], g_meals:[], g_biz:[], g_avail:[], g_torates:[] };
+  var grp = { g_closeouts:[], g_daily:[], g_more:[], g_meals:[], g_biz:[], g_avail:[], g_torates:[] };
   window._wbGrpData = grp; // expose for Table Settings modal
+
+  // Group: Close Outs Summary
+  grp.g_closeouts.push({type:'top', id:'g_closeouts', label:'Close Outs'});
+  grp.g_closeouts.push({type:'sect', id:'co_summary', label:'Summary', parent:'g_closeouts'});
+  grp.g_closeouts.push({type:'sub', id:'co_full',     label:'Full Day Close Outs', dot:'#dc2626', parent:'co_summary'});
+  grp.g_closeouts.push({type:'sub', id:'co_partial',  label:'Partial Close Outs',  dot:'#f59e0b', parent:'co_summary'});
+  grp.g_closeouts.push({type:'sub', id:'co_open',     label:'Open Channels',       dot:'#16a34a', parent:'co_summary'});
 
   // Group: Daily Metrics
   grp.g_daily.push({type:'top', id:'g_daily', label:'Daily Metrics'});
@@ -3289,7 +3297,7 @@ function buildDailyBView(days, month, activeDay) {
     grp.g_daily.push({type:'sub',  id:'occ_tdh',   label:'Travel Distribution Hubs',dot:'#004948', parent:'occ'});
     grp.g_daily.push({type:'sub',  id:'occ_other', label:'Other Segments',          dot:'#52d9ce', parent:'occ'});
     grp.g_daily.push({type:'sub',  id:'occ_stly',  label:compLabel,                 dot:'#C4FF45', parent:'occ'});
-    grp.g_daily.push({type:'sub',  id:'occ_rem',   label:'Remaining',               dot:'#445e0d', parent:'occ', isRem:true});
+    grp.g_daily.push({type:'sub',  id:'occ_rem',   label:'Total Hotel Remaining',   dot:'#445e0d', parent:'occ', isRem:true});
   }
   if (wvMetricState.onlineOffline) {
     grp.g_daily.push({type:'sect', id:'onoff',     label:'Online / Offline', parent:'g_daily'});
@@ -3406,9 +3414,10 @@ function buildDailyBView(days, month, activeDay) {
     RT_NAMES.forEach(function(name, i) {
       grp.g_avail.push({type:'sect', id:'avrt'+i,       label:name,        parent:'g_avail', rtIdx:i});
       grp.g_avail.push({type:'sub',  id:'avrt'+i+'_to', label:'TO Sold',   dot:'#004948', parent:'avrt'+i, rtIdx:i, rtSub:'to'});
-      grp.g_avail.push({type:'sub',  id:'avrt'+i+'_ot', label:'Other',     dot:'#52d9ce', parent:'avrt'+i, rtIdx:i, rtSub:'other'});
+      grp.g_avail.push({type:'sub',  id:'avrt'+i+'_ot', label:'Other Segments', dot:'#52d9ce', parent:'avrt'+i, rtIdx:i, rtSub:'other'});
+      grp.g_avail.push({type:'sub',  id:'avrt'+i+'_tn', label:'Tentative',    dot:'#8b5cf6', parent:'avrt'+i, rtIdx:i, rtSub:'tentative'});
       grp.g_avail.push({type:'sub',  id:'avrt'+i+'_al', label:'Alloc Rem.',dot:'#D97706', parent:'avrt'+i, rtIdx:i, rtSub:'alloc'});
-      grp.g_avail.push({type:'sub',  id:'avrt'+i+'_av', label:'Remaining', dot:'#445e0d', parent:'avrt'+i, rtIdx:i, rtSub:'avail', isRem:true});
+      grp.g_avail.push({type:'sub',  id:'avrt'+i+'_av', label:'Total Hotel Remaining', dot:'#445e0d', parent:'avrt'+i, rtIdx:i, rtSub:'avail', isRem:true});
     });
   }
 
@@ -3754,6 +3763,21 @@ function buildDailyBView(days, month, activeDay) {
               + '<span style="font-size:12px;font-family:Lato,sans-serif;color:#6b7280">RO '+d.roPct+'%</span>'
               + '</div>';
             break;
+          // ── Close Outs Summary ────────────────────────────────────────────
+          case 'co_summary': {
+            var isFullLock = LOCKED_DAYS.has(d.dm+'-'+d.dd);
+            var partialRules = PARTIAL_CLOSURES[d.dm+'-'+d.dd] || [];
+            var lockSvg2 = '<svg viewBox="0 0 10 12" fill="none" stroke="currentColor" stroke-width="1.6" width="11" height="13"><rect x="1" y="5" width="8" height="7" rx="1"/><path d="M3 5V3.5a2 2 0 0 1 4 0V5"/></svg>';
+            var checkSvg2 = '<svg viewBox="0 0 14 14" fill="none" stroke="#16a34a" stroke-width="1.6" width="12" height="12"><path d="M2 7l4 4 6-6"/></svg>';
+            if (isFullLock) {
+              cellContent = '<div class="wb-sect-val" style="gap:5px"><span style="color:#dc2626">'+lockSvg2.replace('currentColor','#dc2626')+'</span><span style="font-size:13px;font-weight:600;color:#dc2626">Full Close Out</span></div>';
+            } else if (partialRules.length > 0) {
+              cellContent = '<div class="wb-sect-val" style="gap:5px"><span style="color:#f59e0b">'+lockSvg2.replace('currentColor','#f59e0b')+'</span><span style="font-size:13px;color:#f59e0b;font-weight:600">'+partialRules.length+' rule'+(partialRules.length>1?'s':'')+'</span></div>';
+            } else {
+              cellContent = '<div class="wb-sect-val" style="gap:5px">'+checkSvg2+'<span style="font-size:13px;color:#16a34a">Open</span></div>';
+            }
+            break;
+          }
           // ── Business Mix — stacked using sub-row dot colors ─────────────────
           case 'biz':
             cellContent = wbStackBar([{p:d.toMix,c:'#004948'},{p:d.dirMix,c:'#52d9ce'},{p:d.otaMix,c:'#D97706'},{p:d.otherMix,c:'#9ca3af'}])
@@ -3781,10 +3805,15 @@ function buildDailyBView(days, month, activeDay) {
           var avRm2  = Math.max(0, inv2 - sold2);
           if      (row.rtSub === 'to')    v1 = toS2 + ' rm';
           else if (row.rtSub === 'other') v1 = otS2 + ' rm';
+          else if (row.rtSub === 'tentative') { var tent2 = Math.max(0, Math.floor(2+Math.abs((d.dm*(row.rtIdx+4)+d.dd*(row.rtIdx+2))%6))); v1 = tent2 + ' rm'; }
           else if (row.rtSub === 'alloc') v1 = alRem2 + ' rm';
           else if (row.rtSub === 'avail') { v1 = avRm2 + ' rm'; remCls = avRm2 === 0 ? ' wb-sub-val-rem' : ''; }
         } else {
         switch (row.id) {
+          // close outs
+          case 'co_full':    { var _ifl = LOCKED_DAYS.has(d.dm+'-'+d.dd); v1 = _ifl ? '🔒 Yes' : '—'; } break;
+          case 'co_partial': { var _pr = PARTIAL_CLOSURES[d.dm+'-'+d.dd] || []; v1 = _pr.length > 0 ? _pr.length+' rule'+(_pr.length>1?'s':'') : '—'; } break;
+          case 'co_open':    { var _ifl2 = LOCKED_DAYS.has(d.dm+'-'+d.dd); var _pr2 = PARTIAL_CLOSURES[d.dm+'-'+d.dd] || []; v1 = _ifl2 ? 'None' : (_pr2.length === 0 ? 'All open' : 'Partial'); } break;
           // occupancy
           case 'occ_tdh':    v1 = d.toRn+' rms';    v2 = d.to+'%';                         break;
           case 'occ_other':  v1 = d.otherRms+' rms'; v2 = d.otherPct+'%';                  break;
@@ -3987,6 +4016,30 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
   function sect(lbl,clr,dot,fn){ _curSK='S'+(_si++); _dbAllRows.push({type:'sect',lbl:lbl,clr:clr||C1,dot:dot,fn:fn,grpKey:_curGK,sectKey:_curSK}); }
   function sub(lbl,dot,isRem,fn){ _dbAllRows.push({type:'sub',lbl:lbl,dot:dot,isRem:isRem||false,fn:fn,grpKey:_curGK,sectKey:_curSK}); }
 
+  // ── Close Outs Summary ─────────────────────────────────────────────────────
+  grp('Close Outs', '#dc2626');
+  sect('Summary', '#dc2626', '#dc2626', function(d){
+    var isFullLock = LOCKED_DAYS.has(d.dm+'-'+d.dd);
+    var partialRules = PARTIAL_CLOSURES[d.dm+'-'+d.dd] || [];
+    if (isFullLock) return '<div style="display:flex;align-items:center;gap:5px"><svg viewBox="0 0 10 12" fill="none" stroke="#dc2626" stroke-width="1.6" width="11" height="13"><rect x="1" y="5" width="8" height="7" rx="1"/><path d="M3 5V3.5a2 2 0 0 1 4 0V5"/></svg><span style="font-size:13px;font-weight:600;color:#dc2626">Full Day Close Out</span></div>';
+    if (partialRules.length > 0) return '<div style="display:flex;align-items:center;gap:5px"><svg viewBox="0 0 10 12" fill="none" stroke="#f59e0b" stroke-width="1.6" width="11" height="13"><rect x="1" y="5" width="8" height="7" rx="1"/><path d="M3 5V3.5a2 2 0 0 1 4 0V5"/></svg><span style="font-size:13px;color:#f59e0b;font-weight:600">'+partialRules.length+' rule'+(partialRules.length>1?'s':'')+'</span></div>';
+    return '<div style="display:flex;align-items:center;gap:5px"><svg viewBox="0 0 14 14" fill="none" stroke="#16a34a" stroke-width="1.6" width="12" height="12"><path d="M2 7l4 4 6-6"/></svg><span style="font-size:13px;color:#16a34a">Open</span></div>';
+  });
+  sub('Full Day Close Outs', '#dc2626', false, function(d){
+    var isFullLock = LOCKED_DAYS.has(d.dm+'-'+d.dd);
+    return rCell(isFullLock ? '🔒 Yes' : '—');
+  });
+  sub('Partial Close Outs', '#f59e0b', false, function(d){
+    var rules = PARTIAL_CLOSURES[d.dm+'-'+d.dd] || [];
+    return rCell(rules.length > 0 ? rules.length+' rule'+(rules.length>1?'s':'') : '—');
+  });
+  sub('Open Channels', '#16a34a', false, function(d){
+    var isFullLock = LOCKED_DAYS.has(d.dm+'-'+d.dd);
+    if (isFullLock) return rCell('<span style="color:#dc2626">None</span>');
+    var rules = PARTIAL_CLOSURES[d.dm+'-'+d.dd] || [];
+    return rCell(rules.length === 0 ? 'All open' : 'Partial');
+  });
+
   // ── Daily Metrics ─────────────────────────────────────────────────────────
   grp('Daily Metrics', C1);
   if (wvMetricState.capacity) {
@@ -3994,7 +4047,7 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
     sub('Travel Distribution Hubs', C1, false, function(d){ return rCell(d.toRn+' rms',d.to+'%'); });
     sub('Other Segments', C2, false, function(d){ return rCell(d.otherRms+' rms',d.otherPct+'%'); });
     sub('STLY', CSTLY, false, function(d){ return rCell(d.sdlyRn+' rms',d.sdlyH+'%'); });
-    sub('Remaining', CREM, true, function(d){ return rCell(d.freeRms+' rms',Math.max(0,100-d.hotel)+'%',true); });
+    sub('Total Hotel Remaining', CREM, true, function(d){ return rCell(d.freeRms+' rms',Math.max(0,100-d.hotel)+'%',true); });
   }
   if (wvMetricState.onlineOffline) {
     sect('Online / Offline', C1, C1, function(d){ return sCell(d.onlinePct+'%', sBar([{p:d.onlinePct,c:C1},{p:100-d.onlinePct,c:C2}])); });
@@ -4135,8 +4188,9 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
           +sBar([{p:toP,c:C1},{p:otP,c:C2},{p:alP,c:C3},{p:Math.max(0,100-toP-otP-alP),c:C4}]);
       }; })(inv,rtI));
       sub('TO Sold', C1, false, (function(inv){ return function(d){ var s=Math.min(inv,Math.floor(inv*d.hotel/110)); return rCell(Math.min(s,Math.round(s*d.to/Math.max(1,d.hotel)))+' rm'); }; })(inv));
-      sub('Other',   C2, false, (function(inv){ return function(d){ var s=Math.min(inv,Math.floor(inv*d.hotel/110)); var t=Math.min(s,Math.round(s*d.to/Math.max(1,d.hotel))); return rCell((s-t)+' rm'); }; })(inv));
-      sub('Remaining', CREM, true, (function(inv){ return function(d){ var avRm=Math.max(0,inv-Math.min(inv,Math.floor(inv*d.hotel/110))); return sCell(avRm+' rm', bar(Math.min(90,Math.round(avRm/inv*100)),'#16a34a')); }; })(inv));
+      sub('Other Segments', C2, false, (function(inv){ return function(d){ var s=Math.min(inv,Math.floor(inv*d.hotel/110)); var t=Math.min(s,Math.round(s*d.to/Math.max(1,d.hotel))); return rCell((s-t)+' rm'); }; })(inv));
+      sub('Tentative', '#8b5cf6', false, (function(inv,rtI){ return function(d){ var tent=Math.max(0,Math.floor(2+Math.abs((d.dm*(rtI+4)+d.dd*(rtI+2))%6))); return rCell(tent+' rm'); }; })(inv,rtI));
+      sub('Total Hotel Remaining', CREM, true, (function(inv){ return function(d){ var avRm=Math.max(0,inv-Math.min(inv,Math.floor(inv*d.hotel/110))); return sCell(avRm+' rm', bar(Math.min(90,Math.round(avRm/inv*100)),'#16a34a')); }; })(inv));
     });
   }
 
@@ -7174,6 +7228,7 @@ var _tsDragEl = null;
 // Mapping: sect/group IDs → wvMetricState keys
 var _tsMetricMap = {
   // Group-level (top)
+  g_closeouts: [],
   g_daily:   ['capacity','onlineOffline','adr','revenue'],
   g_more:    ['dm_rnSold','dm_trevpar','dm_pickup','dm_avgAdults','dm_avgChildren',
               'dm_totalAdults','dm_totalChildren','dm_totalGuests','dm_avgLos','dm_avgLeadTime',
@@ -7456,8 +7511,7 @@ document.querySelectorAll('.wv-groupby-btn').forEach(function(btn) {
     wvGroupBy = this.dataset.groupby;
     document.querySelectorAll('.wv-groupby-btn').forEach(function(b) { b.classList.remove('active'); });
     this.classList.add('active');
-    var reorderBtn = document.getElementById('dhReorderBtn');
-    if (reorderBtn) reorderBtn.style.display = ['dailyH','combined','report','dailyB'].indexOf(wvGroupBy) !== -1 ? '' : 'none';
+    // Table Settings inline button visibility handled by topbar
     buildWeekGrid(wvMonth, wvWeekStart, wvWeekStart);
   });
 });
