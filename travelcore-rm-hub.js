@@ -2859,6 +2859,10 @@ function renderWeekView(month, day) {
   wvMonth = month;
   wvWeekStart = weekStartDay;
 
+  // Sync calendar filters → weekly so selections persist across views
+  syncFiltersCalToWv();
+  applyFilterUI('wvFiltersDropdown');
+
   const calSection = document.getElementById('demand-calendar');
   const wvSection  = document.getElementById('weekView');
   if (calSection) calSection.style.display = 'none';
@@ -7528,12 +7532,17 @@ document.querySelectorAll('.wv-groupby-btn').forEach(function(btn) {
 
 // Return to monthly calendar view
 window.goToMonthView = function() {
+  // Sync weekly filters → calendar so selections persist across views
+  syncFiltersWvToCal();
+  applyFilterUI('calFiltersDropdown');
+
   document.getElementById('demand-calendar').style.display = '';
   document.getElementById('weekView').classList.remove('visible');
   var backArrow = document.getElementById('wvBack');
   if (backArrow) backArrow.style.display = 'none';
   var cmpWrap = document.getElementById('wvCmpWrap');
   if (cmpWrap) cmpWrap.style.display = 'none';
+  renderCalendar();
 };
 
 // Week nav + back (legacy arrow in cal-header also calls goToMonthView)
@@ -8322,6 +8331,23 @@ const filterState = {
   cal: { calFiltTO: 'all', calFiltRoom: 'all', calFiltBoard: 'all', calFiltMarket: 'all', calFiltPickup: '365' },
   wv:  { wvFiltTO:  'all', wvFiltRoom:  'all', wvFiltBoard:  'all', wvFiltMarket:  'all', wvFiltPickup:  '365' },
 };
+
+/* Sync filters between cal↔wv so switching views preserves selections */
+function syncFiltersCalToWv() {
+  filterState.wv.wvFiltTO     = filterState.cal.calFiltTO;
+  filterState.wv.wvFiltRoom   = filterState.cal.calFiltRoom;
+  filterState.wv.wvFiltBoard  = filterState.cal.calFiltBoard;
+  filterState.wv.wvFiltMarket = filterState.cal.calFiltMarket;
+  filterState.wv.wvFiltPickup = filterState.cal.calFiltPickup;
+}
+function syncFiltersWvToCal() {
+  filterState.cal.calFiltTO     = filterState.wv.wvFiltTO;
+  filterState.cal.calFiltRoom   = filterState.wv.wvFiltRoom;
+  filterState.cal.calFiltBoard  = filterState.wv.wvFiltBoard;
+  filterState.cal.calFiltMarket = filterState.wv.wvFiltMarket;
+  filterState.cal.calFiltPickup = filterState.wv.wvFiltPickup;
+  calFiltTO = (filterState.cal.calFiltTO === 'all' || !filterState.cal.calFiltTO) ? 'all' : filterState.cal.calFiltTO.split(',')[0];
+}
 
 function getFilterVal(id) {
   const ctx = (id.startsWith('wv')) ? filterState.wv : filterState.cal;
