@@ -945,24 +945,24 @@ function updateChart() {
     });
   }
 
-  // ── 2. Subtle horizontal grid lines ─────────────────────────────────────
+  // ── 2. Horizontal grid lines ─────────────────────────────────────────────
   const gridLines = [0, 68, 170, 272, 340].map(y =>
-    `<line x1="0" y1="${y}" x2="${svgW}" y2="${y}" stroke="#eeeeee" stroke-width="1"/>`
+    `<line x1="0" y1="${y}" x2="${svgW}" y2="${y}" stroke="#d4d4d4" stroke-width="0.8"/>`
   ).join('');
 
-  // ── 3. Neutral zone band (±12px around parity) ──────────────────────────
-  const neutralZone = `<rect x="0" y="${refY - 12}" width="${svgW}" height="24" fill="#e0e0e0" opacity="0.35"/>`;
+  // ── 3. Neutral zone band (±8px around parity — very subtle) ─────────────
+  const neutralZone = `<rect x="0" y="${refY - 8}" width="${svgW}" height="16" fill="#e8e8e8" opacity="0.4"/>`;
 
   // ── 4. Benchmark / goal line (dashed, above parity) ─────────────────────
   const goalY = refY - 70;
-  const benchmarkLine = `<line x1="0" y1="${goalY}" x2="${svgW}" y2="${goalY}" stroke="#00298C" stroke-width="1.5" stroke-dasharray="6 4" opacity="0.6"/>`;
+  const benchmarkLine = `<line x1="0" y1="${goalY}" x2="${svgW}" y2="${goalY}" stroke="#004948" stroke-width="1.5" stroke-dasharray="6 4" opacity="0.5"/>`;
 
-  // ── 5. Parity reference line (solid) ────────────────────────────────────
-  const parityLine = `<line x1="0" y1="${refY}" x2="${svgW}" y2="${refY}" stroke="#9E9E9E" stroke-width="1.5"/>`;
+  // ── 5. Parity reference line (solid, darker) ───────────────────────────
+  const parityLine = `<line x1="0" y1="${refY}" x2="${svgW}" y2="${refY}" stroke="#6b7280" stroke-width="1.5"/>`;
 
   // ── 6. "Above" / "Below" right-side labels ──────────────────────────────
-  const aboveLabel = `<text x="${svgW - 4}" y="${refY - 18}" font-family="Lato,sans-serif" font-size="10" fill="#00298C" text-anchor="end" font-weight="600">Above</text>`;
-  const belowLabel = `<text x="${svgW - 4}" y="${refY + 26}" font-family="Lato,sans-serif" font-size="10" fill="#991F1F" text-anchor="end" font-weight="600">Below</text>`;
+  const aboveLabel = `<text x="${svgW - 6}" y="${refY - 16}" font-family="Lato,sans-serif" font-size="11" fill="#004948" text-anchor="end" font-weight="700">Above</text>`;
+  const belowLabel = `<text x="${svgW - 6}" y="${refY + 24}" font-family="Lato,sans-serif" font-size="11" fill="#dc2626" text-anchor="end" font-weight="700">Below</text>`;
 
   let mainSvg = '';
 
@@ -978,44 +978,44 @@ function updateChart() {
         const left = (cx - barW / 2).toFixed(1);
         const py   = primary.pts[xi] || refY;
         if (py < refY) {
-          // Above parity → bar grows upward from refY, blue
+          // Above parity → bar grows upward from refY, deep teal
           const h = (refY - py).toFixed(1);
-          mainSvg += `<rect x="${left}" y="${py.toFixed(1)}" width="${barW.toFixed(1)}" height="${h}" fill="#004948" opacity="0.55" rx="2"/>`;
+          mainSvg += `<rect x="${left}" y="${py.toFixed(1)}" width="${barW.toFixed(1)}" height="${h}" fill="#004948" opacity="0.85" rx="2"/>`;
         } else if (py > refY) {
-          // Below parity → bar grows downward from refY, orange
+          // Below parity → bar grows downward from refY, coral/red
           const h = (py - refY).toFixed(1);
-          mainSvg += `<rect x="${left}" y="${refY}" width="${barW.toFixed(1)}" height="${h}" fill="#52d9ce" opacity="0.55" rx="2"/>`;
+          mainSvg += `<rect x="${left}" y="${refY}" width="${barW.toFixed(1)}" height="${h}" fill="#e85d4a" opacity="0.75" rx="2"/>`;
         }
       }
-      // Additional series as narrower stacked bars behind primary
+      // Additional series as narrower offset bars
       colSeries.slice(1).forEach(function(s, si) {
-        const bw2  = Math.max(3, barW * 0.55);
-        const off  = (si % 2 === 0 ? 1 : -1) * (barW * 0.32);
+        const bw2  = Math.max(3, barW * 0.5);
+        const off  = (si % 2 === 0 ? 1 : -1) * (barW * 0.35);
         for (let xi = 0; xi < nPts2; xi++) {
           const cx  = xs[xi] + off;
           const lft = (cx - bw2 / 2).toFixed(1);
           const py  = s.pts[xi] || refY;
-          const clr = py < refY ? '#004948' : '#52d9ce';
+          const clr = py < refY ? '#0891b2' : '#f59e0b';
           const yR  = py < refY ? py : refY;
           const hR  = Math.abs(py - refY).toFixed(1);
-          mainSvg += `<rect x="${lft}" y="${yR.toFixed(1)}" width="${bw2.toFixed(1)}" height="${hR}" fill="${clr}" opacity="0.28" rx="1"/>`;
+          mainSvg += `<rect x="${lft}" y="${yR.toFixed(1)}" width="${bw2.toFixed(1)}" height="${hR}" fill="${clr}" opacity="0.55" rx="1"/>`;
         }
       });
     }
 
-    // Trend line through primary series (purple, like Figma)
+    // Trend line through primary series — bold, dark
     if (colSeries.length > 0) {
-      mainSvg += `<path d="${smoothPath(colSeries[0].pts, xs)}" fill="none" stroke="#7B5EA7" stroke-width="2" stroke-linejoin="round"/>`;
+      mainSvg += `<path d="${smoothPath(colSeries[0].pts, xs)}" fill="none" stroke="#1e293b" stroke-width="2.5" stroke-linejoin="round"/>`;
     }
 
     // Scatter dots for each series at each data point
-    const DOT_COLORS = ['#42C9D3','#FFB90F','#9AA300','#DA3083','#4A3FD7','#AF75D9','#F4894B','#5B8FF9'];
+    const DOT_COLORS = ['#004948','#0891b2','#6366f1','#dc2626','#f59e0b','#ec4899','#10b981','#8b5cf6'];
     allSeries.forEach(function(s, si) {
       const dotClr = DOT_COLORS[si % DOT_COLORS.length];
-      const r = si === 0 ? 5 : 4;
+      const r = si === 0 ? 5.5 : 4.5;
       xs.forEach(function(x, xi) {
         const py = s.pts[xi] || refY;
-        mainSvg += `<circle cx="${x}" cy="${py.toFixed(1)}" r="${r}" fill="${dotClr}" stroke="#fff" stroke-width="1.5"/>`;
+        mainSvg += `<circle cx="${x}" cy="${py.toFixed(1)}" r="${r}" fill="${dotClr}" stroke="#fff" stroke-width="2"/>`;
       });
     });
 
@@ -1034,10 +1034,10 @@ function updateChart() {
       const fc = colSeries[0];
       // Positive yield: teal fill above refY
       mainSvg += `<clipPath id="aboveClip"><rect x="0" y="0" width="${svgW}" height="${refY}"/></clipPath>`;
-      mainSvg += `<path d="${smoothPath(fc.pts, xs)} L${svgW},${svgH} L0,${svgH} Z" fill="#52d9ce" opacity="0.15" clip-path="url(#aboveClip)"/>`;
-      // Net leak: pink fill below refY
+      mainSvg += `<path d="${smoothPath(fc.pts, xs)} L${svgW},${svgH} L0,${svgH} Z" fill="#004948" opacity="0.12" clip-path="url(#aboveClip)"/>`;
+      // Net leak: coral fill below refY
       mainSvg += `<clipPath id="belowClip"><rect x="0" y="${refY}" width="${svgW}" height="${svgH - refY}"/></clipPath>`;
-      mainSvg += `<path d="${smoothPath(fc.pts, xs)} L${svgW},${svgH} L0,${svgH} Z" fill="#f4894b" opacity="0.12" clip-path="url(#belowClip)"/>`;
+      mainSvg += `<path d="${smoothPath(fc.pts, xs)} L${svgW},${svgH} L0,${svgH} Z" fill="#e85d4a" opacity="0.10" clip-path="url(#belowClip)"/>`;
     }
     allSeries.forEach(function(s, ai) {
       const st       = s.style || SERIES_STYLES[ai % SERIES_STYLES.length];
@@ -1046,13 +1046,13 @@ function updateChart() {
       const dashAttr = dashStr ? ` stroke-dasharray="${dashStr}"` : '';
       const op       = s.forceOpacity || 1;
       const opAttr   = op < 1 ? ` opacity="${op}"` : '';
-      const sw       = s.isCol ? 2.5 : 1.5;
-      const r        = s.isCol ? 4 : 3.5;
+      const sw       = s.isCol ? 2.8 : 2;
+      const r        = s.isCol ? 5 : 4;
       const markers  = xs.map(function(x, i) {
         if (isComp) {
-          return `<circle cx="${x}" cy="${(s.pts[i]||refY).toFixed(1)}" r="${r}" fill="#fff" stroke="${s.color}" stroke-width="2"/>`;
+          return `<circle cx="${x}" cy="${(s.pts[i]||refY).toFixed(1)}" r="${r}" fill="#fff" stroke="${s.color}" stroke-width="2.5"/>`;
         }
-        return `<circle cx="${x}" cy="${(s.pts[i]||refY).toFixed(1)}" r="${r}" fill="${s.color}" stroke="#fff" stroke-width="1.5"/>`;
+        return `<circle cx="${x}" cy="${(s.pts[i]||refY).toFixed(1)}" r="${r}" fill="${s.color}" stroke="#fff" stroke-width="2"/>`;
       }).join('');
       mainSvg += `<path d="${smoothPath(s.pts, xs)}" fill="none" stroke="${s.color}" stroke-width="${sw}"${dashAttr}${opAttr}/>${markers}`;
     });
@@ -1079,22 +1079,22 @@ function updateChart() {
   const legend = document.getElementById('revLegend');
   if (legend) {
     // Fixed legend: Above / Below parity + trend line + series dots
-    const DOT_COLORS2 = ['#42C9D3','#FFB90F','#9AA300','#DA3083','#4A3FD7','#AF75D9','#F4894B','#5B8FF9'];
+    const DOT_COLORS2 = ['#004948','#0891b2','#6366f1','#dc2626','#f59e0b','#ec4899','#10b981','#8b5cf6'];
     let legendHtml = '';
     if (revChartMode === 'histogram') {
-      legendHtml += `<div class="legend-item"><svg viewBox="0 0 14 10" width="14" height="10"><rect x="0" y="1" width="14" height="8" fill="#004948" opacity="0.55" rx="1"/></svg>Above parity</div>`;
-      legendHtml += `<div class="legend-item"><svg viewBox="0 0 14 10" width="14" height="10"><rect x="0" y="1" width="14" height="8" fill="#52d9ce" opacity="0.55" rx="1"/></svg>Below parity</div>`;
-      legendHtml += `<div class="legend-item"><svg viewBox="0 0 28 10" width="28" height="10"><line x1="0" y1="5" x2="28" y2="5" stroke="#7B5EA7" stroke-width="2"/></svg>Trend</div>`;
-      legendHtml += `<div class="legend-item"><svg viewBox="0 0 28 10" width="28" height="10"><line x1="0" y1="5" x2="28" y2="5" stroke="#00298C" stroke-width="1.5" stroke-dasharray="6 4" opacity="0.7"/></svg>Benchmark</div>`;
+      legendHtml += `<div class="legend-item"><svg viewBox="0 0 14 10" width="14" height="10"><rect x="0" y="1" width="14" height="8" fill="#004948" opacity="0.85" rx="2"/></svg>Above parity</div>`;
+      legendHtml += `<div class="legend-item"><svg viewBox="0 0 14 10" width="14" height="10"><rect x="0" y="1" width="14" height="8" fill="#e85d4a" opacity="0.75" rx="2"/></svg>Below parity</div>`;
+      legendHtml += `<div class="legend-item"><svg viewBox="0 0 28 10" width="28" height="10"><line x1="0" y1="5" x2="28" y2="5" stroke="#1e293b" stroke-width="2.5"/></svg>Trend</div>`;
+      legendHtml += `<div class="legend-item"><svg viewBox="0 0 28 10" width="28" height="10"><line x1="0" y1="5" x2="28" y2="5" stroke="#004948" stroke-width="1.5" stroke-dasharray="6 4" opacity="0.6"/></svg>Benchmark</div>`;
     }
     allSeries.forEach(function(s, si) {
       const dotClr = DOT_COLORS2[si % DOT_COLORS2.length];
       const dashStr  = s.isCol ? '' : (s.dash || '');
       const dashAttr = dashStr ? ` stroke-dasharray="${dashStr}"` : '';
       if (revChartMode === 'histogram') {
-        legendHtml += `<div class="legend-item"><svg viewBox="0 0 10 10" width="10" height="10"><circle cx="5" cy="5" r="4" fill="${dotClr}" stroke="#fff" stroke-width="1"/></svg>${s.label}</div>`;
+        legendHtml += `<div class="legend-item"><svg viewBox="0 0 10 10" width="10" height="10"><circle cx="5" cy="5" r="4.5" fill="${dotClr}" stroke="#fff" stroke-width="1.5"/></svg>${s.label}</div>`;
       } else {
-        legendHtml += `<div class="legend-item"><svg class="legend-line-svg" viewBox="0 0 28 10" width="28" height="10"><line x1="0" y1="5" x2="28" y2="5" stroke="${s.color}" stroke-width="2"${dashAttr}/><circle cx="14" cy="5" r="3.5" fill="${s.color}" stroke="#fff" stroke-width="1"/></svg>${s.label}</div>`;
+        legendHtml += `<div class="legend-item"><svg class="legend-line-svg" viewBox="0 0 28 10" width="28" height="10"><line x1="0" y1="5" x2="28" y2="5" stroke="${s.color}" stroke-width="2.5"${dashAttr}/><circle cx="14" cy="5" r="4" fill="${s.color}" stroke="#fff" stroke-width="1.5"/></svg>${s.label}</div>`;
       }
     });
     legend.innerHTML = legendHtml;
