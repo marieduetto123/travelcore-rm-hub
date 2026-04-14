@@ -569,7 +569,7 @@ body.dark .filter-group select { background: var(--surface-2); color: var(--text
 .chart-y-axis span { font-size: 12px; font-family: 'Lato', sans-serif; color: #585858; }
 .chart-area { flex: 1; position: relative; }
 .chart-area svg {
-  width: 100%; height: 240px; display: block;
+  width: 100%; height: 340px; display: block;
   transition: opacity .25s ease;
   border: 1px solid #f5f5f5;
   background: #fff;

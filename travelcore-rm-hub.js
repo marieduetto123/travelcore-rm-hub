@@ -668,7 +668,7 @@ function updateChart() {
   const xLabels2 = revGetXLabels();
   const nPts2    = Math.max(2, xLabels2.length);
   const xs       = Array.from({length: nPts2}, function(_,i){ return Math.round(i * 1305 / (nPts2-1)); });
-  const fillPts  = pts => xs.map((x, i) => `${x},${(pts[i]||120)}`).join(' ') + ' 1305,240 0,240';
+  const fillPts  = pts => xs.map((x, i) => `${x},${(pts[i]||170)}`).join(' ') + ' 1305,340 0,340';
 
   // Generate varied base points matching nPts2
   const nudgeVaried = (base, yOff, variation) => {
@@ -678,7 +678,7 @@ function updateChart() {
       const bf   = t * (base.length - 1) - bi;
       const bv   = base[bi] + bf * ((base[bi+1]||base[bi]) - base[bi]);
       const varV = variation ? (variation[i % variation.length] || 0) : 0;
-      return Math.max(5, Math.min(235, bv + (yOff||0) + varV));
+      return Math.max(5, Math.min(335, bv + (yOff||0) + varV));
     });
   };
 
@@ -728,7 +728,7 @@ function updateChart() {
       const st = SERIES_STYLES[ti % SERIES_STYLES.length];
       return { label, color, pts, style:st, isFirst: ti===0 };
     });
-    const fillArea = toSeries.length ? `<path d="${smoothPath(toSeries[0].pts, xs)} L1305,240 L0,240 Z" fill="${toSeries[0].color}15"/>` : '';
+    const fillArea = toSeries.length ? `<path d="${smoothPath(toSeries[0].pts, xs)} L1305,340 L0,340 Z" fill="${toSeries[0].color}15"/>` : '';
     const seriesSvg = toSeries.map(s => {
       const markers = xs.slice(1).map((x,i) => markerSvg(s.style.marker, x, s.pts[i+1], s.color, s.isFirst?4.5:4)).join('');
       return `<path d="${smoothPath(s.pts, xs)}" fill="none" stroke="${s.color}" stroke-width="${s.style.sw}"/>${markers}`;
@@ -927,8 +927,8 @@ function updateChart() {
   const svg = document.getElementById('revChart');
   if (!svg) return;
 
-  const svgW = 1305, svgH = 240;
-  const refY  = 120;   // mid-point parity line (SVG y-coord)
+  const svgW = 1305, svgH = 340;
+  const refY  = 170;   // mid-point parity line (SVG y-coord)
   const slotW = svgW / nPts2;
 
   // ── 1. Weekend shading (daily granularity only) ─────────────────────────
@@ -946,7 +946,7 @@ function updateChart() {
   }
 
   // ── 2. Subtle horizontal grid lines ─────────────────────────────────────
-  const gridLines = [0, 60, 120, 180, 240].map(y =>
+  const gridLines = [0, 68, 170, 272, 340].map(y =>
     `<line x1="0" y1="${y}" x2="${svgW}" y2="${y}" stroke="#eeeeee" stroke-width="1"/>`
   ).join('');
 
@@ -954,7 +954,7 @@ function updateChart() {
   const neutralZone = `<rect x="0" y="${refY - 12}" width="${svgW}" height="24" fill="#e0e0e0" opacity="0.35"/>`;
 
   // ── 4. Benchmark / goal line (dashed, above parity) ─────────────────────
-  const goalY = refY - 50;
+  const goalY = refY - 70;
   const benchmarkLine = `<line x1="0" y1="${goalY}" x2="${svgW}" y2="${goalY}" stroke="#00298C" stroke-width="1.5" stroke-dasharray="6 4" opacity="0.6"/>`;
 
   // ── 5. Parity reference line (solid) ────────────────────────────────────
