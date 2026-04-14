@@ -1691,7 +1691,7 @@ function renderCalendar() {
 function buildCalendar() { renderCalendar(); }
 
 // ── Monthly summary accordion state ──────────────────────────────────────────
-var _calAccState = { daily: false, more: true, meals: true, biz: true, tc: true, overview: false };
+var _calAccState = { daily: false, more: false, meals: false, biz: false, tc: false, overview: false };
 
 window.calAccClick = function(hdr) {
   var sect = hdr.closest('.wv-acc-sect');
@@ -2740,7 +2740,7 @@ let wvSelEnd     = null;  // { month, day }
 let wvSelPicking = false; // true after first click, awaiting end
 
 // Weekly section collapse state (persists across rebuilds)
-const wvCollapsed = { daily: false, detailed: true, meals: true, avail: true, availAlloc: true, toRates: true, promos: true };
+const wvCollapsed = { daily: false, detailed: false, meals: false, avail: false, availAlloc: false, toRates: false, promos: false, mealsSummary: true };
 // LY comparison mode: 'sdly' | 'final-ly' | 'forecast'
 let wvCompMode = 'sdly';
 // Active weekly content tab
@@ -3389,6 +3389,13 @@ function buildDailyBView(days, month, activeDay) {
 
   // Populate module-level ID list for Open All / Close All
   _wbAllIds = rows.filter(function(r){ return r.type==='top'||r.type==='sect'; }).map(function(r){ return r.id; });
+
+  // Default collapse state: top-groups open, sub-sections closed (only set if not yet toggled by user)
+  rows.forEach(function(r) {
+    if (r.type === 'sect' && !Object.prototype.hasOwnProperty.call(_wbCollapsed, r.id)) {
+      _wbCollapsed[r.id] = true;
+    }
+  });
 
   // Flat id→row map for fast grandparent lookup
   var rowMap = {};
@@ -5027,6 +5034,13 @@ function initDailyHGrid(days, activeMonth, activeDay, containerEl) {
 
   // ── Expose rows to module level (for Open All / Close All) ──────────────
   _dhAllRows = ROWS;
+
+  // Default collapse state: sections open, parent-rows closed (only set if not yet toggled by user)
+  ROWS.forEach(function(r) {
+    if (r.type === 'par' && !Object.prototype.hasOwnProperty.call(_dhCollapsed, r.parKey)) {
+      _dhCollapsed[r.parKey] = true;
+    }
+  });
 
   // ── Build row data (respecting accordion collapse state) ─────────────────
   var rowData = getDHVisibleRowData();
@@ -7025,6 +7039,19 @@ window.wvToggleSection = function(section) {
 
 // ── Open All / Close All (works for both combined and room & board views) ─
 const COMBINED_SECTIONS = ['daily','detailed','meals','avail','availAlloc','toRates','promos'];
+
+// ── Room Type & Board default state: RT open, BT and sub-sections closed ────
+(function initRtDefaults() {
+  [0,1,2,3,4,5].forEach(function(ri) {
+    if (!Object.prototype.hasOwnProperty.call(wvCollapsed, 'rt_' + ri)) wvCollapsed['rt_' + ri] = false;
+    [0,1,2,3].forEach(function(bi) {
+      ['bt_','btdet_','btavail_','btto_'].forEach(function(pfx) {
+        var k = pfx + ri + '_' + bi;
+        if (!Object.prototype.hasOwnProperty.call(wvCollapsed, k)) wvCollapsed[k] = true;
+      });
+    });
+  });
+}());
 function setAllAccordions(collapse) {
   if (wvGroupBy === 'dailyH') {
     dhSetAll(collapse);
