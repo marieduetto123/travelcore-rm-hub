@@ -3384,15 +3384,19 @@ function buildDailyBView(days, month, activeDay) {
     grp.g_meals.push({type:'sect', id:'mp_ai',   label:'All Inclusive',   parent:'g_meals'});
     grp.g_meals.push({type:'sub',  id:'mp_ai_t', label:'TO % of hotel',            dot:'#004948', parent:'mp_ai'});
     grp.g_meals.push({type:'sub',  id:'mp_ai_h', label:'Hotel %',         dot:'#52d9ce', parent:'mp_ai'});
+    grp.g_meals.push({type:'sub',  id:'mp_ai_rn', label:'Room Nights',    dot:'#6b7280', parent:'mp_ai'});
     grp.g_meals.push({type:'sect', id:'mp_bb',   label:'Bed & Breakfast', parent:'g_meals'});
     grp.g_meals.push({type:'sub',  id:'mp_bb_t', label:'TO % of hotel',            dot:'#004948', parent:'mp_bb'});
     grp.g_meals.push({type:'sub',  id:'mp_bb_h', label:'Hotel %',         dot:'#52d9ce', parent:'mp_bb'});
+    grp.g_meals.push({type:'sub',  id:'mp_bb_rn', label:'Room Nights',    dot:'#6b7280', parent:'mp_bb'});
     grp.g_meals.push({type:'sect', id:'mp_hb',   label:'Half Board',      parent:'g_meals'});
     grp.g_meals.push({type:'sub',  id:'mp_hb_t', label:'TO % of hotel',            dot:'#004948', parent:'mp_hb'});
     grp.g_meals.push({type:'sub',  id:'mp_hb_h', label:'Hotel %',         dot:'#52d9ce', parent:'mp_hb'});
+    grp.g_meals.push({type:'sub',  id:'mp_hb_rn', label:'Room Nights',    dot:'#6b7280', parent:'mp_hb'});
     grp.g_meals.push({type:'sect', id:'mp_ro',   label:'Room Only',       parent:'g_meals'});
     grp.g_meals.push({type:'sub',  id:'mp_ro_t', label:'TO % of hotel',            dot:'#004948', parent:'mp_ro'});
     grp.g_meals.push({type:'sub',  id:'mp_ro_h', label:'Hotel %',         dot:'#52d9ce', parent:'mp_ro'});
+    grp.g_meals.push({type:'sub',  id:'mp_ro_rn', label:'Room Nights',    dot:'#6b7280', parent:'mp_ro'});
     grp.g_meals.push({type:'sect', id:'mp_sum',  label:'Summary',         parent:'g_meals'});
   }
 
@@ -3733,33 +3737,34 @@ function buildDailyBView(days, month, activeDay) {
             break;
           // ── Meal Plans — each uses its own dot color ────────────────────────
           case 'mp_ai':
-            { var tPct_ai=Math.max(0,Math.round(d.aiPct*d.toPct*0.9));
-            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.aiPct+'%</span></div>'
+            { var tPct_ai=Math.max(0,Math.round(d.aiPct*d.toPct*0.9)); var aiRn=Math.round(d.hnRn*d.aiPct/100);
+            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.aiPct+'%</span><span style="font-size:11px;color:#6b7280;margin-left:4px">· '+aiRn+' rms</span></div>'
               + wbBar(tPct_ai, '#004948') + wbBar(d.aiPct, '#52d9ce'); }
             break;
           case 'mp_bb':
-            { var tPct_bb=Math.max(0,Math.round(d.bbPct*d.toPct*0.9));
-            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.bbPct+'%</span></div>'
+            { var tPct_bb=Math.max(0,Math.round(d.bbPct*d.toPct*0.9)); var bbRn=Math.round(d.hnRn*d.bbPct/100);
+            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.bbPct+'%</span><span style="font-size:11px;color:#6b7280;margin-left:4px">· '+bbRn+' rms</span></div>'
               + wbBar(tPct_bb, '#004948') + wbBar(d.bbPct, '#52d9ce'); }
             break;
           case 'mp_hb':
-            { var tPct_hb=Math.max(0,Math.round(d.hbPct*d.toPct*0.9));
-            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.hbPct+'%</span></div>'
+            { var tPct_hb=Math.max(0,Math.round(d.hbPct*d.toPct*0.9)); var hbRn=Math.round(d.hnRn*d.hbPct/100);
+            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.hbPct+'%</span><span style="font-size:11px;color:#6b7280;margin-left:4px">· '+hbRn+' rms</span></div>'
               + wbBar(tPct_hb, '#004948') + wbBar(d.hbPct, '#52d9ce'); }
             break;
           case 'mp_ro':
-            { var tPct_ro=Math.max(0,Math.round(d.roPct*d.toPct*0.9));
-            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.roPct+'%</span></div>'
+            { var tPct_ro=Math.max(0,Math.round(d.roPct*d.toPct*0.9)); var roRn=Math.round(d.hnRn*d.roPct/100);
+            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.roPct+'%</span><span style="font-size:11px;color:#6b7280;margin-left:4px">· '+roRn+' rms</span></div>'
               + wbBar(tPct_ro, '#004948') + wbBar(d.roPct, '#52d9ce'); }
             break;
           case 'mp_sum':
+            { var _aiR=Math.round(d.hnRn*d.aiPct/100), _bbR=Math.round(d.hnRn*d.bbPct/100), _hbR=Math.round(d.hnRn*d.hbPct/100), _roR=Math.round(d.hnRn*d.roPct/100);
             cellContent = wbStackBar([{p:d.aiPct,c:'#004948'},{p:d.bbPct,c:'#52d9ce'},{p:d.hbPct,c:'#D97706'},{p:d.roPct,c:'#d7f7ed'}])
               + '<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:3px">'
-              + '<span style="font-size:12px;font-family:Lato,sans-serif;color:#004948">AI '+d.aiPct+'%</span>'
-              + '<span style="font-size:12px;font-family:Lato,sans-serif;color:#52d9ce">BB '+d.bbPct+'%</span>'
-              + '<span style="font-size:12px;font-family:Lato,sans-serif;color:#D97706">HB '+d.hbPct+'%</span>'
-              + '<span style="font-size:12px;font-family:Lato,sans-serif;color:#6b7280">RO '+d.roPct+'%</span>'
-              + '</div>';
+              + '<span style="font-size:12px;font-family:Lato,sans-serif;color:#004948">AI '+d.aiPct+'% · '+_aiR+'</span>'
+              + '<span style="font-size:12px;font-family:Lato,sans-serif;color:#52d9ce">BB '+d.bbPct+'% · '+_bbR+'</span>'
+              + '<span style="font-size:12px;font-family:Lato,sans-serif;color:#D97706">HB '+d.hbPct+'% · '+_hbR+'</span>'
+              + '<span style="font-size:12px;font-family:Lato,sans-serif;color:#6b7280">RO '+d.roPct+'% · '+_roR+'</span>'
+              + '</div>'; }
             break;
           // ── Close Outs Summary ────────────────────────────────────────────
           case 'co_summary': {
@@ -3864,6 +3869,11 @@ function buildDailyBView(days, month, activeDay) {
           case 'mp_hb_t':    v1 = Math.max(0,Math.round(d.hbPct*d.toPct*0.9))+'%';         break;
           case 'mp_ro_h':    v1 = d.roPct+'%';                                              break;
           case 'mp_ro_t':    v1 = Math.max(0,Math.round(d.roPct*d.toPct*0.9))+'%';         break;
+          // meal plan room nights
+          case 'mp_ai_rn':   v1 = Math.round(d.hnRn * d.aiPct / 100)+' rms';              break;
+          case 'mp_bb_rn':   v1 = Math.round(d.hnRn * d.bbPct / 100)+' rms';              break;
+          case 'mp_hb_rn':   v1 = Math.round(d.hnRn * d.hbPct / 100)+' rms';              break;
+          case 'mp_ro_rn':   v1 = Math.round(d.hnRn * d.roPct / 100)+' rms';              break;
           // business mix
           case 'biz_to':     v1 = d.toMix+'%';                                              break;
           case 'biz_dir':    v1 = d.dirMix+'%';                                             break;
@@ -4136,17 +4146,19 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
     grp('Meal Plans', C1);
     [['All Inclusive','aiPct'],['Bed & Breakfast','bbPct'],['Half Board','hbPct'],['Room Only','roPct']].forEach(function(mp){
       var k=mp[1];
-      sect(mp[0], C1, C1, (function(k){ return function(d){ var tPct=Math.max(0,Math.round(d[k]*d.toPct*0.9)); return sCell(d[k]+'%', bar(d[k],C2))+'<div style="margin-top:2px">'+bar(tPct,C1)+'</div>'; }; })(k));
+      sect(mp[0], C1, C1, (function(k){ return function(d){ var tPct=Math.max(0,Math.round(d[k]*d.toPct*0.9)); var rn=Math.round(d.hnRn*d[k]/100); return sCell(d[k]+'% · '+rn+' rms', bar(d[k],C2))+'<div style="margin-top:2px">'+bar(tPct,C1)+'</div>'; }; })(k));
       sub('TO % of hotel', C1, false, (function(k){ return function(d){ var pct=Math.max(0,Math.round(d[k]*d.toPct*0.9)); return sCell(pct+'%', bar(pct,C1)); }; })(k));
       sub('Hotel %', C2, false, (function(k){ return function(d){ return sCell(d[k]+'%', bar(d[k],C2)); }; })(k));
+      sub('Room Nights', '#6b7280', false, (function(k){ return function(d){ return rCell(Math.round(d.hnRn*d[k]/100)+' rms'); }; })(k));
     });
     sect('Summary', C1, C1, function(d){
+      var _aiR=Math.round(d.hnRn*d.aiPct/100), _bbR=Math.round(d.hnRn*d.bbPct/100), _hbR=Math.round(d.hnRn*d.hbPct/100), _roR=Math.round(d.hnRn*d.roPct/100);
       return sBar([{p:d.aiPct,c:C1},{p:d.bbPct,c:C2},{p:d.hbPct,c:C3},{p:d.roPct,c:C4}])
         +'<div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:3px">'
-        +'<span style="font-size:12px;color:'+C1+'">AI '+d.aiPct+'%</span>'
-        +'<span style="font-size:12px;color:'+C2+'">BB '+d.bbPct+'%</span>'
-        +'<span style="font-size:12px;color:'+C3+'">HB '+d.hbPct+'%</span>'
-        +'<span style="font-size:12px;color:#6b7280">RO '+d.roPct+'%</span></div>';
+        +'<span style="font-size:12px;color:'+C1+'">AI '+d.aiPct+'% · '+_aiR+'</span>'
+        +'<span style="font-size:12px;color:'+C2+'">BB '+d.bbPct+'% · '+_bbR+'</span>'
+        +'<span style="font-size:12px;color:'+C3+'">HB '+d.hbPct+'% · '+_hbR+'</span>'
+        +'<span style="font-size:12px;color:#6b7280">RO '+d.roPct+'% · '+_roR+'</span></div>';
     });
   }
 
