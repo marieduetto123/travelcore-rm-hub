@@ -452,9 +452,9 @@ body.dark .section-card { background: var(--surface-2); border-color: var(--bord
 }
 body.dark .section-header { background: var(--surface-3); border-bottom-color: var(--border); }
 .section-title {
-  font-size: 13px; font-weight: 700;
-  color: #1C1C1C;
-  letter-spacing: 0.13px;
+  font-family: 'Lato', sans-serif; font-size: 16px; font-weight: 400;
+  color: #585858;
+  letter-spacing: 0;
 }
 body.dark .section-title { color: var(--text-primary); }
 .section-sub  { font-size: 11px; color: #4F5B60; margin-top: 3px; }
@@ -606,7 +606,7 @@ body.dark #revChart .line-to-act     { stroke: #C4FF45; }
 body.dark .cal-header { background: var(--surface-2); border-bottom-color: var(--border); }
 .cal-header-left  { flex: 1; display: flex; align-items: center; }
 .cal-header-center { flex: 1; display: flex; align-items: center; justify-content: center; }
-.cal-title  { font-size: 18px; font-weight: 400; color: #111827; letter-spacing: 0; }
+.cal-title  { font-family: 'Lato', sans-serif; font-size: 16px; font-weight: 400; color: #585858; letter-spacing: 0; }
 .cal-subtitle { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
 
 /* Legacy centered nav — hidden now that we use cal-date-nav row */
@@ -1976,8 +1976,8 @@ body.dark .wv-topbar { background: var(--surface-2); border-bottom-color: var(--
 .wv-topbar-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 
 .wv-topbar-title {
-  font-family: 'Lato', sans-serif; font-size: 18px; font-weight: 700;
-  color: #4F5B60; white-space: nowrap;
+  font-family: 'Lato', sans-serif; font-size: 16px; font-weight: 400;
+  color: #585858; white-space: nowrap;
 }
 body.dark .wv-topbar-title { color: var(--text-primary); }
 
@@ -2778,7 +2778,7 @@ body.dark .wv-acc-title { color: #fff; }
 .wv-occ-br-left { display: flex; align-items: flex-start; gap: 8px; flex: 1; min-width: 0; }
 /* Right side: value + pct */
 .wv-occ-br-right { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
-.wv-occ-br-dot { width: 9px; height: 9px; border-radius: 2px; flex-shrink: 0; margin-top: 3px; }
+.wv-occ-br-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; margin-top: 3px; }
 .wv-occ-br-lbl { font-size: 12px; color: #1c1c1c; line-height: 1.3; }
 .wv-occ-br-rms { font-size: 14px; font-weight: 400; color: #111827; text-align: right; min-width: 40px; white-space: nowrap; }
 .wv-occ-br-pct { font-size: 14px; font-weight: 400; color: #6b7280; text-align: right; min-width: 28px; }
@@ -7255,7 +7255,7 @@ body.dark .cal-mfilt-btn.active { background: #1a3535; }
 .wb-sub-dot {
   width: 9px;
   height: 9px;
-  border-radius: 0;
+  border-radius: 50%;
   flex-shrink: 0;
 }
 .wb-sub-label {

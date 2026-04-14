@@ -2418,10 +2418,10 @@ function clearCalSelection() {
     var hbPct = Math.max(6,  Math.min(16, 10 + (dm*5+dd*7)%9));
     var roPct = Math.max(2,  100 - aiPct - bbPct - hbPct);
     var mealPlans = [
-      { short:'AI', pct:aiPct, color:'#006461' },
-      { short:'BB', pct:bbPct, color:'#3b82f6' },
-      { short:'HB', pct:hbPct, color:'#8b5cf6' },
-      { short:'RO', pct:roPct, color:'#f59e0b' },
+      { short:'AI', pct:aiPct, color:'#004948' },
+      { short:'BB', pct:bbPct, color:'#52d9ce' },
+      { short:'HB', pct:hbPct, color:'#c4ff45' },
+      { short:'RO', pct:roPct, color:'#445e0d' },
     ];
     var mealBarHtml = '<div class="wv-meals-bar" style="margin:4px 0 6px">'
       + mealPlans.map(function(p){ return '<div style="width:'+p.pct+'%;background:'+p.color+';height:100%"></div>'; }).join('')
@@ -2744,7 +2744,7 @@ let wvCompMode = 'sdly';
 // Active weekly content tab
 let wvActiveTab = 'occupancy';
 // Weekly group-by: 'combined' | 'roomType' | 'boardType'
-let wvGroupBy = 'combined';
+let wvGroupBy = 'dailyB';
 let wvSegMode = 'combined'; // 'combined' | 'individual'
 let wvCompare = 'stly';    // 'none' | 'stly' | 'ly' | 'fcst'
 
@@ -6714,10 +6714,10 @@ function buildWeekGrid(month, weekStart, activeDay) {
           const toHbPct  = Math.round(hbPct  * toPct * (0.8  + (dm+dd*2)%3 * 0.05));
           const toRoPct  = Math.round(roPct  * toPct * (0.95 + (dm*2+dd)%3 * 0.03));
           const plans = [
-            { name:'All Inclusive',   short:'AI', pct:aiPct, toPct:toAiPct,  color:'#006461' },
-            { name:'Bed & Breakfast', short:'BB', pct:bbPct, toPct:toBbPct,  color:'#3b82f6' },
-            { name:'Half Board',      short:'HB', pct:hbPct, toPct:toHbPct,  color:'#8b5cf6' },
-            { name:'Room Only',       short:'RO', pct:roPct, toPct:toRoPct,  color:'#f59e0b' },
+            { name:'All Inclusive',   short:'AI', pct:aiPct, toPct:toAiPct,  color:'#004948' },
+            { name:'Bed & Breakfast', short:'BB', pct:bbPct, toPct:toBbPct,  color:'#52d9ce' },
+            { name:'Half Board',      short:'HB', pct:hbPct, toPct:toHbPct,  color:'#c4ff45' },
+            { name:'Room Only',       short:'RO', pct:roPct, toPct:toRoPct,  color:'#445e0d' },
           ];
           const colHdr = '<div style="display:flex;justify-content:flex-end;gap:10px;padding:1px 8px 0;margin-bottom:-2px">'
             +'<span style="font-size:7px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.3px;width:30px;text-align:right">Hotel</span>'
@@ -6790,10 +6790,10 @@ function buildWeekGrid(month, weekStart, activeDay) {
         const totalRooms2 = Math.floor(hotel * 1.1);
         const toPct2 = to / Math.max(1, hotel);
         const plans2 = [
-          { name:'All Inclusive',   short:'AI', pct:aiPct2, toPct: Math.round(aiPct2 * toPct2 * (0.9  + (dm+dd)%3 * 0.05)), color:'#006461' },
-          { name:'Bed & Breakfast', short:'BB', pct:bbPct2, toPct: Math.round(bbPct2 * toPct2 * (0.85 + (dm*3+dd)%3 * 0.05)), color:'#3b82f6' },
-          { name:'Half Board',      short:'HB', pct:hbPct2, toPct: Math.round(hbPct2 * toPct2 * (0.8  + (dm+dd*2)%3 * 0.05)), color:'#8b5cf6' },
-          { name:'Room Only',       short:'RO', pct:roPct2, toPct: Math.round(roPct2 * toPct2 * (0.95 + (dm*2+dd)%3 * 0.03)), color:'#f59e0b' },
+          { name:'All Inclusive',   short:'AI', pct:aiPct2, toPct: Math.round(aiPct2 * toPct2 * (0.9  + (dm+dd)%3 * 0.05)), color:'#004948' },
+          { name:'Bed & Breakfast', short:'BB', pct:bbPct2, toPct: Math.round(bbPct2 * toPct2 * (0.85 + (dm*3+dd)%3 * 0.05)), color:'#52d9ce' },
+          { name:'Half Board',      short:'HB', pct:hbPct2, toPct: Math.round(hbPct2 * toPct2 * (0.8  + (dm+dd*2)%3 * 0.05)), color:'#c4ff45' },
+          { name:'Room Only',       short:'RO', pct:roPct2, toPct: Math.round(roPct2 * toPct2 * (0.95 + (dm*2+dd)%3 * 0.03)), color:'#445e0d' },
         ];
         const avgAdV2   = 1.8 + (dm*11+dd*7)%3 * 0.1;
         const avgChV2   = 0.3 + (dm*7+dd*13)%5 * 0.1;
@@ -10549,11 +10549,11 @@ document.querySelectorAll('.ds-search-field').forEach(function(wrap) {
   // ── Meal Plan Mix pie card ────────────────────────────────────
   function mealPlanMixCard(toKey){
     const MP_DEFS=[
-      {name:'All Inclusive',color:'#006461'},
-      {name:'Half Board',   color:'#0891b2'},
-      {name:'Bed & Breakfast',color:'#6366f1'},
-      {name:'Room Only',    color:'#f59e0b'},
-      {name:'Full Board',   color:'#ec4899'},
+      {name:'All Inclusive',color:'#004948'},
+      {name:'Half Board',   color:'#c4ff45'},
+      {name:'Bed & Breakfast',color:'#52d9ce'},
+      {name:'Room Only',    color:'#445e0d'},
+      {name:'Full Board',   color:'#d7f7ed'},
     ];
     var segs=MP_DEFS.map(function(mp,mi){
       const seed2=(toKey.charCodeAt(1)||2)*(mi+1)*3;
@@ -10660,11 +10660,11 @@ document.querySelectorAll('.ds-search-field').forEach(function(wrap) {
 
     // ── Meal Plan breakdown ────────────────────────────────────────
     const MP_DEFS=[
-      {key:'AI',name:'All Inclusive',color:'#006461'},
-      {key:'HB',name:'Half Board',   color:'#0891b2'},
-      {key:'BB',name:'Bed & Breakfast',color:'#6366f1'},
-      {key:'RO',name:'Room Only',    color:'#f59e0b'},
-      {key:'FB',name:'Full Board',   color:'#ec4899'},
+      {key:'AI',name:'All Inclusive',color:'#004948'},
+      {key:'HB',name:'Half Board',   color:'#c4ff45'},
+      {key:'BB',name:'Bed & Breakfast',color:'#52d9ce'},
+      {key:'RO',name:'Room Only',    color:'#445e0d'},
+      {key:'FB',name:'Full Board',   color:'#d7f7ed'},
     ];
     const mpRows=MP_DEFS.map(function(mp,mi){
       const seed2=(toKey.charCodeAt(1)||2)*(mi+1)*3;
@@ -11096,11 +11096,11 @@ document.querySelectorAll('.ds-search-field').forEach(function(wrap) {
 
             // ── Meal Plan Breakdown — collapsible ─────────────────────
             const MP_DEFS=[
-              {key:'AI',name:'All Inclusive',  color:'#006461'},
-              {key:'HB',name:'Half Board',     color:'#0891b2'},
-              {key:'BB',name:'Bed & Breakfast',color:'#6366f1'},
-              {key:'RO',name:'Room Only',      color:'#f59e0b'},
-              {key:'FB',name:'Full Board',     color:'#ec4899'},
+              {key:'AI',name:'All Inclusive',  color:'#004948'},
+              {key:'HB',name:'Half Board',     color:'#c4ff45'},
+              {key:'BB',name:'Bed & Breakfast',color:'#52d9ce'},
+              {key:'RO',name:'Room Only',      color:'#445e0d'},
+              {key:'FB',name:'Full Board',     color:'#d7f7ed'},
             ];
             const mpRows=MP_DEFS.map(function(mp,mi){
               const seed2=(c.id.charCodeAt(5)||2)*(mi+1)*3;
