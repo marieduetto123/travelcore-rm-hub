@@ -3862,13 +3862,13 @@ function buildDailyBView(days, month, activeDay) {
           case 'lead_h':     v1 = d.hLead;                                                  break;
           // meal plans (% · rooms)
           case 'mp_ai_h':    v1 = d.aiPct+'% · '+Math.round(d.hnRn*d.aiPct/100)+' rms';   break;
-          case 'mp_ai_t':    v1 = Math.max(0,Math.round(d.aiPct*d.toPct*0.9))+'%';         break;
+          case 'mp_ai_t':    { var _aiTp=Math.max(0,Math.round(d.aiPct*d.toPct*0.9)); v1 = _aiTp+'% · '+Math.round(d.toRn*d.aiPct/100)+' rms'; } break;
           case 'mp_bb_h':    v1 = d.bbPct+'% · '+Math.round(d.hnRn*d.bbPct/100)+' rms';   break;
-          case 'mp_bb_t':    v1 = Math.max(0,Math.round(d.bbPct*d.toPct*0.9))+'%';         break;
+          case 'mp_bb_t':    { var _bbTp=Math.max(0,Math.round(d.bbPct*d.toPct*0.9)); v1 = _bbTp+'% · '+Math.round(d.toRn*d.bbPct/100)+' rms'; } break;
           case 'mp_hb_h':    v1 = d.hbPct+'% · '+Math.round(d.hnRn*d.hbPct/100)+' rms';   break;
-          case 'mp_hb_t':    v1 = Math.max(0,Math.round(d.hbPct*d.toPct*0.9))+'%';         break;
+          case 'mp_hb_t':    { var _hbTp=Math.max(0,Math.round(d.hbPct*d.toPct*0.9)); v1 = _hbTp+'% · '+Math.round(d.toRn*d.hbPct/100)+' rms'; } break;
           case 'mp_ro_h':    v1 = d.roPct+'% · '+Math.round(d.hnRn*d.roPct/100)+' rms';   break;
-          case 'mp_ro_t':    v1 = Math.max(0,Math.round(d.roPct*d.toPct*0.9))+'%';         break;
+          case 'mp_ro_t':    { var _roTp=Math.max(0,Math.round(d.roPct*d.toPct*0.9)); v1 = _roTp+'% · '+Math.round(d.toRn*d.roPct/100)+' rms'; } break;
           // business mix
           case 'biz_to':     v1 = d.toMix+'%';                                              break;
           case 'biz_dir':    v1 = d.dirMix+'%';                                             break;
@@ -4142,7 +4142,7 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
     [['All Inclusive','aiPct'],['Bed & Breakfast','bbPct'],['Half Board','hbPct'],['Room Only','roPct']].forEach(function(mp){
       var k=mp[1];
       sect(mp[0], C1, C1, (function(k){ return function(d){ var rn=Math.round(d.hnRn*d[k]/100); return sCell(d[k]+'% · '+rn+' rms', bar(d[k],C1)); }; })(k));
-      sub('TO', C1, false, (function(k){ return function(d){ var pct=Math.max(0,Math.round(d[k]*d.toPct*0.9)); return sCell(pct+'%', bar(pct,C1)); }; })(k));
+      sub('TO', C1, false, (function(k){ return function(d){ var pct=Math.max(0,Math.round(d[k]*d.toPct*0.9)); var rn=Math.round(d.toRn*d[k]/100); return sCell(pct+'% · '+rn+' rms', bar(pct,C1)); }; })(k));
       sub('Hotel', C2, false, (function(k){ return function(d){ var rn=Math.round(d.hnRn*d[k]/100); return sCell(d[k]+'% · '+rn+' rms', bar(d[k],C2)); }; })(k));
     });
     sect('Summary', C1, C1, function(d){
