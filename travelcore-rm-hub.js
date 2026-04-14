@@ -7214,10 +7214,7 @@ window.dhOpenReorder = function() {
   // Update modal title per view
   var titleEl = modal.querySelector('[style*="font-size:15px"]');
   if (titleEl) {
-    titleEl.textContent = wvGroupBy === 'combined' ? 'Reorder Sections'
-                        : wvGroupBy === 'report'   ? 'Reorder Column Groups'
-                        : wvGroupBy === 'dailyB'   ? 'Reorder Groups'
-                        :                            'Reorder Metrics';
+    titleEl.textContent = 'Table Settings';
   }
 
   if (wvGroupBy === 'dailyH') {
