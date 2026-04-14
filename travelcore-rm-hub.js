@@ -12311,6 +12311,9 @@ setTimeout(function() {
     var events = (typeof CAL_EVENTS !== 'undefined') ? CAL_EVENTS[key] : null;
     if (!events || events.length === 0) return;
 
+    // Hide rooms/capacity tooltip first
+    window.calHideCapTip();
+
     var t = getTip();
     var calSvg = '<span style="display:inline-block;width:10px;height:10px;border-radius:1px;background:#006461;vertical-align:middle;margin-right:2px"></span>';
 
@@ -12349,6 +12352,9 @@ setTimeout(function() {
   window.addEventListener('scroll', window.calHideEventTip, true);
 
 window.calShowCapTip = function(e, hotel, hotelRooms, to, toRooms, avail) {
+  // Hide events tooltip first
+  window.calHideEventTip();
+
   var tip = document.getElementById('calCapTip');
   if (!tip) return;
   tip.innerHTML = '<div style="font-size:12px;font-weight:600;color:#1c1c1c;margin-bottom:2px">Hotel Bookings: '+hotel+'% ('+hotelRooms+' rooms)</div>'
