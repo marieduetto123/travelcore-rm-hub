@@ -3291,6 +3291,10 @@ function buildDailyBView(days, month, activeDay) {
   grp.g_closeouts.push({type:'sub', id:'co_full',     label:'Full Day Close Outs', dot:'#dc2626', parent:'co_summary'});
   grp.g_closeouts.push({type:'sub', id:'co_partial',  label:'Partial Close Outs',  dot:'#f59e0b', parent:'co_summary'});
   grp.g_closeouts.push({type:'sub', id:'co_open',     label:'Open Channels',       dot:'#16a34a', parent:'co_summary'});
+  grp.g_closeouts.push({type:'sect', id:'co_details', label:'Details', parent:'g_closeouts'});
+  grp.g_closeouts.push({type:'sub', id:'co_rooms',    label:'Room Types',          dot:'#6366f1', parent:'co_details'});
+  grp.g_closeouts.push({type:'sub', id:'co_boards',   label:'Board Types',         dot:'#0891b2', parent:'co_details'});
+  grp.g_closeouts.push({type:'sub', id:'co_tos',      label:'Tour Operators',      dot:'#d97706', parent:'co_details'});
 
   // Group: Daily Metrics
   grp.g_daily.push({type:'top', id:'g_daily', label:'Daily Metrics'});
@@ -3781,6 +3785,29 @@ function buildDailyBView(days, month, activeDay) {
             }
             break;
           }
+          // ── Close Outs Details ──────────────────────────────────────────
+          case 'co_details': {
+            var _coKey = d.dm+'-'+d.dd;
+            var _coFull = LOCKED_DAYS.has(_coKey);
+            var _coRules = PARTIAL_CLOSURES[_coKey] || [];
+            if (_coFull) {
+              cellContent = '<div class="wb-sect-val" style="gap:5px"><span style="font-size:12px;font-weight:600;color:#dc2626">All closed</span></div>';
+            } else if (_coRules.length > 0) {
+              var _allRt = [], _allBd = [], _allTo = [];
+              _coRules.forEach(function(r){ _allRt = _allRt.concat(r.roomTypes); _allBd = _allBd.concat(r.boards); _allTo = _allTo.concat(r.tos); });
+              var _uRt = _allRt.filter(function(v,i,a){ return a.indexOf(v)===i; });
+              var _uBd = _allBd.filter(function(v,i,a){ return a.indexOf(v)===i; });
+              var _uTo = _allTo.filter(function(v,i,a){ return a.indexOf(v)===i; });
+              var parts = [];
+              if (_uRt.length) parts.push(_uRt.length+' rm type'+ (_uRt.length>1?'s':''));
+              if (_uBd.length) parts.push(_uBd.length+' board');
+              if (_uTo.length) parts.push(_uTo.length+' TO'+ (_uTo.length>1?'s':''));
+              cellContent = '<div class="wb-sect-val"><span style="font-size:12px;color:#f59e0b;font-weight:500">'+(parts.join(', ') || 'Rules active')+'</span></div>';
+            } else {
+              cellContent = '<div class="wb-sect-val"><span style="font-size:12px;color:#16a34a">—</span></div>';
+            }
+            break;
+          }
           // ── Business Mix — stacked using sub-row dot colors ─────────────────
           case 'biz':
             cellContent = wbStackBar([{p:d.toMix,c:'#004948'},{p:d.dirMix,c:'#52d9ce'},{p:d.otaMix,c:'#D97706'},{p:d.otherMix,c:'#9ca3af'}])
@@ -3817,6 +3844,35 @@ function buildDailyBView(days, month, activeDay) {
           case 'co_full':    { var _ifl = LOCKED_DAYS.has(d.dm+'-'+d.dd); v1 = _ifl ? '🔒 Yes' : '—'; } break;
           case 'co_partial': { var _pr = PARTIAL_CLOSURES[d.dm+'-'+d.dd] || []; v1 = _pr.length > 0 ? _pr.length+' rule'+(_pr.length>1?'s':'') : '—'; } break;
           case 'co_open':    { var _ifl2 = LOCKED_DAYS.has(d.dm+'-'+d.dd); var _pr2 = PARTIAL_CLOSURES[d.dm+'-'+d.dd] || []; v1 = _ifl2 ? 'None' : (_pr2.length === 0 ? 'All open' : 'Partial'); } break;
+          // close out details
+          case 'co_rooms': {
+            var _crKey = d.dm+'-'+d.dd;
+            if (LOCKED_DAYS.has(_crKey)) { v1 = 'All'; }
+            else { var _crR = PARTIAL_CLOSURES[_crKey] || [], _crRt = [];
+              _crR.forEach(function(r){ _crRt = _crRt.concat(r.roomTypes); });
+              _crRt = _crRt.filter(function(v,i,a){ return a.indexOf(v)===i; });
+              v1 = _crRt.length > 0 ? _crRt.join(', ') : '—';
+            }
+          } break;
+          case 'co_boards': {
+            var _cbKey = d.dm+'-'+d.dd;
+            var bdMap = {ai:'AI',bb:'B&B',hb:'HB',ro:'RO'};
+            if (LOCKED_DAYS.has(_cbKey)) { v1 = 'All'; }
+            else { var _cbR = PARTIAL_CLOSURES[_cbKey] || [], _cbBd = [];
+              _cbR.forEach(function(r){ _cbBd = _cbBd.concat(r.boards); });
+              _cbBd = _cbBd.filter(function(v,i,a){ return a.indexOf(v)===i; }).map(function(b){ return bdMap[b]||b; });
+              v1 = _cbBd.length > 0 ? _cbBd.join(', ') : '—';
+            }
+          } break;
+          case 'co_tos': {
+            var _ctKey = d.dm+'-'+d.dd;
+            if (LOCKED_DAYS.has(_ctKey)) { v1 = 'All'; }
+            else { var _ctR = PARTIAL_CLOSURES[_ctKey] || [], _ctTo = [];
+              _ctR.forEach(function(r){ _ctTo = _ctTo.concat(r.tos); });
+              _ctTo = _ctTo.filter(function(v,i,a){ return a.indexOf(v)===i; });
+              v1 = _ctTo.length > 0 ? _ctTo.join(', ') : '—';
+            }
+          } break;
           // occupancy
           case 'occ_tdh':    v1 = d.toRn+' rms';    v2 = d.to+'%';                         break;
           case 'occ_other':  v1 = d.otherRms+' rms'; v2 = d.otherPct+'%';                  break;
@@ -4041,6 +4097,47 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
     if (isFullLock) return rCell('<span style="color:#dc2626">None</span>');
     var rules = PARTIAL_CLOSURES[d.dm+'-'+d.dd] || [];
     return rCell(rules.length === 0 ? 'All open' : 'Partial');
+  });
+  var bdMap = {ai:'AI',bb:'B&B',hb:'HB',ro:'RO'};
+  sect('Details', '#f59e0b', '#f59e0b', function(d){
+    var k=d.dm+'-'+d.dd;
+    if (LOCKED_DAYS.has(k)) return '<div style="font-size:12px;font-weight:600;color:#dc2626">All closed</div>';
+    var rules=PARTIAL_CLOSURES[k]||[];
+    if (!rules.length) return '<div style="font-size:12px;color:#16a34a">—</div>';
+    var rt=[],bd=[],to=[];
+    rules.forEach(function(r){rt=rt.concat(r.roomTypes);bd=bd.concat(r.boards);to=to.concat(r.tos);});
+    rt=rt.filter(function(v,i,a){return a.indexOf(v)===i;});
+    bd=bd.filter(function(v,i,a){return a.indexOf(v)===i;});
+    to=to.filter(function(v,i,a){return a.indexOf(v)===i;});
+    var p=[];
+    if(rt.length)p.push(rt.length+' rm type'+(rt.length>1?'s':''));
+    if(bd.length)p.push(bd.length+' board');
+    if(to.length)p.push(to.length+' TO'+(to.length>1?'s':''));
+    return '<div style="font-size:12px;color:#f59e0b;font-weight:500">'+(p.join(', ')||'Rules active')+'</div>';
+  });
+  sub('Room Types', '#6366f1', false, function(d){
+    var k=d.dm+'-'+d.dd;
+    if (LOCKED_DAYS.has(k)) return rCell('All');
+    var rules=PARTIAL_CLOSURES[k]||[], rt=[];
+    rules.forEach(function(r){rt=rt.concat(r.roomTypes);});
+    rt=rt.filter(function(v,i,a){return a.indexOf(v)===i;});
+    return rCell(rt.length?rt.join(', '):'—');
+  });
+  sub('Board Types', '#0891b2', false, function(d){
+    var k=d.dm+'-'+d.dd;
+    if (LOCKED_DAYS.has(k)) return rCell('All');
+    var rules=PARTIAL_CLOSURES[k]||[], bd=[];
+    rules.forEach(function(r){bd=bd.concat(r.boards);});
+    bd=bd.filter(function(v,i,a){return a.indexOf(v)===i;}).map(function(b){return bdMap[b]||b;});
+    return rCell(bd.length?bd.join(', '):'—');
+  });
+  sub('Tour Operators', '#d97706', false, function(d){
+    var k=d.dm+'-'+d.dd;
+    if (LOCKED_DAYS.has(k)) return rCell('All');
+    var rules=PARTIAL_CLOSURES[k]||[], to=[];
+    rules.forEach(function(r){to=to.concat(r.tos);});
+    to=to.filter(function(v,i,a){return a.indexOf(v)===i;});
+    return rCell(to.length?to.join(', '):'—');
   });
 
   // ── Daily Metrics ─────────────────────────────────────────────────────────
