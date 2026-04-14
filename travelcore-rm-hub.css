@@ -1247,12 +1247,17 @@ body.dark .daily-b-ag-wrap {
 .ts-btn-cancel:hover, .ts-btn-apply:hover { background: #004948; }
 
 /* Table Settings inline button (next to Filters) */
-.wv-table-settings-inline {
-  background: transparent; border: none; gap: 8px;
-  color: #4F5B60; padding: 8px 16px; height: auto;
+.wv-table-settings-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 8px; padding: 8px 16px; border-radius: 4px;
+  background: transparent; border: none;
+  color: #4F5B60; font-family: 'Lato', sans-serif;
+  font-size: 14px; font-weight: 400; line-height: 1;
+  letter-spacing: 0; white-space: nowrap; cursor: pointer;
+  transition: background .15s;
 }
-.wv-table-settings-inline:hover { background: rgba(79,91,96,0.08); }
-.wv-table-settings-inline svg { flex-shrink: 0; }
+.wv-table-settings-btn:hover { background: rgba(79,91,96,0.08); }
+.wv-table-settings-btn svg { flex-shrink: 0; }
 
 /* ── Daily X AG Grid ── */
 
