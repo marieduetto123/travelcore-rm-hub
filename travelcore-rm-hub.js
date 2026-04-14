@@ -3440,7 +3440,7 @@ function buildDailyBView(days, month, activeDay) {
   }
 
   function wbStackBar(segs) {
-    return '<div style="height:5px;background:#e5e7eb;border-radius:3px;display:flex;overflow:hidden;margin-top:3px">'
+    return '<div style="height:6px;background:#e5e7eb;border-radius:3px;display:flex;overflow:hidden;margin-top:3px">'
       + segs.map(function(s){ return '<div style="width:'+s.p+'%;background:'+s.c+'"></div>'; }).join('')
       + '</div>';
   }
