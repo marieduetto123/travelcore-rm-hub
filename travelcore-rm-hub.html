@@ -176,20 +176,20 @@
         <div class="section-header">
           <div>
             <h3 class="section-title">Trends</h3>
-            <p class="section-sub" id="revSubtitle">Monthly Revenue - T &amp; Hotel Comparison</p>
+            <p class="section-sub" id="revSubtitle">Total Guests – Segment Comparison</p>
           </div>
         </div>
         <div class="filter-bar rev-filter-bar">
           <div class="filter-group">
             <label>Metric</label>
             <select id="revMetric">
-              <option value="revenue" selected>Revenue</option>
+              <option value="revenue">Revenue</option>
               <option value="adr">ADR</option>
               <option value="nights">Room Nights</option>
               <option value="occ">Occupancy</option>
               <option value="bookings">Contract Bookings</option>
               <option value="avg_guests">Avg Guests</option>
-              <option value="total_guests">Total Guests</option>
+              <option value="total_guests" selected>Total Guests</option>
               <option value="contracted_rates">Contracted Rates</option>
               <option value="allotments">Allotments / Guarantees</option>
             </select>
@@ -205,10 +205,10 @@
                   <label class="rev-board-opt"><input type="radio" name="revSegmentMode" value="individual"> Individual lines</label>
                 </div>
                 <div class="rev-dd-divider"></div>
-                <label class="rev-board-opt"><input type="checkbox" value="to"> Static FIT Rates</label>
-                <label class="rev-board-opt"><input type="checkbox" value="to_dynamic"> Operator Dynamic</label>
-                <label class="rev-board-opt"><input type="checkbox" value="direct"> Direct Bookings</label>
-                <label class="rev-board-opt"><input type="checkbox" value="gds"> GDS</label>
+                <label class="rev-board-opt"><input type="checkbox" value="to" checked> Static FIT Rates</label>
+                <label class="rev-board-opt"><input type="checkbox" value="to_dynamic" checked> Operator Dynamic</label>
+                <label class="rev-board-opt"><input type="checkbox" value="direct" checked> Direct Bookings</label>
+                <label class="rev-board-opt"><input type="checkbox" value="gds" checked> GDS</label>
                 <label class="rev-board-opt"><input type="checkbox" value="corporate"> Corporate</label>
               </div>
             </div>
@@ -224,10 +224,10 @@
                   <label class="rev-board-opt"><input type="radio" name="revRoomMode" value="individual"> Individual lines</label>
                 </div>
                 <div class="rev-dd-divider"></div>
-                <label class="rev-board-opt"><input type="checkbox" value="standard"> Standard Room</label>
-                <label class="rev-board-opt"><input type="checkbox" value="deluxe"> Deluxe Room</label>
-                <label class="rev-board-opt"><input type="checkbox" value="premium"> Premium Suite</label>
-                <label class="rev-board-opt"><input type="checkbox" value="executive"> Executive Suite</label>
+                <label class="rev-board-opt"><input type="checkbox" value="standard" checked> Standard Room</label>
+                <label class="rev-board-opt"><input type="checkbox" value="deluxe" checked> Deluxe Room</label>
+                <label class="rev-board-opt"><input type="checkbox" value="premium" checked> Premium Suite</label>
+                <label class="rev-board-opt"><input type="checkbox" value="executive" checked> Executive Suite</label>
                 <label class="rev-board-opt"><input type="checkbox" value="presidential"> Presidential Suite</label>
                 <label class="rev-board-opt"><input type="checkbox" value="family"> Family Room</label>
               </div>
@@ -267,9 +267,9 @@
                   <label class="rev-board-opt"><input type="radio" name="revTOMode" value="individual"> Individual lines</label>
                 </div>
                 <div class="rev-dd-divider"></div>
-                <label class="rev-board-opt"><input type="checkbox" value="tui" data-group="revTO"> TUI Group</label>
-                <label class="rev-board-opt"><input type="checkbox" value="thomas-cook" data-group="revTO"> Thomas Cook</label>
-                <label class="rev-board-opt"><input type="checkbox" value="jet2" data-group="revTO"> Jet2holidays</label>
+                <label class="rev-board-opt"><input type="checkbox" value="tui" data-group="revTO" checked> TUI Group</label>
+                <label class="rev-board-opt"><input type="checkbox" value="thomas-cook" data-group="revTO" checked> Thomas Cook</label>
+                <label class="rev-board-opt"><input type="checkbox" value="jet2" data-group="revTO" checked> Jet2holidays</label>
                 <label class="rev-board-opt"><input type="checkbox" value="fti" data-group="revTO"> FTI Group</label>
                 <label class="rev-board-opt"><input type="checkbox" value="sunwing" data-group="revTO"> Sunwing</label>
                 <label class="rev-board-opt"><input type="checkbox" value="club-med" data-group="revTO"> Club Med</label>
@@ -288,8 +288,8 @@
                   <label class="rev-board-opt"><input type="radio" name="revOriginMode" value="individual"> Individual lines</label>
                 </div>
                 <div class="rev-dd-divider"></div>
-                <label class="rev-board-opt"><input type="checkbox" value="UK" data-group="revOrigin"> UK</label>
-                <label class="rev-board-opt"><input type="checkbox" value="SP" data-group="revOrigin"> Spain</label>
+                <label class="rev-board-opt"><input type="checkbox" value="UK" data-group="revOrigin" checked> UK</label>
+                <label class="rev-board-opt"><input type="checkbox" value="SP" data-group="revOrigin" checked> Spain</label>
                 <label class="rev-board-opt"><input type="checkbox" value="US" data-group="revOrigin"> US</label>
                 <label class="rev-board-opt"><input type="checkbox" value="MX" data-group="revOrigin"> Mexico</label>
               </div>
@@ -307,8 +307,8 @@
                   <label class="rev-board-opt"><input type="radio" name="revSourceMode" value="individual"> Individual lines</label>
                 </div>
                 <div class="rev-dd-divider"></div>
-                <label class="rev-board-opt"><input type="checkbox" value="contract" data-group="revSource"> Contract</label>
-                <label class="rev-board-opt"><input type="checkbox" value="promo" data-group="revSource"> Promotion</label>
+                <label class="rev-board-opt"><input type="checkbox" value="contract" data-group="revSource" checked> Contract</label>
+                <label class="rev-board-opt"><input type="checkbox" value="promo" data-group="revSource" checked> Promotion</label>
                 <label class="rev-board-opt"><input type="checkbox" value="direct_web" data-group="revSource"> Direct Web</label>
                 <label class="rev-board-opt"><input type="checkbox" value="gds_source" data-group="revSource"> GDS</label>
                 <label class="rev-board-opt"><input type="checkbox" value="walk_in" data-group="revSource"> Walk-in</label>

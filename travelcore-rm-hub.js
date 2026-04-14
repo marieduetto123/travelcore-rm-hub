@@ -237,23 +237,23 @@ function updateTargetsTable() {
 // Chart data per metric
 const CHART_CONFIGS = {
   revenue:          { label:'Monthly Revenue – Segment Comparison', ticks:['$350K','$262K','$175K','$87K','$0K'],
-    base:[116,111,108,102,99,102] },
+    base:[95,88,82,78,74,80] },
   adr:              { label:'ADR – Segment Comparison', ticks:['$250','$188','$125','$63','$0'],
-    base:[144,138,133,129,126,130] },
+    base:[96,90,85,80,76,82] },
   nights:           { label:'Room Nights – Segment Comparison', ticks:['1,000','750','500','250','0'],
-    base:[145,138,132,124,120,124] },
+    base:[94,87,81,76,72,78] },
   occ:              { label:'Occupancy – Segment Comparison', ticks:['100%','75%','50%','25%','0%'],
-    base:[152,146,141,135,132,136] },
+    base:[92,86,80,75,70,76] },
   bookings:         { label:'Contract Bookings – Segment Comparison', ticks:['600','450','300','150','0'],
-    base:[138,131,125,118,114,118] },
+    base:[98,91,85,78,74,80] },
   avg_guests:       { label:'Avg Guests per Room – Segment Comparison', ticks:['4.0','3.0','2.0','1.0','0'],
-    base:[168,162,158,153,150,154] },
+    base:[100,94,88,82,78,84] },
   total_guests:     { label:'Total Guests – Segment Comparison', ticks:['8,000','6,000','4,000','2,000','0'],
-    base:[141,134,128,122,118,122] },
+    base:[98,92,86,80,76,82] },
   contracted_rates: { label:'Contracted Rates – Operator', ticks:['$300','$225','$150','$75','$0'],
-    base:[150,144,139,135,132,136], toOnly:true },
+    base:[96,90,84,78,74,80], toOnly:true },
   allotments:       { label:'Allotments / Guarantees – Operator', ticks:['200','150','100','50','0'],
-    base:[160,153,147,140,136,140] },
+    base:[100,94,88,82,78,84] },
 };
 
 // Segment offset (Y-shift relative to base TO data — higher Y = lower on chart)
@@ -1131,6 +1131,29 @@ makeRevMultiSelect('revRoomWrap',    'revRoomBtn',    'revRoomDropdown',    'All
 makeRevMultiSelect('revTOWrap',      'revTOBtn',      'revTODropdown',      'All TOs');
 makeRevMultiSelect('revOriginWrap',  'revOriginBtn',  'revOriginDropdown',  'All Origins');
 makeRevMultiSelect('revSourceWrap',  'revSourceBtn',  'revSourceDropdown',  'All Sources');
+
+// Sync button labels with pre-checked defaults
+(function syncDefaultLabels() {
+  var pairs = [
+    ['revSegmentBtn','revSegmentDropdown','All Segments'],
+    ['revRoomBtn','revRoomDropdown','All Rooms'],
+    ['revBoardBtn','revBoardDropdown','All Types'],
+    ['revTOBtn','revTODropdown','All TOs'],
+    ['revOriginBtn','revOriginDropdown','All Origins'],
+    ['revSourceBtn','revSourceDropdown','All Sources']
+  ];
+  pairs.forEach(function(p) {
+    var btn = document.getElementById(p[0]);
+    var dd  = document.getElementById(p[1]);
+    if (!btn || !dd) return;
+    var checked = Array.from(dd.querySelectorAll('input[type=checkbox]:checked'));
+    if (checked.length > 0) {
+      btn.firstChild.textContent = checked.length === 1
+        ? checked[0].closest('label').textContent.trim()
+        : checked.length + ' selected';
+    }
+  });
+})();
 
 // Listen for mode radio changes on all dropdowns
 ['revTOMode','revOriginMode','revSourceMode','revSegmentMode','revRoomMode','revBoardMode'].forEach(function(name) {
