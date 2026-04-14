@@ -4763,12 +4763,15 @@ body.dark .ag-header-cell-resize::after { background: #2a3d40 !important; }
   margin-bottom: 24px;
 }
 .cw-back-btn {
-  display: flex; align-items: center; gap: 6px;
-  background: none; border: none; cursor: pointer;
-  font-size: 13px; color: var(--text-secondary, #374151);
+  display: flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; padding: 4px;
+  background: transparent; border: none; border-radius: 22px;
+  cursor: default; color: #006461;
+  transition: background .15s, color .15s;
   font-family: inherit;
 }
-.cw-back-btn:hover { color: var(--teal-700, #006461); }
+.cw-back-btn:hover { background: #D7F7ED; color: #053C3C; cursor: pointer; }
+.cw-back-btn:active { background: #5CEADE; color: #053C3C; }
 .cw-title { font-size: 22px; font-weight: 700; color: var(--text-primary, #111827); flex: 1; text-align: center; }
 .cw-step-label { font-size: 13px; color: var(--text-muted, #6B7280); min-width: 70px; text-align: right; }
 
@@ -7088,16 +7091,16 @@ body.dark .cal-mfilt-btn.active { background: #1a3535; }
 .hm-colour-name { font-size: 11px; font-weight: 800; color: #374151; text-transform: uppercase; letter-spacing: .4px; }
 .hm-colour-desc { font-size: 12px; color: #374151; }
 .hm-colour-between { font-size: 11px; color: #6b7280; font-style: italic; padding: 4px 0; }
-/* Day cell heatmap colours */
-.cal-day.hm-grey  { background: #e5e7eb !important; }
-.cal-day.hm-green { background: #bbf7d0 !important; }
-.cal-day.hm-blue  { background: #a5f3fc !important; }
+/* Day cell heatmap colours (Figma 2026) */
+.cal-day.hm-grey  { background: #F5F5F5 !important; border-left: 3px solid #DDE1E2 !important; }
+.cal-day.hm-green { background: #E8F5E9 !important; border-left: 3px solid #CEF2D1 !important; }
+.cal-day.hm-blue  { background: #D7F7ED !important; border-left: 3px solid #52D9CE !important; }
 
-/* Stop Sales semantic colours */
-.cal-day.hm-closed  { background: #fee2e2 !important; border-left: 3px solid #ef4444 !important; }
-.cal-day.hm-partial { background: #fef9c3 !important; border-left: 3px solid #eab308 !important; }
-.cal-day.hm-open    { background: #dcfce7 !important; border-left: 3px solid #22c55e !important; }
-.cal-day.hm-closed .day-num  { color: #b91c1c; }
+/* Stop Sales semantic colours (Figma 2026) */
+.cal-day.hm-closed  { background: #F0B7B7 !important; border-left: 3px solid #D33030 !important; }
+.cal-day.hm-partial { background: #FFF1DE !important; border-left: 3px solid #FDCF61 !important; }
+.cal-day.hm-open    { background: #E8F5E9 !important; border-left: 3px solid #CEF2D1 !important; }
+.cal-day.hm-closed .day-num  { color: #D33030; }
 .cal-day.hm-partial .day-num { color: #854d0e; }
 .cal-day.hm-open .day-num    { color: #15803d; }
 
