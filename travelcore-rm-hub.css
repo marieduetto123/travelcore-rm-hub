@@ -2499,7 +2499,7 @@ body.dark .wv-range { color: var(--text-primary); }
 .wv-acc-hdr {
   display: flex; align-items: center; gap: 6px;
   padding: 0 12px; cursor: pointer;
-  background: #52d9ce;
+  background: #F5F5F5;
   border: 1px solid #dde1e2; border-radius: 0;
   user-select: none; height: 44px; min-height: 44px;
   overflow: hidden; flex-wrap: nowrap;
@@ -7374,7 +7374,7 @@ body.dark .cal-mfilt-btn.active { background: #1a3535; }
   padding: 0 13px;
   height: 44px;
   cursor: pointer;
-  background: #52d9ce;
+  background: #F5F5F5;
   border-bottom: 1px solid #dde1e2;
   user-select: none;
 }
@@ -7385,7 +7385,7 @@ body.dark .cal-mfilt-btn.active { background: #1a3535; }
   color: #1c1c1c;
 }
 .wb-chev { color: #004948 !important; }
-.wb-row-top .wb-data-cell { background: #52d9ce; height: 44px; }
+.wb-row-top .wb-data-cell { background: #F5F5F5; height: 44px; }
 
 /* ── Section header row ── */
 .wb-sect-lbl {
