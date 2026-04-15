@@ -4096,8 +4096,26 @@ function buildDailyBView(days, month, activeDay) {
           case 'biz_other':  v1 = d.otherMix+'%';                                           break;
         }
         } // end rtSub else
+        // Forecast comparison for sub-rows
+        var fcstChip = '';
+        if (wvCompare === 'fcst' && v1 && row.id.indexOf('_stly') < 0) {
+          // Generate forecast value from actual using a day/row-seeded multiplier
+          var _fSeed = Math.abs((d.dm * 7 + d.dd * 13 + (row.rtIdx||0) * 5 + row.id.charCodeAt(row.id.length-1)) % 20);
+          var _fMul = 0.92 + _fSeed * 0.008; // 0.92–1.08 range
+          // Extract numeric from v1
+          var _fNum = parseFloat(String(v1).replace(/[^0-9.\-]/g, ''));
+          if (!isNaN(_fNum) && _fNum !== 0) {
+            var _fVal = Math.round(_fNum * _fMul);
+            var _fDiff = _fNum - _fVal;
+            var _fClr = _fDiff > 0 ? '#059669' : _fDiff < 0 ? '#dc2626' : '#6b7280';
+            var _fIco = _fDiff > 0 ? 'trending_up' : _fDiff < 0 ? 'trending_down' : 'remove';
+            fcstChip = '<span style="font-size:10px;color:'+_fClr+';margin-left:4px;display:inline-flex;align-items:center;gap:1px;opacity:0.85">'
+              + '<span class="material-icons" style="font-size:11px">'+_fIco+'</span>'
+              + 'Fc:'+_fVal+'</span>';
+          }
+        }
         cellContent = '<div class="wb-sub-vals' + remCls + '">'
-                    + '<span class="wb-sub-v1">' + v1 + '</span>'
+                    + '<span class="wb-sub-v1">' + v1 + fcstChip + '</span>'
                     + (v2 ? '<span class="wb-sub-v2">' + v2 + '</span>' : '')
                     + '</div>';
       }
