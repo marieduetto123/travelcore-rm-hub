@@ -2173,7 +2173,7 @@ function renderCalMonthlySummary() {
             break;
           case 'mos_tcbase': {
             cc = '<div class="wb-sect-val"><span class="wv-occ-total" style="font-weight:700;color:#9333ea">$'+mo.baseRate+'</span></div>'
-              + moBar(Math.min(90,Math.round(mo.baseRate/280*100)), '#9333ea');
+              + moBar(Math.min(90,Math.round(mo.baseRate/280*100)), '#004948');
             break;
           }
           default:
@@ -2186,7 +2186,7 @@ function renderCalMonthlySummary() {
                 + '<span class="wv-occ-total" style="color:'+row.toClr+'">$'+mo.tcRates[row.toIdx]+'</span>'
                 + '<span style="font-size:11px;font-weight:700;padding:1px 5px;border-radius:3px;background:'+promoClr+'22;color:'+promoClr+';border:1px solid '+promoClr+'44">'+promoTxt+'</span>'
                 + '</div>'
-                + moBar(Math.min(90,Math.round(mo.tcRates[row.toIdx]/280*100)), row.toClr);
+                + moBar(Math.min(90,Math.round(mo.tcRates[row.toIdx]/280*100)), '#004948');
             }
             break;
         }

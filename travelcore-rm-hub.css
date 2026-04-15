@@ -621,6 +621,44 @@ body.dark .cal-date-nav { border-bottom-color: var(--border); }
   margin-left: auto;
 }
 
+/* ── Calendar header responsive stacking ──────────────────────────────── */
+@media (max-width: 1024px) {
+  .cal-header {
+    flex-wrap: wrap;
+  }
+  .cal-header-left {
+    flex: 0 0 auto;
+  }
+  .cal-header-center {
+    flex: 0 0 auto;
+  }
+  .cal-header-right {
+    flex: 1 1 100%;
+    justify-content: flex-start;
+    margin-left: 0;
+  }
+}
+@media (max-width: 768px) {
+  .cal-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 10px 12px;
+  }
+  .cal-header-left {
+    width: 100%;
+  }
+  .cal-header-center {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  .cal-header-right {
+    width: 100%;
+    justify-content: flex-start;
+    gap: 6px;
+  }
+}
+
 .btn-closeout {
   display: inline-flex; align-items: center; gap: 5px;
   height: 28px; padding: 0 11px; border-radius: 4px;
