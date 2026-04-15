@@ -4227,16 +4227,17 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
     if (clr==='#004948') return 'linear-gradient(to right,#004948,#007a75)';
     if (clr==='#52d9ce') return 'linear-gradient(to right,#52d9ce,#8aeee8)';
     if (clr==='#445e0d') return 'linear-gradient(to right,#445e0d,#6a9014)';
+    if (clr==='#8b5cf6') return 'linear-gradient(to right,#8b5cf6,#a78bfa)';
     if (clr==='#D97706') return 'linear-gradient(to right,#D97706,#F59E0B)';
     if (clr==='#16a34a') return 'linear-gradient(to right,#16a34a,#22c55e)';
     if (clr==='#C4FF45') return 'linear-gradient(to right,#C4FF45,#D4FF73)';
     return clr;
   }
   function bar(pct, clr) {
-    return '<div class="wv-occ-bar-track"><div style="width:'+pct+'%;background:'+wbGrad2(clr)+';height:6px"></div></div>';
+    return '<div style="display:flex;height:6px;border-radius:2px;overflow:hidden;background:#e5e7eb;width:100%"><div style="width:'+pct+'%;background:'+wbGrad2(clr)+';height:6px"></div></div>';
   }
   function sBar(segs) {
-    return '<div class="wv-occ-bar-track">'
+    return '<div style="display:flex;height:6px;border-radius:2px;overflow:hidden;background:#e5e7eb;width:100%">'
       + segs.map(function(s){ return '<div style="width:'+s.p+'%;background:'+wbGrad2(s.c)+';height:6px"></div>'; }).join('')+'</div>';
   }
   function sCell(val, barHtml) {
@@ -4425,14 +4426,15 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
         var sold=Math.min(inv,Math.floor(inv*d.hotel/110));
         var toS=Math.min(sold,Math.round(sold*d.to/Math.max(1,d.hotel)));
         var otS=sold-toS;
+        var tent=Math.max(0,Math.floor(2+Math.abs((d.dm*(rtI+4)+d.dd*(rtI+2))%6)));
         var alRem=Math.max(0,Math.floor(inv*0.8+Math.abs((d.dm*(rtI+3)+d.dd*(rtI+5))%15))-toS);
-        var avRm=Math.max(0,inv-sold);
-        var toP=Math.round(toS/inv*100),otP=Math.round(otS/inv*100),alP=Math.round(alRem/inv*100);
-        var avClr=avRm===0?'#dc2626':C1;
+        var avRm=Math.max(0,inv-sold-tent);
+        var toP=Math.round(toS/inv*100),otP=Math.round(otS/inv*100),tnP=Math.round(tent/inv*100),alP=Math.round(alRem/inv*100);
+        var avClr=avRm<=0?'#dc2626':C1;
         return '<div style="font-size:14px;color:'+avClr+';margin-bottom:5px">'
-          +(avRm===0?'SOLD OUT':avRm+' avail')
+          +(avRm<=0?'SOLD OUT':avRm+' avail')
           +'<span style="font-size:12px;color:#9ca3af;margin-left:4px">/ '+inv+'</span></div>'
-          +sBar([{p:toP,c:C1},{p:otP,c:C2},{p:alP,c:C3},{p:Math.max(0,100-toP-otP-alP),c:C4}]);
+          +sBar([{p:toP,c:C1},{p:otP,c:C2},{p:tnP,c:'#8b5cf6'},{p:alP,c:C3},{p:Math.max(0,100-toP-otP-tnP-alP),c:C4}]);
       }; })(inv,rtI));
       sub('TO Sold', C1, false, (function(inv){ return function(d){ var s=Math.min(inv,Math.floor(inv*d.hotel/110)); return rCell(Math.min(s,Math.round(s*d.to/Math.max(1,d.hotel)))+' rm'); }; })(inv));
       sub('Other Segments', C2, false, (function(inv){ return function(d){ var s=Math.min(inv,Math.floor(inv*d.hotel/110)); var t=Math.min(s,Math.round(s*d.to/Math.max(1,d.hotel))); return rCell((s-t)+' rm'); }; })(inv));
@@ -13245,7 +13247,7 @@ window.calHideCapTip = function() {
     blue:  { params: {} },
     enabled: false,
     condition: { enabled: false, metric: 'hotel', op: '>', value: 50 },
-    stopSalesRoomType: ''  // '' = all room types, or specific room type name
+    stopSalesRoomTypes: []  // [] = all room types, or array of selected room type names
   };
 
   // ── Type definitions ───────────────────────────────────────────
