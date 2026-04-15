@@ -1667,7 +1667,7 @@ function renderCalendar() {
           ${!isCompact && !isLocked ? eyeSvg : ''}
         </div>
         ${!isCompact ? `<div class="cell-content">${metricRows}</div>` : ''}
-        ${!isCompact && hasCalCl && !_isStopSalesActive ? '<span class="cell-event-ico cell-event-icon" onmouseenter="calShowEventTip(event,\''+m.month+'-'+d+'\')" onmouseleave="calHideEventTip()"><span class="material-icons" style="font-size:12px;color:#006461">calendar_month</span></span>' : ''}
+        ${!isCompact && hasCalCl && !_isStopSalesActive ? '<span class="cell-event-ico cell-event-icon" onmouseenter="calShowEventTip(event,\''+m.month+'-'+d+'\')" onmouseleave="calHideEventTip()"><span class="material-icons" style="font-size:16px;color:#006461">calendar_month</span></span>' : ''}
       </div>`;
     }
 
@@ -12595,7 +12595,7 @@ setTimeout(function() {
     window.calHideCapTip();
 
     var t = getTip();
-    var calSvg = '<span class="material-icons" style="font-size:14px;color:#006461;vertical-align:middle;margin-right:2px">calendar_month</span>';
+    var calSvg = '<span class="material-icons" style="font-size:18px;color:#006461;vertical-align:middle;margin-right:2px">calendar_month</span>';
 
     t.innerHTML = '<div class="cal-event-tooltip-title">' + calSvg + ' Events</div>'
       + events.map(function(ev) {
