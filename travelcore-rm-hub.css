@@ -7413,17 +7413,17 @@ body.dark .cal-mfilt-btn.active { background: #1a3535; }
 }
 .hm-btn-apply:hover { background: #00524f; }
 /* Day cell heatmap colours (Figma 2026) */
-.cal-day.hm-grey  { background: #F5F5F5 !important; border-left: 3px solid #DDE1E2 !important; }
-.cal-day.hm-green { background: #E8F5E9 !important; border-left: 3px solid #CEF2D1 !important; }
-.cal-day.hm-blue  { background: #D7F7ED !important; border-left: 3px solid #52D9CE !important; }
+.cal-day.hm-grey  { background: var(--hm-grey-bg, #F5F5F5) !important; border-left: 3px solid var(--hm-grey-bdr, #DDE1E2) !important; }
+.cal-day.hm-green { background: var(--hm-green-bg, #E8F5E9) !important; border-left: 3px solid var(--hm-green-bdr, #CEF2D1) !important; }
+.cal-day.hm-blue  { background: var(--hm-blue-bg, #D7F7ED) !important; border-left: 3px solid var(--hm-blue-bdr, #52D9CE) !important; }
 
-/* Stop Sales semantic colours (Figma 2026) */
-.cal-day.hm-closed  { background: #F0B7B7 !important; border-left: 3px solid #D33030 !important; }
-.cal-day.hm-partial { background: #FFF1DE !important; border-left: 3px solid #FDCF61 !important; }
-.cal-day.hm-open    { background: #E8F5E9 !important; border-left: 3px solid #CEF2D1 !important; }
-.cal-day.hm-closed .day-num  { color: #D33030; }
-.cal-day.hm-partial .day-num { color: #854d0e; }
-.cal-day.hm-open .day-num    { color: #15803d; }
+/* Stop Sales semantic colours (Figma 2026) — custom via CSS vars */
+.cal-day.hm-closed  { background: var(--hm-closed-bg, #F0B7B7) !important; border-left: 3px solid var(--hm-closed-bdr, #D33030) !important; }
+.cal-day.hm-partial { background: var(--hm-partial-bg, #FFF1DE) !important; border-left: 3px solid var(--hm-partial-bdr, #FDCF61) !important; }
+.cal-day.hm-open    { background: var(--hm-open-bg, #E8F5E9) !important; border-left: 3px solid var(--hm-open-bdr, #CEF2D1) !important; }
+.cal-day.hm-closed .day-num  { color: var(--hm-closed-bdr, #D33030); }
+.cal-day.hm-partial .day-num { color: var(--hm-partial-bdr, #854d0e); }
+.cal-day.hm-open .day-num    { color: var(--hm-open-bdr, #15803d); }
 
 /* Daily R column panel items */
 .dr-col-item {

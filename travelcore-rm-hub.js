@@ -13357,7 +13357,8 @@ window.calHideCapTip = function() {
     blue:  { params: {} },
     enabled: false,
     condition: { enabled: false, metric: 'hotel', op: '>', value: 50 },
-    stopSalesRoomTypes: []  // [] = all room types, or array of selected room type names
+    stopSalesRoomTypes: [],  // [] = all room types, or array of selected room type names
+    colors: {}  // custom color overrides, e.g. { grey: '#D33030', blue: '#FDCF61', green: '#CEF2D1' }
   };
 
   // ── Type definitions ───────────────────────────────────────────
@@ -13462,6 +13463,7 @@ window.calHideCapTip = function() {
     ];
 
     rows.innerHTML = colours.map(function(c) {
+      var currentClr = hmState.colors[c.key] || c.swatch;
       var bodyHtml = '';
       if (c.cfg.input) {
         var val = hmState[c.key][c.cfg.input.param] !== undefined
@@ -13483,7 +13485,11 @@ window.calHideCapTip = function() {
       }
       var rowCls = 'hm-threshold-row' + (!c.cfg.input ? ' hm-threshold-no-input' : '');
       return '<div class="' + rowCls + '">'
-        + '<div class="hm-threshold-swatch" style="background:' + c.swatch + '"></div>'
+        + '<div class="hm-threshold-swatch hm-swatch-pick" style="background:' + currentClr + ';cursor:pointer;position:relative" title="Click to change colour">'
+        + '<input type="color" value="' + currentClr + '" data-hm-swatch="' + c.key + '"'
+        + ' onchange="hmSwatchChange(this)" oninput="hmSwatchChange(this)"'
+        + ' style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer">'
+        + '</div>'
         + bodyHtml
         + '</div>';
     }).join('');
@@ -13496,7 +13502,7 @@ window.calHideCapTip = function() {
         var rtOpts = ['Standard','Superior','Deluxe','Suite','Jr. Suite','Family'];
         var checksEl = document.getElementById('hmRtChecks');
         if (checksEl) {
-          var sel = hmState.stopSalesRoomTypes && hmState.stopSalesRoomTypes.lengths || [];
+          var sel = hmState.stopSalesRoomTypes || [];
           var allSelected = sel.length === 0;
           checksEl.innerHTML = '<label class="hm-rt-chip' + (allSelected ? ' active' : '') + '">'
             + '<input type="checkbox" onchange="hmRtToggle(\'all\',this)" style="display:none"' + (allSelected ? ' checked' : '') + '>'
@@ -13525,18 +13531,27 @@ window.calHideCapTip = function() {
     hmState[color][param] = parseFloat(el.value) || 0;
   };
 
+  // ── Swatch colour change ────────────────────────────────────────
+  window.hmSwatchChange = function(el) {
+    var key = el.dataset.hmSwatch;
+    hmState.colors[key] = el.value;
+    // Update swatch preview immediately
+    var swatch = el.parentElement;
+    if (swatch) swatch.style.background = el.value;
+  };
+
   // ── Room type toggle (stop sales multiselect) ──────────────────
   window.hmRtToggle = function(rt, el) {
     if (rt === 'all') {
-      hmState.stopSalesRoomTypes && hmState.stopSalesRoomTypes.lengths = [];
+      hmState.stopSalesRoomTypes = [];
       // Re-render chips to update active states
       if (hmState.type) hmRenderColours(hmState.type);
       return;
     }
-    var arr = hmState.stopSalesRoomTypes && hmState.stopSalesRoomTypes.lengths || [];
+    var arr = hmState.stopSalesRoomTypes || [];
     var idx = arr.indexOf(rt);
     if (idx >= 0) { arr.splice(idx, 1); } else { arr.push(rt); }
-    hmState.stopSalesRoomTypes && hmState.stopSalesRoomTypes.lengths = arr;
+    hmState.stopSalesRoomTypes = arr;
     if (hmState.type) hmRenderColours(hmState.type);
   };
 
@@ -13566,11 +13581,38 @@ window.calHideCapTip = function() {
       op:      condOp     ? condOp.value     : '>',
       value:   condValEl  ? (parseFloat(condValEl.value) || 0) : 50
     };
+    // Apply custom heatmap colours as CSS variables
+    hmApplyColors();
     // Update button to reflect active heatmap type
     hmUpdateBtn();
     hmToggle();
     renderCalendar();
   };
+
+  function hmApplyColors() {
+    var grid = document.getElementById('calMonths');
+    if (!grid) return;
+    var isStopSales = hmState.type === 'stopsales';
+    var defaults = isStopSales
+      ? { grey: '#D33030', blue: '#FDCF61', green: '#CEF2D1' }
+      : { grey: '#D9D9D9', blue: '#D7F7ED', green: '#388C3F' };
+    var gc = hmState.colors.grey  || defaults.grey;
+    var bc = hmState.colors.blue  || defaults.blue;
+    var gnc = hmState.colors.green || defaults.green;
+    grid.style.setProperty('--hm-grey-bg',  gc + '30');
+    grid.style.setProperty('--hm-grey-bdr', gc);
+    grid.style.setProperty('--hm-blue-bg',  bc + '30');
+    grid.style.setProperty('--hm-blue-bdr', bc);
+    grid.style.setProperty('--hm-green-bg', gnc + '30');
+    grid.style.setProperty('--hm-green-bdr',gnc);
+    // Stop sales specific aliases
+    grid.style.setProperty('--hm-closed-bg',  gc + '40');
+    grid.style.setProperty('--hm-closed-bdr', gc);
+    grid.style.setProperty('--hm-partial-bg', bc + '30');
+    grid.style.setProperty('--hm-partial-bdr',bc);
+    grid.style.setProperty('--hm-open-bg',    gnc + '30');
+    grid.style.setProperty('--hm-open-bdr',   gnc);
+  }
 
   function hmUpdateBtn() {
     var iconEl   = document.getElementById('hmBtnIcon');
@@ -13600,7 +13642,12 @@ window.calHideCapTip = function() {
   // ── Reset ──────────────────────────────────────────────────────
   window.hmReset = function() {
     hmState = { type: '', grey: { params:{} }, green: { params:{} }, blue: { params:{} }, enabled: false,
-                condition: { enabled: false, metric: 'hotel', op: '>', value: 50 }, stopSalesRoomTypes: [] };
+                condition: { enabled: false, metric: 'hotel', op: '>', value: 50 }, stopSalesRoomTypes: [], colors: {} };
+    // Clear custom color CSS variables
+    var grid = document.getElementById('calMonths');
+    if (grid) ['--hm-grey-bg','--hm-grey-bdr','--hm-blue-bg','--hm-blue-bdr','--hm-green-bg','--hm-green-bdr',
+               '--hm-closed-bg','--hm-closed-bdr','--hm-partial-bg','--hm-partial-bdr','--hm-open-bg','--hm-open-bdr']
+      .forEach(function(v){ grid.style.removeProperty(v); });
     document.querySelectorAll('.hm-type-option').forEach(function(c) { c.classList.remove('active'); });
     var section = document.getElementById('hmColourSection');
     if (section) section.style.display = 'none';
@@ -13657,7 +13704,7 @@ window.calHideCapTip = function() {
 
     // Stop sales room type helpers (multiselect)
     function ssRtClosed() {
-      var rts = hmState.stopSalesRoomTypes && hmState.stopSalesRoomTypes.lengths;
+      var rts = hmState.stopSalesRoomTypes;
       if (!rts || rts.length === 0) return false; // no room type filter (All)
       var rules = dayData.closureRules || [];
       // Check if ALL selected room types are closed
