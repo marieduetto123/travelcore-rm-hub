@@ -2400,67 +2400,128 @@ function clearCalSelection() {
       : '';
     dateEl.innerHTML = DAY_NAMES[d.getDay()] + ', ' + MONTH_NAMES[dm] + ' ' + dd + ', 2026' + popupDbaHtml;
 
-    // ── Compute same values as buildWeekGrid ──
-    const { hotel, to: toRaw } = getOccupancy(dm, dd);
-    const toKey  = (typeof filterState !== 'undefined' ? filterState.cal.calFiltTO : null) || calFiltTO || 'all';
+    // ── Read active filters ──
+    const _fCal = typeof filterState !== 'undefined' ? filterState.cal : {};
+    const toKey  = _fCal.calFiltTO || calFiltTO || 'all';
+    const _rtFilt = _fCal.calFiltRoom || 'all';
+    const _bdFilt = _fCal.calFiltBoard || 'all';
+    const _mkFilt = _fCal.calFiltMarket || 'all';
+    const _hasAnyFilter = toKey !== 'all' || _rtFilt !== 'all' || _bdFilt !== 'all' || _mkFilt !== 'all';
+
+    // ── Compute base values ──
+    const { hotel: hotelBase, to: toRaw } = getOccupancy(dm, dd);
     const toMult = TO_FILTER_MULT[toKey] || 1.0;
-    const to     = Math.min(95, Math.round(toRaw * toMult));
+    const toBase = Math.min(95, Math.round(toRaw * toMult));
     const toLabel = toKey !== 'all'
       ? toKey.charAt(0).toUpperCase() + toKey.slice(1).replace(/-/g,' ')
       : 'All Operators';
 
-    const adr    = 150 + Math.abs((dm * 47 + dd * 31) % 130);
-    const rev    = Math.floor(hotel * adr * 1.1);
-    const v      = Math.abs((dm * 127 + dd * 53 + dm * dd * 7 + dd * dd * 3)) % 100;
-    const onlinePct = Math.max(30, Math.min(80, 45 + Math.abs((dm * 13 + dd * 7) % 35)));
-    const offlinePct = 100 - onlinePct;
-    const adrBar = Math.min(95, 40 + Math.abs((dm * 11 + dd * 19) % 55));
-    const revBar = Math.min(95, 35 + Math.abs((dm * 17 + dd * 13) % 60));
-    const hotelSDLY = Math.max(5, hotel - 3 - (v % 5));
-    const toSDLY    = Math.max(5, to    - 2 - (v % 4));
-    const adrSDLY   = adr - 8;
-    const revSDLY   = Math.floor(rev * 0.9);
+    const adrBase = 150 + Math.abs((dm * 47 + dd * 31) % 130);
+    const v       = Math.abs((dm * 127 + dd * 53 + dm * dd * 7 + dd * dd * 3)) % 100;
+
+    // ── Apply filter multipliers to metrics ──
+    // Room type filter: each room type represents a share of total inventory
+    var _rtMult = 1.0;
+    if (_rtFilt !== 'all') {
+      var _rtShares = {standard:0.34,superior:0.24,deluxe:0.18,suite:0.08,'jr. suite':0.10,family:0.06};
+      var _rtParts = _rtFilt.split(',');
+      _rtMult = _rtParts.reduce(function(a,b){ return a + (_rtShares[b.trim().toLowerCase()] || 0.15); }, 0);
+      _rtMult = Math.min(1, _rtMult);
+    }
+    // Board type filter
+    var _bdMult = 1.0;
+    if (_bdFilt !== 'all') {
+      var _bdShares = {ai:0.55,bb:0.20,hb:0.15,ro:0.10,fb:0.05};
+      var _bdParts = _bdFilt.split(',');
+      _bdMult = _bdParts.reduce(function(a,b){ return a + (_bdShares[b.trim()] || 0.15); }, 0);
+      _bdMult = Math.min(1, _bdMult);
+    }
+    // Market filter
+    var _mkMult = _mkFilt !== 'all' ? 0.6 : 1.0;
+
+    var _filterMult = _rtMult * _bdMult * _mkMult;
+    // Filtered occupancy: scale rooms sold by filter scope
+    var hotel = _hasAnyFilter ? Math.max(5, Math.round(hotelBase * _filterMult)) : hotelBase;
+    var to    = _hasAnyFilter ? Math.max(2, Math.round(toBase * _filterMult))    : toBase;
+    // Filtered ADR: slight variation by room type (suites higher, standard lower)
+    var _adrAdj = 0;
+    if (_rtFilt !== 'all') {
+      var _rtAdrMap = {standard:-15,superior:0,deluxe:20,suite:80,'jr. suite':50,family:10};
+      var _rtFirst = _rtFilt.split(',')[0].trim().toLowerCase();
+      _adrAdj = _rtAdrMap[_rtFirst] || 0;
+    }
+    var adr = adrBase + _adrAdj;
+    var rev = Math.floor(hotel * adr * HOTEL_CAPACITY / 100 * 1.1);
+    var onlinePct = Math.max(30, Math.min(80, 45 + Math.abs((dm * 13 + dd * 7) % 35)));
+    var offlinePct = 100 - onlinePct;
+    var adrBar = Math.min(95, 40 + Math.abs((dm * 11 + dd * 19) % 55));
+    var revBar = Math.min(95, Math.round((35 + Math.abs((dm * 17 + dd * 13) % 60)) * _filterMult));
+    var hotelSDLY = Math.max(5, hotel - 3 - (v % 5));
+    var toSDLY    = Math.max(5, to    - 2 - (v % 4));
+    var adrSDLY   = adr - 8;
+    var revSDLY   = Math.floor(rev * 0.9);
     const pad = function(n){ return String(n).padStart(2,'0'); };
 
     // update operator label
     const opEl = document.getElementById('popupOperator');
     if (opEl) opEl.textContent = toLabel;
 
-    // ── Computed values (matching weekly view) ──
+    // ── Computed values ──
     var sign       = function(n){ return n >= 0 ? '+' + n : String(n); };
     var otherPct   = Math.max(0, hotel - to);
     var freePct    = 100 - hotel;
-    var toRms      = Math.round(HOTEL_CAPACITY * to       / 100);
-    var otherRms   = Math.round(HOTEL_CAPACITY * otherPct / 100);
-    var freeRms    = HOTEL_CAPACITY - toRms - otherRms;
-    var rnSold     = Math.floor(hotel * HOTEL_CAPACITY / 100);
-    var availRooms = Math.max(0, HOTEL_CAPACITY - rnSold);
-    var availGuar  = Math.floor(8 + v % 5);
+    var filteredCap = _hasAnyFilter ? Math.round(HOTEL_CAPACITY * _rtMult) : HOTEL_CAPACITY;
+    var toRms      = Math.round(filteredCap * to       / 100);
+    var otherRms   = Math.round(filteredCap * otherPct / 100);
+    var freeRms    = Math.max(0, filteredCap - toRms - otherRms);
+    var rnSold     = Math.floor(hotel * filteredCap / 100);
+    var availRooms = Math.max(0, filteredCap - rnSold);
+    var availGuar  = Math.max(0, Math.floor((8 + v % 5) * _filterMult));
     var sdlyR      = Math.floor(rev * 0.9);
+
+    // Filter label for sections
+    var _filtLabel = '';
+    if (_hasAnyFilter) {
+      var _parts = [];
+      if (toKey !== 'all') _parts.push(toLabel);
+      if (_rtFilt !== 'all') _parts.push(_rtFilt.split(',').map(function(s){return s.trim();}).join(', '));
+      if (_bdFilt !== 'all') { var _bm={ai:'AI',bb:'B&B',hb:'HB',ro:'RO',fb:'FB'}; _parts.push(_bdFilt.split(',').map(function(b){return _bm[b.trim()]||b;}).join(', ')); }
+      if (_mkFilt !== 'all') _parts.push('Market: '+_mkFilt);
+      _filtLabel = '<div style="font-size:8px;font-weight:600;color:#006461;background:#d7f7ed;padding:2px 8px;border-radius:4px;margin-bottom:6px;text-align:center">Filtered: '+_parts.join(' · ')+'</div>';
+    }
 
     var detRows = [
       ['RN Sold',      rnSold,                            Math.floor(rnSold*0.88),          '+' + Math.floor(v%30+5)],
       ['ADR',          '$' + adr,                         '$' + adrSDLY,                    '+' + (3+v%12)+'%'],
       ['Revenue',      '$' + Math.floor(rev/1000) + 'k',  '$' + Math.floor(sdlyR/1000)+'k','+' + (5+v%15)+'%'],
-      ['Pickup',       '+' + Math.floor(v%25+5),          '+0',                             '+' + Math.floor(v%15+5)],
+      ['Pickup',       '+' + Math.max(1,Math.floor((v%25+5)*_filterMult)), '+0',            '+' + Math.floor(v%15+5)],
       ['Avg Adults',   (1.8+v%3*.1).toFixed(1),           '1.9',                            '-0.1'],
       ['Avg Children', (0.3+v%2*.1).toFixed(1),           '0.4',                            '-0.1'],
-      ['REVPAR',       '$' + (adr+80),                    '$' + Math.floor(adr*0.92),       '+' + (10+v%20)+'%'],
+      ['REVPAR',       '$' + Math.round(adr*hotel/100),   '$' + Math.floor(adr*0.92),       '+' + (10+v%20)+'%'],
       ['Avail Rooms',  availRooms,                         availRooms+3,                     '-' + (Math.floor(v%8)+1)],
       ['Avail Guar.',  availGuar,                          availGuar+2,                      '-' + (Math.floor(v%4)+1)],
     ];
 
-    // Meal plans (matching wv-meals)
+    // Meal plans — filtered by board type
     var aiPct = Math.max(45, Math.min(68, 55 + (dm*7+dd*3)%14));
     var bbPct = Math.max(14, Math.min(28, 20 + (dm*11+dd*5)%11));
     var hbPct = Math.max(6,  Math.min(16, 10 + (dm*5+dd*7)%9));
     var roPct = Math.max(2,  100 - aiPct - bbPct - hbPct);
     var mealPlans = [
-      { short:'AI', pct:aiPct, color:'#004948' },
-      { short:'BB', pct:bbPct, color:'#52d9ce' },
-      { short:'HB', pct:hbPct, color:'#C4FF45' },
-      { short:'RO', pct:roPct, color:'#D97706' },
+      { short:'AI', pct:aiPct, color:'#004948', key:'ai' },
+      { short:'BB', pct:bbPct, color:'#52d9ce', key:'bb' },
+      { short:'HB', pct:hbPct, color:'#C4FF45', key:'hb' },
+      { short:'RO', pct:roPct, color:'#D97706', key:'ro' },
     ];
+    // When board filter active, filter meal plans to only show selected
+    if (_bdFilt !== 'all') {
+      var _bdSel = _bdFilt.split(',').map(function(s){ return s.trim(); });
+      mealPlans = mealPlans.filter(function(mp){ return _bdSel.indexOf(mp.key) >= 0; });
+      if (mealPlans.length === 0) mealPlans = [{ short:'AI', pct:aiPct, color:'#004948', key:'ai' }]; // fallback
+      // Normalize percentages to 100%
+      var _mpTotal = mealPlans.reduce(function(a,p){ return a+p.pct; },0);
+      if (_mpTotal > 0) mealPlans.forEach(function(p){ p.pct = Math.round(p.pct / _mpTotal * 100); });
+    }
     var mealBarHtml = '<div class="wv-meals-bar" style="margin:4px 0 6px">'
       + mealPlans.map(function(p){ return '<div style="width:'+p.pct+'%;background:'+p.color+';height:100%"></div>'; }).join('')
       + '</div>';
@@ -2575,7 +2636,7 @@ function clearCalSelection() {
     })();
 
     document.getElementById('popupBody').innerHTML =
-      popupClHtml +
+      _filtLabel + popupClHtml +
 
       // 1. Daily Metrics
       '<div class="popup-metrics-section">'
