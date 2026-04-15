@@ -1247,6 +1247,23 @@ function calSetCompare(val) {
   calCompareMode = val || 'ly';
   renderCalendar();
 }
+// Disable compare dropdown when viewport is too narrow for the current view
+function _calUpdateCompareState() {
+  var sel = document.getElementById('calCompare');
+  var wrap = document.getElementById('calCompareWrap');
+  if (!sel || !wrap) return;
+  var w = window.innerWidth;
+  var v = calDisplayView;
+  // 3-month under 2100px or 2-month under 1537px → disable
+  var hide = (v === 3 && w < 2100) || (v === 2 && w < 1537);
+  sel.disabled = hide;
+  wrap.classList.toggle('cmp-disabled', hide);
+  if (hide && calCompareMode !== 'none') {
+    calCompareMode = 'none';
+    sel.value = 'none';
+  }
+}
+window.addEventListener('resize', _calUpdateCompareState);
 const ALLOTMENTS = {
   sunwing:       { total: 42, pct: 0.88 },
   tui:           { total: 55, pct: 0.72 },
@@ -2153,14 +2170,19 @@ window.calSetDisplayView = function(n) {
     }
   }
 
-  // Apply compact CSS class
+  // Apply compact CSS class + view class
   var grid = document.getElementById('calMonths');
   if (grid) {
     if (n === 6 || n === 12) { grid.classList.add('cal-compact'); }
     else { grid.classList.remove('cal-compact'); }
     if (n === 12) grid.classList.add('cal-12m');
     else grid.classList.remove('cal-12m');
+    // View-specific class for responsive breakpoints
+    grid.className = grid.className.replace(/\bcal-view-\d+\b/g, '');
+    grid.classList.add('cal-view-' + n);
   }
+  // Update compare dropdown state based on breakpoint
+  _calUpdateCompareState();
 
   // Clamp start index
   calStartIdx = Math.min(calStartIdx, Math.max(0, ALL_MONTHS.length - calView));
@@ -2174,6 +2196,8 @@ window.calSetDisplayView = function(n) {
       else g.classList.remove('cal-compact');
       if (n === 12) g.classList.add('cal-12m');
       else g.classList.remove('cal-12m');
+      g.className = g.className.replace(/\bcal-view-\d+\b/g, '');
+      g.classList.add('cal-view-' + n);
     }
     if (typeof applyOutOfRange === 'function') applyOutOfRange();
   }, 80);

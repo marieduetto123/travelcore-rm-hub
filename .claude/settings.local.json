@@ -30,7 +30,8 @@
       "Bash(./deploy.sh \"monthly: move events dot left of lock, grey icons, hide comparison on narrow screens\")",
       "Bash(./deploy.sh \"monthly cells: reduce visual clutter — smaller icons, tighter spacing, shorter labels, subtler comparison values\")",
       "Bash(./deploy.sh \"monthly: increase day cell height to 140px\")",
-      "Bash(./deploy.sh \"monthly: lock icon next to day number, metrics pushed up, events square bottom-right\")"
+      "Bash(./deploy.sh \"monthly: lock icon next to day number, metrics pushed up, events square bottom-right\")",
+      "Bash(./deploy.sh \"monthly: responsive breakpoints to hide compare metrics, bump metric text to 9px\")"
     ]
   }
 }
