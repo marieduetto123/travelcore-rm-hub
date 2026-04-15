@@ -6279,8 +6279,7 @@ function buildWeekGrid(month, weekStart, activeDay) {
     return;
   }
   if (wvGroupBy === 'dailyB') {
-    grid.style.cssText = 'display:flex;flex-direction:column;overflow-x:auto;';
-    grid.innerHTML = buildDailyBView(days, month, activeDay);
+    initDailyBGrid(days, month, activeDay, grid);
     return;
   }
   grid.style.cssText = '';
