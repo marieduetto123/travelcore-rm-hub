@@ -1552,8 +1552,8 @@ function renderCalendar() {
         totalGuests:  Math.round(hotel * HOTEL_CAPACITY / 100 * (cellAvgAdults + cellAvgChildren)),
       };
       // ── Icons (Material: apartment = hotel, confirmation_number = TO) ──
-      const icoHotel = `<svg class="cell-m-ico" viewBox="0 0 24 24" fill="#b0b5ba" width="14" height="14"><path d="M17 11V3H7v4H3v14h8v-4h2v4h8V11h-4zm-8 6H7v-2h2v2zm0-4H7v-2h2v2zm0-4H7V7h2v2zm4 4h-2v-2h2v2zm0-4h-2V7h2v2zm4 8h-2v-2h2v2zm0-4h-2v-2h2v2z"/></svg>`;
-      const icoTO    = `<svg class="cell-m-ico" viewBox="0 0 24 24" fill="#b0b5ba" width="14" height="14"><path d="M22 10V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v4c1.1 0 2 .9 2 2s-.9 2-2 2v4c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-4c-1.1 0-2-.9-2-2s.9-2 2-2zm-9 5.5h-2v-2h2v2zm0-3.5h-2v-2h2v2zm0-3.5h-2v-2h2v2z"/></svg>`;
+      const icoHotel = `<svg class="cell-m-ico" viewBox="0 0 24 24" fill="#b0b5ba" width="10" height="10"><path d="M17 11V3H7v4H3v14h8v-4h2v4h8V11h-4zm-8 6H7v-2h2v2zm0-4H7v-2h2v2zm0-4H7V7h2v2zm4 4h-2v-2h2v2zm0-4h-2V7h2v2zm4 8h-2v-2h2v2zm0-4h-2v-2h2v2z"/></svg>`;
+      const icoTO    = `<svg class="cell-m-ico" viewBox="0 0 24 24" fill="#b0b5ba" width="10" height="10"><path d="M22 10V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v4c1.1 0 2 .9 2 2s-.9 2-2 2v4c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-4c-1.1 0-2-.9-2-2s.9-2 2-2zm-9 5.5h-2v-2h2v2zm0-3.5h-2v-2h2v2zm0-3.5h-2v-2h2v2z"/></svg>`;
       const lockIcoYellow = `<svg class="cell-lock-ico" viewBox="0 0 24 24" fill="#FF9800" width="20" height="20"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zM9 8V6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9z"/></svg>`;
       const eyeSvg  = `<button class="cell-eye" aria-label="Quick view" data-month="${m.month}" data-day="${d}"><svg viewBox="0 0 14 10" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1 5s2.5-4 6-4 6 4 6 4-2.5 4-6 4-6-4-6-4z"/><circle cx="7" cy="5" r="1.6"/></svg></button>`;
 
@@ -1584,8 +1584,9 @@ function renderCalendar() {
           var isTO = lbl.charAt(0) === 'T' && lbl.charAt(1) === '-';
           var isH  = lbl.charAt(0) === 'H' && lbl.charAt(1) === '-';
           var ico = isTO ? icoTO : icoHotel;
-          // Short label: strip the H-/T- prefix
+          // Short label: strip H-/T- prefix, then strip LY-/STLY-/Fcst- for cleanliness
           var shortLabel = (isH || isTO) ? lbl.substring(2) : lbl;
+          shortLabel = shortLabel.replace(/^LY-|^STLY-|^Fcst-/, '');
 
           // Comparison value
           var compHtml = '';

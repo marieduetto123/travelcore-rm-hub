@@ -811,30 +811,32 @@ body.dark .cal-nav-btn:hover { background: rgba(196,255,69,0.07); border-color: 
 
 /* Metric rows — Figma layout */
 .cell-content {
-  display: flex; flex-direction: column; gap: 4px;
+  display: flex; flex-direction: column; gap: 2px;
   flex-shrink: 0;
 }
 .cell-m-row {
   display: flex; align-items: center; justify-content: space-between;
+  line-height: 1.1;
 }
 .cell-m-left {
-  display: flex; align-items: center; gap: 4px;
+  display: flex; align-items: center; gap: 2px; min-width: 0;
 }
 .cell-m-ico { flex-shrink: 0; fill: #b0b5ba; }
 .cell-m-label {
-  font-size: 9px; font-weight: 400; color: #1C1C1C;
+  font-size: 8px; font-weight: 500; color: #8a9096;
   font-family: 'Inter', sans-serif;
   white-space: nowrap;
 }
 .cell-m-val {
-  font-size: 9px; font-weight: 600; color: #1C1C1C;
+  font-size: 8px; font-weight: 600; color: #1C1C1C;
   font-family: 'Inter', sans-serif;
-  white-space: nowrap;
+  white-space: nowrap; text-align: right;
 }
 
-/* Comparison value colors (no arrows) */
-.cell-cmp-up { color: #16a34a; font-weight: 600; }
-.cell-cmp-dn { color: #dc2626; font-weight: 600; }
+/* Comparison value colors */
+.cell-cmp { font-size: 7px; font-weight: 500; opacity: .85; }
+.cell-cmp-up { color: #16a34a; }
+.cell-cmp-dn { color: #dc2626; }
 /* Light green/red on dark heatmap cells */
 .cal-day.hotel-occ-5 .cell-cmp-up, .cal-day.hotel-occ-6 .cell-cmp-up,
 .cal-day.hotel-occ-7 .cell-cmp-up, .cal-day.hotel-occ-8 .cell-cmp-up,
