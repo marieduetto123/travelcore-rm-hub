@@ -6868,11 +6868,9 @@ function buildWeekGrid(month, weekStart, activeDay) {
   var summaryContainer = document.getElementById('wvSummaryContainer');
   if (summaryContainer) summaryContainer.innerHTML = summaryPanel;
 
-  // Render close-out heat map when Close Outs tab is active
+  // Close-out heat map removed
   var coHeatmapContainer = document.getElementById('coHeatmapContainer');
-  if (coHeatmapContainer) {
-    coHeatmapContainer.innerHTML = wvGroupBy === 'roomType' ? buildCoHeatmap(days) : '';
-  }
+  if (coHeatmapContainer) coHeatmapContainer.innerHTML = '';
 
   grid.innerHTML = days.map(({ month: dm, day: dd }) => {
     const isToday  = dm === 3 && dd === 9;
