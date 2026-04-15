@@ -36,7 +36,8 @@
       "mcp__60ac2e8c-24aa-44e4-8c8a-c4a3c769ec23__search_design_system",
       "Bash(./deploy.sh \"filter-aware tooltip, rename Settings to Configuration, add Stop Sales & Alerts config panel, Hotel/TO color coding\")",
       "Bash(./deploy.sh \"monthly: align metrics above events, replace events square with calendar icon\")",
-      "Bash(./deploy.sh \"tooltip: match Figma design — dark blue info panel with icon, Lato 14px, material shadow\")"
+      "Bash(./deploy.sh \"tooltip: match Figma design — dark blue info panel with icon, Lato 14px, material shadow\")",
+      "Bash(./deploy.sh \"monthly cells: truncate metric text with ellipsis on overflow\")"
     ]
   }
 }

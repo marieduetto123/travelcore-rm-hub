@@ -819,17 +819,19 @@ body.dark .cal-nav-btn:hover { background: rgba(196,255,69,0.07); border-color: 
 }
 .cell-m-row {
   display: flex; align-items: center; justify-content: space-between;
-  line-height: 1.1;
+  line-height: 1.1; min-width: 0; overflow: hidden;
 }
 .cell-m-label {
   font-size: 12px; font-weight: 500;
   font-family: 'Inter', sans-serif;
-  white-space: nowrap;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  flex-shrink: 1; min-width: 0;
 }
 .cell-m-val {
   font-size: 12px; font-weight: 600;
   font-family: 'Inter', sans-serif;
   white-space: nowrap; text-align: right;
+  flex-shrink: 0;
 }
 /* Hotel = black, TO = gold-brown */
 .cell-m-hotel .cell-m-label, .cell-m-hotel .cell-m-val { color: #1C1C1C; }
