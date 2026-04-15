@@ -1753,12 +1753,17 @@ window.calAccClick = function(hdr) {
 };
 
 // ── Monthly Summary Metrics (1M / 2M / 3M) ─────────────────────────────────
-var _moActiveTab = 'dailyB';
+var _moActiveTab = 'monthly';
 
 function renderCalMonthlySummary() {
   var el = document.getElementById('calMonthlySummary');
   if (!el) return;
-  if (calDisplayView > 3) { el.style.display = 'none'; return; }
+  var moTabBarEl2 = document.getElementById('moTabBar');
+  if (calDisplayView > 3) {
+    el.style.display = 'none';
+    if (moTabBarEl2) moTabBarEl2.style.display = 'none';
+    return;
+  }
   el.style.display = 'block';
 
   var visible = ALL_MONTHS.slice(calStartIdx, calStartIdx + calView);
@@ -2038,27 +2043,32 @@ function renderCalMonthlySummary() {
     return false;
   }
 
-  // ── Tab bar ─────────────────────────────────────────────────────────────
-  var moTabs = [
-    { key: 'dailyB',   label: 'Daily B' },
-    { key: 'combined', label: 'Daily' },
-    { key: 'dailyH',   label: 'Daily H' },
-    { key: 'report',   label: 'Daily R' },
-    { key: 'roomType', label: 'Close Outs' },
-    { key: 'coReport', label: 'Close Out Report' }
-  ];
-  var html = '<div class="mo-tab-bar">';
-  moTabs.forEach(function(t) {
-    var active = t.key === _moActiveTab ? ' active' : '';
-    html += '<button class="wv-groupby-btn mo-tab-btn' + active + '" onclick="moSwitchTab(\'' + t.key + '\')">' + t.label + '</button>';
-  });
-  html += '</div>';
+  // ── Tab bar (rendered into external #moTabBar) ──────────────────────────
+  var moTabBarEl = document.getElementById('moTabBar');
+  if (moTabBarEl) {
+    var moTabs = [
+      { key: 'monthly',  label: 'Monthly' },
+      { key: 'dailyB',   label: 'Daily B' },
+      { key: 'combined', label: 'Daily' },
+      { key: 'dailyH',   label: 'Daily H' },
+      { key: 'report',   label: 'Daily R' },
+      { key: 'roomType', label: 'Close Outs' },
+      { key: 'coReport', label: 'Close Out Report' }
+    ];
+    var tabHtml = '';
+    moTabs.forEach(function(t) {
+      var active = t.key === _moActiveTab ? ' active' : '';
+      tabHtml += '<button class="wv-groupby-btn mo-tab-btn' + active + '" onclick="moSwitchTab(\'' + t.key + '\')">' + t.label + '</button>';
+    });
+    moTabBarEl.innerHTML = tabHtml;
+    moTabBarEl.style.display = '';
+  }
 
-  html += '<div class="wb-layout">';
+  var html = '<div class="wb-layout">';
 
-  if (_moActiveTab !== 'dailyB') {
+  if (_moActiveTab !== 'monthly') {
     // Placeholder for other tabs
-    var tabLabels = {combined:'Daily',dailyH:'Daily H',report:'Daily R',roomType:'Close Outs',coReport:'Close Out Report'};
+    var tabLabels = {dailyB:'Daily B',combined:'Daily',dailyH:'Daily H',report:'Daily R',roomType:'Close Outs',coReport:'Close Out Report'};
     html += '<div style="padding:40px 24px;text-align:center;color:#9ca3af">'
       + '<span class="material-icons" style="font-size:36px;display:block;margin-bottom:8px">construction</span>'
       + '<div style="font-size:14px;font-weight:600;color:#6b7280">' + (tabLabels[_moActiveTab]||'') + ' — Monthly View</div>'
