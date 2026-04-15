@@ -2234,6 +2234,13 @@ body.dark .wv-groupby-bar { background: var(--surface-2); border-bottom-color: v
 body.dark .wv-groupby-btn { color: #4dd8d4; }
 body.dark .wv-groupby-btn.active { background: #1a2f31; color: #5ceade; }
 
+/* Monthly tab bar */
+.mo-tab-bar {
+  display: flex; align-items: flex-end; gap: 0;
+  background: #f8fafc; padding: 8px 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
 /* Compare-against dropdown */
 .wv-cmp-wrap {
   display: flex; align-items: center;

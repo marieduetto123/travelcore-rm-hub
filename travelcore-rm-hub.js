@@ -1753,6 +1753,8 @@ window.calAccClick = function(hdr) {
 };
 
 // ── Monthly Summary Metrics (1M / 2M / 3M) ─────────────────────────────────
+var _moActiveTab = 'dailyB';
+
 function renderCalMonthlySummary() {
   var el = document.getElementById('calMonthlySummary');
   if (!el) return;
@@ -2036,7 +2038,51 @@ function renderCalMonthlySummary() {
     return false;
   }
 
-  var html = '<div class="wb-layout">';
+  // ── Tab bar ─────────────────────────────────────────────────────────────
+  var moTabs = [
+    { key: 'dailyB',   label: 'Daily B' },
+    { key: 'combined', label: 'Daily' },
+    { key: 'dailyH',   label: 'Daily H' },
+    { key: 'report',   label: 'Daily R' },
+    { key: 'roomType', label: 'Close Outs' },
+    { key: 'coReport', label: 'Close Out Report' }
+  ];
+  var html = '<div class="mo-tab-bar">';
+  moTabs.forEach(function(t) {
+    var active = t.key === _moActiveTab ? ' active' : '';
+    html += '<button class="wv-groupby-btn mo-tab-btn' + active + '" onclick="moSwitchTab(\'' + t.key + '\')">' + t.label + '</button>';
+  });
+  html += '</div>';
+
+  html += '<div class="wb-layout">';
+
+  if (_moActiveTab !== 'dailyB') {
+    // Placeholder for other tabs
+    var tabLabels = {combined:'Daily',dailyH:'Daily H',report:'Daily R',roomType:'Close Outs',coReport:'Close Out Report'};
+    html += '<div style="padding:40px 24px;text-align:center;color:#9ca3af">'
+      + '<span class="material-icons" style="font-size:36px;display:block;margin-bottom:8px">construction</span>'
+      + '<div style="font-size:14px;font-weight:600;color:#6b7280">' + (tabLabels[_moActiveTab]||'') + ' — Monthly View</div>'
+      + '<div style="font-size:12px;margin-top:4px">Coming soon</div></div>';
+    html += '</div>';
+
+    // Skip to accordion wrap
+    var ovLabel = months.length===1 ? months[0].name+' Overview' : months[0].name+' – '+months[months.length-1].name+' Overview';
+    var ovCollapsed = _calAccState['overview'] === false ? false : true;
+    var ovChev = ovCollapsed
+      ? '<span class="material-icons" style="font-size:16px">expand_more</span>'
+      : '<span class="material-icons" style="font-size:16px">expand_less</span>';
+    el.innerHTML = '<div class="cal-summary-wrap" style="background:#fff">'
+      +'<div class="wv-acc-sect' + (ovCollapsed ? '' : ' wv-acc-open') + '" style="border:1px solid #dde1e2;border-radius:0;overflow:hidden">'
+      +'<div class="wv-acc-hdr" data-cal-section="overview" onclick="calAccClick(this)" style="background:#fff;border-bottom:none;border-radius:0">'
+      +'<span class="wv-acc-chev" style="color:#006461">'+ovChev+'</span>'
+      +'<span class="wv-acc-title" style="font-weight:700">'+ovLabel+'</span>'
+      +'</div>'
+      +'<div class="wv-acc-body' + (ovCollapsed ? ' wv-body-hidden' : '') + '" style="padding:0;background:#fff">'
+      +html
+      +'</div></div>'
+      +'</div>';
+    return;
+  }
 
   // ── Header row with month names ─────────────────────────────────────────
   html += '<div class="wb-row wb-hdr-row">';
@@ -2253,6 +2299,12 @@ function renderCalMonthlySummary() {
 // ── Monthly overview toggle handler ──────────────────────────────────────
 window.moToggle = function(id) {
   _calAccState[id] = !_calAccState[id];
+  renderCalMonthlySummary();
+};
+
+// ── Monthly tab switch ──────────────────────────────────────────────────
+window.moSwitchTab = function(tabKey) {
+  _moActiveTab = tabKey;
   renderCalMonthlySummary();
 };
 
