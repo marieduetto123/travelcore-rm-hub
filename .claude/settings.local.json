@@ -47,7 +47,8 @@
       "Bash(./deploy.sh \"add Out-of-Order rooms sub-row in room type data for 7-day view and eye popup\")",
       "Bash(./deploy.sh \"add forecast comparison values to all 3rd-tier sub-rows in 7-day weekly view\")",
       "Bash(./deploy.sh \"calendar_month icon for events, remove accordion border-radius, add padding to close-outs row\")",
-      "Bash(./deploy.sh \"eye popup bars match Daily B: 6px height, 2px radius, gradients, tentative segment in room avail\")"
+      "Bash(./deploy.sh \"eye popup bars match Daily B: 6px height, 2px radius, gradients, tentative segment in room avail\")",
+      "Bash(./deploy.sh \"change calendar event icon to 'today' \\(filled\\) per Figma\")"
     ]
   }
 }
