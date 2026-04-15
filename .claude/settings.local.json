@@ -40,7 +40,8 @@
       "Bash(./deploy.sh \"monthly cells: truncate metric text with ellipsis on overflow\")",
       "Bash(./deploy.sh \"feat: Material UI icons, filled calendar icon, event hover on monthly cells\")",
       "Bash(./deploy.sh \"white accordion bg, no padding, Material Icon chevrons for monthly overview\")",
-      "Bash(./deploy.sh \"replace trend SVG arrows with Material Icons trending_up/trending_down in weekly view\")"
+      "Bash(./deploy.sh \"replace trend SVG arrows with Material Icons trending_up/trending_down in weekly view\")",
+      "Bash(./deploy.sh \"restructure close-outs: move summary to collapsed header, remove summary row, details directly in accordion\")"
     ]
   }
 }

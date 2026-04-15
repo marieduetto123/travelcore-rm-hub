@@ -3470,12 +3470,11 @@ function buildDailyBView(days, month, activeDay) {
   var grp = { g_closeouts:[], g_daily:[], g_more:[], g_meals:[], g_biz:[], g_avail:[], g_torates:[] };
   window._wbGrpData = grp; // expose for Table Settings modal
 
-  // Group: Close Outs Summary
+  // Group: Close Outs (details directly under group — summary shown in collapsed header)
   grp.g_closeouts.push({type:'top', id:'g_closeouts', label:'Close Outs'});
-  grp.g_closeouts.push({type:'sect', id:'co_summary', label:'Summary', parent:'g_closeouts'});
-  grp.g_closeouts.push({type:'sub', id:'co_rooms',    label:'Room Types',          dot:'#6b7280', parent:'co_summary'});
-  grp.g_closeouts.push({type:'sub', id:'co_boards',   label:'Board Types',         dot:'#6b7280', parent:'co_summary'});
-  grp.g_closeouts.push({type:'sub', id:'co_tos',      label:'Tour Operators',      dot:'#6b7280', parent:'co_summary'});
+  grp.g_closeouts.push({type:'sub', id:'co_rooms',    label:'Room Types',          dot:'#6b7280', parent:'g_closeouts'});
+  grp.g_closeouts.push({type:'sub', id:'co_boards',   label:'Board Types',         dot:'#6b7280', parent:'g_closeouts'});
+  grp.g_closeouts.push({type:'sub', id:'co_tos',      label:'Tour Operators',      dot:'#6b7280', parent:'g_closeouts'});
 
   // Group: Daily Metrics
   grp.g_daily.push({type:'top', id:'g_daily', label:'Daily Metrics'});
@@ -3623,8 +3622,8 @@ function buildDailyBView(days, month, activeDay) {
   wbOrder.forEach(function(key) { if (grp[key]) rows = rows.concat(grp[key]); });
 
   // ── Helpers ────────────────────────────────────────────────────────────────
-  var chevUp   = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="18 15 12 9 6 15"/></svg>';
-  var chevDown = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 12 15 18 9"/></svg>';
+  var chevUp   = '<span class="material-icons" style="font-size:14px">expand_less</span>';
+  var chevDown = '<span class="material-icons" style="font-size:14px">expand_more</span>';
 
   // Populate module-level ID list for Open All / Close All
   _wbAllIds = rows.filter(function(r){ return r.type==='top'||r.type==='sect'; }).map(function(r){ return r.id; });
@@ -3777,7 +3776,22 @@ function buildDailyBView(days, month, activeDay) {
       var cellContent = '';
 
       if (row.type === 'top') {
-        cellContent = '';
+        // Close Outs group shows summary in collapsed state
+        if (row.id === 'g_closeouts' && collapsed) {
+          var _coKey3 = d.dm+'-'+d.dd;
+          var _coFull3 = LOCKED_DAYS.has(_coKey3);
+          var _coPart3 = PARTIAL_CLOSURES[_coKey3] || [];
+          var _lockIco3 = '<span class="material-icons" style="font-size:13px;vertical-align:middle;margin-right:3px">';
+          if (_coFull3) {
+            cellContent = '<div style="display:flex;align-items:center;gap:4px;padding:2px 0">'+_lockIco3+'lock</span><span style="font-size:12px;font-weight:600;color:var(--text-primary)">Full Close Out</span></div>';
+          } else if (_coPart3.length > 0) {
+            cellContent = '<div style="display:flex;align-items:center;gap:4px;padding:2px 0">'+_lockIco3+'lock</span><span style="font-size:12px;font-weight:600;color:var(--text-primary)">'+_coPart3.length+' rule'+(_coPart3.length>1?'s':'')+'</span></div>';
+          } else {
+            cellContent = '<div style="display:flex;align-items:center;gap:4px;padding:2px 0"><span class="material-icons" style="font-size:13px;color:#059669;vertical-align:middle;margin-right:3px">check_circle</span><span style="font-size:12px;color:var(--text-primary)">Open</span></div>';
+          }
+        } else {
+          cellContent = '';
+        }
 
       } else if (row.type === 'sect') {
         var cs = '';
@@ -3953,22 +3967,7 @@ function buildDailyBView(days, month, activeDay) {
               + '<span style="font-size:12px;font-family:Lato,sans-serif;color:#6b7280">RO '+d.roPct+'% · '+_roR+'</span>'
               + '</div>'; }
             break;
-          // ── Close Outs Summary ────────────────────────────────────────────
-          case 'co_summary': {
-            var isFullLock = LOCKED_DAYS.has(d.dm+'-'+d.dd);
-            var partialRules = PARTIAL_CLOSURES[d.dm+'-'+d.dd] || [];
-            var lockSvg2 = '<svg viewBox="0 0 10 12" fill="none" stroke="currentColor" stroke-width="1.6" width="11" height="13"><rect x="1" y="5" width="8" height="7" rx="1"/><path d="M3 5V3.5a2 2 0 0 1 4 0V5"/></svg>';
-            var checkSvg2 = '<svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" width="12" height="12"><path d="M2 7l4 4 6-6"/></svg>';
-            var _txtClr = 'var(--text-primary)';
-            if (isFullLock) {
-              cellContent = '<div class="wb-sect-val" style="gap:5px">'+lockSvg2.replace(/currentColor/g,'var(--text-primary)')+'<span style="font-size:13px;font-weight:600;color:'+_txtClr+'">Full Close Out</span></div>';
-            } else if (partialRules.length > 0) {
-              cellContent = '<div class="wb-sect-val" style="gap:5px">'+lockSvg2.replace(/currentColor/g,'var(--text-primary)')+'<span style="font-size:13px;font-weight:600;color:'+_txtClr+'">'+partialRules.length+' rule'+(partialRules.length>1?'s':'')+'</span></div>';
-            } else {
-              cellContent = '<div class="wb-sect-val" style="gap:5px">'+checkSvg2.replace(/currentColor/g,'var(--text-primary)')+'<span style="font-size:13px;color:'+_txtClr+'">Open</span></div>';
-            }
-            break;
-          }
+          // (co_summary removed — summary now shown in collapsed group header)
           // ── Business Mix — stacked using sub-row dot colors ─────────────────
           case 'biz':
             cellContent = wbStackBar([{p:d.toMix,c:'#004948'},{p:d.dirMix,c:'#52d9ce'},{p:d.otaMix,c:'#D97706'},{p:d.otherMix,c:'#9ca3af'}])
@@ -4234,15 +4233,8 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
   function sect(lbl,clr,dot,fn){ _curSK='S'+(_si++); _dbAllRows.push({type:'sect',lbl:lbl,clr:clr||C1,dot:dot,fn:fn,grpKey:_curGK,sectKey:_curSK}); }
   function sub(lbl,dot,isRem,fn){ _dbAllRows.push({type:'sub',lbl:lbl,dot:dot,isRem:isRem||false,fn:fn,grpKey:_curGK,sectKey:_curSK}); }
 
-  // ── Close Outs Summary ─────────────────────────────────────────────────────
+  // ── Close Outs ─────────────────────────────────────────────────────────────
   grp('Close Outs', '#dc2626');
-  sect('Summary', '#dc2626', '#dc2626', function(d){
-    var isFullLock = LOCKED_DAYS.has(d.dm+'-'+d.dd);
-    var partialRules = PARTIAL_CLOSURES[d.dm+'-'+d.dd] || [];
-    if (isFullLock) return '<div style="display:flex;align-items:center;gap:5px"><span class="material-icons" style="font-size:14px;color:#111827">lock</span><span style="font-size:13px;font-weight:600;color:#111827">Full Close Out</span></div>';
-    if (partialRules.length > 0) return '<div style="display:flex;align-items:center;gap:5px"><span class="material-icons" style="font-size:14px;color:#111827">lock</span><span style="font-size:13px;font-weight:600;color:#111827">'+partialRules.length+' rule'+(partialRules.length>1?'s':'')+'</span></div>';
-    return '<div style="display:flex;align-items:center;gap:5px"><span class="material-icons" style="font-size:14px;color:#111827">check</span><span style="font-size:13px;color:#111827">Open</span></div>';
-  });
   var bdMap = {ai:'AI',bb:'B&B',hb:'HB',ro:'RO'};
   sub('Room Types', '#6b7280', false, function(d){
     var k=d.dm+'-'+d.dd;
