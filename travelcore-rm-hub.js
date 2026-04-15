@@ -1645,10 +1645,11 @@ function renderCalendar() {
       const capTipAttr = isLocked ? '' : ` onmouseenter="calShowCapTip(event,${hotel},${hotelRooms},${to},${toRoomsSold},${210-hotelRooms-toRoomsSold})" onmouseleave="calHideCapTip()"`;
       cells += `<div class="${classes}" data-month="${m.month}" data-day="${d}"${capTipAttr}>
         <div class="cell-day-hdr">
-          <span class="day-num">${d}</span>
-          <span class="cell-hdr-right">${!isCompact && hasCalCl && !_isStopSalesActive ? '<span class="cell-teal-dot"></span>' : ''}${isLocked ? lockIcoYellow : (isCompact ? '' : eyeSvg)}</span>
+          <span class="cell-hdr-left"><span class="day-num">${d}</span>${isLocked ? lockIcoYellow : ''}</span>
+          ${!isCompact && !isLocked ? eyeSvg : ''}
         </div>
         ${!isCompact ? `<div class="cell-content">${metricRows}</div>` : ''}
+        ${!isCompact && hasCalCl && !_isStopSalesActive ? '<span class="cell-teal-dot"></span>' : ''}
       </div>`;
     }
 
