@@ -59,7 +59,8 @@
       "Bash(git stash:*)",
       "Bash(git reset:*)",
       "Bash(./deploy.sh \"revert last 4 changes: restore view tabs inline with header controls\")",
-      "Bash(./deploy.sh \"remove monthly view tabs, keep everything else unchanged\")"
+      "Bash(./deploy.sh \"remove monthly view tabs, keep everything else unchanged\")",
+      "Bash(./deploy.sh \"hide Daily, Daily H, Daily R tabs; rename Daily B to Daily\")"
     ]
   }
 }
