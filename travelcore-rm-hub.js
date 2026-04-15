@@ -39,7 +39,8 @@ var _realAgGrid = window.agGrid || null; // capture real AG Grid before shim
     };
   }
   window.agGrid = {
-    Grid: makeGrid
+    Grid: makeGrid,
+    themeQuartz: { withParams: function(p){ return p||{}; } }
   };
 })();
 

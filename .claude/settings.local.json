@@ -4,7 +4,9 @@
       "Bash(python3)",
       "WebFetch(domain:raw.githubusercontent.com)",
       "mcp__mcp-registry__search_mcp_registry",
-      "Bash(./deploy.sh \"Migrate AG Grid from v33.3.0 to v23.2.1 — update CDN, API calls, theme\")"
+      "Bash(./deploy.sh \"Migrate AG Grid from v33.3.0 to v23.2.1 — update CDN, API calls, theme\")",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(./deploy.sh \"Fix AG Grid v23 migration: restore themeQuartz shim, bump JS cache version\")"
     ]
   }
 }
