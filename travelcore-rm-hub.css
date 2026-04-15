@@ -865,7 +865,10 @@ body.dark .cal-nav-btn:hover { background: rgba(196,255,69,0.07); border-color: 
 .cell-event-ico {
   position: absolute; bottom: 4px; right: 4px;
   display: flex; align-items: center; justify-content: center;
+  pointer-events: auto; cursor: pointer; z-index: 2;
+  transition: opacity .12s;
 }
+.cell-event-ico:hover { opacity: .75; }
 
 /* Legacy compat — hide old elements */
 .cell-occ-row { display: none; }

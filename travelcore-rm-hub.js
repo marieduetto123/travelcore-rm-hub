@@ -1569,10 +1569,10 @@ function renderCalendar() {
         totalGuests:  Math.round(hotel * HOTEL_CAPACITY / 100 * (cellAvgAdults + cellAvgChildren)),
       };
       // ── Icons (Material: apartment = hotel, confirmation_number = TO) ──
-      const icoHotel = `<svg class="cell-m-ico" viewBox="0 0 24 24" fill="#b0b5ba" width="10" height="10"><path d="M17 11V3H7v4H3v14h8v-4h2v4h8V11h-4zm-8 6H7v-2h2v2zm0-4H7v-2h2v2zm0-4H7V7h2v2zm4 4h-2v-2h2v2zm0-4h-2V7h2v2zm4 8h-2v-2h2v2zm0-4h-2v-2h2v2z"/></svg>`;
-      const icoTO    = `<svg class="cell-m-ico" viewBox="0 0 24 24" fill="#b0b5ba" width="10" height="10"><path d="M22 10V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v4c1.1 0 2 .9 2 2s-.9 2-2 2v4c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-4c-1.1 0-2-.9-2-2s.9-2 2-2zm-9 5.5h-2v-2h2v2zm0-3.5h-2v-2h2v2zm0-3.5h-2v-2h2v2z"/></svg>`;
-      const lockIcoYellow = `<svg class="cell-lock-ico" viewBox="0 0 24 24" fill="#FF9800" width="20" height="20"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zM9 8V6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9z"/></svg>`;
-      const eyeSvg  = `<button class="cell-eye" aria-label="Quick view" data-month="${m.month}" data-day="${d}"><svg viewBox="0 0 14 10" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1 5s2.5-4 6-4 6 4 6 4-2.5 4-6 4-6-4-6-4z"/><circle cx="7" cy="5" r="1.6"/></svg></button>`;
+      const icoHotel = `<span class="material-icons cell-m-ico" style="font-size:10px;color:#b0b5ba">apartment</span>`;
+      const icoTO    = `<span class="material-icons cell-m-ico" style="font-size:10px;color:#b0b5ba">confirmation_number</span>`;
+      const lockIcoYellow = `<span class="material-icons cell-lock-ico" style="font-size:14px;color:#FF9800">lock</span>`;
+      const eyeSvg  = `<button class="cell-eye" aria-label="Quick view" data-month="${m.month}" data-day="${d}"><span class="material-icons" style="font-size:14px">visibility</span></button>`;
 
       // ── Build metric rows from Cell Metrics selection ──
       const isCompact = (calDisplayView === 6 || calDisplayView === 12);
@@ -1666,7 +1666,7 @@ function renderCalendar() {
           ${!isCompact && !isLocked ? eyeSvg : ''}
         </div>
         ${!isCompact ? `<div class="cell-content">${metricRows}</div>` : ''}
-        ${!isCompact && hasCalCl && !_isStopSalesActive ? '<span class="cell-event-ico"><svg viewBox="0 0 16 16" fill="#006461" width="12" height="12"><rect x="2" y="3" width="12" height="11" rx="1.5" fill="none" stroke="#006461" stroke-width="1.3"/><line x1="2" y1="6.5" x2="14" y2="6.5" stroke="#006461" stroke-width="1.3"/><line x1="5.5" y1="1.5" x2="5.5" y2="4.5" stroke="#006461" stroke-width="1.3" stroke-linecap="round"/><line x1="10.5" y1="1.5" x2="10.5" y2="4.5" stroke="#006461" stroke-width="1.3" stroke-linecap="round"/></svg></span>' : ''}
+        ${!isCompact && hasCalCl && !_isStopSalesActive ? '<span class="cell-event-ico cell-event-icon" onmouseenter="calShowEventTip(event,\''+m.month+'-'+d+'\')" onmouseleave="calHideEventTip()"><span class="material-icons" style="font-size:12px;color:#006461">event</span></span>' : ''}
       </div>`;
     }
 
@@ -1706,7 +1706,7 @@ function renderCalendar() {
       <div class="cal-month">
         <div class="cal-month-hdr">
           <span class="cal-month-name">${m.name}</span>
-          ${!(typeof window.hmIsStopSales === 'function' && window.hmIsStopSales()) ? `<span class="cal-lock-badge"><svg viewBox="0 0 10 12" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="5" width="8" height="7" rx="1"/><path d="M3 5V3.5a2 2 0 0 1 4 0V5"/></svg>${m.lockedCount}</span>` : ''}
+          ${!(typeof window.hmIsStopSales === 'function' && window.hmIsStopSales()) ? `<span class="cal-lock-badge"><span class="material-icons" style="font-size:12px">lock</span>${m.lockedCount}</span>` : ''}
         </div>
         <div class="cal-dow">${DOW.map(d => `<span>${d}</span>`).join('')}</div>
         <div class="cal-days">${cells}</div>
@@ -2284,7 +2284,7 @@ function applyCalSelection(hoverMonth, hoverDay) {
 }
 
 const svgCal = `<svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" width="12" height="12" style="flex-shrink:0"><rect x="1" y="2" width="12" height="11" rx="1"/><line x1="4" y1="1" x2="4" y2="3"/><line x1="10" y1="1" x2="10" y2="3"/><line x1="1" y1="6" x2="13" y2="6"/></svg>`;
-const svgChevronDown = `<svg viewBox="0 0 10 6" fill="none" stroke="currentColor" stroke-width="1.5" width="10" height="6" style="flex-shrink:0;margin-left:2px"><path d="M1 1l4 4 4-4"/></svg>`;
+const svgChevronDown = `<span class="material-icons" style="font-size:14px;flex-shrink:0;margin-left:2px">expand_more</span>`;
 
 function clearCalSelection() {
   calSelStart = null; calSelEnd = null; calSelPicking = false;
@@ -3752,7 +3752,7 @@ function buildDailyBView(days, month, activeDay) {
           + '<span class="wb-hdr-date">' + dv.day + '/' + dv.month + '</span>'
           + (dbaStr ? '<span style="font-size:10px;background:rgba(255,255,255,0.2);border-radius:3px;padding:0 4px;color:#fff;white-space:nowrap">'+dbaStr+'</span>' : '')
           + '<span class="wb-hdr-sel-icon">'
-          + '<svg viewBox="0 0 12 14" fill="none" stroke="'+_lockColor+'" stroke-width="'+_lockWidth+'" width="11" height="13"><rect x="1" y="5" width="10" height="9" rx="1"/><path d="M3.5 5V3a2.5 2.5 0 0 1 5 0v2"/></svg>'
+          + '<span class="material-icons" style="font-size:13px;color:'+_lockColor+'">lock</span>'
           + '</span>'
           + '</div>';
   });
@@ -4254,9 +4254,9 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
   sect('Summary', '#dc2626', '#dc2626', function(d){
     var isFullLock = LOCKED_DAYS.has(d.dm+'-'+d.dd);
     var partialRules = PARTIAL_CLOSURES[d.dm+'-'+d.dd] || [];
-    if (isFullLock) return '<div style="display:flex;align-items:center;gap:5px"><svg viewBox="0 0 10 12" fill="none" stroke="#111827" stroke-width="1.6" width="11" height="13"><rect x="1" y="5" width="8" height="7" rx="1"/><path d="M3 5V3.5a2 2 0 0 1 4 0V5"/></svg><span style="font-size:13px;font-weight:600;color:#111827">Full Close Out</span></div>';
-    if (partialRules.length > 0) return '<div style="display:flex;align-items:center;gap:5px"><svg viewBox="0 0 10 12" fill="none" stroke="#111827" stroke-width="1.6" width="11" height="13"><rect x="1" y="5" width="8" height="7" rx="1"/><path d="M3 5V3.5a2 2 0 0 1 4 0V5"/></svg><span style="font-size:13px;font-weight:600;color:#111827">'+partialRules.length+' rule'+(partialRules.length>1?'s':'')+'</span></div>';
-    return '<div style="display:flex;align-items:center;gap:5px"><svg viewBox="0 0 14 14" fill="none" stroke="#111827" stroke-width="1.6" width="12" height="12"><path d="M2 7l4 4 6-6"/></svg><span style="font-size:13px;color:#111827">Open</span></div>';
+    if (isFullLock) return '<div style="display:flex;align-items:center;gap:5px"><span class="material-icons" style="font-size:14px;color:#111827">lock</span><span style="font-size:13px;font-weight:600;color:#111827">Full Close Out</span></div>';
+    if (partialRules.length > 0) return '<div style="display:flex;align-items:center;gap:5px"><span class="material-icons" style="font-size:14px;color:#111827">lock</span><span style="font-size:13px;font-weight:600;color:#111827">'+partialRules.length+' rule'+(partialRules.length>1?'s':'')+'</span></div>';
+    return '<div style="display:flex;align-items:center;gap:5px"><span class="material-icons" style="font-size:14px;color:#111827">check</span><span style="font-size:13px;color:#111827">Open</span></div>';
   });
   var bdMap = {ai:'AI',bb:'B&B',hb:'HB',ro:'RO'};
   sub('Room Types', '#6b7280', false, function(d){
@@ -4469,7 +4469,7 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
     var iconWrap=document.createElement('span');
     this._iconEl=iconWrap;
     iconWrap.style.cssText='display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;width:20px;height:20px;border-radius:5px;background:'+clr+'22;color:'+clr+';box-shadow:0 1px 3px '+clr+'33;transform:rotate('+(isC?'-90deg':'0deg')+');transition:transform .2s ease;';
-    iconWrap.innerHTML='<svg viewBox="0 0 10 6" width="9" height="9" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1l4 4 4-4"/></svg>';
+    iconWrap.innerHTML='<span class="material-icons" style="font-size:12px">expand_more</span>';
     var label=document.createElement('span');
     label.style.cssText='font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.65px;color:#1e2d3a;';
     label.textContent=r._lbl;
@@ -4508,7 +4508,7 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
         var iw=document.createElement('span');
         var isC=!!_wbCollapsed[r._sectKey];
         iw.style.cssText='display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;width:16px;height:16px;border-radius:4px;background:'+r._clr+'18;color:'+r._clr+';transform:rotate('+(isC?'-90deg':'0deg')+');transition:transform .2s ease;';
-        iw.innerHTML='<svg viewBox="0 0 10 6" width="8" height="8" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1l4 4 4-4"/></svg>';
+        iw.innerHTML='<span class="material-icons" style="font-size:11px">expand_more</span>';
         var lbl=document.createElement('span');
         lbl.style.cssText='font-size:14px;font-weight:400;color:#1c1c1c;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:Lato,sans-serif;';
         lbl.textContent=r._lbl;
@@ -5300,7 +5300,7 @@ function initDailyHGrid(days, activeMonth, activeDay, containerEl) {
       + 'box-shadow:0 1px 3px ' + clr + '33;'
       + 'transform:rotate(' + (isCollapsed ? '-90deg' : '0deg') + ');'
       + 'transition:transform .2s ease;';
-    iconWrap.innerHTML = '<svg viewBox="0 0 10 6" width="9" height="9" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1l4 4 4-4"/></svg>';
+    iconWrap.innerHTML = '<span class="material-icons" style="font-size:12px">expand_more</span>';
 
     var label = document.createElement('span');
     label.style.cssText =
@@ -5353,7 +5353,7 @@ function initDailyHGrid(days, activeMonth, activeDay, containerEl) {
           + 'background:' + clr + '18;color:' + clr + ';'
           + 'transform:rotate(' + (isCollapsed ? '-90deg' : '0deg') + ');'
           + 'transition:transform .2s ease;';
-        iconWrap.innerHTML = '<svg viewBox="0 0 10 6" width="8" height="8" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1l4 4 4-4"/></svg>';
+        iconWrap.innerHTML = '<span class="material-icons" style="font-size:11px">expand_more</span>';
 
         var label = document.createElement('span');
         label.style.cssText = 'font-size:10px;font-weight:600;color:#374151;letter-spacing:.15px';
@@ -6736,7 +6736,7 @@ function buildWeekGrid(month, weekStart, activeDay) {
   const summaryPanel = '<div class="wv-summary-panel" style="padding:0">'
     +'<div id="wvSummaryToggle" onclick="wvToggleSummary(this)" style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 16px;cursor:pointer;user-select:none;">'
     +'<span style="font-size:14px;font-weight:700;color:#111827;letter-spacing:0">7 Day Metrics Summary</span>'
-    +'<svg id="wvSummaryChev" viewBox="0 0 10 6" fill="none" stroke="#6b7280" stroke-width="2" width="10" height="6" style="flex-shrink:0;transition:transform .2s"><path d="M1 1l4 4 4-4"/></svg>'
+    +'<span class="material-icons" id="wvSummaryChev" style="font-size:14px;color:#6b7280;flex-shrink:0;transition:transform .2s">expand_more</span>'
     +'</div>'
     +'<div id="wvSummaryDetail" style="display:none;padding:10px 12px">'
     +'<div style="display:grid;grid-template-columns:2fr 2fr 1fr 1fr 1fr;gap:8px;align-items:start">'
@@ -8043,7 +8043,7 @@ document.querySelector('.btn-reopen')?.addEventListener('click', () => {
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
           </button>
           <button class="dp-month-nav-btn" data-act="last">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="13 17 18 12 13 7"/><line x1="6" y1="12" x2="18" y2="12"/></svg>
+            <span class="material-icons" style="font-size:20px">arrow_forward</span>
           </button>`;
       }
       navRow.querySelectorAll('[data-act]').forEach(btn => {
@@ -12590,7 +12590,7 @@ setTimeout(function() {
     window.calHideCapTip();
 
     var t = getTip();
-    var calSvg = '<span style="display:inline-block;width:10px;height:10px;border-radius:1px;background:#006461;vertical-align:middle;margin-right:2px"></span>';
+    var calSvg = '<span class="material-icons" style="font-size:14px;color:#006461;vertical-align:middle;margin-right:2px">event</span>';
 
     t.innerHTML = '<div class="cal-event-tooltip-title">' + calSvg + ' Events</div>'
       + events.map(function(ev) {
@@ -12601,7 +12601,9 @@ setTimeout(function() {
         }).join('');
 
     // Position below the icon
-    var rect = e.target.closest('.cell-event-icon').getBoundingClientRect();
+    var _evEl = e.target.closest('.cell-event-icon') || e.target.closest('.cell-event-ico');
+    if (!_evEl) return;
+    var rect = _evEl.getBoundingClientRect();
     t.style.display = 'block';
     var tW = t.offsetWidth || 180;
     var tH = t.offsetHeight || 80;
@@ -12653,7 +12655,7 @@ window.calShowCapTip = function(e, hotel, hotelRooms, to, toRooms, avail, month,
   var filtToRooms = Math.round(filteredCap * to / 100);
   var filtAvail = Math.max(0, filteredCap - filtHotelRooms);
 
-  var infoIco = '<svg viewBox="0 0 24 24" fill="#00298C" width="20" height="20" style="flex-shrink:0"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>';
+  var infoIco = '<span class="material-icons" style="font-size:20px;color:#00298C;flex-shrink:0">info</span>';
   var html = '';
   if (isFiltered) {
     html += '<div style="display:flex;align-items:center;gap:4px;border:1px solid #00298C;border-radius:4px;padding:6px 4px;margin-bottom:8px">'
