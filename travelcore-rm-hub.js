@@ -12653,14 +12653,17 @@ window.calShowCapTip = function(e, hotel, hotelRooms, to, toRooms, avail, month,
   var filtToRooms = Math.round(filteredCap * to / 100);
   var filtAvail = Math.max(0, filteredCap - filtHotelRooms);
 
+  var infoIco = '<svg viewBox="0 0 24 24" fill="#00298C" width="20" height="20" style="flex-shrink:0"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>';
   var html = '';
   if (isFiltered) {
-    html += '<div style="font-size:10px;font-weight:600;color:#006461;background:#e6f7f6;padding:3px 6px;border-radius:3px;margin-bottom:6px">'
-      + '📋 Filtered: ' + rtLabel + ' (' + filteredCap + ' rooms)</div>';
+    html += '<div style="display:flex;align-items:center;gap:4px;border:1px solid #00298C;border-radius:4px;padding:6px 4px;margin-bottom:8px">'
+      + infoIco
+      + '<span style="font-size:14px;font-family:Lato,sans-serif;color:#00298C;line-height:1.2">Filtered: ' + rtLabel + ' (' + filteredCap + ' rooms)</span>'
+      + '</div>';
   }
-  html += '<div style="font-size:12px;font-weight:600;color:#1c1c1c;margin-bottom:2px">Hotel: ' + hotel + '% (' + filtHotelRooms + ' rooms)</div>'
-    + '<div style="font-size:12px;color:#8C7843;margin-bottom:2px">TO: ' + to + '% (' + filtToRooms + ' rooms)</div>'
-    + '<div style="font-size:12px;font-weight:600;color:' + (filtAvail < 10 ? '#dc2626' : '#16a34a') + '">'
+  html += '<div style="font-size:14px;font-weight:700;color:#1c1c1c;margin-bottom:3px;font-family:Lato,sans-serif">Hotel: ' + hotel + '% (' + filtHotelRooms + ' rooms)</div>'
+    + '<div style="font-size:14px;color:#8C7843;margin-bottom:3px;font-family:Lato,sans-serif">&nbsp;&nbsp;TO: ' + to + '% (' + filtToRooms + ' rooms)</div>'
+    + '<div style="font-size:14px;font-weight:700;color:' + (filtAvail < 10 ? '#dc2626' : '#16a34a') + ';font-family:Lato,sans-serif">'
     + filtAvail + ' rooms available' + (isFiltered ? ' (' + rtLabel + ')' : '') + '</div>';
 
   tip.innerHTML = html;
