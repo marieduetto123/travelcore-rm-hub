@@ -51,7 +51,14 @@
       "Bash(./deploy.sh \"change calendar event icon to 'today' \\(filled\\) per Figma\")",
       "Bash(./deploy.sh \"purple #967EF3, popup 12px fonts, secondary btn Figma style, SOLD OUT→0 available green, overview accordion closed default, increase popup height\")",
       "Bash(./deploy.sh \"add tabs to monthly overview: Daily B, Daily, Daily H, Daily R, Close Outs, Close Out Report\")",
-      "Bash(./deploy.sh \"move monthly tabs above calendar grid, add Monthly as first tab\")"
+      "Bash(./deploy.sh \"move monthly tabs above calendar grid, add Monthly as first tab\")",
+      "Bash(./deploy.sh \"simplify monthly tabs: Monthly, Daily, Close Outs, Close Out Report\")",
+      "Bash(./deploy.sh \"remove monthly view tabs, keep month shuffler in header\")",
+      "Bash(./deploy.sh \"remove duplicate month switcher from filter bar, keep only header shuffler, responsive wrap\")",
+      "Bash(git revert:*)",
+      "Bash(git stash:*)",
+      "Bash(git reset:*)",
+      "Bash(./deploy.sh \"revert last 4 changes: restore view tabs inline with header controls\")"
     ]
   }
 }
