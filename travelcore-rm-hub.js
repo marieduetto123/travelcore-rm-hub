@@ -3171,6 +3171,75 @@ function buildCoReportView(days) {
 }
 
 
+// ── Close-Out Heat Map by Room Type ──────────────────────────────────────────
+function buildCoHeatmap(days) {
+  var RT = ['Standard','Superior','Deluxe','Suite','Jr. Suite','Family'];
+  var DOW_S = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  var MNAMES_S = ['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var lockSvg = '<svg viewBox="0 0 10 12" fill="none" stroke="currentColor" stroke-width="1.4" width="9" height="11"><rect x="1" y="5" width="8" height="7" rx="1"/><path d="M3 5V3.5a2 2 0 0 1 4 0V5"/></svg>';
+
+  // For each day+room type, determine close-out status:
+  // 'full' = full day locked, 'closed' = room type specifically closed, 'partial' = day has closures but not this RT, 'open' = no closures
+  function getStatus(dm, dd, rt) {
+    var key = dm + '-' + dd;
+    if (LOCKED_DAYS.has(key)) return 'full';
+    var rules = PARTIAL_CLOSURES[key] || [];
+    if (rules.length === 0) return 'open';
+    // Check if any rule targets this room type (or all room types)
+    for (var i = 0; i < rules.length; i++) {
+      var r = rules[i];
+      if (r.roomTypes.length === 0) return 'closed'; // applies to all room types
+      if (r.roomTypes.indexOf(rt) >= 0) return 'closed';
+    }
+    return 'partial'; // day has closures but not for this room type
+  }
+
+  var cellClasses = { full:'co-hm-full', closed:'co-hm-closed', partial:'co-hm-partial', open:'co-hm-open' };
+  var cellTitles  = { full:'Full day closed', closed:'Closed out', partial:'Other closures (open for this type)', open:'Open' };
+
+  // Build header row (days)
+  var hdrCells = '<div class="co-hm-corner">Room Type</div>' + days.map(function(dv) {
+    var dt = new Date(2026, dv.month - 1, dv.day);
+    var isToday = dv.month === 3 && dv.day === 9;
+    return '<div class="co-hm-hdr' + (isToday ? ' co-hm-today' : '') + '">'
+      + '<span class="co-hm-dow">' + DOW_S[dt.getDay()] + '</span>'
+      + '<span class="co-hm-date">' + MNAMES_S[dv.month] + ' ' + dv.day + '</span>'
+      + '</div>';
+  }).join('');
+
+  // Build rows (one per room type)
+  var bodyRows = RT.map(function(rt) {
+    var rtClr = RT_NAME_COLORS[rt] || '#6b7280';
+    var cells = days.map(function(dv) {
+      var status = getStatus(dv.month, dv.day, rt);
+      var icon = status === 'full' || status === 'closed' ? lockSvg : '';
+      return '<div class="co-hm-cell ' + cellClasses[status] + '" title="' + rt + ' — ' + MNAMES_S[dv.month] + ' ' + dv.day + ': ' + cellTitles[status] + '">'
+        + icon
+        + '</div>';
+    }).join('');
+    return '<div class="co-hm-row">'
+      + '<div class="co-hm-label"><span class="co-hm-dot" style="background:' + rtClr + '"></span>' + rt + '</div>'
+      + cells
+      + '</div>';
+  }).join('');
+
+  // Legend
+  var legend = '<div class="co-hm-legend">'
+    + '<span class="co-hm-leg"><span class="co-hm-leg-sw co-hm-full"></span>Full Close Out</span>'
+    + '<span class="co-hm-leg"><span class="co-hm-leg-sw co-hm-closed"></span>Room Type Closed</span>'
+    + '<span class="co-hm-leg"><span class="co-hm-leg-sw co-hm-partial"></span>Other Closures</span>'
+    + '<span class="co-hm-leg"><span class="co-hm-leg-sw co-hm-open"></span>Open</span>'
+    + '</div>';
+
+  return '<div class="co-hm-wrap">'
+    + '<div class="co-hm-title">' + lockSvg + ' Close Out Heat Map — Room Types</div>'
+    + '<div class="co-hm-grid" style="grid-template-columns:140px repeat(' + days.length + ',1fr)">'
+    + hdrCells + bodyRows
+    + '</div>'
+    + legend
+    + '</div>';
+}
+
 // ── Daily B View ─────────────────────────────────────────────────────────────
 var _wbCollapsed    = {};   // shared collapse state (used by both HTML fallback and AG Grid)
 var _wbAllIds       = [];   // all toggleable row IDs in Daily B (populated on each render)
@@ -6589,6 +6658,12 @@ function buildWeekGrid(month, weekStart, activeDay) {
 
   var summaryContainer = document.getElementById('wvSummaryContainer');
   if (summaryContainer) summaryContainer.innerHTML = summaryPanel;
+
+  // Render close-out heat map when Close Outs tab is active
+  var coHeatmapContainer = document.getElementById('coHeatmapContainer');
+  if (coHeatmapContainer) {
+    coHeatmapContainer.innerHTML = wvGroupBy === 'roomType' ? buildCoHeatmap(days) : '';
+  }
 
   grid.innerHTML = days.map(({ month: dm, day: dd }) => {
     const isToday  = dm === 3 && dd === 9;

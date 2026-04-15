@@ -6879,6 +6879,73 @@ body.dark .co-meta-text strong { color: #d1fae5; }
 body.dark .co-meta-avatar { background: #0e7b80; }
 
 
+/* ══ Close Out Heat Map by Room Type ════════════════════════════════════════ */
+.co-hm-wrap {
+  background: var(--surface-1, #fff); border: 1px solid var(--border, #e5e7eb);
+  border-radius: 8px; padding: 14px 16px; margin: 0 12px 12px;
+}
+.co-hm-title {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 13px; font-weight: 700; color: var(--text-primary, #111827);
+  margin-bottom: 12px;
+}
+.co-hm-title svg { color: #dc2626; }
+.co-hm-grid {
+  display: grid; gap: 2px;
+}
+.co-hm-corner {
+  display: flex; align-items: center; justify-content: flex-end;
+  font-size: 10px; font-weight: 600; color: #6b7280;
+  text-transform: uppercase; letter-spacing: .3px;
+  padding: 0 8px 4px 0;
+}
+.co-hm-hdr {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 4px 2px; font-size: 10px; font-weight: 600; color: #374151;
+  background: #f9fafb; border-radius: 4px;
+}
+.co-hm-hdr.co-hm-today { background: #d7f7ed; color: #004948; }
+.co-hm-dow { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .3px; }
+.co-hm-date { font-size: 10px; font-weight: 500; color: #6b7280; }
+.co-hm-today .co-hm-date { color: #004948; }
+.co-hm-row { display: contents; }
+.co-hm-label {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 500; color: #374151;
+  padding: 6px 8px 6px 0; white-space: nowrap;
+}
+.co-hm-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.co-hm-cell {
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 4px; min-height: 32px;
+  cursor: default; transition: transform .1s;
+}
+.co-hm-cell:hover { transform: scale(1.08); z-index: 1; }
+.co-hm-cell svg { opacity: .7; }
+.co-hm-open    { background: #f0fdf4; }
+.co-hm-partial { background: #fefce8; border: 1px solid #fde68a; }
+.co-hm-closed  { background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; }
+.co-hm-full    { background: #dc2626; color: #fff; }
+.co-hm-full svg { stroke: #fff; opacity: 1; }
+.co-hm-legend {
+  display: flex; gap: 14px; margin-top: 10px; padding-top: 8px;
+  border-top: 1px solid #f3f4f6;
+}
+.co-hm-leg {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 10px; font-weight: 500; color: #6b7280;
+}
+.co-hm-leg-sw {
+  width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0;
+}
+body.dark .co-hm-wrap { background: var(--surface-1); border-color: var(--border); }
+body.dark .co-hm-hdr { background: #1a2a2a; color: #d1d5db; }
+body.dark .co-hm-label { color: #d1d5db; }
+body.dark .co-hm-open { background: #0a1f0a; }
+body.dark .co-hm-partial { background: #1f1a0a; border-color: #78716c; }
+body.dark .co-hm-closed { background: #2a0a0a; color: #fca5a5; border-color: #7f1d1d; }
+body.dark .co-hm-full { background: #991b1b; color: #fee2e2; }
+
 /* ══ Close Out Report — grouped-by-day card layout ══════════════════════════ */
 .co-rpt-list {
   display: flex; flex-direction: column; gap: 8px;
