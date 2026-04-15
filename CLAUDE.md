@@ -20,7 +20,7 @@ Or run `./deploy.sh "commit message"` which does all four steps.
 - `travelcore-rm-hub.js`   — all logic (AG Grid, charts, data)
 
 ## Key implementation notes
-- AG Grid Community v23.2.1 (`_realAgGrid`) — uses v23 API: `new agGrid.Grid(el, opts)`, `opts.api.setRowData()`, theme `ag-theme-alpine`
+- AG Grid Community v33.3.0 (`_realAgGrid`)
 - Daily H: flat-row accordion (fullWidthRow for sections, custom cellRenderer for parents)
   - `_dhCollapsed` persists state between grid rebuilds
   - `dhSetAll(collapse)` — Open All / Close All

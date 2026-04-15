@@ -1,7 +1,7 @@
 var _realAgGrid = window.agGrid || null; // capture real AG Grid before shim
 (function(){
   function makeGrid(el, opts){
-    if(!el) return;
+    if(!el) return {};
     var cols = opts.columnDefs || [];
     var rows = opts.rowData || [];
     function render(rowData){
@@ -26,8 +26,8 @@ var _realAgGrid = window.agGrid || null; // capture real AG Grid before shim
       el.innerHTML=s;
     }
     render(rows);
-    opts.api = {
-      setRowData:function(v){render(v);},
+    return {
+      setGridOption:function(k,v){if(k==='rowData')render(v);},
       setColumnsVisible:function(){},
       setQuickFilter:function(q){
         var filtered=rows.filter(function(r){
@@ -39,7 +39,7 @@ var _realAgGrid = window.agGrid || null; // capture real AG Grid before shim
     };
   }
   window.agGrid = {
-    Grid: makeGrid,
+    createGrid: makeGrid,
     themeQuartz: { withParams: function(p){ return p||{}; } }
   };
 })();
@@ -103,17 +103,16 @@ function initTargetsGrid() {
       cellRenderer: p => progressBarHtml(p.value) },
   ];
 
-  var _targetsOpts = {
+  _targetsGridApi = agGrid.createGrid(el, {
+    theme: sharedTheme,
     columnDefs: colDefs,
     rowData: TARGETS_DATA,
     rowHeight: 48,
     headerHeight: 42,
     suppressMovableColumns: true,
-    suppressFocusAfterRefresh: true,
+    suppressCellFocus: true,
     defaultColDef: { sortable: true, resizable: true, floatingFilter: false, minWidth: 200 },
-  };
-  new agGrid.Grid(el, _targetsOpts);
-  _targetsGridApi = _targetsOpts.api;
+  });
 }
 
 /* ─── ROOM TYPE DATA ─── */
@@ -166,14 +165,15 @@ function buildRoomTypeTable() {
       cellRenderer: p => `<span class="status-badge ${p.data.winner}">${p.value}</span>` },
   ];
 
-  new agGrid.Grid(el, {
+  agGrid.createGrid(el, {
+    theme: sharedTheme,
     columnDefs: colDefs,
     rowData: rowData,
     pinnedBottomRowData: [TOTAL_ROW_formatted],
     rowHeight: 42,
     headerHeight: 42,
     suppressMovableColumns: true,
-    suppressFocusAfterRefresh: true,
+    suppressCellFocus: true,
     defaultColDef: { sortable: true, resizable: true, floatingFilter: false, minWidth: 200 },
   });
 }
@@ -231,7 +231,7 @@ function updateTargetsTable() {
     return { category: r.cat, sub: r.sub, forecast: r.fc, current: r.cur, progress: p };
   });
 
-  _targetsGridApi.setRowData(newData);
+  _targetsGridApi.setGridOption('rowData', newData);
 }
 
 // Chart data per metric
@@ -3170,11 +3170,11 @@ function _getDBVisibleRows() {
 function _toggleDBGrp(grpKey) {
   _wbCollapsed[grpKey] = !_wbCollapsed[grpKey];
   _dbGrpRenderrs.forEach(function(gr){ if (gr._grpKey===grpKey) gr._syncChev(); });
-  if (_dailyBGridApi) _dailyBGridApi.setRowData(_getDBVisibleRows());
+  if (_dailyBGridApi) _dailyBGridApi.setGridOption('rowData', _getDBVisibleRows());
 }
 function _toggleDBSect(sectKey) {
   _wbCollapsed[sectKey] = !_wbCollapsed[sectKey];
-  if (_dailyBGridApi) _dailyBGridApi.setRowData(_getDBVisibleRows());
+  if (_dailyBGridApi) _dailyBGridApi.setGridOption('rowData', _getDBVisibleRows());
 }
 
 function wbToggle(id) {
@@ -3925,7 +3925,7 @@ function buildDailyBView(days, month, activeDay) {
 /* ── Daily B AG Grid ─────────────────────────────────────────────────────── */
 function initDailyBGrid(days, month, activeDay, containerEl) {
   var AG = _realAgGrid;
-  if (!AG || typeof AG.Grid !== 'function') {
+  if (!AG || typeof AG.createGrid !== 'function') {
     containerEl.style.cssText = 'display:flex;flex-direction:column;overflow-x:auto;';
     containerEl.innerHTML = buildDailyBView(days, month, activeDay);
     return;
@@ -3935,7 +3935,7 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
   containerEl.style.cssText = '';
   containerEl.style.padding = '0';
   var wrapper = document.createElement('div');
-  wrapper.className = 'ag-theme-alpine daily-b-ag-wrap';
+  wrapper.className = 'ag-theme-quartz daily-b-ag-wrap';
   containerEl.appendChild(wrapper);
 
   var DOW_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
@@ -4354,14 +4354,14 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
   });
 
   // ── Create grid ───────────────────────────────────────────────────────────
-  var _dailyBOpts = {
+  _dailyBGridApi = AG.createGrid(wrapper, {
     columnDefs: colDefs,
     rowData: _getDBVisibleRows(),
     headerHeight: 50,
     domLayout: 'autoHeight',
     suppressHorizontalScroll: false,
     alwaysShowHorizontalScroll: true,
-    suppressFocusAfterRefresh: true,
+    suppressCellFocus: true,
     suppressRowClickSelection: true,
     getRowHeight: function(p) {
       if (p.data._type==='grp')  return 40;
@@ -4377,9 +4377,7 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
       if (t==='sect') return {background:'#fff'};
       return {background:p.data._isRem?'#fff8f5':'#fff'};
     },
-  };
-  new AG.Grid(wrapper, _dailyBOpts);
-  _dailyBGridApi = _dailyBOpts.api;
+  });
 }
 
 // ── Daily H View — horizontal layout with sticky label column ─────────────────
@@ -4801,11 +4799,11 @@ function _getDHVisibleRowData() {
 }
 function _toggleDHSection(secKey) {
   _dhCollapsed[secKey] = !_dhCollapsed[secKey];
-  if (_dailyHGridApi) _dailyHGridApi.setRowData(_getDHVisibleRowData());
+  if (_dailyHGridApi) _dailyHGridApi.setGridOption('rowData', _getDHVisibleRowData());
 }
 function _toggleDHPar(parKey) {
   _dhCollapsed[parKey] = !_dhCollapsed[parKey];
-  if (_dailyHGridApi) _dailyHGridApi.setRowData(_getDHVisibleRowData());
+  if (_dailyHGridApi) _dailyHGridApi.setGridOption('rowData', _getDHVisibleRowData());
 }
 function dhSetAll(collapse) {
   // Set all known rows
@@ -4823,13 +4821,13 @@ function dhSetAll(collapse) {
     var rot = _dhCollapsed[pc._parKey] ? '-90deg' : '0deg';
     if (pc._iconEl) pc._iconEl.style.transform = 'rotate(' + rot + ')';
   });
-  if (_dailyHGridApi) _dailyHGridApi.setRowData(_getDHVisibleRowData());
+  if (_dailyHGridApi) _dailyHGridApi.setGridOption('rowData', _getDHVisibleRowData());
 }
 
 function initDailyHGrid(days, activeMonth, activeDay, containerEl) {
   _dhLastInitArgs = { days: days, month: activeMonth, day: activeDay, container: containerEl };
   var AG = _realAgGrid;
-  if (!AG || typeof AG.Grid !== 'function') {
+  if (!AG || typeof AG.createGrid !== 'function') {
     containerEl.innerHTML = buildDailyHView(days, activeMonth, activeDay);
     return;
   }
@@ -4839,7 +4837,7 @@ function initDailyHGrid(days, activeMonth, activeDay, containerEl) {
   containerEl.style.padding = '0';
 
   var wrapper = document.createElement('div');
-  wrapper.className = 'ag-theme-alpine daily-h-ag-wrap';
+  wrapper.className = 'ag-theme-quartz daily-h-ag-wrap';
   containerEl.appendChild(wrapper);
 
   var DOW_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
@@ -5230,14 +5228,14 @@ function initDailyHGrid(days, activeMonth, activeDay, containerEl) {
   var rowData = getDHVisibleRowData();
 
   // ── Create grid ───────────────────────────────────────────────────────────
-  var _dailyHOpts = {
+  _dailyHGridApi = AG.createGrid(wrapper, {
     columnDefs: colDefs,
     rowData: rowData,
     headerHeight: 54,
     domLayout: 'autoHeight',
     suppressHorizontalScroll: false,
     alwaysShowHorizontalScroll: true,
-    suppressFocusAfterRefresh: true,
+    suppressCellFocus: true,
     suppressRowClickSelection: true,
     getRowHeight: function(p) {
       if (p.data._type === 'sec') return 36;
@@ -5260,9 +5258,7 @@ function initDailyHGrid(days, activeMonth, activeDay, containerEl) {
       if (idx%2===0) return { background:'#fff' };
       return { background:'#fff' };
     },
-  };
-  new AG.Grid(wrapper, _dailyHOpts);
-  _dailyHGridApi = _dailyHOpts.api;
+  });
 }
 
 /* ── Close Out Report AG Grid ────────────────────────────────────────────── */
@@ -5270,7 +5266,7 @@ var _coReportGridApi = null;
 
 function initCoReportGrid(days, containerEl) {
   var AG = _realAgGrid;
-  if (!AG || typeof AG.Grid !== 'function') {
+  if (!AG || typeof AG.createGrid !== 'function') {
     containerEl.innerHTML = buildCoReportView(days);
     return;
   }
@@ -5280,7 +5276,7 @@ function initCoReportGrid(days, containerEl) {
   containerEl.style.padding = '0';
 
   var wrapper = document.createElement('div');
-  wrapper.className = 'ag-theme-alpine co-report-ag-wrap';
+  wrapper.className = 'ag-theme-quartz co-report-ag-wrap';
   containerEl.appendChild(wrapper);
 
   var BMAP   = {ai:'All Inclusive', bb:'B&B', hb:'Half Board', ro:'Room Only', fb:'Full Board'};
@@ -5430,7 +5426,7 @@ function initCoReportGrid(days, containerEl) {
   });
 
   // ── create grid ─────────────────────────────────────────────────────────
-  var _coReportOpts = {
+  _coReportGridApi = AG.createGrid(wrapper, {
     columnDefs: colDefs,
     rowData: rowData,
     rowHeight: 44,
@@ -5449,9 +5445,7 @@ function initCoReportGrid(days, containerEl) {
       if (p.data._isToday)  return { background: 'rgba(0,100,97,0.06)' };
       if (p.node.rowIndex % 2) return { background: '#fafafa' };
     },
-  };
-  new AG.Grid(wrapper, _coReportOpts);
-  _coReportGridApi = _coReportOpts.api;
+  });
 }
 
 /* ── Daily Revenue AG Grid ───────────────────────────────────────────────── */
@@ -5460,7 +5454,7 @@ var _dailyRevGridApi = null;
 function initDailyRevGrid(days, containerEl) {
   _drLastInitArgs = { days: days, container: containerEl };
   var AG = _realAgGrid;
-  if (!AG || typeof AG.Grid !== 'function') {
+  if (!AG || typeof AG.createGrid !== 'function') {
     containerEl.innerHTML = buildReportView(days);
     return;
   }
@@ -5471,7 +5465,7 @@ function initDailyRevGrid(days, containerEl) {
   containerEl.style.padding = '0';
 
   var wrapper = document.createElement('div');
-  wrapper.className = 'ag-theme-alpine daily-rev-ag-wrap';
+  wrapper.className = 'ag-theme-quartz daily-rev-ag-wrap';
   containerEl.appendChild(wrapper);
 
   // ── per-day data ──────────────────────────────────────────────────────────
@@ -5680,7 +5674,7 @@ function initDailyRevGrid(days, containerEl) {
   groupOrder.forEach(function(k){ if(drGroupColDefs[k]) colDefs.push(drGroupColDefs[k]); });
 
   // ── create grid ───────────────────────────────────────────────────────────
-  var _dailyRevOpts = {
+  _dailyRevGridApi = AG.createGrid(wrapper, {
     columnDefs: colDefs,
     rowData: rowData,
     rowHeight: 42,
@@ -5695,9 +5689,7 @@ function initDailyRevGrid(days, containerEl) {
       if(p.node.rowIndex%2) return {background:'#fafafa'};
     },
     onGridReady: function(e){ e.api.sizeColumnsToFit && false; /* keep explicit widths */ },
-  };
-  new AG.Grid(wrapper, _dailyRevOpts);
-  _dailyRevGridApi = _dailyRevOpts.api;
+  });
 }
 
 // ── Report View ──────────────────────────────────────────────────────────────
@@ -6279,7 +6271,8 @@ function buildWeekGrid(month, weekStart, activeDay) {
     return;
   }
   if (wvGroupBy === 'dailyB') {
-    initDailyBGrid(days, month, activeDay, grid);
+    grid.style.cssText = 'display:flex;flex-direction:column;overflow-x:auto;';
+    grid.innerHTML = buildDailyBView(days, month, activeDay);
     return;
   }
   grid.style.cssText = '';
@@ -9059,7 +9052,7 @@ document.getElementById('wvFiltPickupSlider')?.addEventListener('input', functio
   window.anApplyDateRange = function(isoStart, isoEnd) {
     drpDateStart = isoStart || '';
     drpDateEnd   = isoEnd   || '';
-    gridApi.setRowData(getDisplayData());
+    gridApi.setGridOption('rowData', getDisplayData());
   };
 
   // ── Column defs ────────────────────────────────────────────────────────
@@ -9078,19 +9071,21 @@ document.getElementById('wvFiltPickupSlider')?.addEventListener('input', functio
     { field:'lyDelta',   headerName:'vs LY %',           filter:'agTextColumnFilter',   width:90,  cellStyle:deltaStyle, hide:true },
   ];
 
+  // ── New theming API (ag-Grid v33+) ─────────────────────────────────────
+  var anTheme = sharedTheme;
+
   // ── Grid init ──────────────────────────────────────────────────────────
-  var _anOpts = {
+  var gridApi = agGrid.createGrid(el, {
+    theme: anTheme,
     columnDefs: colDefs,
     rowData: getDisplayData(),
     rowHeight: 42,
     headerHeight: 42,
     suppressMovableColumns: true,
-    suppressFocusAfterRefresh: true,
+    suppressCellFocus: true,
     tooltipShowDelay: 300,
     defaultColDef: { sortable: true, resizable: true, floatingFilter: true, minWidth: 200 },
-  };
-  new agGrid.Grid(el, _anOpts);
-  var gridApi = _anOpts.api;
+  });
 
   // ── Period tabs ────────────────────────────────────────────────────────
   var periodTabs = document.getElementById('anPeriodTabs');
@@ -9106,7 +9101,7 @@ document.getElementById('wvFiltPickupSlider')?.addEventListener('input', functio
       if (drpWrap) drpWrap.style.display = currentPeriod==='custom' ? '' : 'none';
       // Clear date filter when leaving custom range
       if (currentPeriod !== 'custom') { drpDateStart = ''; drpDateEnd = ''; }
-      gridApi.setRowData(getDisplayData());
+      gridApi.setGridOption('rowData', getDisplayData());
     });
   }
 
@@ -9161,7 +9156,7 @@ document.getElementById('wvFiltPickupSlider')?.addEventListener('input', functio
     filterBoard  = document.getElementById('anFbBoard')?.value   || '';
     filterSeg    = document.getElementById('anFbSegment')?.value  || '';
     filterTourOp = document.getElementById('anFbTourOp')?.value   || '';
-    gridApi.setRowData(getDisplayData());
+    gridApi.setGridOption('rowData', getDisplayData());
   }
   ['anFbRoomType','anFbBoard','anFbSegment','anFbTourOp'].forEach(function(id) {
     document.getElementById(id)?.addEventListener('change', onFilterChange);
@@ -9171,7 +9166,7 @@ document.getElementById('wvFiltPickupSlider')?.addEventListener('input', functio
   var searchInput = document.getElementById('anSearchInput');
   if (searchInput) {
     searchInput.addEventListener('input', function() {
-      gridApi.setQuickFilter(this.value);
+      gridApi.setGridOption('quickFilterText', this.value);
     });
   }
 })();
@@ -9228,12 +9223,12 @@ var _tourOpsGridApi = null;
   if (!el) return;
 
   var AG = _realAgGrid;
-  if (!AG || typeof AG.Grid !== 'function') return;
+  if (!AG || typeof AG.createGrid !== 'function') return;
 
   el.innerHTML = '';
   el.style.padding = '0';
   var wrapper = document.createElement('div');
-  wrapper.className = 'ag-theme-alpine tour-ops-ag-wrap';
+  wrapper.className = 'ag-theme-quartz tour-ops-ag-wrap';
   el.appendChild(wrapper);
 
   var colDefs = [
@@ -9255,14 +9250,14 @@ var _tourOpsGridApi = null;
       cellStyle: { display: 'flex', alignItems: 'center', justifyContent: 'center' } },
   ];
 
-  var _tourOpsOpts = {
+  _tourOpsGridApi = AG.createGrid(wrapper, {
     columnDefs: colDefs,
     rowData: TO_OPS_DATA,
     rowHeight: 48,
     headerHeight: 38,
     domLayout: 'autoHeight',
     suppressMovableColumns: true,
-    suppressFocusAfterRefresh: true,
+    suppressCellFocus: true,
     rowSelection: 'single',
     defaultColDef: { sortable: true, resizable: true },
     getRowStyle: function(p) {
@@ -9275,9 +9270,7 @@ var _tourOpsGridApi = null;
     onFirstDataRendered: function(params) {
       params.api.getRowNode(0)?.setSelected(true);
     },
-  };
-  new AG.Grid(wrapper, _tourOpsOpts);
-  _tourOpsGridApi = _tourOpsOpts.api;
+  });
 
   // Show first operator by default
   updateDetailPanel(TO_OPS_DATA[0]);
@@ -9336,7 +9329,7 @@ var _tourOpsGridApi = null;
     TO_OPS_DATA.push(newOp);
     TO_DATA_MAP[name] = { contracts: 0, revenue: '—', bookings: 0, rooms: '—' };
     if (_tourOpsGridApi) {
-      _tourOpsGridApi.setRowData(TO_OPS_DATA);
+      _tourOpsGridApi.setGridOption('rowData', TO_OPS_DATA);
       // select the new row
       setTimeout(function() {
         var lastNode = _tourOpsGridApi.getRowNode(TO_OPS_DATA.length - 1);
@@ -9407,17 +9400,16 @@ var _tourOpsGridApi = null;
     },
   ];
 
-  var _contractsOpts = {
+  var contractsGridApi = agGrid.createGrid(el, {
+    theme: sharedTheme,
     columnDefs: colDefs,
     rowData: CONTRACTS_DATA,
     rowHeight: 42,
     headerHeight: 42,
     suppressMovableColumns: true,
-    suppressFocusAfterRefresh: true,
+    suppressCellFocus: true,
     defaultColDef: { sortable: true, resizable: true, floatingFilter: false, minWidth: 200 },
-  };
-  new agGrid.Grid(el, _contractsOpts);
-  var contractsGridApi = _contractsOpts.api;
+  });
   window._contractsGridApi = contractsGridApi;
   window._contractsData = CONTRACTS_DATA;
 })();
@@ -9469,14 +9461,15 @@ var _tourOpsGridApi = null;
     { field: 'period',       headerName: 'Period',        flex: 1.2 },
   ];
 
-  new agGrid.Grid(el, {
+  agGrid.createGrid(el, {
+    theme: sharedTheme,
     columnDefs: colDefs,
     rowData: INVENTORY_DATA,
     pinnedBottomRowData: [INVENTORY_TOTAL],
     rowHeight: 42,
     headerHeight: 42,
     suppressMovableColumns: true,
-    suppressFocusAfterRefresh: true,
+    suppressCellFocus: true,
     defaultColDef: { sortable: true, resizable: true, floatingFilter: false, minWidth: 200 },
   });
 })();
@@ -9538,13 +9531,14 @@ var _tourOpsGridApi = null;
     },
   ];
 
-  new agGrid.Grid(el, {
+  agGrid.createGrid(el, {
+    theme: sharedTheme,
     columnDefs: colDefs,
     rowData: PROMOTIONS_DATA,
     rowHeight: 42,
     headerHeight: 42,
     suppressMovableColumns: true,
-    suppressFocusAfterRefresh: true,
+    suppressCellFocus: true,
     defaultColDef: { sortable: true, resizable: true, floatingFilter: false, minWidth: 200 },
   });
 })();
@@ -9588,13 +9582,14 @@ var _tourOpsGridApi = null;
     },
   ];
 
-  new agGrid.Grid(el, {
+  agGrid.createGrid(el, {
+    theme: sharedTheme,
     columnDefs: colDefs,
     rowData: COMMS_DATA,
     rowHeight: 42,
     headerHeight: 42,
     suppressMovableColumns: true,
-    suppressFocusAfterRefresh: true,
+    suppressCellFocus: true,
     defaultColDef: { sortable: true, resizable: true, floatingFilter: true, minWidth: 200 },
   });
 })();
@@ -9763,7 +9758,7 @@ var _tourOpsGridApi = null;
     };
 
     if (window._contractsData) window._contractsData.push(newRow);
-    if (window._contractsGridApi) window._contractsGridApi.setRowData(window._contractsData);
+    if (window._contractsGridApi) window._contractsGridApi.setGridOption('rowData', window._contractsData);
 
     hideWizard();
   });
