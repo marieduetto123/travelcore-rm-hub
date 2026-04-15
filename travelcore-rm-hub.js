@@ -2478,11 +2478,34 @@ function clearCalSelection() {
         +'</div>';
     }).join('');
 
-    // Room availability
-    var rtRows = [['Standard',51],['Superior',36],['Deluxe',27],['Suite',12],['Jr. Suite',15],['Family',9]];
-    var rtHTML = rtRows.map(function(row, i) {
+    // Room availability — filtered by active calendar filters
+    var rtRowsAll = [['Standard',51],['Superior',36],['Deluxe',27],['Suite',12],['Jr. Suite',15],['Family',9]];
+    var _rtFilt = (typeof filterState !== 'undefined' ? filterState.cal.calFiltRoom : 'all') || 'all';
+    var _bdFilt = (typeof filterState !== 'undefined' ? filterState.cal.calFiltBoard : 'all') || 'all';
+    var _toFiltKey = toKey;
+    // Filter room types when a specific room filter is active
+    var rtRows = _rtFilt !== 'all' ? rtRowsAll.filter(function(r) {
+      var selected = _rtFilt.split(',');
+      return selected.some(function(s) { return s.trim().toLowerCase() === r[0].toLowerCase(); });
+    }) : rtRowsAll;
+    if (rtRows.length === 0) rtRows = rtRowsAll; // fallback if no match
+    // Adjust sold based on TO filter (single TO = ~20-35% of hotel inventory)
+    var _toSoldMult = _toFiltKey !== 'all' ? (TO_FILTER_MULT[_toFiltKey] || 0.25) : 1.0;
+    // Adjust sold based on board type filter (each board = portion of sales)
+    var _bdSoldMult = 1.0;
+    if (_bdFilt !== 'all') {
+      var _bdM = {ai:0.55,bb:0.20,hb:0.15,ro:0.10,fb:0.05};
+      var _bdParts = _bdFilt.split(',');
+      _bdSoldMult = _bdParts.reduce(function(a,b){ return a + (_bdM[b.trim()] || 0.15); }, 0);
+      _bdSoldMult = Math.min(1, _bdSoldMult);
+    }
+    var _combinedMult = _toSoldMult * _bdSoldMult;
+    var rtHTML = rtRows.map(function(row) {
       var name = row[0], inv = row[1];
-      var sold  = Math.min(inv, Math.floor(inv * hotel / 110));
+      var origIdx = rtRowsAll.findIndex(function(r){ return r[0] === name; });
+      var colorIdx = origIdx >= 0 ? origIdx : 0;
+      var baseSold = Math.min(inv, Math.floor(inv * hotel / 110));
+      var sold = Math.min(inv, Math.round(baseSold * _combinedMult));
       var avail = Math.max(0, inv - sold);
       var pct   = Math.round(sold / inv * 100);
       var barClr  = avail === 0 ? '#dc2626' : pct >= 85 ? '#ea580c' : pct >= 60 ? '#f59e0b' : '#16a34a';
@@ -2490,7 +2513,7 @@ function clearCalSelection() {
       var rowBg = avail === 0 ? 'background:#fff1f2;border-radius:4px;padding:2px 4px;margin:1px -4px;' : 'padding:2px 0;';
       return '<div class="popup-rt-row" style="flex-direction:column;gap:2px;align-items:stretch;'+rowBg+'">'
         +'<div style="display:flex;align-items:center;gap:4px">'
-        +'<span class="popup-rt-sw" style="background:'+RT_COLORS[i]+'"></span>'
+        +'<span class="popup-rt-sw" style="background:'+RT_COLORS[colorIdx]+'"></span>'
         +'<span class="popup-rt-nm" style="flex:1">'+name+'</span>'
         +(avail === 0
           ? '<span style="font-size:7px;font-weight:700;color:#dc2626;background:#fee2e2;padding:1px 5px;border-radius:3px;letter-spacing:.2px">SOLD OUT</span>'
@@ -2502,12 +2525,21 @@ function clearCalSelection() {
         +'</div>';
     }).join('');
 
-    // TO Rates
-    var toNames  = ['Sunshine Tours','Global Adv.','Beach Hols','City Breaks','Adventure'];
-    var toColors = ['#3b82f6','#8b5cf6','#0ea5e9','#10b981','#f59e0b'];
+    // TO Rates — filtered by active TO filter
+    var toNamesAll  = ['Sunshine Tours','Global Adv.','Beach Hols','City Breaks','Adventure'];
+    var toColorsAll = ['#3b82f6','#8b5cf6','#0ea5e9','#10b981','#f59e0b'];
+    var _toFilterMap = {'sunshine-tours':0,'global-adv':1,'beach-hols':2,'city-breaks':3,'adventure':4};
+    var toNames = toNamesAll, toColors = toColorsAll;
+    if (_toFiltKey !== 'all' && _toFilterMap[_toFiltKey] !== undefined) {
+      var _tfi = _toFilterMap[_toFiltKey];
+      toNames = [toNamesAll[_tfi]];
+      toColors = [toColorsAll[_tfi]];
+    }
     var toRatesHTML = toNames.map(function(name, i) {
-      var toRate  = adr - 15 + Math.abs((dm*(i+3) + dd*(i+5)) % 50);
-      var toAllot = 5  + Math.abs((dm*(i+2) + dd*(i+3)) % 20);
+      var origIdx = toNamesAll.indexOf(name);
+      if (origIdx < 0) origIdx = i;
+      var toRate  = adr - 15 + Math.abs((dm*(origIdx+3) + dd*(origIdx+5)) % 50);
+      var toAllot = 5  + Math.abs((dm*(origIdx+2) + dd*(origIdx+3)) % 20);
       var toUsed  = Math.max(0, toAllot - Math.floor(hotel / 20));
       var barPct  = Math.round((toUsed / toAllot) * 100);
       var barCls  = barPct >= 90 ? 'wv-to-bar-high' : barPct >= 60 ? 'wv-to-bar-mid' : 'wv-to-bar-low';
@@ -2602,9 +2634,13 @@ function clearCalSelection() {
       + mealBarHtml + mealRowsHtml
       +'</div>'
 
-      // 4. Room Availability
+      // 4. Room Availability (filtered)
       +'<div class="popup-metrics-section">'
-      +'<div class="popup-metrics-title">ROOM AVAILABILITY</div>'
+      +'<div class="popup-metrics-title">ROOM AVAILABILITY'
+      + ((_rtFilt !== 'all' || _toFiltKey !== 'all' || _bdFilt !== 'all')
+         ? '<span style="font-size:8px;font-weight:600;color:#006461;background:#d7f7ed;padding:1px 6px;border-radius:3px;margin-left:6px;vertical-align:middle">FILTERED</span>'
+         : '')
+      +'</div>'
       + rtHTML
       +'</div>'
 

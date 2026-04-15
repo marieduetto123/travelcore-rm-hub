@@ -9,7 +9,8 @@
       "Bash(./deploy.sh \"Fix AG Grid v23 migration: restore themeQuartz shim, bump JS cache version\")",
       "Bash(./deploy.sh \"Route Daily B weekly view through AG Grid instead of HTML fallback\")",
       "Bash(git checkout:*)",
-      "Bash(./deploy.sh \"Revert AG Grid v23 migration — restore v33.3.0 and HTML Daily B layout\")"
+      "Bash(./deploy.sh \"Revert AG Grid v23 migration — restore v33.3.0 and HTML Daily B layout\")",
+      "Bash(./deploy.sh \"Popup room availability and TO rates now respect active calendar filters\")"
     ]
   }
 }
