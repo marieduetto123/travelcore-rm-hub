@@ -1409,8 +1409,13 @@ body.dark .wv-rpt-row-odd .wv-rpt-cell-date { background: #111a1a; }
   background-color: rgba(0, 100, 97, 0.06) !important;
 }
 .cal-day.today .day-num {
-  color: #006461;
+  color: #fff;
   font-weight: 800;
+  background: #006461;
+  border-radius: 50%;
+  width: 22px; height: 22px;
+  display: inline-flex; align-items: center; justify-content: center;
+  line-height: 1;
 }
 body.dark .cal-day.today {
   border-color: transparent;
@@ -1418,7 +1423,14 @@ body.dark .cal-day.today {
   border-top: 2px solid var(--lime);
   background-color: rgba(196, 255, 69, 0.07) !important;
 }
-body.dark .cal-day.today .day-num { color: var(--lime); }
+body.dark .cal-day.today .day-num {
+  color: #1a1a2e;
+  background: var(--lime);
+  border-radius: 50%;
+  width: 22px; height: 22px;
+  display: inline-flex; align-items: center; justify-content: center;
+  line-height: 1;
+}
 
 /* Empty / locked */
 .cal-day.empty   { cursor: default; pointer-events: none; height: 100px; }
