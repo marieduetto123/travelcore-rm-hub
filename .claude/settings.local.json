@@ -38,7 +38,8 @@
       "Bash(./deploy.sh \"monthly: align metrics above events, replace events square with calendar icon\")",
       "Bash(./deploy.sh \"tooltip: match Figma design — dark blue info panel with icon, Lato 14px, material shadow\")",
       "Bash(./deploy.sh \"monthly cells: truncate metric text with ellipsis on overflow\")",
-      "Bash(./deploy.sh \"feat: Material UI icons, filled calendar icon, event hover on monthly cells\")"
+      "Bash(./deploy.sh \"feat: Material UI icons, filled calendar icon, event hover on monthly cells\")",
+      "Bash(./deploy.sh \"white accordion bg, no padding, Material Icon chevrons for monthly overview\")"
     ]
   }
 }

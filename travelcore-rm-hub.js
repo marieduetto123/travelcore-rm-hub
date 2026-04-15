@@ -1801,8 +1801,8 @@ function renderCalMonthlySummary() {
       +'<span style="font-size:6.5px;font-weight:700;color:'+(clr||'#006461')+';text-transform:uppercase;letter-spacing:.3px;min-width:24px;text-align:right">T</span>'
       +'</div>';
   }
-  var chevUp   = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>';
-  var chevDown = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
+  var chevUp   = '<span class="material-icons" style="font-size:16px">expand_less</span>';
+  var chevDown = '<span class="material-icons" style="font-size:16px">expand_more</span>';
   function sec(title, key, content) {
     var collapsed = _calAccState[key] !== false ? !!_calAccState[key] : false;
     return '<div class="wv-acc-sect' + (collapsed ? '' : ' wv-acc-open') + '">'
@@ -2006,7 +2006,7 @@ function renderCalMonthlySummary() {
       +'</div>'
     );
 
-    return '<div style="min-width:0;border:1px solid #dde1e2;border-radius:0;overflow:hidden;margin-bottom:0">'
+    return '<div style="min-width:0;border:1px solid #dde1e2;border-radius:0;overflow:hidden;margin-bottom:0;background:#fff">'
       +(ttl ? '<div style="padding:8px 12px;border-bottom:2px solid #006461;background:#1a5e5b">'+
         '<span style="font-size:13px;font-weight:700;color:#fff">'+mo.name+'</span></div>' : '')
       +secDailyMetrics
@@ -2119,12 +2119,12 @@ function renderCalMonthlySummary() {
 
   var ovCollapsed = _calAccState['overview'] !== false ? !!_calAccState['overview'] : true;
   var ovChev = ovCollapsed
-    ? '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>'
-    : '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>';
+    ? '<span class="material-icons" style="font-size:16px">expand_more</span>'
+    : '<span class="material-icons" style="font-size:16px">expand_less</span>';
 
   var cols = calView===1?'1fr':calView===2?'1fr 1fr':'1fr 1fr 1fr';
   var ovAccordion = '<div class="wv-acc-sect' + (ovCollapsed ? '' : ' wv-acc-open') + '" style="border:1px solid #dde1e2;border-radius:6px;overflow:hidden">'
-    +'<div class="wv-acc-hdr" data-cal-section="overview" onclick="calAccClick(this)" style="background:#f0fffe;border-bottom:none;border-radius:6px">'
+    +'<div class="wv-acc-hdr" data-cal-section="overview" onclick="calAccClick(this)" style="background:#fff;border-bottom:none;border-radius:6px">'
     +'<span class="wv-acc-chev" style="color:#006461">'+ovChev+'</span>'
     +'<span class="wv-acc-title" style="font-weight:700">'+ovLabel+'</span>'
     +'</div>'
@@ -2140,10 +2140,9 @@ function renderCalMonthlySummary() {
     +'</div></div>'
     +'</div></div>';
 
-  el.innerHTML = '<div class="cal-summary-wrap" style="background:#f8fafc;border-top:2px solid #006461">'
-    +'<div style="padding:12px 14px">'
+  el.innerHTML = '<div class="cal-summary-wrap" style="background:#fff">'
     +ovAccordion
-    +'</div></div>';
+    +'</div>';
 }
 
 
@@ -2668,81 +2667,67 @@ function clearCalSelection() {
         +ruleCards+'</div>';
     })();
 
-    document.getElementById('popupBody').innerHTML =
-      _filtLabel + popupClHtml +
+    // ── Daily B–style group/section/sub builders ──
+    var _C1='#004948',_C2='#52d9ce',_C3='#D97706',_CSTLY='#C4FF45',_CREM='#445e0d';
+    function _pGrad(c){if(c==='#004948')return'linear-gradient(to right,#004948,#007a75)';if(c==='#52d9ce')return'linear-gradient(to right,#52d9ce,#8aeee8)';if(c==='#445e0d')return'linear-gradient(to right,#445e0d,#6a9014)';if(c==='#D97706')return'linear-gradient(to right,#D97706,#F59E0B)';if(c==='#16a34a')return'linear-gradient(to right,#16a34a,#22c55e)';if(c==='#C4FF45')return'linear-gradient(to right,#C4FF45,#D4FF73)';return c;}
+    function _pBar(pct,c){return'<div class="wv-occ-bar-track" style="margin:2px 0 0"><div style="width:'+pct+'%;background:'+_pGrad(c)+';height:5px"></div></div>';}
+    function _pSbar(segs){return'<div class="wv-occ-bar-track" style="margin:2px 0 0">'+segs.map(function(s){return'<div style="width:'+s.p+'%;background:'+_pGrad(s.c)+';height:5px"></div>';}).join('')+'</div>';}
+    function _pGrp(label,clr){return'<div class="pb-grp" style="background:'+clr+';color:#fff;font-size:10px;font-weight:700;padding:4px 8px;margin:0 -10px;letter-spacing:.5px">'+label+'</div>';}
+    function _pSect(label,val,barHtml,dot){return'<div class="pb-sect" style="padding:5px 0 3px;border-bottom:1px solid #f0f0f0"><div style="display:flex;align-items:center;gap:4px;margin-bottom:2px">'+(dot?'<span style="width:6px;height:6px;border-radius:50%;background:'+dot+';flex-shrink:0"></span>':'')+'<span style="font-size:11px;font-weight:600;color:#111827;flex:1">'+label+'</span><span style="font-size:11px;font-weight:700;color:#111827">'+val+'</span></div>'+barHtml+'</div>';}
+    function _pSub(label,val,dot,isRem){var c=isRem?'#388c3f':'#6b7280';return'<div style="display:flex;align-items:center;gap:4px;padding:2px 0 2px 10px">'+(dot?'<span style="width:5px;height:5px;border-radius:50%;background:'+dot+';flex-shrink:0"></span>':'')+'<span style="font-size:10px;color:'+c+';flex:1">'+label+'</span><span style="font-size:10px;font-weight:600;color:'+(isRem?'#388c3f':'#111827')+'">'+val+'</span></div>';}
+    function _pRef(stlyVal,delta){return'<div style="display:flex;gap:6px;padding:1px 0 0 10px"><span class="wv-ref-tag wv-ref-sdly" style="font-size:8px">STLY '+stlyVal+'</span><span class="wv-ref-tag '+(String(delta).startsWith('+')?'wv-ref-fcst':'wv-ref-sdly')+'" style="font-size:8px">'+delta+'</span></div>';}
 
-      // 1. Daily Metrics
-      '<div class="popup-metrics-section">'
-      +'<div class="popup-metrics-title">DAILY METRICS</div>'
-      // Occupancy segmented bar
-      +'<div class="popup-metric">'
-      +'<div class="popup-metric-header"><span class="popup-metric-label">Occupancy</span><span class="popup-metric-value">'+hotel+'%</span></div>'
-      +'<div class="wv-occ-bar-track" style="position:relative;margin:4px 0 2px">'
-      +'<div class="wv-occ-seg wv-occ-to"    style="width:'+to+'%"       title="TO: '+to+'%"></div>'
-      +'<div class="wv-occ-seg wv-occ-other" style="width:'+otherPct+'%" title="Other: '+otherPct+'%"></div>'
-      +'<div class="wv-occ-ref-tick wv-tick-sdly" style="left:'+hotelSDLY+'%" title="STLY '+hotelSDLY+'%"></div>'
-      +'</div>'
-      +'<div class="popup-sdly"><span class="popup-sdly-label">STLY '+hotelSDLY+'%</span><span class="popup-sdly-delta">'+sign(hotel-hotelSDLY)+'pp</span></div>'
-      +'<div class="wv-occ-breakdown">'
-      +'<div class="wv-occ-br-row"><span class="wv-occ-br-dot" style="background:#006461"></span><span class="wv-occ-br-lbl">Travel Distribution Hubs</span><span class="wv-occ-br-rms">'+toRms+' rms</span><span class="wv-occ-br-pct">'+to+'%</span></div>'
-      +'<div class="wv-occ-br-row"><span class="wv-occ-br-dot" style="background:#5883ed"></span><span class="wv-occ-br-lbl">Other segments</span><span class="wv-occ-br-rms">'+otherRms+' rms</span><span class="wv-occ-br-pct">'+otherPct+'%</span></div>'
-      +'<div class="wv-occ-br-row"><span class="wv-occ-br-dot" style="background:#16a34a"></span><span class="wv-occ-br-lbl">Remaining</span><span class="wv-occ-br-rms">'+freeRms+' rms</span><span class="wv-occ-br-pct">'+freePct+'%</span></div>'
-      +'</div></div>'
-      // Online/Offline
-      +'<div class="wv-online-row" style="margin:0 0 8px">'
-      +'<span class="wv-dot" style="background:#3b82f6"></span>'+onlinePct+'% online'
-      +'<span class="wv-dot" style="background:#f97316;margin-left:8px"></span>'+offlinePct+'% offline'
-      +'</div>'
-      // ADR
-      +'<div class="popup-metric">'
-      +'<div class="popup-metric-header"><span class="popup-metric-label">ADR</span><span class="popup-metric-value">$'+adr+'</span></div>'
-      +'<div class="popup-bar-track"><div class="popup-bar-mono" style="width:'+adrBar+'%;background:#94b1f5"></div></div>'
-      +'<div class="popup-sdly"><span class="popup-sdly-label">STLY $'+adrSDLY+'</span><span class="popup-sdly-delta">+'+(adr-adrSDLY)+'</span></div>'
-      +'</div>'
-      // Revenue
-      +'<div class="popup-metric">'
-      +'<div class="popup-metric-header"><span class="popup-metric-label">Revenue</span><span class="popup-metric-value">$'+Math.floor(rev/1000)+'k</span></div>'
-      +'<div class="popup-bar-track"><div class="popup-bar-mono" style="width:'+revBar+'%;background:#eba2a2"></div></div>'
-      +'<div class="popup-sdly"><span class="popup-sdly-label">STLY $'+Math.floor(sdlyR/1000)+'k</span><span class="popup-sdly-delta">+'+Math.round((rev-sdlyR)/sdlyR*100)+'%</span></div>'
-      +'</div>'
-      +'</div>'
+    var _pb = '';
+    _pb += _filtLabel;
 
-      // 2. More Metrics (bar-style, matching wv-detailed)
-      +'<div class="popup-metrics-section">'
-      +'<div class="popup-metrics-title">DETAILED METRICS</div>'
-      + detRows.map(function(r, ri) {
-          var bp = Math.min(92, 30 + Math.abs((dm*(ri+3)+dd*7)%55));
-          var isPos = String(r[3]).startsWith('+');
-          return '<div class="wv-dm-row">'
-            +'<div class="wv-dm-top"><span class="wv-dm-label">'+r[0]+'</span><span class="wv-dm-val">'+r[1]+'</span></div>'
-            +'<div class="wv-dm-bar-wrap"><div class="wv-dm-bar-fill" style="width:'+bp+'%;background:#2e65e8"></div></div>'
-            +'<div class="wv-ref-row"><span class="wv-ref-tag wv-ref-sdly">STLY '+r[2]+'</span>'
-            +'<span class="wv-ref-tag '+(isPos?'wv-ref-fcst':'wv-ref-sdly')+'">'+r[3]+'</span></div>'
-            +'</div>';
-        }).join('')
-      +'</div>'
+    // ── Close Outs ──
+    _pb += popupClHtml;
 
-      // 3. Meal Plans
-      +'<div class="popup-metrics-section">'
-      +'<div class="popup-metrics-title">MEAL PLANS</div>'
-      + mealBarHtml + mealRowsHtml
-      +'</div>'
+    // ── Daily Metrics ──
+    _pb += _pGrp('Daily Metrics', _C1);
+    _pb += _pSect('Occupancy', hotel+'%', _pSbar([{p:to,c:_C1},{p:otherPct,c:_C2}]));
+    _pb += _pSub('Travel Distribution Hubs', toRms+' rms / '+to+'%', _C1);
+    _pb += _pSub('Other Segments', otherRms+' rms / '+otherPct+'%', _C2);
+    _pb += _pSub('STLY', hotelSDLY+'%', _CSTLY);
+    _pb += _pSub('Remaining', freeRms+' rms / '+freePct+'%', _CREM, true);
 
-      // 4. Room Availability (filtered)
-      +'<div class="popup-metrics-section">'
-      +'<div class="popup-metrics-title">ROOM AVAILABILITY'
-      + (_hasAnyFilter
-         ? '<span style="font-size:7px;font-weight:600;color:#006461;background:#d7f7ed;padding:1px 6px;border-radius:3px;margin-left:6px;vertical-align:middle">'+(_filtLabel ? 'FILTERED' : 'FILTERED')+'</span>'
-         : '')
-      +'</div>'
-      + rtHTML
-      +'</div>'
+    _pb += _pSect('Online / Offline', onlinePct+'%', _pSbar([{p:onlinePct,c:_C1},{p:offlinePct,c:_C2}]));
+    _pb += _pSub('Online', onlinePct+'%', _C1);
+    _pb += _pSub('Offline', offlinePct+'%', _C2);
 
-      // 5. Travel Distribution Hubs
-      +'<div class="popup-metrics-section" style="padding-bottom:4px">'
-      +'<div class="popup-metrics-title">TOUR OPERATOR RATES</div>'
-      + toRatesHTML
-      +'</div>';
+    _pb += _pSect('ADR', '$'+adr, _pBar(adrBar, _C1));
+    _pb += _pSub('Hotel ADR', '$'+adr, _C2);
+    _pb += _pRef('$'+adrSDLY, '+'+(adr-adrSDLY));
+
+    _pb += _pSect('Revenue', '$'+Math.floor(rev/1000)+'k', _pBar(revBar, _C1));
+    _pb += _pSub('Hotel Revenue', '$'+Math.floor(rev/1000)+'k', _C2);
+    _pb += _pRef('$'+Math.floor(sdlyR/1000)+'k', '+'+Math.round((rev-sdlyR)/sdlyR*100)+'%');
+
+    // ── More Metrics ──
+    _pb += _pGrp('More Metrics', _C1);
+    detRows.forEach(function(r, ri) {
+      var bp = Math.min(92, 30 + Math.abs((dm*(ri+3)+dd*7)%55));
+      _pb += _pSect(r[0], String(r[1]), _pBar(bp, _C1));
+      _pb += _pRef(String(r[2]), String(r[3]));
+    });
+
+    // ── Meal Plans ──
+    _pb += _pGrp('Meal Plans', _C1);
+    _pb += '<div style="padding:4px 0">'+mealBarHtml+'</div>';
+    mealPlans.forEach(function(mp){
+      var rn = Math.round(rnSold * mp.pct / 100);
+      _pb += _pSect(mp.short, mp.pct+'% · '+rn+' rms', _pBar(mp.pct, _C1), mp.color);
+    });
+
+    // ── Room Availability ──
+    _pb += _pGrp('Room Availability' + (_hasAnyFilter ? ' (Filtered)' : ''), _C1);
+    _pb += rtHTML;
+
+    // ── TO Rates ──
+    _pb += _pGrp('Tour Operator Rates', _C1);
+    _pb += toRatesHTML;
+
+    document.getElementById('popupBody').innerHTML = _pb;
 
     // ── Position popup ──
     const rect = cell.getBoundingClientRect();
