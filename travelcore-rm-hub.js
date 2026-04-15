@@ -1667,7 +1667,7 @@ function renderCalendar() {
           ${!isCompact && !isLocked ? eyeSvg : ''}
         </div>
         ${!isCompact ? `<div class="cell-content">${metricRows}</div>` : ''}
-        ${!isCompact && hasCalCl && !_isStopSalesActive ? '<span class="cell-event-ico cell-event-icon" onmouseenter="calShowEventTip(event,\''+m.month+'-'+d+'\')" onmouseleave="calHideEventTip()"><span class="material-icons" style="font-size:16px;color:#006461">today</span></span>' : ''}
+        ${!isCompact && hasCalCl && !_isStopSalesActive ? '<span class="cell-event-ico" onmouseenter="calShowEventTip(event,\''+m.month+'-'+d+'\')" onmouseleave="calHideEventTip()"><span class="material-icons" style="font-size:16px;color:#006461">today</span></span>' : ''}
       </div>`;
     }
 
