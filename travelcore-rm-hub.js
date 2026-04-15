@@ -1557,50 +1557,64 @@ function renderCalendar() {
       const lockIcoYellow = `<svg class="cell-lock-ico" viewBox="0 0 24 24" fill="#FF9800" width="20" height="20"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zM9 8V6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9z"/></svg>`;
       const eyeSvg  = `<button class="cell-eye" aria-label="Quick view" data-month="${m.month}" data-day="${d}"><svg viewBox="0 0 14 10" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1 5s2.5-4 6-4 6 4 6 4-2.5 4-6 4-6-4-6-4z"/><circle cx="7" cy="5" r="1.6"/></svg></button>`;
 
-      // ── Comparison values by mode ──
-      const stlyF  = 0.85 + Math.abs((m.month * 5 + d * 3) % 10) * 0.006;
-      const fcstF  = 1.04 + Math.abs((m.month * 5 + d * 11) % 6) * 0.005;
-      const budgF  = 0.95 + Math.abs((m.month * 9 + d * 4) % 8) * 0.004;
-      function cmpVal(actual, cmpMode) {
-        if (cmpMode === 'ly')     return Math.round(actual * lyF);
-        if (cmpMode === 'stly')   return Math.round(actual * stlyF);
-        if (cmpMode === 'fcst')   return Math.round(actual * fcstF);
-        if (cmpMode === 'budget') return Math.round(actual * budgF);
-        return null;
-      }
-      function arrowHtml(actual, comp) {
-        if (comp === null) return '';
-        var diff = actual - comp;
-        if (diff === 0) return '<span class="cell-m-arrow cell-m-flat">–</span>';
-        var up = diff > 0;
-        var cls = up ? 'cell-m-up' : 'cell-m-dn';
-        var svg = up
-          ? '<svg viewBox="0 0 8 6" width="7" height="5"><path d="M0 6L4 0L8 6Z" fill="currentColor"/></svg>'
-          : '<svg viewBox="0 0 8 6" width="7" height="5"><path d="M0 0L4 6L8 0Z" fill="currentColor"/></svg>';
-        return '<span class="cell-m-arrow ' + cls + '">' + svg + '</span>';
-      }
-
-      var _cm = calCompareMode;
-      var cHOcc = cmpVal(hotel, _cm);
-      var cTOcc = cmpVal(to, _cm);
-      var cHAdr = cmpVal(cellAdr, _cm);
-      var cTAdr = cmpVal(cellMetricVals.toAdr, _cm);
-
-      // Build 4 metric rows: Hotel Occ, TO Occ, Hotel ADR, TO ADR
+      // ── Build metric rows from Cell Metrics selection ──
       const isCompact = (calDisplayView === 6 || calDisplayView === 12);
-      const metricRows = !isCompact ? [
-        { ico: icoHotel, label: 'Occ', actual: hotel, comp: cHOcc, fmt: function(v){ return v + '%'; } },
-        { ico: icoTO,    label: 'Occ', actual: to,    comp: cTOcc, fmt: function(v){ return v + '%'; } },
-        { ico: icoHotel, label: 'ADR', actual: cellAdr, comp: cHAdr, fmt: function(v){ return '$' + v; } },
-        { ico: icoTO,    label: 'ADR', actual: cellMetricVals.toAdr, comp: cTAdr, fmt: function(v){ return '$' + v; } },
-      ].map(r => {
-        var valStr = r.fmt(r.actual);
-        if (r.comp !== null) valStr += ' / ' + r.fmt(r.comp);
-        return `<div class="cell-m-row">`
-          + `<div class="cell-m-left">${r.ico}<span class="cell-m-label">${r.label}</span></div>`
-          + `<span class="cell-m-val">${arrowHtml(r.actual, r.comp)}${valStr}</span>`
-          + `</div>`;
-      }).join('') : '';
+      const metricRows = (function() {
+        if (isCompact) return '';
+        // Use cmBuildRows to get what user selected in Cell Metrics panel
+        var rows = (typeof window.cmBuildRows === 'function')
+          ? window.cmBuildRows(cellMetricVals)
+          : [
+              { label: 'H-Occ', value: hotel + '%', raw: hotel, color: '#5883ed' },
+              { label: 'T-Occ', value: to + '%',    raw: to,    color: '#006461' },
+            ];
+
+        // Compare multipliers
+        var _stlyF = 0.85 + Math.abs((m.month * 5 + d * 3) % 10) * 0.006;
+        var _fcstF = 1.04 + Math.abs((m.month * 5 + d * 11) % 6) * 0.005;
+        var _budgF = 0.95 + Math.abs((m.month * 9 + d * 4) % 8) * 0.004;
+        var _cmpMult = calCompareMode === 'ly' ? lyF
+          : calCompareMode === 'stly' ? _stlyF
+          : calCompareMode === 'fcst' ? _fcstF
+          : calCompareMode === 'budget' ? _budgF : 0;
+
+        return rows.map(function(r) {
+          // Determine if this is a Hotel (H) or TO (T) metric by label prefix
+          var lbl = r.label || '';
+          var isTO = lbl.charAt(0) === 'T' && lbl.charAt(1) === '-';
+          var isH  = lbl.charAt(0) === 'H' && lbl.charAt(1) === '-';
+          var ico = isTO ? icoTO : icoHotel;
+          // Short label: strip the H-/T- prefix
+          var shortLabel = (isH || isTO) ? lbl.substring(2) : lbl;
+
+          // Comparison value
+          var compHtml = '';
+          if (_cmpMult > 0 && r.raw !== undefined) {
+            var compRaw = Math.round(r.raw * _cmpMult * 10) / 10;
+            var diff = r.raw - compRaw;
+            var upOrDown = diff > 0 ? 'cell-cmp-up' : diff < 0 ? 'cell-cmp-dn' : '';
+            // Format comparison value same way as actual
+            var compStr = r.value; // fallback
+            if (typeof r.raw === 'number') {
+              // Detect format from actual value string
+              var v = r.value || '';
+              if (v.indexOf('$') >= 0 && v.indexOf('k') >= 0) compStr = '$' + Math.round(compRaw / 1000) + 'k';
+              else if (v.indexOf('$') >= 0) compStr = '$' + Math.round(compRaw);
+              else if (v.indexOf('%') >= 0) compStr = Math.round(compRaw) + '%';
+              else if (v.indexOf('n') >= 0) compStr = compRaw.toFixed ? compRaw.toFixed(1) + 'n' : Math.round(compRaw) + 'n';
+              else if (v.indexOf('d') >= 0) compStr = Math.round(compRaw) + 'd';
+              else if (v.indexOf('rn') >= 0) compStr = Math.round(compRaw) + ' rn';
+              else compStr = String(Math.round(compRaw));
+            }
+            compHtml = ' / <span class="' + upOrDown + '">' + compStr + '</span>';
+          }
+
+          return '<div class="cell-m-row">'
+            + '<div class="cell-m-left">' + ico + '<span class="cell-m-label">' + shortLabel + '</span></div>'
+            + '<span class="cell-m-val">' + r.value + compHtml + '</span>'
+            + '</div>';
+        }).join('');
+      })();
 
       const calCl = PARTIAL_CLOSURES[m.month + '-' + d];
       const hasCalCl = !isLocked && calCl && Array.isArray(calCl) && calCl.length > 0;
