@@ -1667,7 +1667,7 @@ function renderCalendar() {
           ${!isCompact && !isLocked ? eyeSvg : ''}
         </div>
         ${!isCompact ? `<div class="cell-content">${metricRows}</div>` : ''}
-        ${!isCompact && hasCalCl && !_isStopSalesActive ? '<span class="cell-event-ico cell-event-icon" onmouseenter="calShowEventTip(event,\''+m.month+'-'+d+'\')" onmouseleave="calHideEventTip()"><span class="material-icons" style="font-size:12px;color:#006461">event</span></span>' : ''}
+        ${!isCompact && hasCalCl && !_isStopSalesActive ? '<span class="cell-event-ico cell-event-icon" onmouseenter="calShowEventTip(event,\''+m.month+'-'+d+'\')" onmouseleave="calHideEventTip()"><span class="material-icons" style="font-size:12px;color:#006461">calendar_month</span></span>' : ''}
       </div>`;
     }
 
@@ -2124,8 +2124,8 @@ function renderCalMonthlySummary() {
     : '<span class="material-icons" style="font-size:16px">expand_less</span>';
 
   var cols = calView===1?'1fr':calView===2?'1fr 1fr':'1fr 1fr 1fr';
-  var ovAccordion = '<div class="wv-acc-sect' + (ovCollapsed ? '' : ' wv-acc-open') + '" style="border:1px solid #dde1e2;border-radius:6px;overflow:hidden">'
-    +'<div class="wv-acc-hdr" data-cal-section="overview" onclick="calAccClick(this)" style="background:#fff;border-bottom:none;border-radius:6px">'
+  var ovAccordion = '<div class="wv-acc-sect' + (ovCollapsed ? '' : ' wv-acc-open') + '" style="border:1px solid #dde1e2;border-radius:0;overflow:hidden">'
+    +'<div class="wv-acc-hdr" data-cal-section="overview" onclick="calAccClick(this)" style="background:#fff;border-bottom:none;border-radius:0">'
     +'<span class="wv-acc-chev" style="color:#006461">'+ovChev+'</span>'
     +'<span class="wv-acc-title" style="font-weight:700">'+ovLabel+'</span>'
     +'</div>'
@@ -12593,7 +12593,7 @@ setTimeout(function() {
     window.calHideCapTip();
 
     var t = getTip();
-    var calSvg = '<span class="material-icons" style="font-size:14px;color:#006461;vertical-align:middle;margin-right:2px">event</span>';
+    var calSvg = '<span class="material-icons" style="font-size:14px;color:#006461;vertical-align:middle;margin-right:2px">calendar_month</span>';
 
     t.innerHTML = '<div class="cal-event-tooltip-title">' + calSvg + ' Events</div>'
       + events.map(function(ev) {
