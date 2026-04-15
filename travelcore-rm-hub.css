@@ -820,7 +820,7 @@ body.dark .cal-nav-btn:hover { background: rgba(196,255,69,0.07); border-color: 
 .cell-m-left {
   display: flex; align-items: center; gap: 4px;
 }
-.cell-m-ico { flex-shrink: 0; }
+.cell-m-ico { flex-shrink: 0; fill: #b0b5ba; }
 .cell-m-label {
   font-size: 9px; font-weight: 400; color: #1C1C1C;
   font-family: 'Inter', sans-serif;
@@ -843,11 +843,17 @@ body.dark .cal-nav-btn:hover { background: rgba(196,255,69,0.07); border-color: 
 .cal-day.hotel-occ-7 .cell-cmp-dn, .cal-day.hotel-occ-8 .cell-cmp-dn,
 .cal-day.hotel-occ-9 .cell-cmp-dn, .cal-day.hotel-occ-10 .cell-cmp-dn { color: #fca5a5; }
 
-/* Teal indicator dot — bottom-right */
+/* Hide comparison values when cells are narrow */
+.cell-cmp { white-space: nowrap; }
+@media (max-width: 1100px) { .cell-cmp { display: none; } }
+
+/* Teal indicator dot — next to lock */
+.cell-hdr-right { display: flex; align-items: center; gap: 4px; }
 .cell-teal-dot {
-  position: absolute; bottom: 8px; right: 8px;
+  display: inline-block;
   width: 11px; height: 11px;
   background: #006461;
+  flex-shrink: 0;
 }
 
 /* Legacy compat — hide old elements */

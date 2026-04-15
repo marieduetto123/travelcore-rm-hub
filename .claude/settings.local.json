@@ -26,7 +26,8 @@
       "mcp__60ac2e8c-24aa-44e4-8c8a-c4a3c769ec23__get_design_context",
       "mcp__60ac2e8c-24aa-44e4-8c8a-c4a3c769ec23__get_metadata",
       "Bash(node -c travelcore-rm-hub.js)",
-      "Bash(./deploy.sh \"monthly: remove arrows, color comparison values green/red, use cell metrics selection with hotel/TO icons\")"
+      "Bash(./deploy.sh \"monthly: remove arrows, color comparison values green/red, use cell metrics selection with hotel/TO icons\")",
+      "Bash(./deploy.sh \"monthly: move events dot left of lock, grey icons, hide comparison on narrow screens\")"
     ]
   }
 }
