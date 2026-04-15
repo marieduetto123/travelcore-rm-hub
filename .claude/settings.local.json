@@ -28,7 +28,8 @@
       "Bash(node -c travelcore-rm-hub.js)",
       "Bash(./deploy.sh \"monthly: remove arrows, color comparison values green/red, use cell metrics selection with hotel/TO icons\")",
       "Bash(./deploy.sh \"monthly: move events dot left of lock, grey icons, hide comparison on narrow screens\")",
-      "Bash(./deploy.sh \"monthly cells: reduce visual clutter — smaller icons, tighter spacing, shorter labels, subtler comparison values\")"
+      "Bash(./deploy.sh \"monthly cells: reduce visual clutter — smaller icons, tighter spacing, shorter labels, subtler comparison values\")",
+      "Bash(./deploy.sh \"monthly: increase day cell height to 140px\")"
     ]
   }
 }
