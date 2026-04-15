@@ -1758,10 +1758,10 @@ var _moActiveTab = 'monthly';
 function renderCalMonthlySummary() {
   var el = document.getElementById('calMonthlySummary');
   if (!el) return;
-  var moTabBarEl2 = document.getElementById('moTabBar');
+  var calViewTabsHide = document.getElementById('calViewTabs');
   if (calDisplayView > 3) {
     el.style.display = 'none';
-    if (moTabBarEl2) moTabBarEl2.style.display = 'none';
+    if (calViewTabsHide) calViewTabsHide.style.display = 'none';
     return;
   }
   el.style.display = 'block';
@@ -2043,9 +2043,9 @@ function renderCalMonthlySummary() {
     return false;
   }
 
-  // ── Tab bar (rendered into external #moTabBar) ──────────────────────────
-  var moTabBarEl = document.getElementById('moTabBar');
-  if (moTabBarEl) {
+  // ── Tab bar (rendered into #calViewTabs in header) ──────────────────────
+  var calViewTabsEl = document.getElementById('calViewTabs');
+  if (calViewTabsEl) {
     var moTabs = [
       { key: 'monthly',  label: 'Monthly' },
       { key: 'dailyB',   label: 'Daily B' },
@@ -2058,10 +2058,10 @@ function renderCalMonthlySummary() {
     var tabHtml = '';
     moTabs.forEach(function(t) {
       var active = t.key === _moActiveTab ? ' active' : '';
-      tabHtml += '<button class="wv-groupby-btn mo-tab-btn' + active + '" onclick="moSwitchTab(\'' + t.key + '\')">' + t.label + '</button>';
+      tabHtml += '<button class="wv-groupby-btn cal-vt-btn' + active + '" onclick="moSwitchTab(\'' + t.key + '\')">' + t.label + '</button>';
     });
-    moTabBarEl.innerHTML = tabHtml;
-    moTabBarEl.style.display = '';
+    calViewTabsEl.innerHTML = tabHtml;
+    calViewTabsEl.style.display = '';
   }
 
   var html = '<div class="wb-layout">';
@@ -3159,6 +3159,8 @@ function renderWeekView(month, day) {
   if (backArrow) backArrow.style.display = 'inline-flex';
   var cmpWrap = document.getElementById('wvCmpWrap');
   if (cmpWrap) cmpWrap.style.display = 'flex';
+  var vtabs = document.getElementById('calViewTabs');
+  if (vtabs) vtabs.style.display = 'none';
 
   buildWeekGrid(month, weekStartDay, day);
 }
@@ -7956,6 +7958,8 @@ window.goToMonthView = function() {
   if (backArrow) backArrow.style.display = 'none';
   var cmpWrap = document.getElementById('wvCmpWrap');
   if (cmpWrap) cmpWrap.style.display = 'none';
+  var vtabs = document.getElementById('calViewTabs');
+  if (vtabs && calDisplayView <= 3) vtabs.style.display = '';
   renderCalendar();
 };
 
