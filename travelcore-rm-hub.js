@@ -3602,7 +3602,7 @@ function buildDailyBView(days, month, activeDay) {
       grp.g_avail.push({type:'sect', id:'avrt'+i,       label:name,        parent:'g_avail', rtIdx:i});
       grp.g_avail.push({type:'sub',  id:'avrt'+i+'_to', label:'TO Sold',   dot:'#004948', parent:'avrt'+i, rtIdx:i, rtSub:'to'});
       grp.g_avail.push({type:'sub',  id:'avrt'+i+'_ot', label:'Other Segments', dot:'#52d9ce', parent:'avrt'+i, rtIdx:i, rtSub:'other'});
-      grp.g_avail.push({type:'sub',  id:'avrt'+i+'_tn', label:'Tentative',    dot:'#8b5cf6', parent:'avrt'+i, rtIdx:i, rtSub:'tentative'});
+      grp.g_avail.push({type:'sub',  id:'avrt'+i+'_tn', label:'Tentative Sold (Group)',    dot:'#8b5cf6', parent:'avrt'+i, rtIdx:i, rtSub:'tentative'});
       grp.g_avail.push({type:'sub',  id:'avrt'+i+'_al', label:'Alloc Rem.',dot:'#D97706', parent:'avrt'+i, rtIdx:i, rtSub:'alloc'});
       grp.g_avail.push({type:'sub',  id:'avrt'+i+'_av', label:'Total Hotel Remaining', dot:'#445e0d', parent:'avrt'+i, rtIdx:i, rtSub:'avail', isRem:true});
     });
@@ -3689,6 +3689,7 @@ function buildDailyBView(days, month, activeDay) {
     if (clr==='#52d9ce') return 'linear-gradient(to right,#52d9ce,#8aeee8)';
     if (clr==='#445e0d') return 'linear-gradient(to right,#445e0d,#6a9014)';
     if (clr==='#D97706') return 'linear-gradient(to right,#D97706,#F59E0B)';
+    if (clr==='#8b5cf6') return 'linear-gradient(to right,#8b5cf6,#a78bfa)';
     if (clr==='#16a34a') return 'linear-gradient(to right,#16a34a,#22c55e)';
     if (clr==='#C4FF45') return 'linear-gradient(to right,#C4FF45,#D4FF73)';
     return clr;
@@ -3803,18 +3804,21 @@ function buildDailyBView(days, month, activeDay) {
           var sold = Math.min(inv, Math.floor(inv * d.hotel / 110));
           var toS  = Math.min(sold, Math.round(sold * d.to / Math.max(1, d.hotel)));
           var otS  = sold - toS;
+          var tent = Math.max(0, Math.floor(2+Math.abs((d.dm*(row.rtIdx+4)+d.dd*(row.rtIdx+2))%6)));
           var alloc = Math.floor(inv * 0.8 + Math.abs((d.dm*(row.rtIdx+3)+d.dd*(row.rtIdx+5))%15));
           var allocRem = Math.max(0, alloc - toS);
-          var avRm = Math.max(0, inv - sold);
+          var avRm = Math.max(0, inv - sold - tent);
           var toP  = Math.round(toS/inv*100), otP = Math.round(otS/inv*100);
-          var alP  = Math.round(allocRem/inv*100), avP = Math.max(0, 100-toP-otP-alP);
-          var avClr = avRm === 0 ? '#dc2626' : '#004948';
+          var tnP  = Math.round(tent/inv*100);
+          var alP  = Math.round(allocRem/inv*100), avP = Math.max(0, 100-toP-otP-tnP-alP);
+          var avClr = avRm <= 0 ? '#dc2626' : '#004948';
           cellContent = '<div class="wb-sect-val"><span class="wv-occ-total" style="color:'+avClr+'">'
-            + (avRm === 0 ? 'SOLD OUT' : avRm+' avail') + '</span>'
+            + (avRm <= 0 ? 'SOLD OUT' : avRm+' avail') + '</span>'
             + '<span style="font-size:12px;color:#9ca3af;margin-left:4px">/ '+inv+'</span></div>'
             + '<div class="wv-occ-bar-track">'
             + '<div style="width:'+toP+'%;background:'+wbGrad('#004948')+';height:6px"></div>'
             + '<div style="width:'+otP+'%;background:'+wbGrad('#52d9ce')+';height:6px"></div>'
+            + '<div style="width:'+tnP+'%;background:'+wbGrad('#8b5cf6')+';height:6px"></div>'
             + '<div style="width:'+alP+'%;background:'+wbGrad('#D97706')+';height:6px"></div>'
             + '<div style="width:'+avP+'%;background:'+wbGrad('#d7f7ed')+';height:6px"></div>'
             + '</div>';
@@ -4412,7 +4416,7 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
       }; })(inv,rtI));
       sub('TO Sold', C1, false, (function(inv){ return function(d){ var s=Math.min(inv,Math.floor(inv*d.hotel/110)); return rCell(Math.min(s,Math.round(s*d.to/Math.max(1,d.hotel)))+' rm'); }; })(inv));
       sub('Other Segments', C2, false, (function(inv){ return function(d){ var s=Math.min(inv,Math.floor(inv*d.hotel/110)); var t=Math.min(s,Math.round(s*d.to/Math.max(1,d.hotel))); return rCell((s-t)+' rm'); }; })(inv));
-      sub('Tentative', '#8b5cf6', false, (function(inv,rtI){ return function(d){ var tent=Math.max(0,Math.floor(2+Math.abs((d.dm*(rtI+4)+d.dd*(rtI+2))%6))); return rCell(tent+' rm'); }; })(inv,rtI));
+      sub('Tentative Sold (Group)', '#8b5cf6', false, (function(inv,rtI){ return function(d){ var tent=Math.max(0,Math.floor(2+Math.abs((d.dm*(rtI+4)+d.dd*(rtI+2))%6))); return rCell(tent+' rm'); }; })(inv,rtI));
       sub('Total Hotel Remaining', CREM, true, (function(inv){ return function(d){ var avRm=Math.max(0,inv-Math.min(inv,Math.floor(inv*d.hotel/110))); return sCell(avRm+' rm', bar(Math.min(90,Math.round(avRm/inv*100)),'#16a34a')); }; })(inv));
     });
   }

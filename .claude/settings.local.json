@@ -42,7 +42,8 @@
       "Bash(./deploy.sh \"white accordion bg, no padding, Material Icon chevrons for monthly overview\")",
       "Bash(./deploy.sh \"replace trend SVG arrows with Material Icons trending_up/trending_down in weekly view\")",
       "Bash(./deploy.sh \"restructure close-outs: move summary to collapsed header, remove summary row, details directly in accordion\")",
-      "Bash(./deploy.sh \"add stop sales heatmap room type filter condition\")"
+      "Bash(./deploy.sh \"add stop sales heatmap room type filter condition\")",
+      "Bash(./deploy.sh \"rename tentative to 'Tentative Sold \\(Group\\)', add purple segment to room avail bar chart\")"
     ]
   }
 }
