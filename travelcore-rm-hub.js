@@ -2723,7 +2723,7 @@ function clearCalSelection() {
           ? '<span style="font-size:7px;font-weight:700;color:#dc2626;background:#fee2e2;padding:1px 5px;border-radius:3px;letter-spacing:.2px">SOLD OUT</span>'
           : '<span style="font-size:9px;font-weight:700;color:'+availClr+'">'+avail+' avail</span>')
         +'</div>'
-        +'<div style="height:4px;border-radius:2px;background:#f0f0f0;overflow:hidden;margin-left:11px">'
+        +'<div style="height:6px;border-radius:2px;background:#e5e7eb;overflow:hidden;margin-left:11px">'
         +'<div style="height:100%;width:'+pct+'%;background:'+barClr+';border-radius:2px"></div>'
         +'</div>'
         +'</div>';
@@ -2781,8 +2781,8 @@ function clearCalSelection() {
     // ── Daily B–style group/section/sub builders ──
     var _C1='#004948',_C2='#52d9ce',_C3='#D97706',_CSTLY='#C4FF45',_CREM='#445e0d';
     function _pGrad(c){if(c==='#004948')return'linear-gradient(to right,#004948,#007a75)';if(c==='#52d9ce')return'linear-gradient(to right,#52d9ce,#8aeee8)';if(c==='#445e0d')return'linear-gradient(to right,#445e0d,#6a9014)';if(c==='#D97706')return'linear-gradient(to right,#D97706,#F59E0B)';if(c==='#16a34a')return'linear-gradient(to right,#16a34a,#22c55e)';if(c==='#C4FF45')return'linear-gradient(to right,#C4FF45,#D4FF73)';return c;}
-    function _pBar(pct,c){return'<div class="wv-occ-bar-track" style="margin:2px 0 0"><div style="width:'+pct+'%;background:'+_pGrad(c)+';height:5px"></div></div>';}
-    function _pSbar(segs){return'<div class="wv-occ-bar-track" style="margin:2px 0 0">'+segs.map(function(s){return'<div style="width:'+s.p+'%;background:'+_pGrad(s.c)+';height:5px"></div>';}).join('')+'</div>';}
+    function _pBar(pct,c){return'<div class="wv-occ-bar-track" style="margin:2px 0 0;height:6px;border-radius:2px"><div style="width:'+pct+'%;background:'+_pGrad(c)+';height:6px"></div></div>';}
+    function _pSbar(segs){return'<div class="wv-occ-bar-track" style="margin:2px 0 0;height:6px;border-radius:2px">'+segs.map(function(s){return'<div style="width:'+s.p+'%;background:'+_pGrad(s.c)+';height:6px"></div>';}).join('')+'</div>';}
     function _pGrp(label,clr){return'<div class="pb-grp" style="background:'+clr+';color:#fff;font-size:10px;font-weight:700;padding:4px 8px;margin:0 -10px;letter-spacing:.5px">'+label+'</div>';}
     function _pSect(label,val,barHtml,dot){return'<div class="pb-sect" style="padding:5px 0 3px;border-bottom:1px solid #f0f0f0"><div style="display:flex;align-items:center;gap:4px;margin-bottom:2px">'+(dot?'<span style="width:6px;height:6px;border-radius:50%;background:'+dot+';flex-shrink:0"></span>':'')+'<span style="font-size:11px;font-weight:600;color:#111827;flex:1">'+label+'</span><span style="font-size:11px;font-weight:700;color:#111827">'+val+'</span></div>'+barHtml+'</div>';}
     function _pSub(label,val,dot,isRem){var c=isRem?'#388c3f':'#6b7280';return'<div style="display:flex;align-items:center;gap:4px;padding:2px 0 2px 10px">'+(dot?'<span style="width:5px;height:5px;border-radius:50%;background:'+dot+';flex-shrink:0"></span>':'')+'<span style="font-size:10px;color:'+c+';flex:1">'+label+'</span><span style="font-size:10px;font-weight:600;color:'+(isRem?'#388c3f':'#111827')+'">'+val+'</span></div>';}
