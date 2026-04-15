@@ -1242,6 +1242,11 @@ let calSelPicking = false; // true after first click, waiting for end
 // Filter bar state
 const TO_FILTER_MULT = { all:1.0, sunwing:0.82, tui:1.18, 'thomas-cook':0.71, 'club-med':1.08 };
 let calFiltTO = 'all';
+let calCompareMode = 'ly'; // 'ly', 'stly', 'fcst', 'budget', 'none'
+function calSetCompare(val) {
+  calCompareMode = val || 'ly';
+  renderCalendar();
+}
 const ALLOTMENTS = {
   sunwing:       { total: 42, pct: 0.88 },
   tui:           { total: 55, pct: 0.72 },
@@ -1552,23 +1557,50 @@ function renderCalendar() {
       const lockIcoYellow = `<svg class="cell-lock-ico" viewBox="0 0 24 24" fill="#FF9800" width="20" height="20"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zM9 8V6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9z"/></svg>`;
       const eyeSvg  = `<button class="cell-eye" aria-label="Quick view" data-month="${m.month}" data-day="${d}"><svg viewBox="0 0 14 10" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1 5s2.5-4 6-4 6 4 6 4-2.5 4-6 4-6-4-6-4z"/><circle cx="7" cy="5" r="1.6"/></svg></button>`;
 
-      // LY values for dual display (lyF already declared above)
-      const lyHotel = Math.round(hotel * lyF);
-      const lyTo    = Math.round(to * lyF);
-      const lyAdr   = Math.round(cellAdr * lyF);
-      const lyToAdr = Math.max(80, Math.round((cellAdr - 20 - Math.abs((m.month * 3 + d * 7) % 15)) * lyF));
+      // ── Comparison values by mode ──
+      const stlyF  = 0.85 + Math.abs((m.month * 5 + d * 3) % 10) * 0.006;
+      const fcstF  = 1.04 + Math.abs((m.month * 5 + d * 11) % 6) * 0.005;
+      const budgF  = 0.95 + Math.abs((m.month * 9 + d * 4) % 8) * 0.004;
+      function cmpVal(actual, cmpMode) {
+        if (cmpMode === 'ly')     return Math.round(actual * lyF);
+        if (cmpMode === 'stly')   return Math.round(actual * stlyF);
+        if (cmpMode === 'fcst')   return Math.round(actual * fcstF);
+        if (cmpMode === 'budget') return Math.round(actual * budgF);
+        return null;
+      }
+      function arrowHtml(actual, comp) {
+        if (comp === null) return '';
+        var diff = actual - comp;
+        if (diff === 0) return '<span class="cell-m-arrow cell-m-flat">–</span>';
+        var up = diff > 0;
+        var cls = up ? 'cell-m-up' : 'cell-m-dn';
+        var svg = up
+          ? '<svg viewBox="0 0 8 6" width="7" height="5"><path d="M0 6L4 0L8 6Z" fill="currentColor"/></svg>'
+          : '<svg viewBox="0 0 8 6" width="7" height="5"><path d="M0 0L4 6L8 0Z" fill="currentColor"/></svg>';
+        return '<span class="cell-m-arrow ' + cls + '">' + svg + '</span>';
+      }
+
+      var _cm = calCompareMode;
+      var cHOcc = cmpVal(hotel, _cm);
+      var cTOcc = cmpVal(to, _cm);
+      var cHAdr = cmpVal(cellAdr, _cm);
+      var cTAdr = cmpVal(cellMetricVals.toAdr, _cm);
 
       // Build 4 metric rows: Hotel Occ, TO Occ, Hotel ADR, TO ADR
       const isCompact = (calDisplayView === 6 || calDisplayView === 12);
       const metricRows = !isCompact ? [
-        { ico: icoHotel, label: 'Occ', val: hotel + '% / ' + lyHotel + '%' },
-        { ico: icoTO,    label: 'Occ', val: to + '% / ' + lyTo + '%' },
-        { ico: icoHotel, label: 'ADR', val: '$' + cellAdr + ' / $' + lyAdr },
-        { ico: icoTO,    label: 'ADR', val: '$' + cellMetricVals.toAdr + ' / $' + lyToAdr },
-      ].map(r => `<div class="cell-m-row">`
-        + `<div class="cell-m-left">${r.ico}<span class="cell-m-label">${r.label}</span></div>`
-        + `<span class="cell-m-val">${r.val}</span>`
-        + `</div>`).join('') : '';
+        { ico: icoHotel, label: 'Occ', actual: hotel, comp: cHOcc, fmt: function(v){ return v + '%'; } },
+        { ico: icoTO,    label: 'Occ', actual: to,    comp: cTOcc, fmt: function(v){ return v + '%'; } },
+        { ico: icoHotel, label: 'ADR', actual: cellAdr, comp: cHAdr, fmt: function(v){ return '$' + v; } },
+        { ico: icoTO,    label: 'ADR', actual: cellMetricVals.toAdr, comp: cTAdr, fmt: function(v){ return '$' + v; } },
+      ].map(r => {
+        var valStr = r.fmt(r.actual);
+        if (r.comp !== null) valStr += ' / ' + r.fmt(r.comp);
+        return `<div class="cell-m-row">`
+          + `<div class="cell-m-left">${r.ico}<span class="cell-m-label">${r.label}</span></div>`
+          + `<span class="cell-m-val">${arrowHtml(r.actual, r.comp)}${valStr}</span>`
+          + `</div>`;
+      }).join('') : '';
 
       const calCl = PARTIAL_CLOSURES[m.month + '-' + d];
       const hasCalCl = !isLocked && calCl && Array.isArray(calCl) && calCl.length > 0;
