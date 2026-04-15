@@ -13488,23 +13488,33 @@ window.calHideCapTip = function() {
         + '</div>';
     }).join('');
 
-    // Stop Sales room type filter
-    var rtFilterEl = document.getElementById('hmRtFilter');
-    if (rtFilterEl) {
+    // Stop Sales room type multiselect
+    var rtSection = document.getElementById('hmRtSection');
+    if (rtSection) {
       if (isStopSales) {
+        rtSection.style.display = '';
         var rtOpts = ['Standard','Superior','Deluxe','Suite','Jr. Suite','Family'];
-        rtFilterEl.innerHTML = '<div style="margin-top:12px;padding:10px 12px;background:#f8fafc;border-radius:6px;border:1px solid #e5e7eb">'
-          + '<div style="font-size:11px;font-weight:700;color:#374151;margin-bottom:6px;text-transform:uppercase;letter-spacing:.3px">Filter by Room Type</div>'
-          + '<select id="hmRtSelect" onchange="hmRtChange(this)" style="width:100%;padding:6px 8px;border:1px solid #d1d5db;border-radius:4px;font-size:13px;color:#374151;background:#fff">'
-          + '<option value=""' + (hmState.stopSalesRoomType===''?' selected':'') + '>All Room Types</option>'
-          + rtOpts.map(function(rt){ return '<option value="'+rt+'"'+(hmState.stopSalesRoomType===rt?' selected':'')+'>'+rt+'</option>'; }).join('')
-          + '</select></div>';
-        rtFilterEl.style.display = '';
+        var checksEl = document.getElementById('hmRtChecks');
+        if (checksEl) {
+          var sel = hmState.stopSalesRoomTypes && hmState.stopSalesRoomTypes.lengths || [];
+          var allSelected = sel.length === 0;
+          checksEl.innerHTML = '<label class="hm-rt-chip' + (allSelected ? ' active' : '') + '">'
+            + '<input type="checkbox" onchange="hmRtToggle(\'all\',this)" style="display:none"' + (allSelected ? ' checked' : '') + '>'
+            + '<span>All</span></label>'
+            + rtOpts.map(function(rt) {
+              var isOn = sel.indexOf(rt) >= 0;
+              return '<label class="hm-rt-chip' + (isOn ? ' active' : '') + '">'
+                + '<input type="checkbox" onchange="hmRtToggle(\'' + rt + '\',this)" style="display:none"' + (isOn ? ' checked' : '') + '>'
+                + '<span>' + rt + '</span></label>';
+            }).join('');
+        }
       } else {
-        rtFilterEl.innerHTML = '';
-        rtFilterEl.style.display = 'none';
+        rtSection.style.display = 'none';
       }
     }
+    // Hide old rtFilter if it exists
+    var rtFilterEl = document.getElementById('hmRtFilter');
+    if (rtFilterEl) { rtFilterEl.innerHTML = ''; rtFilterEl.style.display = 'none'; }
   }
 
   // ── Param change ───────────────────────────────────────────────
@@ -13515,9 +13525,19 @@ window.calHideCapTip = function() {
     hmState[color][param] = parseFloat(el.value) || 0;
   };
 
-  // ── Room type change (stop sales) ──────────────────────────────
-  window.hmRtChange = function(el) {
-    hmState.stopSalesRoomType = el.value;
+  // ── Room type toggle (stop sales multiselect) ──────────────────
+  window.hmRtToggle = function(rt, el) {
+    if (rt === 'all') {
+      hmState.stopSalesRoomTypes && hmState.stopSalesRoomTypes.lengths = [];
+      // Re-render chips to update active states
+      if (hmState.type) hmRenderColours(hmState.type);
+      return;
+    }
+    var arr = hmState.stopSalesRoomTypes && hmState.stopSalesRoomTypes.lengths || [];
+    var idx = arr.indexOf(rt);
+    if (idx >= 0) { arr.splice(idx, 1); } else { arr.push(rt); }
+    hmState.stopSalesRoomTypes && hmState.stopSalesRoomTypes.lengths = arr;
+    if (hmState.type) hmRenderColours(hmState.type);
   };
 
   // ── Condition toggle ───────────────────────────────────────────
@@ -13534,9 +13554,7 @@ window.calHideCapTip = function() {
       if (c && p) hmState[c][p] = parseFloat(el.value) || 0;
     });
     hmState.enabled = !!hmState.type;
-    // Read room type filter
-    var rtSel = document.getElementById('hmRtSelect');
-    if (rtSel) hmState.stopSalesRoomType = rtSel.value;
+    // Room types already tracked via hmRtToggle — no extra read needed
     // Read condition
     var condCb     = document.getElementById('hmCondEnabled');
     var condMetric = document.getElementById('hmCondMetric');
@@ -13582,7 +13600,7 @@ window.calHideCapTip = function() {
   // ── Reset ──────────────────────────────────────────────────────
   window.hmReset = function() {
     hmState = { type: '', grey: { params:{} }, green: { params:{} }, blue: { params:{} }, enabled: false,
-                condition: { enabled: false, metric: 'hotel', op: '>', value: 50 }, stopSalesRoomType: '' };
+                condition: { enabled: false, metric: 'hotel', op: '>', value: 50 }, stopSalesRoomTypes: [] };
     document.querySelectorAll('.hm-type-option').forEach(function(c) { c.classList.remove('active'); });
     var section = document.getElementById('hmColourSection');
     if (section) section.style.display = 'none';
@@ -13596,6 +13614,10 @@ window.calHideCapTip = function() {
     if (condCtrls) condCtrls.style.display = 'none';
     var rtFilter = document.getElementById('hmRtFilter');
     if (rtFilter) { rtFilter.innerHTML = ''; rtFilter.style.display = 'none'; }
+    var rtSect = document.getElementById('hmRtSection');
+    if (rtSect) rtSect.style.display = 'none';
+    var rtChecks = document.getElementById('hmRtChecks');
+    if (rtChecks) rtChecks.innerHTML = '';
     hmUpdateBtn();
     renderCalendar();
   };
@@ -13633,23 +13655,27 @@ window.calHideCapTip = function() {
     var gT  = parseFloat(hmState.grey.greyT)   || 0;
     var gnT = parseFloat(hmState.green.greenT) || 0;
 
-    // Stop sales room type helpers
+    // Stop sales room type helpers (multiselect)
     function ssRtClosed() {
-      var rt = hmState.stopSalesRoomType;
-      if (!rt) return false; // no room type filter
+      var rts = hmState.stopSalesRoomTypes && hmState.stopSalesRoomTypes.lengths;
+      if (!rts || rts.length === 0) return false; // no room type filter (All)
       var rules = dayData.closureRules || [];
-      for (var i = 0; i < rules.length; i++) {
-        var r = rules[i];
-        if (r.roomTypes.length === 0) return true; // applies to all room types
-        if (r.roomTypes.indexOf(rt) >= 0) return true;
+      // Check if ALL selected room types are closed
+      for (var ri = 0; ri < rts.length; ri++) {
+        var found = false;
+        for (var i = 0; i < rules.length; i++) {
+          var r = rules[i];
+          if (r.roomTypes.length === 0 || r.roomTypes.indexOf(rts[ri]) >= 0) { found = true; break; }
+        }
+        if (!found) return false; // at least one selected RT is not closed
       }
-      return false;
+      return true; // all selected RTs are closed
     }
 
     function testGrey() {
       if (type === 'stopsales') {
         if (dayData.isFullClose) return true;
-        if (hmState.stopSalesRoomType) return ssRtClosed();
+        if (hmState.stopSalesRoomTypes && hmState.stopSalesRoomTypes.length) return ssRtClosed();
         return false;
       }
       if (type === 'hotelocc')   return dayData.hotel >= gT;
@@ -13661,7 +13687,7 @@ window.calHideCapTip = function() {
     function testGreen() {
       if (type === 'stopsales') {
         if (dayData.isFullClose) return false;
-        if (hmState.stopSalesRoomType) return !ssRtClosed();
+        if (hmState.stopSalesRoomTypes && hmState.stopSalesRoomTypes.length) return !ssRtClosed();
         return !dayData.hasPartialClose;
       }
       if (type === 'hotelocc')   return dayData.hotel < gnT;
@@ -13673,7 +13699,7 @@ window.calHideCapTip = function() {
     function testBlue() {
       if (type === 'stopsales') {
         if (dayData.isFullClose) return false;
-        if (hmState.stopSalesRoomType) return false; // RT filter → binary closed/open only
+        if (hmState.stopSalesRoomTypes && hmState.stopSalesRoomTypes.length) return false; // RT filter → binary closed/open only
         return dayData.hasPartialClose;
       }
       // Between grey and green for threshold types

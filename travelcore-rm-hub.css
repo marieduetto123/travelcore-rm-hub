@@ -7379,6 +7379,19 @@ body.dark .cal-mfilt-btn.active { background: #1a3535; }
 }
 .hm-btn-chip svg { display: block; }
 
+/* Room type multiselect chips */
+.hm-rt-chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 4px 12px; border-radius: 16px;
+  border: 1px solid #d1d5db; background: #fff;
+  font-size: 12px; font-weight: 500; color: #374151;
+  cursor: pointer; transition: all .15s; user-select: none;
+}
+.hm-rt-chip:hover { border-color: #006461; color: #006461; }
+.hm-rt-chip.active {
+  background: #006461; border-color: #006461; color: #fff;
+}
+
 /* Actions / footer */
 .hm-modal-actions {
   display: flex; flex-direction: column; gap: 24px;
