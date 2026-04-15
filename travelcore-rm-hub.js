@@ -1659,7 +1659,7 @@ function renderCalendar() {
 
       const hotelRooms = toRooms(hotel);
       const toRoomsSold = toRooms(to);
-      const capTipAttr = isLocked ? '' : ` onmouseenter="calShowCapTip(event,${hotel},${hotelRooms},${to},${toRoomsSold},${210-hotelRooms-toRoomsSold})" onmouseleave="calHideCapTip()"`;
+      const capTipAttr = isLocked ? '' : ` onmouseenter="calShowCapTip(event,${hotel},${hotelRooms},${to},${toRoomsSold},${210-hotelRooms-toRoomsSold},${m.month},${d})" onmouseleave="calHideCapTip()"`;
       cells += `<div class="${classes}" data-month="${m.month}" data-day="${d}"${capTipAttr}>
         <div class="cell-day-hdr">
           <span class="cell-hdr-left"><span class="day-num">${d}</span>${isLocked ? lockIcoYellow : ''}</span>
@@ -12626,19 +12626,48 @@ setTimeout(function() {
   // Also hide on scroll
   window.addEventListener('scroll', window.calHideEventTip, true);
 
-window.calShowCapTip = function(e, hotel, hotelRooms, to, toRooms, avail) {
+window.calShowCapTip = function(e, hotel, hotelRooms, to, toRooms, avail, month, day) {
   // Hide events tooltip first
   window.calHideEventTip();
 
   var tip = document.getElementById('calCapTip');
   if (!tip) return;
-  tip.innerHTML = '<div style="font-size:12px;font-weight:600;color:#1c1c1c;margin-bottom:2px">Hotel Bookings: '+hotel+'% ('+hotelRooms+' rooms)</div>'
-    +'<div style="font-size:12px;color:#374151;margin-bottom:2px">TO Bookings: '+to+'% ('+toRooms+' rooms)</div>'
-    +'<div style="font-size:12px;color:#374151">'+avail+' Rooms available</div>';
+
+  // Check if room type filter is active
+  var _fCal = typeof filterState !== 'undefined' ? filterState.cal : {};
+  var _rtFilt = _fCal.calFiltRoom || 'all';
+  var _rtShares = {standard:0.34,superior:0.24,deluxe:0.18,suite:0.08,'jr. suite':0.10,family:0.06};
+  var filteredCap = HOTEL_CAPACITY;
+  var rtLabel = '';
+  var isFiltered = _rtFilt !== 'all';
+
+  if (isFiltered) {
+    var _rtParts = _rtFilt.split(',');
+    var _rtMult = _rtParts.reduce(function(a,b){ return a + (_rtShares[b.trim().toLowerCase()] || 0.15); }, 0);
+    _rtMult = Math.min(1, _rtMult);
+    filteredCap = Math.round(HOTEL_CAPACITY * _rtMult);
+    rtLabel = _rtParts.map(function(s){ return s.trim().charAt(0).toUpperCase() + s.trim().slice(1); }).join(', ');
+  }
+
+  var filtHotelRooms = Math.round(filteredCap * hotel / 100);
+  var filtToRooms = Math.round(filteredCap * to / 100);
+  var filtAvail = Math.max(0, filteredCap - filtHotelRooms);
+
+  var html = '';
+  if (isFiltered) {
+    html += '<div style="font-size:10px;font-weight:600;color:#006461;background:#e6f7f6;padding:3px 6px;border-radius:3px;margin-bottom:6px">'
+      + '📋 Filtered: ' + rtLabel + ' (' + filteredCap + ' rooms)</div>';
+  }
+  html += '<div style="font-size:12px;font-weight:600;color:#1c1c1c;margin-bottom:2px">Hotel: ' + hotel + '% (' + filtHotelRooms + ' rooms)</div>'
+    + '<div style="font-size:12px;color:#8C7843;margin-bottom:2px">TO: ' + to + '% (' + filtToRooms + ' rooms)</div>'
+    + '<div style="font-size:12px;font-weight:600;color:' + (filtAvail < 10 ? '#dc2626' : '#16a34a') + '">'
+    + filtAvail + ' rooms available' + (isFiltered ? ' (' + rtLabel + ')' : '') + '</div>';
+
+  tip.innerHTML = html;
   tip.style.display = 'block';
   var x = e.clientX + 14, y = e.clientY - 10;
-  if (x + 220 > window.innerWidth) x = e.clientX - 226;
-  if (y + 80 > window.innerHeight) y = e.clientY - 90;
+  if (x + 240 > window.innerWidth) x = e.clientX - 250;
+  if (y + 100 > window.innerHeight) y = e.clientY - 110;
   tip.style.left = x + 'px';
   tip.style.top  = y + 'px';
 };
