@@ -1651,6 +1651,7 @@ function renderCalendar() {
         totalGuests: cellMetricVals ? (cellMetricVals.totalGuests || 0) : 0,
         isFullClose: isLocked,
         hasPartialClose: isActionNeeded,
+        closureRules: calCl || [],
         toOtb: to * 1.8,
         toFcst: to * 1.6 + Math.abs((m.month * 7 + d * 11) % 15)
       };
@@ -13218,7 +13219,8 @@ window.calHideCapTip = function() {
     green: { threshold: 60, params: {} },
     blue:  { params: {} },
     enabled: false,
-    condition: { enabled: false, metric: 'hotel', op: '>', value: 50 }
+    condition: { enabled: false, metric: 'hotel', op: '>', value: 50 },
+    stopSalesRoomType: ''  // '' = all room types, or specific room type name
   };
 
   // ── Type definitions ───────────────────────────────────────────
@@ -13348,6 +13350,24 @@ window.calHideCapTip = function() {
         + bodyHtml
         + '</div>';
     }).join('');
+
+    // Stop Sales room type filter
+    var rtFilterEl = document.getElementById('hmRtFilter');
+    if (rtFilterEl) {
+      if (isStopSales) {
+        var rtOpts = ['Standard','Superior','Deluxe','Suite','Jr. Suite','Family'];
+        rtFilterEl.innerHTML = '<div style="margin-top:12px;padding:10px 12px;background:#f8fafc;border-radius:6px;border:1px solid #e5e7eb">'
+          + '<div style="font-size:11px;font-weight:700;color:#374151;margin-bottom:6px;text-transform:uppercase;letter-spacing:.3px">Filter by Room Type</div>'
+          + '<select id="hmRtSelect" onchange="hmRtChange(this)" style="width:100%;padding:6px 8px;border:1px solid #d1d5db;border-radius:4px;font-size:13px;color:#374151;background:#fff">'
+          + '<option value=""' + (hmState.stopSalesRoomType===''?' selected':'') + '>All Room Types</option>'
+          + rtOpts.map(function(rt){ return '<option value="'+rt+'"'+(hmState.stopSalesRoomType===rt?' selected':'')+'>'+rt+'</option>'; }).join('')
+          + '</select></div>';
+        rtFilterEl.style.display = '';
+      } else {
+        rtFilterEl.innerHTML = '';
+        rtFilterEl.style.display = 'none';
+      }
+    }
   }
 
   // ── Param change ───────────────────────────────────────────────
@@ -13356,6 +13376,11 @@ window.calHideCapTip = function() {
     var param = el.dataset.hmParam;
     if (!hmState[color]) hmState[color] = { params: {} };
     hmState[color][param] = parseFloat(el.value) || 0;
+  };
+
+  // ── Room type change (stop sales) ──────────────────────────────
+  window.hmRtChange = function(el) {
+    hmState.stopSalesRoomType = el.value;
   };
 
   // ── Condition toggle ───────────────────────────────────────────
@@ -13372,6 +13397,9 @@ window.calHideCapTip = function() {
       if (c && p) hmState[c][p] = parseFloat(el.value) || 0;
     });
     hmState.enabled = !!hmState.type;
+    // Read room type filter
+    var rtSel = document.getElementById('hmRtSelect');
+    if (rtSel) hmState.stopSalesRoomType = rtSel.value;
     // Read condition
     var condCb     = document.getElementById('hmCondEnabled');
     var condMetric = document.getElementById('hmCondMetric');
@@ -13417,7 +13445,7 @@ window.calHideCapTip = function() {
   // ── Reset ──────────────────────────────────────────────────────
   window.hmReset = function() {
     hmState = { type: '', grey: { params:{} }, green: { params:{} }, blue: { params:{} }, enabled: false,
-                condition: { enabled: false, metric: 'hotel', op: '>', value: 50 } };
+                condition: { enabled: false, metric: 'hotel', op: '>', value: 50 }, stopSalesRoomType: '' };
     document.querySelectorAll('.hm-type-option').forEach(function(c) { c.classList.remove('active'); });
     var section = document.getElementById('hmColourSection');
     if (section) section.style.display = 'none';
@@ -13429,6 +13457,8 @@ window.calHideCapTip = function() {
     if (condCb) condCb.checked = false;
     var condCtrls = document.getElementById('hmCondControls');
     if (condCtrls) condCtrls.style.display = 'none';
+    var rtFilter = document.getElementById('hmRtFilter');
+    if (rtFilter) { rtFilter.innerHTML = ''; rtFilter.style.display = 'none'; }
     hmUpdateBtn();
     renderCalendar();
   };
@@ -13466,8 +13496,25 @@ window.calHideCapTip = function() {
     var gT  = parseFloat(hmState.grey.greyT)   || 0;
     var gnT = parseFloat(hmState.green.greenT) || 0;
 
+    // Stop sales room type helpers
+    function ssRtClosed() {
+      var rt = hmState.stopSalesRoomType;
+      if (!rt) return false; // no room type filter
+      var rules = dayData.closureRules || [];
+      for (var i = 0; i < rules.length; i++) {
+        var r = rules[i];
+        if (r.roomTypes.length === 0) return true; // applies to all room types
+        if (r.roomTypes.indexOf(rt) >= 0) return true;
+      }
+      return false;
+    }
+
     function testGrey() {
-      if (type === 'stopsales')  return dayData.isFullClose;
+      if (type === 'stopsales') {
+        if (dayData.isFullClose) return true;
+        if (hmState.stopSalesRoomType) return ssRtClosed();
+        return false;
+      }
       if (type === 'hotelocc')   return dayData.hotel >= gT;
       if (type === 'remaining')  return dayData.remainRooms < gT;
       if (type === 'mealplan')   return dayData.totalGuests >= gT;
@@ -13475,7 +13522,11 @@ window.calHideCapTip = function() {
       return false;
     }
     function testGreen() {
-      if (type === 'stopsales')  return !dayData.isFullClose && !dayData.hasPartialClose;
+      if (type === 'stopsales') {
+        if (dayData.isFullClose) return false;
+        if (hmState.stopSalesRoomType) return !ssRtClosed();
+        return !dayData.hasPartialClose;
+      }
       if (type === 'hotelocc')   return dayData.hotel < gnT;
       if (type === 'remaining')  return dayData.remainRooms > gnT;
       if (type === 'mealplan')   return dayData.totalGuests < gnT;
@@ -13483,7 +13534,11 @@ window.calHideCapTip = function() {
       return false;
     }
     function testBlue() {
-      if (type === 'stopsales') return dayData.hasPartialClose && !dayData.isFullClose;
+      if (type === 'stopsales') {
+        if (dayData.isFullClose) return false;
+        if (hmState.stopSalesRoomType) return false; // RT filter → binary closed/open only
+        return dayData.hasPartialClose;
+      }
       // Between grey and green for threshold types
       var lo = Math.min(gT, gnT), hi = Math.max(gT, gnT);
       if (type === 'hotelocc')   return dayData.hotel >= lo && dayData.hotel <= hi;
