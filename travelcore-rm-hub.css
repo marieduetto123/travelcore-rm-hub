@@ -2234,18 +2234,6 @@ body.dark .wv-groupby-bar { background: var(--surface-2); border-bottom-color: v
 body.dark .wv-groupby-btn { color: #4dd8d4; }
 body.dark .wv-groupby-btn.active { background: #1a2f31; color: #5ceade; }
 
-/* Calendar view tabs (in header row) */
-.cal-view-tabs {
-  display: flex; align-items: center; gap: 0;
-  margin-right: 8px;
-}
-.cal-vt-btn {
-  font-size: 13px !important;
-  padding: 4px 12px !important;
-  height: 30px !important;
-  border-radius: 4px !important;
-}
-
 /* Compare-against dropdown */
 .wv-cmp-wrap {
   display: flex; align-items: center;
