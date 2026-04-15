@@ -17,7 +17,8 @@
       "Bash(node -c /Users/marie/Melia/travelcore-rm-hub.js)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(vercel --prod --yes)"
     ]
   }
 }

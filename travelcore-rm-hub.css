@@ -773,7 +773,7 @@ body.dark .cal-nav-btn:hover { background: rgba(196,255,69,0.07); border-color: 
 
 /* Day cells — tall with occ content */
 .cal-day {
-  height: 84px; min-width: 0;
+  height: 100px; min-width: 0;
   display: flex; flex-direction: column;
   position: relative; border-radius: 3px;
   cursor: pointer; transition: box-shadow .1s;
@@ -1421,7 +1421,7 @@ body.dark .cal-day.today {
 body.dark .cal-day.today .day-num { color: var(--lime); }
 
 /* Empty / locked */
-.cal-day.empty   { cursor: default; pointer-events: none; height: 80px; }
+.cal-day.empty   { cursor: default; pointer-events: none; height: 100px; }
 
 /* ── Compact 6 / 12 month view ── */
 .cal-compact .cal-day {
@@ -1883,7 +1883,7 @@ body.dark .figma-fab { border-color: rgba(255,255,255,.08); }
 /* 1-month view — larger cells */
 .cal-months-grid[style*="repeat(1"] .cal-day,
 .cal-months-grid[style*="repeat(1"] .cal-day.empty {
-  height: 110px;
+  height: 126px;
 }
 .cal-months-grid[style*="repeat(1"] .day-num { font-size: 11px; }
 .cal-months-grid[style*="repeat(1"] .cell-occ-label { font-size: 9px; }
@@ -1894,7 +1894,7 @@ body.dark .figma-fab { border-color: rgba(255,255,255,.08); }
 /* 2-month view */
 .cal-months-grid[style*="repeat(2"] .cal-day,
 .cal-months-grid[style*="repeat(2"] .cal-day.empty {
-  height: 90px;
+  height: 106px;
 }
 
 /* ─── CELL EYE ICON ─── */

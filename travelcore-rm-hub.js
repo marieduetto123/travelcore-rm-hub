@@ -2541,19 +2541,45 @@ function clearCalSelection() {
 
     // Room availability — filtered by active calendar filters
     var rtRowsAll = [['Standard',51],['Superior',36],['Deluxe',27],['Suite',12],['Jr. Suite',15],['Family',9]];
-    // _rtFilt, _bdFilt, toKey already declared above
     // Filter room types when a specific room filter is active
     var rtRows = _rtFilt !== 'all' ? rtRowsAll.filter(function(r) {
       var selected = _rtFilt.split(',');
       return selected.some(function(s) { return s.trim().toLowerCase() === r[0].toLowerCase(); });
     }) : rtRowsAll;
     if (rtRows.length === 0) rtRows = rtRowsAll; // fallback if no match
+
+    // Per-room-type sold: compute bookings specific to active filters
+    // TO share per room type (seed-based variation)
+    var _toShareMap = {'sunshine-tours':[.22,.20,.18,.25,.20,.22],'global-adv':[.20,.22,.24,.20,.22,.18],
+      'beach-hols':[.18,.16,.20,.15,.18,.24],'city-breaks':[.24,.22,.18,.20,.20,.18],'adventure':[.16,.20,.20,.20,.20,.18]};
+    // Board share per room type
+    var _bdShareMap = {ai:[.55,.50,.45,.35,.40,.60],bb:[.20,.22,.24,.25,.25,.18],
+      hb:[.15,.16,.18,.22,.20,.14],ro:[.10,.12,.13,.18,.15,.08]};
+
     var rtHTML = rtRows.map(function(row) {
       var name = row[0], inv = row[1];
       var origIdx = rtRowsAll.findIndex(function(r){ return r[0] === name; });
       var colorIdx = origIdx >= 0 ? origIdx : 0;
-      var baseSold = Math.min(inv, Math.floor(inv * hotel / 110));
-      var sold = Math.min(inv, Math.round(baseSold * _filterMult));
+      // Base sold for this room type from overall hotel occupancy
+      var baseSold = Math.min(inv, Math.floor(inv * hotelBase / 110));
+      // Apply per-room-type filter multipliers
+      var rtFiltMult = 1.0;
+      if (toKey !== 'all') {
+        var _ts = _toShareMap[toKey];
+        rtFiltMult *= _ts ? _ts[origIdx] || 0.20 : 0.20;
+      }
+      if (_bdFilt !== 'all') {
+        var _bdParts = _bdFilt.split(',').map(function(s){ return s.trim(); });
+        var _bdSum = _bdParts.reduce(function(a,b){
+          var _bs = _bdShareMap[b];
+          return a + (_bs ? _bs[origIdx] || 0.15 : 0.15);
+        }, 0);
+        rtFiltMult *= Math.min(1, _bdSum);
+      }
+      if (_mkFilt !== 'all') rtFiltMult *= 0.6;
+      var sold = _hasAnyFilter
+        ? Math.min(inv, Math.max(0, Math.round(baseSold * rtFiltMult)))
+        : baseSold;
       var avail = Math.max(0, inv - sold);
       var pct   = Math.round(sold / inv * 100);
       var barClr  = avail === 0 ? '#dc2626' : pct >= 85 ? '#ea580c' : pct >= 60 ? '#f59e0b' : '#16a34a';
@@ -2563,6 +2589,9 @@ function clearCalSelection() {
         +'<div style="display:flex;align-items:center;gap:4px">'
         +'<span class="popup-rt-sw" style="background:'+RT_COLORS[colorIdx]+'"></span>'
         +'<span class="popup-rt-nm" style="flex:1">'+name+'</span>'
+        +(_hasAnyFilter
+          ? '<span style="font-size:8px;font-weight:600;color:#004948;margin-right:2px">'+sold+'<span style="color:#94a3b8;font-weight:400"> booked</span></span>'
+          : '')
         +(avail === 0
           ? '<span style="font-size:7px;font-weight:700;color:#dc2626;background:#fee2e2;padding:1px 5px;border-radius:3px;letter-spacing:.2px">SOLD OUT</span>'
           : '<span style="font-size:9px;font-weight:700;color:'+availClr+'">'+avail+' avail</span>')
@@ -2685,8 +2714,8 @@ function clearCalSelection() {
       // 4. Room Availability (filtered)
       +'<div class="popup-metrics-section">'
       +'<div class="popup-metrics-title">ROOM AVAILABILITY'
-      + ((_rtFilt !== 'all' || toKey !== 'all' || _bdFilt !== 'all')
-         ? '<span style="font-size:8px;font-weight:600;color:#006461;background:#d7f7ed;padding:1px 6px;border-radius:3px;margin-left:6px;vertical-align:middle">FILTERED</span>'
+      + (_hasAnyFilter
+         ? '<span style="font-size:7px;font-weight:600;color:#006461;background:#d7f7ed;padding:1px 6px;border-radius:3px;margin-left:6px;vertical-align:middle">'+(_filtLabel ? 'FILTERED' : 'FILTERED')+'</span>'
          : '')
       +'</div>'
       + rtHTML
