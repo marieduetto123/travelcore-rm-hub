@@ -819,23 +819,22 @@ body.dark .cal-nav-btn:hover { background: rgba(196,255,69,0.07); border-color: 
   display: flex; align-items: center; justify-content: space-between;
   line-height: 1.1;
 }
-.cell-m-left {
-  display: flex; align-items: center; gap: 2px; min-width: 0;
-}
-.cell-m-ico { flex-shrink: 0; fill: #b0b5ba; }
 .cell-m-label {
-  font-size: 9px; font-weight: 500; color: #8a9096;
+  font-size: 12px; font-weight: 500;
   font-family: 'Inter', sans-serif;
   white-space: nowrap;
 }
 .cell-m-val {
-  font-size: 9px; font-weight: 600; color: #1C1C1C;
+  font-size: 12px; font-weight: 600;
   font-family: 'Inter', sans-serif;
   white-space: nowrap; text-align: right;
 }
+/* Hotel = black, TO = gold-brown */
+.cell-m-hotel .cell-m-label, .cell-m-hotel .cell-m-val { color: #1C1C1C; }
+.cell-m-to .cell-m-label, .cell-m-to .cell-m-val { color: #8C7843; }
 
 /* Comparison value colors */
-.cell-cmp { font-size: 8px; font-weight: 500; opacity: .85; }
+.cell-cmp { font-size: 10px; font-weight: 500; opacity: .85; }
 .cell-cmp-up { color: #16a34a; }
 .cell-cmp-dn { color: #dc2626; }
 /* Light green/red on dark heatmap cells */
@@ -7196,6 +7195,11 @@ body.dark .cal-mfilt-btn.active { background: #1a3535; }
   display: inline-block;
   width: 12px; height: 12px; border-radius: 2px;
   background: #006461; flex-shrink: 0;
+}
+.leg-color-swatch {
+  display: inline-block;
+  width: 10px; height: 10px; border-radius: 50%;
+  flex-shrink: 0;
 }
 
 

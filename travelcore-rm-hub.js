@@ -1600,7 +1600,7 @@ function renderCalendar() {
           var lbl = r.label || '';
           var isTO = lbl.charAt(0) === 'T' && lbl.charAt(1) === '-';
           var isH  = lbl.charAt(0) === 'H' && lbl.charAt(1) === '-';
-          var ico = isTO ? icoTO : icoHotel;
+          var metricColorClass = isTO ? 'cell-m-to' : 'cell-m-hotel';
           // Short label: strip H-/T- prefix, then strip LY-/STLY-/Fcst- for cleanliness
           var shortLabel = (isH || isTO) ? lbl.substring(2) : lbl;
           shortLabel = shortLabel.replace(/^LY-|^STLY-|^Fcst-/, '');
@@ -1627,8 +1627,8 @@ function renderCalendar() {
             compHtml = '<span class="cell-cmp"> / <span class="' + upOrDown + '">' + compStr + '</span></span>';
           }
 
-          return '<div class="cell-m-row">'
-            + '<div class="cell-m-left">' + ico + '<span class="cell-m-label">' + shortLabel + '</span></div>'
+          return '<div class="cell-m-row ' + metricColorClass + '">'
+            + '<span class="cell-m-label">' + shortLabel + '</span>'
             + '<span class="cell-m-val">' + r.value + compHtml + '</span>'
             + '</div>';
         }).join('');
