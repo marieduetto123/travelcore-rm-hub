@@ -282,7 +282,7 @@ const BOARD_COLORS = { ai:'#065f46', fb:'#1d4ed8', hb:'#b45309', bb:'#7c3aed', r
 // Room type offset + labels + colors
 const ROOM_OFFSET = { all:0, standard:4, deluxe:0, premium:-6, executive:-10, presidential:-16, family:2 };
 const ROOM_LABELS = { standard:'Standard Room', deluxe:'Deluxe Room', premium:'Premium Suite', executive:'Executive Suite', presidential:'Presidential Suite', family:'Family Room' };
-const ROOM_COLORS = { standard:'#059669', deluxe:'#0ea5e9', premium:'#8b5cf6', executive:'#f59e0b', presidential:'#ec4899', family:'#14b8a6' };
+const ROOM_COLORS = { standard:'#059669', deluxe:'#0ea5e9', premium:'#967EF3', executive:'#f59e0b', presidential:'#ec4899', family:'#14b8a6' };
 
 const MONTHS_SHORT = ['Aug','Sep','Oct','Nov','Dec','Jan'];
 
@@ -348,10 +348,10 @@ function getRadioVal(name) {
 }
 
 // Color palettes for TO/Source Geo/Source individual lines
-const TO_LINE_COLORS   = { tui:'#0ea5e9', 'thomas-cook':'#f59e0b', jet2:'#10b981', fti:'#8b5cf6', sunwing:'#ec4899', 'club-med':'#f97316' };
+const TO_LINE_COLORS   = { tui:'#0ea5e9', 'thomas-cook':'#f59e0b', jet2:'#10b981', fti:'#967EF3', sunwing:'#ec4899', 'club-med':'#f97316' };
 const TO_LINE_LABELS   = { tui:'TUI Group', 'thomas-cook':'Thomas Cook', jet2:'Jet2holidays', fti:'FTI Group', sunwing:'Sunwing', 'club-med':'Club Med' };
 const ORIGIN_COLORS    = { UK:'#3b82f6', SP:'#f97316', US:'#10b981', MX:'#ec4899' };
-const SOURCE_COLORS    = { contract:'#006461', promo:'#8b5cf6', direct_web:'#0ea5e9', gds_source:'#f59e0b', walk_in:'#6b7280' };
+const SOURCE_COLORS    = { contract:'#006461', promo:'#967EF3', direct_web:'#0ea5e9', gds_source:'#f59e0b', walk_in:'#6b7280' };
 const SOURCE_LABELS    = { contract:'Contract', promo:'Promotion', direct_web:'Direct Web', gds_source:'GDS', walk_in:'Walk-in' };
 
 // ── Revenue Trend: date range state (start/end as Date objects) ──────────────
@@ -363,7 +363,7 @@ var revChartMode   = 'histogram'; // 'lines' | 'histogram'
 // Distinct colour palette for unique combinations (primary + compare)
 const REV_PALETTE = [
   '#006461','#0891b2','#6366f1','#f59e0b','#ec4899',
-  '#10b981','#8b5cf6','#f97316','#3b82f6','#dc2626',
+  '#10b981','#967EF3','#f97316','#3b82f6','#dc2626',
   '#14b8a6','#a855f7','#eab308','#06b6d4','#84cc16',
 ];
 
@@ -800,8 +800,8 @@ function updateChart() {
       : (checkedRooms.length > 0 ? [{ key:'_room', label:'Rooms (combined)', color:'#059669', yOff:4 }] : []);
 
     const boardList = boardsInd
-      ? checkedBoards.map(b => ({ key:b, label:BOARD_LABELS[b]||b, color:BOARD_COLORS[b]||'#8b5cf6', yOff:BOARD_MULT[b]||0 }))
-      : (checkedBoards.length > 0 ? [{ key:'_board', label:'Meal Plans (combined)', color:'#8b5cf6', yOff:6 }] : []);
+      ? checkedBoards.map(b => ({ key:b, label:BOARD_LABELS[b]||b, color:BOARD_COLORS[b]||'#967EF3', yOff:BOARD_MULT[b]||0 }))
+      : (checkedBoards.length > 0 ? [{ key:'_board', label:'Meal Plans (combined)', color:'#967EF3', yOff:6 }] : []);
 
     const hasSeg   = segList.length   > 0;
     const hasRoom  = roomList.length  > 0;
@@ -1009,7 +1009,7 @@ function updateChart() {
     }
 
     // Scatter dots for each series at each data point
-    const DOT_COLORS = ['#004948','#0891b2','#6366f1','#dc2626','#f59e0b','#ec4899','#10b981','#8b5cf6'];
+    const DOT_COLORS = ['#004948','#0891b2','#6366f1','#dc2626','#f59e0b','#ec4899','#10b981','#967EF3'];
     allSeries.forEach(function(s, si) {
       const dotClr = DOT_COLORS[si % DOT_COLORS.length];
       const r = si === 0 ? 5.5 : 4.5;
@@ -1079,7 +1079,7 @@ function updateChart() {
   const legend = document.getElementById('revLegend');
   if (legend) {
     // Fixed legend: Above / Below parity + trend line + series dots
-    const DOT_COLORS2 = ['#004948','#0891b2','#6366f1','#dc2626','#f59e0b','#ec4899','#10b981','#8b5cf6'];
+    const DOT_COLORS2 = ['#004948','#0891b2','#6366f1','#dc2626','#f59e0b','#ec4899','#10b981','#967EF3'];
     let legendHtml = '';
     if (revChartMode === 'histogram') {
       legendHtml += `<div class="legend-item"><svg viewBox="0 0 28 10" width="28" height="10"><line x1="0" y1="5" x2="28" y2="5" stroke="#1e293b" stroke-width="2.5"/></svg>Trend</div>`;
@@ -1731,7 +1731,7 @@ function renderCalendar() {
 function buildCalendar() { renderCalendar(); }
 
 // ── Monthly summary accordion state ──────────────────────────────────────────
-var _calAccState = { daily: false, more: false, meals: false, biz: false, tc: false, overview: false };
+var _calAccState = { daily: false, more: false, meals: false, biz: false, tc: false, overview: true };
 
 window.calAccClick = function(hdr) {
   var sect = hdr.closest('.wv-acc-sect');
@@ -1913,7 +1913,7 @@ function renderCalMonthlySummary() {
       sdlyRevpar,lyRevpar,sdlyRn,lyRn,fcstRn};
   });
 
-  var tcOps=[['Sunshine Tours','#3b82f6'],['Global Adv.','#8b5cf6'],['Beach Hols','#0ea5e9'],['City Breaks','#10b981'],['Adventure','#f59e0b']];
+  var tcOps=[['Sunshine Tours','#3b82f6'],['Global Adv.','#967EF3'],['Beach Hols','#0ea5e9'],['City Breaks','#10b981'],['Adventure','#f59e0b']];
 
   // ── Build Daily-B style grid ──────────────────────────────────────────
   // Reuse wb- classes from the weekly view but with month columns
@@ -1926,7 +1926,7 @@ function renderCalMonthlySummary() {
     if (clr==='#6366f1') return 'linear-gradient(to right,#6366f1,#818cf8)';
     if (clr==='#5883ed') return 'linear-gradient(to right,#5883ed,#93b4f6)';
     if (clr==='#D97706') return 'linear-gradient(to right,#D97706,#F59E0B)';
-    if (clr==='#8b5cf6') return 'linear-gradient(to right,#8b5cf6,#a78bfa)';
+    if (clr==='#967EF3') return 'linear-gradient(to right,#967EF3,#a78bfa)';
     if (clr==='#3b82f6') return 'linear-gradient(to right,#3b82f6,#60a5fa)';
     if (clr==='#f59e0b') return 'linear-gradient(to right,#f59e0b,#fbbf24)';
     if (clr==='#0284c7') return 'linear-gradient(to right,#0284c7,#38bdf8)';
@@ -2006,7 +2006,7 @@ function renderCalMonthlySummary() {
   moRows.push({type:'sect', id:'mos_mpsum', label:'Summary', parent:'mo_meals'});
   moRows.push({type:'sub', id:'mos_mp_ai', label:'All Inclusive', dot:'#006461', parent:'mos_mpsum', gp:'mo_meals'});
   moRows.push({type:'sub', id:'mos_mp_bb', label:'Bed & Breakfast', dot:'#3b82f6', parent:'mos_mpsum', gp:'mo_meals'});
-  moRows.push({type:'sub', id:'mos_mp_hb', label:'Half Board', dot:'#8b5cf6', parent:'mos_mpsum', gp:'mo_meals'});
+  moRows.push({type:'sub', id:'mos_mp_hb', label:'Half Board', dot:'#967EF3', parent:'mos_mpsum', gp:'mo_meals'});
   moRows.push({type:'sub', id:'mos_mp_ro', label:'Room Only', dot:'#f59e0b', parent:'mos_mpsum', gp:'mo_meals'});
 
   // ── Business Mix group
@@ -2155,11 +2155,11 @@ function renderCalMonthlySummary() {
               + moBar(Math.min(90,Math.round(mo.avgAvailGuar/20*100)), '#004948');
             break;
           case 'mos_mpsum':
-            cc = moStackBar([{p:mo.avgAi,c:'#006461'},{p:mo.avgBb,c:'#3b82f6'},{p:mo.avgHb,c:'#8b5cf6'},{p:mo.avgRo,c:'#f59e0b'}])
+            cc = moStackBar([{p:mo.avgAi,c:'#006461'},{p:mo.avgBb,c:'#3b82f6'},{p:mo.avgHb,c:'#967EF3'},{p:mo.avgRo,c:'#f59e0b'}])
               + '<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:3px">'
               + '<span style="font-size:12px;font-family:Lato,sans-serif;color:#006461">AI '+mo.avgAi+'%</span>'
               + '<span style="font-size:12px;font-family:Lato,sans-serif;color:#3b82f6">BB '+mo.avgBb+'%</span>'
-              + '<span style="font-size:12px;font-family:Lato,sans-serif;color:#8b5cf6">HB '+mo.avgHb+'%</span>'
+              + '<span style="font-size:12px;font-family:Lato,sans-serif;color:#967EF3">HB '+mo.avgHb+'%</span>'
               + '<span style="font-size:12px;font-family:Lato,sans-serif;color:#f59e0b">RO '+mo.avgRo+'%</span>'
               + '</div>';
             break;
@@ -2717,11 +2717,11 @@ function clearCalSelection() {
         +'<span class="popup-rt-sw" style="background:'+RT_COLORS[colorIdx]+'"></span>'
         +'<span class="popup-rt-nm" style="flex:1">'+name+'</span>'
         +(_hasAnyFilter
-          ? '<span style="font-size:8px;font-weight:600;color:#004948;margin-right:2px">'+sold+'<span style="color:#94a3b8;font-weight:400"> booked</span></span>'
+          ? '<span style="font-size:12px;font-weight:600;color:#004948;margin-right:2px">'+sold+'<span style="color:#94a3b8;font-weight:400"> booked</span></span>'
           : '')
         +(avail === 0
-          ? '<span style="font-size:7px;font-weight:700;color:#dc2626;background:#fee2e2;padding:1px 5px;border-radius:3px;letter-spacing:.2px">SOLD OUT</span>'
-          : '<span style="font-size:9px;font-weight:700;color:'+availClr+'">'+avail+' avail</span>')
+          ? '<span style="font-size:12px;font-weight:700;color:#16a34a">0 available</span>'
+          : '<span style="font-size:12px;font-weight:700;color:'+availClr+'">'+avail+' avail</span>')
         +'</div>'
         +'<div style="height:6px;border-radius:2px;background:#e5e7eb;overflow:hidden;margin-left:11px">'
         +'<div style="height:100%;width:'+pct+'%;background:'+barClr+';border-radius:2px"></div>'
@@ -2731,7 +2731,7 @@ function clearCalSelection() {
 
     // TO Rates — filtered by active TO filter
     var toNamesAll  = ['Sunshine Tours','Global Adv.','Beach Hols','City Breaks','Adventure'];
-    var toColorsAll = ['#3b82f6','#8b5cf6','#0ea5e9','#10b981','#f59e0b'];
+    var toColorsAll = ['#3b82f6','#967EF3','#0ea5e9','#10b981','#f59e0b'];
     var _toFilterMap = {'sunshine-tours':0,'global-adv':1,'beach-hols':2,'city-breaks':3,'adventure':4};
     var toNames = toNamesAll, toColors = toColorsAll;
     if (toKey !== 'all' && _toFilterMap[toKey] !== undefined) {
@@ -2769,7 +2769,7 @@ function clearCalSelection() {
         const rtPart = rule.roomTypes.length ? rule.roomTypes.map(function(n){ return popupClChip(n, RT_NAME_COLORS[n]||'#b45309'); }).join('') : popupClChip('All Room Types','#9ca3af');
         const bdPart = rule.boards.length ? rule.boards.map(function(b){ return popupClChip(BMAP_P[b]||b,'#7c3aed'); }).join('') : popupClChip('All Meal Plans','#9ca3af');
         return '<div style="margin-bottom:4px;padding:4px 0;border-bottom:1px solid #f3f4f6">'
-          +'<span style="font-size:9px;font-weight:700;color:#dc2626">Strategy</span>'
+          +'<span style="font-size:12px;font-weight:700;color:#dc2626">Strategy</span>'
           +'<div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:3px">'+toPart+rtPart+bdPart+'</div>'
           +'</div>';
       }).join('');
@@ -2783,10 +2783,10 @@ function clearCalSelection() {
     function _pGrad(c){if(c==='#004948')return'linear-gradient(to right,#004948,#007a75)';if(c==='#52d9ce')return'linear-gradient(to right,#52d9ce,#8aeee8)';if(c==='#445e0d')return'linear-gradient(to right,#445e0d,#6a9014)';if(c==='#D97706')return'linear-gradient(to right,#D97706,#F59E0B)';if(c==='#16a34a')return'linear-gradient(to right,#16a34a,#22c55e)';if(c==='#C4FF45')return'linear-gradient(to right,#C4FF45,#D4FF73)';return c;}
     function _pBar(pct,c){return'<div class="wv-occ-bar-track" style="margin:2px 0 0;height:6px;border-radius:2px"><div style="width:'+pct+'%;background:'+_pGrad(c)+';height:6px"></div></div>';}
     function _pSbar(segs){return'<div class="wv-occ-bar-track" style="margin:2px 0 0;height:6px;border-radius:2px">'+segs.map(function(s){return'<div style="width:'+s.p+'%;background:'+_pGrad(s.c)+';height:6px"></div>';}).join('')+'</div>';}
-    function _pGrp(label,clr){return'<div class="pb-grp" style="background:'+clr+';color:#fff;font-size:10px;font-weight:700;padding:4px 8px;margin:0 -10px;letter-spacing:.5px">'+label+'</div>';}
-    function _pSect(label,val,barHtml,dot){return'<div class="pb-sect" style="padding:5px 0 3px;border-bottom:1px solid #f0f0f0"><div style="display:flex;align-items:center;gap:4px;margin-bottom:2px">'+(dot?'<span style="width:6px;height:6px;border-radius:50%;background:'+dot+';flex-shrink:0"></span>':'')+'<span style="font-size:11px;font-weight:600;color:#111827;flex:1">'+label+'</span><span style="font-size:11px;font-weight:700;color:#111827">'+val+'</span></div>'+barHtml+'</div>';}
-    function _pSub(label,val,dot,isRem){var c=isRem?'#388c3f':'#6b7280';return'<div style="display:flex;align-items:center;gap:4px;padding:2px 0 2px 10px">'+(dot?'<span style="width:5px;height:5px;border-radius:50%;background:'+dot+';flex-shrink:0"></span>':'')+'<span style="font-size:10px;color:'+c+';flex:1">'+label+'</span><span style="font-size:10px;font-weight:600;color:'+(isRem?'#388c3f':'#111827')+'">'+val+'</span></div>';}
-    function _pRef(stlyVal,delta){return'<div style="display:flex;gap:6px;padding:1px 0 0 10px"><span class="wv-ref-tag wv-ref-sdly" style="font-size:8px">STLY '+stlyVal+'</span><span class="wv-ref-tag '+(String(delta).startsWith('+')?'wv-ref-fcst':'wv-ref-sdly')+'" style="font-size:8px">'+delta+'</span></div>';}
+    function _pGrp(label,clr){return'<div class="pb-grp" style="background:'+clr+';color:#fff;font-size:12px;font-weight:700;padding:4px 8px;margin:0 -10px;letter-spacing:.5px">'+label+'</div>';}
+    function _pSect(label,val,barHtml,dot){return'<div class="pb-sect" style="padding:5px 0 3px;border-bottom:1px solid #f0f0f0"><div style="display:flex;align-items:center;gap:4px;margin-bottom:2px">'+(dot?'<span style="width:6px;height:6px;border-radius:50%;background:'+dot+';flex-shrink:0"></span>':'')+'<span style="font-size:12px;font-weight:600;color:#111827;flex:1">'+label+'</span><span style="font-size:12px;font-weight:700;color:#111827">'+val+'</span></div>'+barHtml+'</div>';}
+    function _pSub(label,val,dot,isRem){var c=isRem?'#388c3f':'#6b7280';return'<div style="display:flex;align-items:center;gap:4px;padding:2px 0 2px 10px">'+(dot?'<span style="width:5px;height:5px;border-radius:50%;background:'+dot+';flex-shrink:0"></span>':'')+'<span style="font-size:12px;color:'+c+';flex:1">'+label+'</span><span style="font-size:12px;font-weight:600;color:'+(isRem?'#388c3f':'#111827')+'">'+val+'</span></div>';}
+    function _pRef(stlyVal,delta){return'<div style="display:flex;gap:6px;padding:1px 0 0 10px"><span class="wv-ref-tag wv-ref-sdly" style="font-size:10px">STLY '+stlyVal+'</span><span class="wv-ref-tag '+(String(delta).startsWith('+')?'wv-ref-fcst':'wv-ref-sdly')+'" style="font-size:10px">'+delta+'</span></div>';}
 
     var _pb = '';
     _pb += _filtLabel;
@@ -2842,7 +2842,7 @@ function clearCalSelection() {
 
     // ── Position popup ──
     const rect = cell.getBoundingClientRect();
-    const popW = 270;
+    const popW = 320;
     let left = rect.right + 10;
     let top  = rect.top;
     if (left + popW > window.innerWidth - 12) left = rect.left - popW - 10;
@@ -2957,11 +2957,11 @@ function clearCalSelection() {
 const DOW_FULL = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 const RT_COLORS = ['#ff5900','#547733','#604f35','#3f3e78','#967ef3','#248b86'];
 const RT_NAMES  = ['Standard','Superior','Deluxe','Suite','Jr. Suite','Family'];
-const SEG_COLORS = ['#3b82f6','#8b5cf6','#0ea5e9','#10b981','#f59e0b','#ec4899'];
+const SEG_COLORS = ['#3b82f6','#967EF3','#0ea5e9','#10b981','#f59e0b','#ec4899'];
 
 // Color maps for partial closure chips
 const TO_COLORS_MAP = {
-  'Sunshine Tours':'#3b82f6', 'Global Adv.':'#8b5cf6',
+  'Sunshine Tours':'#3b82f6', 'Global Adv.':'#967EF3',
   'Beach Hols':'#0ea5e9',     'City Breaks':'#10b981', 'Adventure':'#f59e0b',
 };
 const RT_NAME_COLORS = {
@@ -3517,7 +3517,7 @@ function buildDailyBView(days, month, activeDay) {
   var RT_NAMES   = ['Standard','Superior','Deluxe','Suite','Jr. Suite','Family'];
   var RT_CAPS    = [51,36,27,12,15,9];
   var TO_NAMES   = ['Sunshine Tours','Global Adv.','Beach Hols','City Breaks','Adventure'];
-  var TO_COLORS  = ['#3b82f6','#8b5cf6','#0ea5e9','#10b981','#f59e0b'];
+  var TO_COLORS  = ['#3b82f6','#967EF3','#0ea5e9','#10b981','#f59e0b'];
 
   // ── Per-day values ────────────────────────────────────────────────────────
   var dd7 = days.map(function(dv) {
@@ -3712,7 +3712,7 @@ function buildDailyBView(days, month, activeDay) {
       grp.g_avail.push({type:'sect', id:'avrt'+i,       label:name,        parent:'g_avail', rtIdx:i});
       grp.g_avail.push({type:'sub',  id:'avrt'+i+'_to', label:'TO Sold',   dot:'#004948', parent:'avrt'+i, rtIdx:i, rtSub:'to'});
       grp.g_avail.push({type:'sub',  id:'avrt'+i+'_ot', label:'Other Segments', dot:'#52d9ce', parent:'avrt'+i, rtIdx:i, rtSub:'other'});
-      grp.g_avail.push({type:'sub',  id:'avrt'+i+'_tn', label:'Tentative Sold (Group)',    dot:'#8b5cf6', parent:'avrt'+i, rtIdx:i, rtSub:'tentative'});
+      grp.g_avail.push({type:'sub',  id:'avrt'+i+'_tn', label:'Tentative Sold (Group)',    dot:'#967EF3', parent:'avrt'+i, rtIdx:i, rtSub:'tentative'});
       grp.g_avail.push({type:'sub',  id:'avrt'+i+'_oo', label:'Out-of-Order',             dot:'#ef4444', parent:'avrt'+i, rtIdx:i, rtSub:'ooo'});
       grp.g_avail.push({type:'sub',  id:'avrt'+i+'_al', label:'Alloc Rem.',dot:'#D97706', parent:'avrt'+i, rtIdx:i, rtSub:'alloc'});
       grp.g_avail.push({type:'sub',  id:'avrt'+i+'_av', label:'Total Hotel Remaining', dot:'#445e0d', parent:'avrt'+i, rtIdx:i, rtSub:'avail', isRem:true});
@@ -3800,7 +3800,7 @@ function buildDailyBView(days, month, activeDay) {
     if (clr==='#52d9ce') return 'linear-gradient(to right,#52d9ce,#8aeee8)';
     if (clr==='#445e0d') return 'linear-gradient(to right,#445e0d,#6a9014)';
     if (clr==='#D97706') return 'linear-gradient(to right,#D97706,#F59E0B)';
-    if (clr==='#8b5cf6') return 'linear-gradient(to right,#8b5cf6,#a78bfa)';
+    if (clr==='#967EF3') return 'linear-gradient(to right,#967EF3,#a78bfa)';
     if (clr==='#16a34a') return 'linear-gradient(to right,#16a34a,#22c55e)';
     if (clr==='#C4FF45') return 'linear-gradient(to right,#C4FF45,#D4FF73)';
     return clr;
@@ -3923,13 +3923,13 @@ function buildDailyBView(days, month, activeDay) {
           var tnP  = Math.round(tent/inv*100);
           var alP  = Math.round(allocRem/inv*100), avP = Math.max(0, 100-toP-otP-tnP-alP);
           var avClr = avRm <= 0 ? '#dc2626' : '#004948';
-          cellContent = '<div class="wb-sect-val"><span class="wv-occ-total" style="color:'+avClr+'">'
-            + (avRm <= 0 ? 'SOLD OUT' : avRm+' avail') + '</span>'
+          cellContent = '<div class="wb-sect-val"><span class="wv-occ-total" style="color:'+(avRm<=0?'#16a34a':avClr)+'">'
+            + (avRm <= 0 ? '0 available' : avRm+' avail') + '</span>'
             + '<span style="font-size:12px;color:#9ca3af;margin-left:4px">/ '+inv+'</span></div>'
             + '<div class="wv-occ-bar-track">'
             + '<div style="width:'+toP+'%;background:'+wbGrad('#004948')+';height:6px"></div>'
             + '<div style="width:'+otP+'%;background:'+wbGrad('#52d9ce')+';height:6px"></div>'
-            + '<div style="width:'+tnP+'%;background:'+wbGrad('#8b5cf6')+';height:6px"></div>'
+            + '<div style="width:'+tnP+'%;background:'+wbGrad('#967EF3')+';height:6px"></div>'
             + '<div style="width:'+alP+'%;background:'+wbGrad('#D97706')+';height:6px"></div>'
             + '<div style="width:'+avP+'%;background:'+wbGrad('#d7f7ed')+';height:6px"></div>'
             + '</div>';
@@ -4337,7 +4337,7 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
     if (clr==='#004948') return 'linear-gradient(to right,#004948,#007a75)';
     if (clr==='#52d9ce') return 'linear-gradient(to right,#52d9ce,#8aeee8)';
     if (clr==='#445e0d') return 'linear-gradient(to right,#445e0d,#6a9014)';
-    if (clr==='#8b5cf6') return 'linear-gradient(to right,#8b5cf6,#a78bfa)';
+    if (clr==='#967EF3') return 'linear-gradient(to right,#967EF3,#a78bfa)';
     if (clr==='#D97706') return 'linear-gradient(to right,#D97706,#F59E0B)';
     if (clr==='#16a34a') return 'linear-gradient(to right,#16a34a,#22c55e)';
     if (clr==='#C4FF45') return 'linear-gradient(to right,#C4FF45,#D4FF73)';
@@ -4540,15 +4540,15 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
         var alRem=Math.max(0,Math.floor(inv*0.8+Math.abs((d.dm*(rtI+3)+d.dd*(rtI+5))%15))-toS);
         var avRm=Math.max(0,inv-sold-tent);
         var toP=Math.round(toS/inv*100),otP=Math.round(otS/inv*100),tnP=Math.round(tent/inv*100),alP=Math.round(alRem/inv*100);
-        var avClr=avRm<=0?'#dc2626':C1;
+        var avClr=avRm<=0?'#16a34a':C1;
         return '<div style="font-size:14px;color:'+avClr+';margin-bottom:5px">'
-          +(avRm<=0?'SOLD OUT':avRm+' avail')
+          +(avRm<=0?'0 available':avRm+' avail')
           +'<span style="font-size:12px;color:#9ca3af;margin-left:4px">/ '+inv+'</span></div>'
-          +sBar([{p:toP,c:C1},{p:otP,c:C2},{p:tnP,c:'#8b5cf6'},{p:alP,c:C3},{p:Math.max(0,100-toP-otP-tnP-alP),c:C4}]);
+          +sBar([{p:toP,c:C1},{p:otP,c:C2},{p:tnP,c:'#967EF3'},{p:alP,c:C3},{p:Math.max(0,100-toP-otP-tnP-alP),c:C4}]);
       }; })(inv,rtI));
       sub('TO Sold', C1, false, (function(inv){ return function(d){ var s=Math.min(inv,Math.floor(inv*d.hotel/110)); return rCell(Math.min(s,Math.round(s*d.to/Math.max(1,d.hotel)))+' rm'); }; })(inv));
       sub('Other Segments', C2, false, (function(inv){ return function(d){ var s=Math.min(inv,Math.floor(inv*d.hotel/110)); var t=Math.min(s,Math.round(s*d.to/Math.max(1,d.hotel))); return rCell((s-t)+' rm'); }; })(inv));
-      sub('Tentative Sold (Group)', '#8b5cf6', false, (function(inv,rtI){ return function(d){ var tent=Math.max(0,Math.floor(2+Math.abs((d.dm*(rtI+4)+d.dd*(rtI+2))%6))); return rCell(tent+' rm'); }; })(inv,rtI));
+      sub('Tentative Sold (Group)', '#967EF3', false, (function(inv,rtI){ return function(d){ var tent=Math.max(0,Math.floor(2+Math.abs((d.dm*(rtI+4)+d.dd*(rtI+2))%6))); return rCell(tent+' rm'); }; })(inv,rtI));
       sub('Out-of-Order', '#ef4444', false, (function(inv,rtI){ return function(d){ var ooo=Math.max(0,Math.floor(Math.abs((d.dm*(rtI+1)+d.dd*(rtI+3))%4))); return rCell(ooo+' rm'); }; })(inv,rtI));
       sub('Total Hotel Remaining', CREM, true, (function(inv){ return function(d){ var avRm=Math.max(0,inv-Math.min(inv,Math.floor(inv*d.hotel/110))); return sCell(avRm+' rm', bar(Math.min(90,Math.round(avRm/inv*100)),'#16a34a')); }; })(inv));
     });
@@ -4912,8 +4912,8 @@ function buildDailyHView(days, activeMonth, activeDay) {
   row('T', function(d){ return '<span style="font-size:11px;font-weight:800;color:#ea580c">'+d.availGuar+' rm</span>'; });
 
   // ── MEAL PLANS ────────────────────────────────────────────────────────────
-  sec('Meal Plans','#8b5cf6');
-  var mpDefs = [['All Inclusive','#006461','aiPct'],['Bed & Bkfst','#3b82f6','bbPct'],['Half Board','#8b5cf6','hbPct'],['Room Only','#f59e0b','roPct']];
+  sec('Meal Plans','#967EF3');
+  var mpDefs = [['All Inclusive','#006461','aiPct'],['Bed & Bkfst','#3b82f6','bbPct'],['Half Board','#967EF3','hbPct'],['Room Only','#f59e0b','roPct']];
   mpDefs.forEach(function(mp){
     par(mp[0],mp[1]);
     var key=mp[2];
@@ -4925,13 +4925,13 @@ function buildDailyHView(days, activeMonth, activeDay) {
     });
   });
   // Summary stacked bar
-  par('Summary','#8b5cf6');
+  par('Summary','#967EF3');
   row('AI / BB / HB / RO', function(d){
-    return stackBar([{p:d.aiPct,c:'#006461'},{p:d.bbPct,c:'#3b82f6'},{p:d.hbPct,c:'#8b5cf6'},{p:d.roPct,c:'#f59e0b'}])
+    return stackBar([{p:d.aiPct,c:'#006461'},{p:d.bbPct,c:'#3b82f6'},{p:d.hbPct,c:'#967EF3'},{p:d.roPct,c:'#f59e0b'}])
       +'<div style="display:flex;gap:5px;font-size:8px;flex-wrap:wrap">'
       +'<span style="color:#006461">AI '+d.aiPct+'%</span>'
       +'<span style="color:#3b82f6">BB '+d.bbPct+'%</span>'
-      +'<span style="color:#8b5cf6">HB '+d.hbPct+'%</span>'
+      +'<span style="color:#967EF3">HB '+d.hbPct+'%</span>'
       +'<span style="color:#f59e0b">RO '+d.roPct+'%</span>'
       +'</div>';
   });
@@ -4951,7 +4951,7 @@ function buildDailyHView(days, activeMonth, activeDay) {
 
   // ── TRAVEL CO. RATES ─────────────────────────────────────────────────────
   sec('Travel Co. Rates','#0f766e');
-  var toOps=[['Sunshine Tours','#3b82f6'],['Global Adv.','#8b5cf6'],['Beach Hols','#0ea5e9'],['City Breaks','#10b981'],['Adventure','#f59e0b']];
+  var toOps=[['Sunshine Tours','#3b82f6'],['Global Adv.','#967EF3'],['Beach Hols','#0ea5e9'],['City Breaks','#10b981'],['Adventure','#f59e0b']];
   toOps.forEach(function(op,i){
     par(op[0],op[1]);
     row('Rate / Promo', function(d){
@@ -5328,8 +5328,8 @@ function initDailyHGrid(days, activeMonth, activeDay, containerEl) {
   par('Avail Rooms','#16a34a');   row('Hotel', function(d){ return '<span style="font-size:11px;font-weight:800;color:#16a34a">'+d.availRooms+' rm</span>'; });
   par('Avail Guar.','#ea580c');   row('T', function(d){ return '<span style="font-size:11px;font-weight:800;color:#ea580c">'+d.availGuar+' rm</span>'; });
 
-  sec('Meal Plans','#8b5cf6');
-  var mpDefs=[['All Inclusive','#006461','aiPct'],['Bed & Bkfst','#3b82f6','bbPct'],['Half Board','#8b5cf6','hbPct'],['Room Only','#f59e0b','roPct']];
+  sec('Meal Plans','#967EF3');
+  var mpDefs=[['All Inclusive','#006461','aiPct'],['Bed & Bkfst','#3b82f6','bbPct'],['Half Board','#967EF3','hbPct'],['Room Only','#f59e0b','roPct']];
   mpDefs.forEach(function(mp){
     par(mp[0],mp[1]);
     var key=mp[2];
@@ -5338,10 +5338,10 @@ function initDailyHGrid(days, activeMonth, activeDay, containerEl) {
       return valH(hPct+'%','TO '+toPct2+'%',mp[1])+dualBar(hPct,null,mp[1]);
     });
   });
-  par('Summary','#8b5cf6');
+  par('Summary','#967EF3');
   row('AI / BB / HB / RO', function(d){
-    return stackBar([{p:d.aiPct,c:'#006461'},{p:d.bbPct,c:'#3b82f6'},{p:d.hbPct,c:'#8b5cf6'},{p:d.roPct,c:'#f59e0b'}])
-      +'<div style="display:flex;gap:5px;font-size:8px;flex-wrap:wrap"><span style="color:#006461">AI '+d.aiPct+'%</span><span style="color:#3b82f6">BB '+d.bbPct+'%</span><span style="color:#8b5cf6">HB '+d.hbPct+'%</span><span style="color:#f59e0b">RO '+d.roPct+'%</span></div>';
+    return stackBar([{p:d.aiPct,c:'#006461'},{p:d.bbPct,c:'#3b82f6'},{p:d.hbPct,c:'#967EF3'},{p:d.roPct,c:'#f59e0b'}])
+      +'<div style="display:flex;gap:5px;font-size:8px;flex-wrap:wrap"><span style="color:#006461">AI '+d.aiPct+'%</span><span style="color:#3b82f6">BB '+d.bbPct+'%</span><span style="color:#967EF3">HB '+d.hbPct+'%</span><span style="color:#f59e0b">RO '+d.roPct+'%</span></div>';
   });
 
   sec('Business Mix','#0284c7');
@@ -5352,7 +5352,7 @@ function initDailyHGrid(days, activeMonth, activeDay, containerEl) {
   });
 
   sec('Travel Co. Rates','#0f766e');
-  var toOps=[['Sunshine Tours','#3b82f6'],['Global Adv.','#8b5cf6'],['Beach Hols','#0ea5e9'],['City Breaks','#10b981'],['Adventure','#f59e0b']];
+  var toOps=[['Sunshine Tours','#3b82f6'],['Global Adv.','#967EF3'],['Beach Hols','#0ea5e9'],['City Breaks','#10b981'],['Adventure','#f59e0b']];
   toOps.forEach(function(op,i){
     par(op[0],op[1]);
     row('Rate / Promo', (function(op,i){ return function(d){
@@ -5949,7 +5949,7 @@ function initDailyRevGrid(days, containerEl) {
       ]},
       { headerName:'HB', children:[
         {field:'mp_hb_h',   headerName:'Hotel', width:72, cellStyle:cs('#374151')},
-        {field:'mp_hb_t',   headerName:'T',     width:65, cellStyle:cs('#8b5cf6',true)},
+        {field:'mp_hb_t',   headerName:'T',     width:65, cellStyle:cs('#967EF3',true)},
         {field:'mp_hb_pct', headerName:'Occ',   width:65},
       ]},
       { headerName:'RO', children:[
@@ -5961,7 +5961,7 @@ function initDailyRevGrid(days, containerEl) {
     'Travel Co. Rates':
     { headerName:'Travel Co. Rates', headerClass:'drg-top drg-tc', openByDefault:true, children:[
       {field:'tc_0',    headerName:'Sunshine',    width:92, cellStyle:cs('#3b82f6',true)},
-      {field:'tc_1',    headerName:'Global Adv.', width:105, cellStyle:cs('#8b5cf6',true)},
+      {field:'tc_1',    headerName:'Global Adv.', width:105, cellStyle:cs('#967EF3',true)},
       {field:'tc_2',    headerName:'Beach Hols',  width:100, cellStyle:cs('#0ea5e9',true)},
       {field:'tc_3',    headerName:'City Breaks',  width:100, cellStyle:cs('#10b981',true)},
       {field:'tc_4',    headerName:'Adventure',   width:92, cellStyle:cs('#f59e0b',true)},
@@ -6048,7 +6048,7 @@ function buildReportView(days) {
     var mealPlans=[
       {n:'AI',s:'All Inclusive',pct:aiPct,toPct:Math.round(aiPct*toPct*(0.9+(dm+dd2)%3*0.05)),c:'#006461'},
       {n:'BB',s:'Bed & Breakfast',pct:bbPct,toPct:Math.round(bbPct*toPct*(0.85+(dm*3+dd2)%3*0.05)),c:'#3b82f6'},
-      {n:'HB',s:'Half Board',pct:hbPct,toPct:Math.round(hbPct*toPct*(0.8+(dm+dd2*2)%3*0.05)),c:'#8b5cf6'},
+      {n:'HB',s:'Half Board',pct:hbPct,toPct:Math.round(hbPct*toPct*(0.8+(dm+dd2*2)%3*0.05)),c:'#967EF3'},
       {n:'RO',s:'Room Only',pct:roPct,toPct:Math.round(roPct*toPct*(0.95+(dm*2+dd2)%3*0.03)),c:'#f59e0b'},
     ];
     var toMix=28+Math.abs((dm*7+dd2*5)%25),dirMix=30+Math.abs((dm*5+dd2*9)%20),otaMix=20+Math.abs((dm*9+dd2*3)%18);
@@ -6313,38 +6313,38 @@ function buildReportView(days) {
         {child:'T',     fn:function(d){return{t:'$'+d.mealPlans[1].tAdrNet, clr:'#3b82f6',bold:true};}},
       ]},
     ]},
-    { id:'mp_hb', label:'Meal Plan: HB', clr:'#8b5cf6', metrics:[
+    { id:'mp_hb', label:'Meal Plan: HB', clr:'#967EF3', metrics:[
       { lbl:'Rooms Sold', cols:[
         {child:'Hotel', fn:function(d){return{t:d.mealPlans[2].hotelRms,  clr:'#374151'};}},
-        {child:'T',     fn:function(d){return{t:d.mealPlans[2].toRms,    clr:'#8b5cf6',bold:true};}},
+        {child:'T',     fn:function(d){return{t:d.mealPlans[2].toRms,    clr:'#967EF3',bold:true};}},
       ]},
       { lbl:'Occ %', cols:[
         {child:'Hotel', fn:function(d){return{t:d.hbPct+'%',                             clr:'#374151'};}},
-        {child:'TO',    fn:function(d){return{t:Math.max(0,d.mealPlans[2].toPct)+'%',   clr:'#8b5cf6',bold:true};}},
+        {child:'TO',    fn:function(d){return{t:Math.max(0,d.mealPlans[2].toPct)+'%',   clr:'#967EF3',bold:true};}},
       ]},
       { lbl:'Adults', cols:[
         {child:'Hotel', fn:function(d){return{t:d.mealPlans[2].hAdults,  clr:'#374151'};}},
-        {child:'T',     fn:function(d){return{t:d.mealPlans[2].tAdults,  clr:'#8b5cf6',bold:true};}},
+        {child:'T',     fn:function(d){return{t:d.mealPlans[2].tAdults,  clr:'#967EF3',bold:true};}},
       ]},
       { lbl:'Children', cols:[
         {child:'Hotel', fn:function(d){return{t:d.mealPlans[2].hChildren,clr:'#374151'};}},
-        {child:'T',     fn:function(d){return{t:d.mealPlans[2].tChildren,clr:'#8b5cf6',bold:true};}},
+        {child:'T',     fn:function(d){return{t:d.mealPlans[2].tChildren,clr:'#967EF3',bold:true};}},
       ]},
       { lbl:'Tot. Guests', cols:[
         {child:'Hotel', fn:function(d){return{t:d.mealPlans[2].hGuests,  clr:'#374151'};}},
-        {child:'T',     fn:function(d){return{t:d.mealPlans[2].tGuests,  clr:'#8b5cf6',bold:true};}},
+        {child:'T',     fn:function(d){return{t:d.mealPlans[2].tGuests,  clr:'#967EF3',bold:true};}},
       ]},
       { lbl:'Revenue', cols:[
         {child:'Hotel', fn:function(d){return{t:fmtRev(d.mealPlans[2].hRev),clr:'#374151'};}},
-        {child:'T',     fn:function(d){return{t:fmtRev(d.mealPlans[2].tRev),clr:'#8b5cf6',bold:true};}},
+        {child:'T',     fn:function(d){return{t:fmtRev(d.mealPlans[2].tRev),clr:'#967EF3',bold:true};}},
       ]},
       { lbl:'ADR Gross', cols:[
         {child:'Hotel', fn:function(d){return{t:'$'+d.mealPlans[2].hAdrGross,clr:'#374151'};}},
-        {child:'T',     fn:function(d){return{t:'$'+d.mealPlans[2].tAdrGross,clr:'#8b5cf6',bold:true};}},
+        {child:'T',     fn:function(d){return{t:'$'+d.mealPlans[2].tAdrGross,clr:'#967EF3',bold:true};}},
       ]},
       { lbl:'ADR Net', cols:[
         {child:'Hotel', fn:function(d){return{t:'$'+d.mealPlans[2].hAdrNet, clr:'#374151'};}},
-        {child:'T',     fn:function(d){return{t:'$'+d.mealPlans[2].tAdrNet, clr:'#8b5cf6',bold:true};}},
+        {child:'T',     fn:function(d){return{t:'$'+d.mealPlans[2].tAdrNet, clr:'#967EF3',bold:true};}},
       ]},
     ]},
     { id:'mp_ro', label:'Meal Plan: RO', clr:'#f59e0b', metrics:[
@@ -6393,7 +6393,7 @@ function buildReportView(days) {
     // ── Travel Co. Rates ─────────────────────────────────────────────────────
     { id:'tc', label:'Travel Co. Rates', clr:'#0f766e', metrics:[
       { lbl:'Sunshine',    cols:[{child:'Rate',fn:function(d){return{t:'$'+d.tcRates[0],clr:'#3b82f6',bold:true,badge:d.tcPromos[0]};}}]},
-      { lbl:'Global Adv.', cols:[{child:'Rate',fn:function(d){return{t:'$'+d.tcRates[1],clr:'#8b5cf6',bold:true,badge:d.tcPromos[1]};}}]},
+      { lbl:'Global Adv.', cols:[{child:'Rate',fn:function(d){return{t:'$'+d.tcRates[1],clr:'#967EF3',bold:true,badge:d.tcPromos[1]};}}]},
       { lbl:'Beach Hols',  cols:[{child:'Rate',fn:function(d){return{t:'$'+d.tcRates[2],clr:'#0ea5e9',bold:true,badge:d.tcPromos[2]};}}]},
       { lbl:'City Breaks', cols:[{child:'Rate',fn:function(d){return{t:'$'+d.tcRates[3],clr:'#10b981',bold:true,badge:d.tcPromos[3]};}}]},
       { lbl:'Adventure',   cols:[{child:'Rate',fn:function(d){return{t:'$'+d.tcRates[4],clr:'#f59e0b',bold:true,badge:d.tcPromos[4]};}}]},
@@ -6787,10 +6787,10 @@ function buildWeekGrid(month, weekStart, activeDay) {
   const hbToP=Math.max(0,Math.round(avgHbPct*toPct7*0.80));
   const roToP=Math.max(0,Math.round(avgRoPct*toPct7*0.95));
   const secMeals = sumSec('Meal Plans',
-    stackBar([{p:avgAiPct,c:'#006461'},{p:avgBbPct,c:'#3b82f6'},{p:avgHbPct,c:'#8b5cf6'},{p:avgRoPct,c:'#f59e0b'}])
+    stackBar([{p:avgAiPct,c:'#006461'},{p:avgBbPct,c:'#3b82f6'},{p:avgHbPct,c:'#967EF3'},{p:avgRoPct,c:'#f59e0b'}])
     +'<div style="font-size:7px;color:#9ca3af;text-align:right;margin-bottom:2px">Hotel % · TO %</div>'
     +[['AI (All Inclusive)',avgAiPct,aiToP,'#006461'],['BB (Bed & Bkfst)',avgBbPct,bbToP,'#3b82f6'],
-      ['HB (Half Board)',avgHbPct,hbToP,'#8b5cf6'],['RO (Room Only)',avgRoPct,roToP,'#f59e0b']].map(function(p){
+      ['HB (Half Board)',avgHbPct,hbToP,'#967EF3'],['RO (Room Only)',avgRoPct,roToP,'#f59e0b']].map(function(p){
       return '<div style="display:flex;align-items:center;gap:4px;margin-bottom:2px">'
         +'<span style="width:6px;height:6px;border-radius:50%;background:'+p[3]+';flex-shrink:0"></span>'
         +'<span style="font-size:8px;color:#374151;flex:1">'+p[0]+'</span>'
@@ -6830,7 +6830,7 @@ function buildWeekGrid(month, weekStart, activeDay) {
     +'</div>'
   );
 
-  const tcOps=[['Sunshine Tours','#3b82f6'],['Global Adv.','#8b5cf6'],['Beach Hols','#0ea5e9'],['City Breaks','#10b981'],['Adventure','#f59e0b']];
+  const tcOps=[['Sunshine Tours','#3b82f6'],['Global Adv.','#967EF3'],['Beach Hols','#0ea5e9'],['City Breaks','#10b981'],['Adventure','#f59e0b']];
   const promoLabel=isEbbWeek?'EBB 10%':'Contract';
   const promoClr  =isEbbWeek?'#16a34a':'#2563eb';
   const secTC = sumSec('Travel Co. Rates',
@@ -7365,7 +7365,7 @@ function buildWeekGrid(month, weekStart, activeDay) {
           : [{ name:'Contract Rate',  type:'Contract',discount:0,  color:'#2563eb' }];
         const toOperators = [
           { name:'Sunshine Tours', color:'#3b82f6' },
-          { name:'Global Adv.',    color:'#8b5cf6' },
+          { name:'Global Adv.',    color:'#967EF3' },
           { name:'Beach Hols',     color:'#0ea5e9' },
           { name:'City Breaks',    color:'#10b981' },
           { name:'Adventure',      color:'#f59e0b' },
@@ -10828,7 +10828,7 @@ document.querySelectorAll('.ds-search-field').forEach(function(wrap) {
     { id:'TUI Group',    name:'TUI Group',    color:'#0ea5e9' },
     { id:'Thomas Cook',  name:'Thomas Cook',  color:'#f59e0b' },
     { id:'Jet2holidays', name:'Jet2holidays', color:'#10b981' },
-    { id:'FTI Group',    name:'FTI Group',    color:'#8b5cf6' },
+    { id:'FTI Group',    name:'FTI Group',    color:'#967EF3' },
     { id:'Sunwing',      name:'Sunwing',      color:'#ec4899' },
     { id:'Club Med',     name:'Club Med',     color:'#f97316' },
   ];
@@ -11092,14 +11092,14 @@ document.querySelectorAll('.ds-search-field').forEach(function(wrap) {
     return '<div class="ins-donut-wrap">'
       +'<svg width="108" height="108" viewBox="0 0 108 108">'
       +arcPath(0, cShare, '#0ea5e9')
-      +arcPath(cShare, 1, '#8b5cf6')
+      +arcPath(cShare, 1, '#967EF3')
       +'<circle cx="'+cx+'" cy="'+cy+'" r="24" fill="var(--surface-1)"/>'
       +'<text x="'+cx+'" y="'+(cy-5)+'" text-anchor="middle" font-size="11" font-weight="700" fill="var(--text-primary)">'+cPct+'%</text>'
       +'<text x="'+cx+'" y="'+(cy+8)+'" text-anchor="middle" font-size="9" fill="var(--text-muted)">Contracts</text>'
       +'</svg>'
       +'<div class="ins-donut-legend">'
       +'<div class="ins-donut-leg-item"><div class="ins-donut-leg-dot" style="background:#0ea5e9"></div><span>'+cPct+'% From Contracts</span></div>'
-      +'<div class="ins-donut-leg-item"><div class="ins-donut-leg-dot" style="background:#8b5cf6"></div><span>'+pPct+'% From Promotions</span></div>'
+      +'<div class="ins-donut-leg-item"><div class="ins-donut-leg-dot" style="background:#967EF3"></div><span>'+pPct+'% From Promotions</span></div>'
       +'</div></div>';
   }
 
@@ -11111,7 +11111,7 @@ document.querySelectorAll('.ds-search-field').forEach(function(wrap) {
       +'<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="var(--border-sub)" stroke-width="11"/>'
       +'<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="#0ea5e9" stroke-width="11"'
       +' stroke-dasharray="'+dLen.toFixed(1)+' '+cLen.toFixed(1)+'" stroke-dashoffset="'+(circ*0.25).toFixed(1)+'" stroke-linecap="round"/>'
-      +'<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="#8b5cf6" stroke-width="11"'
+      +'<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="#967EF3" stroke-width="11"'
       +' stroke-dasharray="'+cLen.toFixed(1)+' '+dLen.toFixed(1)+'" stroke-dashoffset="'+(circ*0.25-dLen).toFixed(1)+'" stroke-linecap="round" opacity=".85"/>'
       +'<text x="'+cx+'" y="'+(cy-3)+'" text-anchor="middle" font-size="11" font-weight="700" fill="var(--text-primary)">'+Math.round(dShare*100)+'%</text>'
       +'<text x="'+cx+'" y="'+(cy+10)+'" text-anchor="middle" font-size="9" fill="var(--text-muted)">Online</text>'
@@ -11371,7 +11371,7 @@ document.querySelectorAll('.ds-search-field').forEach(function(wrap) {
     const staticFITPct  = Math.round(d.staticShare * 100 * 0.65);
     const CHANNELS = [
       {name:'Dynamic / Online', pct:dynamicPct,   color:'#0ea5e9'},
-      {name:'Static FIT',       pct:staticFITPct, color:'#8b5cf6'},
+      {name:'Static FIT',       pct:staticFITPct, color:'#967EF3'},
       {name:'Tour Series',      pct:tourSeriesPct,color:'#ec4899'},
     ];
     const chDetailRows = CHANNELS.map(function(ch){
@@ -11408,7 +11408,7 @@ document.querySelectorAll('.ds-search-field').forEach(function(wrap) {
       +donutSvg(d.dynamicShare)
       +'<div class="ins-donut-legend">'
       +'<div class="ins-donut-leg-item"><div class="ins-donut-leg-dot" style="background:#0ea5e9"></div><span>'+dynamicPct+'% Dynamic / Online</span></div>'
-      +'<div class="ins-donut-leg-item"><div class="ins-donut-leg-dot" style="background:#8b5cf6"></div><span>'+staticFITPct+'% Static FIT</span></div>'
+      +'<div class="ins-donut-leg-item"><div class="ins-donut-leg-dot" style="background:#967EF3"></div><span>'+staticFITPct+'% Static FIT</span></div>'
       +'<div class="ins-donut-leg-item"><div class="ins-donut-leg-dot" style="background:#ec4899"></div><span>'+tourSeriesPct+'% Tour Series</span></div>'
       +'</div></div>'
       +'</div>'
@@ -11900,7 +11900,7 @@ document.querySelectorAll('.ds-search-field').forEach(function(wrap) {
       // ── More Details (Stay Details + Channel) ───────────────────
       const chDetailRowsOv = [
         {name:'Dynamic / Online', pct:dynamicPctOv,   color:'#0ea5e9'},
-        {name:'Static FIT',       pct:staticFITPctOv, color:'#8b5cf6'},
+        {name:'Static FIT',       pct:staticFITPctOv, color:'#967EF3'},
         {name:'Tour Series',      pct:tourSeriesPctOv,color:'#ec4899'},
       ].map(function(ch){
         const chRn=Math.round(ovData.rn*ch.pct/100), chRev=Math.round(ovData.rev*ch.pct/100);
@@ -11924,7 +11924,7 @@ document.querySelectorAll('.ds-search-field').forEach(function(wrap) {
         +donutSvg(ovData.dynamicShare)
         +'<div class="ins-donut-legend">'
         +'<div class="ins-donut-leg-item"><div class="ins-donut-leg-dot" style="background:#0ea5e9"></div><span>'+dynamicPctOv+'% Dynamic / Online</span></div>'
-        +'<div class="ins-donut-leg-item"><div class="ins-donut-leg-dot" style="background:#8b5cf6"></div><span>'+staticFITPctOv+'% Static FIT</span></div>'
+        +'<div class="ins-donut-leg-item"><div class="ins-donut-leg-dot" style="background:#967EF3"></div><span>'+staticFITPctOv+'% Static FIT</span></div>'
         +'<div class="ins-donut-leg-item"><div class="ins-donut-leg-dot" style="background:#ec4899"></div><span>'+tourSeriesPctOv+'% Tour Series</span></div>'
         +'</div></div></div>'
         +collapsible('ov_ch_detail','Channel Stay Details',chDetailRowsOv);
@@ -12068,12 +12068,12 @@ document.querySelectorAll('.ds-search-field').forEach(function(wrap) {
           +'<div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px">Channel Mix</div>'
           +'<div style="display:flex;height:8px;border-radius:4px;overflow:hidden;margin-bottom:4px">'
           +'<div style="flex:'+dynamicPctOv+';background:#0ea5e9"></div>'
-          +'<div style="flex:'+staticFITPctOv+';background:#8b5cf6"></div>'
+          +'<div style="flex:'+staticFITPctOv+';background:#967EF3"></div>'
           +'<div style="flex:'+tourSeriesPctOv+';background:#ec4899"></div>'
           +'</div>'
           +'<div style="display:flex;gap:12px;font-size:10px;color:var(--text-muted)">'
           +'<span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#0ea5e9;margin-right:3px"></span>'+dynamicPctOv+'% Dynamic</span>'
-          +'<span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#8b5cf6;margin-right:3px"></span>'+staticFITPctOv+'% Static FIT</span>'
+          +'<span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#967EF3;margin-right:3px"></span>'+staticFITPctOv+'% Static FIT</span>'
           +'<span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#ec4899;margin-right:3px"></span>'+tourSeriesPctOv+'% Tour Series</span>'
           +'</div>'
           +'</div>';
