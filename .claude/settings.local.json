@@ -12,7 +12,8 @@
       "Bash(./deploy.sh \"Revert AG Grid v23 migration — restore v33.3.0 and HTML Daily B layout\")",
       "Bash(./deploy.sh \"Popup room availability and TO rates now respect active calendar filters\")",
       "Bash(./deploy.sh \"Add close-out heat map by room type on Close Outs tab\")",
-      "Bash(./deploy.sh \"Popup hover fully reflects monthly filter selections — occupancy, ADR, revenue, rooms, meals, TO rates all filter-aware\")"
+      "Bash(./deploy.sh \"Popup hover fully reflects monthly filter selections — occupancy, ADR, revenue, rooms, meals, TO rates all filter-aware\")",
+      "Bash(./deploy.sh \"Bump JS cache version to fix stale cache after revert\")"
     ]
   }
 }
