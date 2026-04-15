@@ -43,7 +43,8 @@
       "Bash(./deploy.sh \"replace trend SVG arrows with Material Icons trending_up/trending_down in weekly view\")",
       "Bash(./deploy.sh \"restructure close-outs: move summary to collapsed header, remove summary row, details directly in accordion\")",
       "Bash(./deploy.sh \"add stop sales heatmap room type filter condition\")",
-      "Bash(./deploy.sh \"rename tentative to 'Tentative Sold \\(Group\\)', add purple segment to room avail bar chart\")"
+      "Bash(./deploy.sh \"rename tentative to 'Tentative Sold \\(Group\\)', add purple segment to room avail bar chart\")",
+      "Bash(./deploy.sh \"add Out-of-Order rooms sub-row in room type data for 7-day view and eye popup\")"
     ]
   }
 }
