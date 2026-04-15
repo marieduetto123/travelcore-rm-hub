@@ -34,7 +34,8 @@
       "Bash(./deploy.sh \"monthly: responsive breakpoints to hide compare metrics, bump metric text to 9px\")",
       "Bash(./deploy.sh \"monthly: remove icons, color-code Hotel \\(black\\) vs TO \\(#8C7843\\), 12px text, add legend\")",
       "mcp__60ac2e8c-24aa-44e4-8c8a-c4a3c769ec23__search_design_system",
-      "Bash(./deploy.sh \"filter-aware tooltip, rename Settings to Configuration, add Stop Sales & Alerts config panel, Hotel/TO color coding\")"
+      "Bash(./deploy.sh \"filter-aware tooltip, rename Settings to Configuration, add Stop Sales & Alerts config panel, Hotel/TO color coding\")",
+      "Bash(./deploy.sh \"monthly: align metrics above events, replace events square with calendar icon\")"
     ]
   }
 }

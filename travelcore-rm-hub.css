@@ -814,6 +814,8 @@ body.dark .cal-nav-btn:hover { background: rgba(196,255,69,0.07); border-color: 
 .cell-content {
   display: flex; flex-direction: column; gap: 2px;
   flex-shrink: 0;
+  margin-top: auto;
+  margin-bottom: 16px;
 }
 .cell-m-row {
   display: flex; align-items: center; justify-content: space-between;
@@ -857,6 +859,10 @@ body.dark .cal-nav-btn:hover { background: rgba(196,255,69,0.07); border-color: 
   position: absolute; bottom: 6px; right: 6px;
   width: 10px; height: 10px;
   background: #006461;
+}
+.cell-event-ico {
+  position: absolute; bottom: 4px; right: 4px;
+  display: flex; align-items: center; justify-content: center;
 }
 
 /* Legacy compat — hide old elements */

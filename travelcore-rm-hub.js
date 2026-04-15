@@ -1666,7 +1666,7 @@ function renderCalendar() {
           ${!isCompact && !isLocked ? eyeSvg : ''}
         </div>
         ${!isCompact ? `<div class="cell-content">${metricRows}</div>` : ''}
-        ${!isCompact && hasCalCl && !_isStopSalesActive ? '<span class="cell-teal-dot"></span>' : ''}
+        ${!isCompact && hasCalCl && !_isStopSalesActive ? '<span class="cell-event-ico"><svg viewBox="0 0 16 16" fill="#006461" width="12" height="12"><rect x="2" y="3" width="12" height="11" rx="1.5" fill="none" stroke="#006461" stroke-width="1.3"/><line x1="2" y1="6.5" x2="14" y2="6.5" stroke="#006461" stroke-width="1.3"/><line x1="5.5" y1="1.5" x2="5.5" y2="4.5" stroke="#006461" stroke-width="1.3" stroke-linecap="round"/><line x1="10.5" y1="1.5" x2="10.5" y2="4.5" stroke="#006461" stroke-width="1.3" stroke-linecap="round"/></svg></span>' : ''}
       </div>`;
     }
 
