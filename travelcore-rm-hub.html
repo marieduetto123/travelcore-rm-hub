@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@33.3.0/styles/ag-grid.css"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@33.3.0/styles/ag-theme-quartz.css"/>
   <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@33.3.0/dist/ag-grid-community.min.js"></script>
-  <link rel="stylesheet" href="travelcore-rm-hub.css?v=27">
+  <link rel="stylesheet" href="travelcore-rm-hub.css?v=28">
 </head>
 <body>
 
@@ -75,7 +75,7 @@
 <div class="mega-menu" id="tourOpMegaMenu">
   <a class="mega-link" href="#" data-navpage="0">Dashboard</a>
   <a class="mega-link" href="#" data-navpage="1">Contacts &amp; Contracts</a>
-  <a class="mega-link" href="#" data-navpage="2">Audit</a>
+  <a class="mega-link" href="#" data-navpage="2" style="display:none">Audit</a>
   <a class="mega-link" href="#" data-navpage="3">Communications &amp; Notes</a>
   <a class="mega-link" href="#" data-navpage="4">Configuration</a>
 </div>
@@ -110,7 +110,7 @@
         <span class="material-icons">people</span>
         Contacts &amp; Contracts
       </a>
-      <a class="nav-item" href="#" data-label="Audit">
+      <a class="nav-item" href="#" data-label="Audit" style="display:none">
         <span class="material-icons">trending_up</span>
         Audit
       </a>
@@ -511,8 +511,8 @@
             <div id="calViewToggleWrap" class="cal-view-toggle-wrap">
               <select class="wv-cmp-select" id="calViewSelect" onchange="calSetDisplayView(parseInt(this.value))">
                 <option value="1">1 month</option>
-                <option value="2">2 months</option>
-                <option value="3" selected>3 months</option>
+                <option value="2" selected>2 months</option>
+                <option value="3">3 months</option>
                 <option value="6">6 months</option>
                 <option value="12">12 months</option>
               </select>
@@ -605,6 +605,16 @@
 </div>
 
                 </div>
+            <!-- Compare dropdown -->
+            <div style="position:relative" id="calCompareWrap">
+              <select class="wv-cmp-select" id="calCompare" onchange="calSetCompare(this.value)">
+                <option value="ly" selected>vs LY</option>
+                <option value="stly">vs STLY</option>
+                <option value="fcst">vs Forecast</option>
+                <option value="budget">vs Budget</option>
+                <option value="none">No Compare</option>
+              </select>
+            </div>
             <!-- Filters (moved next to Cell Metrics) -->
             <div class="cal-filters-wrap" id="calFiltersWrap" style="position:relative">
               <button class="cal-hdr-btn" id="calFiltBtn" onclick="calToggleFilters(this)">
@@ -658,17 +668,6 @@
                   <button class="cal-filter-apply cal-filter-apply-btn" onclick="calApplyFilters()">Apply</button>
                 </div>
               </div>
-            </div>
-
-            <!-- Compare dropdown -->
-            <div style="position:relative" id="calCompareWrap">
-              <select class="wv-cmp-select" id="calCompare" onchange="calSetCompare(this.value)">
-                <option value="ly" selected>vs LY</option>
-                <option value="stly">vs STLY</option>
-                <option value="fcst">vs Forecast</option>
-                <option value="budget">vs Budget</option>
-                <option value="none">No Compare</option>
-              </select>
             </div>
 
             <!-- Heatmap configurator -->
@@ -3444,6 +3443,6 @@
 
 
 
-  <script src="travelcore-rm-hub.js?v=39"></script>
+  <script src="travelcore-rm-hub.js?v=40"></script>
 <div id="calCapTip" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #e0e0e0;border-radius:4px;box-shadow:0 1px 3px rgba(0,0,0,.2),0 2px 1px -1px rgba(0,0,0,.12),0 1px 1px rgba(0,0,0,.14);padding:10px;pointer-events:none;width:245px"></div>
 </body>

@@ -1230,8 +1230,8 @@ const ALL_MONTHS = [
 ];
 
 let calStartIdx = 1; // start at February
-let calView = 3;        // actual months shown (display-controlled)
-let calDisplayView = 3; // user-selected view: 1, 3, 6, 12
+let calView = 2;        // actual months shown (display-controlled)
+let calDisplayView = 2; // user-selected view: 1, 2, 3, 6, 12
 let calRangeFrom   = new Date(2026, 1, 1);  // active date-range start (global)
 let calRangeTo     = new Date(2026, 3, 30); // active date-range end   (global)
 let calDateRangeStart = null; // start of selected date range (for navigation)
@@ -2172,7 +2172,7 @@ function renderCalMonthlySummary() {
               + '</div>';
             break;
           case 'mos_tcbase': {
-            cc = '<div class="wb-sect-val"><span class="wv-occ-total" style="font-weight:700;color:#9333ea">$'+mo.baseRate+'</span></div>'
+            cc = '<div class="wb-sect-val"><span class="wv-occ-total" style="font-weight:700;color:#1C1C1C">$'+mo.baseRate+'</span></div>'
               + moBar(Math.min(90,Math.round(mo.baseRate/280*100)), '#004948');
             break;
           }
@@ -2183,7 +2183,7 @@ function renderCalMonthlySummary() {
               var promoTxt = isEbb ? 'EBB 10%' : 'Contract';
               var promoClr = isEbb ? '#16a34a' : '#2563eb';
               cc = '<div class="wb-sect-val" style="justify-content:space-between">'
-                + '<span class="wv-occ-total" style="color:'+row.toClr+'">$'+mo.tcRates[row.toIdx]+'</span>'
+                + '<span class="wv-occ-total" style="color:#1C1C1C">$'+mo.tcRates[row.toIdx]+'</span>'
                 + '<span style="font-size:11px;font-weight:700;padding:1px 5px;border-radius:3px;background:'+promoClr+'22;color:'+promoClr+';border:1px solid '+promoClr+'44">'+promoTxt+'</span>'
                 + '</div>'
                 + moBar(Math.min(90,Math.round(mo.tcRates[row.toIdx]/280*100)), '#004948');
@@ -2233,7 +2233,7 @@ function renderCalMonthlySummary() {
 
   // Wrap in overview accordion
   var ovLabel = months.length===1 ? months[0].name+' Overview' : months[0].name+' – '+months[months.length-1].name+' Overview';
-  var ovCollapsed = _calAccState['overview'] !== false ? !!_calAccState['overview'] : false;
+  var ovCollapsed = _calAccState['overview'] === false ? false : true;
   var ovChev = ovCollapsed
     ? '<span class="material-icons" style="font-size:16px">expand_more</span>'
     : '<span class="material-icons" style="font-size:16px">expand_less</span>';
