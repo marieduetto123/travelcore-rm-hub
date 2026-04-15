@@ -1489,7 +1489,7 @@ function renderCalendar() {
   container.innerHTML = visible.map(m => {
     let cells = '';
     for (let i = 0; i < m.firstDay; i++) {
-      cells += `<div class="cal-day empty" style="height:84px"></div>`;
+      cells += `<div class="cal-day empty"></div>`;
     }
     for (let d = 1; d <= m.days; d++) {
       const key     = `${m.month}-${d}`;
@@ -1546,59 +1546,33 @@ function renderCalendar() {
         rateBase:     Math.round(cellAdr * 1.08),
         totalGuests:  Math.round(hotel * HOTEL_CAPACITY / 100 * (cellAvgAdults + cellAvgChildren)),
       };
-      // Month view: label + value only, no progress bar
-      const metricRows = (function() {
-        // Use new cmBuildRows engine if available
-        if (typeof window.cmBuildRows === 'function') {
-          var rows = window.cmBuildRows(cellMetricVals);
-          return rows.map(function(r) {
-            return '<div class="cell-occ-row">'
-              + '<span class="cell-occ-label" style="color:' + r.color + '">' + r.label + '</span>'
-              + '<span class="cell-occ-pct">' + r.value + '</span>'
-              + '</div>';
-          }).join('');
-        }
-        // Fallback to old engine
-        return calCellMetrics.map(function(key) {
-          var def = CAL_METRIC_DEFS[key];
-          if (!def) return '';
-          var val = cellMetricVals[key];
-          if (val === undefined) return '';
-          return '<div class="cell-occ-row">'
-            + '<span class="cell-occ-label">' + def.label + '</span>'
-            + '<span class="cell-occ-pct">' + def.fmt(val) + '</span>'
-            + '</div>';
-        }).join('');
-      })();
-
-      let allotBadge = '';
-      if (calFiltTO !== 'all' && ALLOTMENTS[calFiltTO]) {
-        const al = ALLOTMENTS[calFiltTO];
-        const dayVar = Math.abs((m.month * 13 + d * 7) % 10) - 5;
-        const usedToday = Math.max(0, Math.min(al.total, Math.round(al.total * al.pct) + dayVar));
-        const remaining = al.total - usedToday;
-        const pct = Math.round(usedToday / al.total * 100);
-        const cls = pct >= 90 ? 'allot-warn' : pct >= 75 ? 'allot-mid' : 'allot-ok';
-        allotBadge = `<span class="allot-badge ${cls}" title="Allotment: ${usedToday}/${al.total} used">${remaining}r avail</span>`;
-      }
-
-      const pickup = getPickupPct(m.month, d);
-      const pickupBadge = pickup >= 18
-        ? `<span class="pickup-badge pickup-up" title="Strong pickup ${pickup}%"><svg viewBox="0 0 9 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="7" height="10"><polyline points="1,7 4.5,3 8,7"/><polyline points="1,11 4.5,7 8,11"/></svg></span>`
-        : pickup >= 10
-        ? `<span class="pickup-badge pickup-mid" title="Moderate pickup ${pickup}%"><svg viewBox="0 0 9 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="7" height="6"><polyline points="1,6 4.5,1 8,6"/></svg></span>`
-        : pickup <= 3
-        ? `<span class="pickup-badge pickup-dn" title="Weak pickup ${pickup}%"><svg viewBox="0 0 9 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="7" height="6"><polyline points="1,1 4.5,6 8,1"/></svg></span>`
-        : '';
-
-      const lockSvg = `<svg class="cell-lock" viewBox="0 0 10 12" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="1" y="5" width="8" height="7" rx="1"/><path d="M3 5V3.5a2 2 0 0 1 4 0V5"/></svg>`;
+      // ── Icons (Material: apartment = hotel, confirmation_number = TO) ──
+      const icoHotel = `<svg class="cell-m-ico" viewBox="0 0 24 24" fill="#1c1c1c" width="14" height="14"><path d="M17 11V3H7v4H3v14h8v-4h2v4h8V11h-4zm-8 6H7v-2h2v2zm0-4H7v-2h2v2zm0-4H7V7h2v2zm4 4h-2v-2h2v2zm0-4h-2V7h2v2zm4 8h-2v-2h2v2zm0-4h-2v-2h2v2z"/></svg>`;
+      const icoTO    = `<svg class="cell-m-ico" viewBox="0 0 24 24" fill="#1c1c1c" width="14" height="14"><path d="M22 10V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v4c1.1 0 2 .9 2 2s-.9 2-2 2v4c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-4c-1.1 0-2-.9-2-2s.9-2 2-2zm-9 5.5h-2v-2h2v2zm0-3.5h-2v-2h2v2zm0-3.5h-2v-2h2v2z"/></svg>`;
+      const lockIcoYellow = `<svg class="cell-lock-ico" viewBox="0 0 24 24" fill="#FF9800" width="20" height="20"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zM9 8V6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9z"/></svg>`;
       const eyeSvg  = `<button class="cell-eye" aria-label="Quick view" data-month="${m.month}" data-day="${d}"><svg viewBox="0 0 14 10" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1 5s2.5-4 6-4 6 4 6 4-2.5 4-6 4-6-4-6-4z"/><circle cx="7" cy="5" r="1.6"/></svg></button>`;
+
+      // LY values for dual display (lyF already declared above)
+      const lyHotel = Math.round(hotel * lyF);
+      const lyTo    = Math.round(to * lyF);
+      const lyAdr   = Math.round(cellAdr * lyF);
+      const lyToAdr = Math.max(80, Math.round((cellAdr - 20 - Math.abs((m.month * 3 + d * 7) % 15)) * lyF));
+
+      // Build 4 metric rows: Hotel Occ, TO Occ, Hotel ADR, TO ADR
+      const isCompact = (calDisplayView === 6 || calDisplayView === 12);
+      const metricRows = !isCompact ? [
+        { ico: icoHotel, label: 'Occ', val: hotel + '% / ' + lyHotel + '%' },
+        { ico: icoTO,    label: 'Occ', val: to + '% / ' + lyTo + '%' },
+        { ico: icoHotel, label: 'ADR', val: '$' + cellAdr + ' / $' + lyAdr },
+        { ico: icoTO,    label: 'ADR', val: '$' + cellMetricVals.toAdr + ' / $' + lyToAdr },
+      ].map(r => `<div class="cell-m-row">`
+        + `<div class="cell-m-left">${r.ico}<span class="cell-m-label">${r.label}</span></div>`
+        + `<span class="cell-m-val">${r.val}</span>`
+        + `</div>`).join('') : '';
+
       const calCl = PARTIAL_CLOSURES[m.month + '-' + d];
       const hasCalCl = !isLocked && calCl && Array.isArray(calCl) && calCl.length > 0;
       const _isStopSalesActive = typeof window.hmIsStopSales === 'function' && window.hmIsStopSales();
-      const restrictBadge = hasCalCl && !_isStopSalesActive
-        ? `<span class="cell-restrict-badge" title="Closed Out: ${calCl.length} strateg${calCl.length>1?'ies':'y'}"><svg viewBox="0 0 10 12" fill="none" stroke="#ea580c" stroke-width="1.6" width="9" height="11"><rect x="1" y="5" width="8" height="7" rx="1"/><path d="M3 5V3.5a2 2 0 0 1 4 0V5"/></svg></span>`
-        : '';
       const isBulkSel = bulkSelectMode && isLocked && bulkSelected.has(key);
       const isInRange = calSelStart && calSelEnd && (function(){
         var s = calSelStart, e = calSelEnd;
@@ -1621,42 +1595,14 @@ function renderCalendar() {
 
       const hotelRooms = toRooms(hotel);
       const toRoomsSold = toRooms(to);
-      const directPct = Math.max(0, hotel - to);
-
-      const isCompact = (calDisplayView === 6 || calDisplayView === 12);
-      const cellDba = Math.round((new Date(2026, m.month - 1, d) - new Date(2026, 2, 9)) / 86400000);
-      const cellDbaHtml = (!isCompact && cellDba > 0 && (!isLocked || _isStopSalesActive))
-        ? `<span style="font-size:8px;font-weight:700;color:${_isStopSalesActive && isLocked ? '#fff' : '#006461'};letter-spacing:.1px;opacity:.85">${cellDba}d</span>`
-        : '';
-      const RT_INVS_CAL  = [51, 36, 27, 12, 15, 9];
-      const RT_ABBRS_CAL = ['Std','Sup','Del','Ste','Jr','Fam'];
-      const RT_CLRS_CAL  = ['#ff5900','#547733','#604f35','#3f3e78','#967ef3','#248b86'];
-      const rtMiniHtml = (!isCompact && !isLocked)
-        ? '<div style="display:flex;gap:1px;margin:2px 4px 1px;">'
-          + RT_INVS_CAL.map((inv, i) => {
-              const sold  = Math.min(inv, Math.floor(inv * hotel / 110));
-              const avail = Math.max(0, inv - sold);
-              const pct   = Math.round(sold / inv * 100);
-              const clr   = avail === 0 ? '#dc2626' : pct >= 85 ? '#ea580c' : pct >= 60 ? '#f59e0b' : '#16a34a';
-              return `<div title="${RT_ABBRS_CAL[i]}: ${avail} avail" style="flex:1;height:3px;border-radius:1px;background:${clr};opacity:.75"></div>`;
-            }).join('')
-          + '</div>'
-        : '';
       const capTipAttr = isLocked ? '' : ` onmouseenter="calShowCapTip(event,${hotel},${hotelRooms},${to},${toRoomsSold},${210-hotelRooms-toRoomsSold})" onmouseleave="calHideCapTip()"`;
       cells += `<div class="${classes}" data-month="${m.month}" data-day="${d}"${capTipAttr}>
         <div class="cell-day-hdr">
-          <div style="display:flex;align-items:center;gap:3px">
-            <span class="day-num${isLocked ? ' day-muted' : ''}">${d}${isLocked && !(typeof window.hmIsStopSales === 'function' && window.hmIsStopSales()) ? `<svg style="margin-left:3px;vertical-align:middle;opacity:.55" viewBox="0 0 10 12" fill="none" stroke="currentColor" stroke-width="1.6" width="9" height="11"><rect x="1" y="5" width="8" height="7" rx="1"/><path d="M3 5V3.5a2 2 0 0 1 4 0V5"/></svg>` : ''}</span>
-            ${cellDbaHtml}
-            ${!isCompact ? restrictBadge : ''}
-          </div>
-          ${isLocked || isCompact ? '' : eyeSvg}
+          <span class="day-num">${d}</span>
+          ${isLocked ? lockIcoYellow : (isCompact ? '' : eyeSvg)}
         </div>
-        ${rtMiniHtml}
         ${!isCompact ? `<div class="cell-content">${metricRows}</div>` : ''}
-        ${!isCompact ? allotBadge : ''}
-        ${!isCompact && dot ? `<span class="day-dot" style="background:${dot}"></span>` : ''}
-        ${!isCompact && (typeof CAL_EVENTS !== 'undefined' && CAL_EVENTS[key] && CAL_EVENTS[key].length > 0) ? `<span class="cell-event-icon" data-event-key="${key}" onmouseenter="calShowEventTip(event,\'${key}\')" onmouseleave="calHideEventTip()"></span>` : ''}
+        ${!isCompact && hasCalCl && !_isStopSalesActive ? '<span class="cell-teal-dot"></span>' : ''}
       </div>`;
     }
 

@@ -22,7 +22,9 @@
       "mcp__60ac2e8c-24aa-44e4-8c8a-c4a3c769ec23__whoami",
       "mcp__60ac2e8c-24aa-44e4-8c8a-c4a3c769ec23__create_new_file",
       "mcp__60ac2e8c-24aa-44e4-8c8a-c4a3c769ec23__use_figma",
-      "mcp__60ac2e8c-24aa-44e4-8c8a-c4a3c769ec23__get_screenshot"
+      "mcp__60ac2e8c-24aa-44e4-8c8a-c4a3c769ec23__get_screenshot",
+      "mcp__60ac2e8c-24aa-44e4-8c8a-c4a3c769ec23__get_design_context",
+      "mcp__60ac2e8c-24aa-44e4-8c8a-c4a3c769ec23__get_metadata"
     ]
   }
 }

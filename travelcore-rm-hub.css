@@ -773,12 +773,14 @@ body.dark .cal-nav-btn:hover { background: rgba(196,255,69,0.07); border-color: 
 
 /* Day cells — tall with occ content */
 .cal-day {
-  height: 100px; min-width: 0;
+  height: 120px; min-width: 0;
   display: flex; flex-direction: column;
-  position: relative; border-radius: 3px;
+  position: relative; border-radius: 0;
   cursor: pointer; transition: box-shadow .1s;
   background: var(--hotel-bg, var(--seg-bg, var(--surface-3)));
   overflow: hidden;
+  border: 1px solid #DDE1E2;
+  padding: 8px;
 }
 /* Content layers */
 .cal-day .cell-day-hdr,
@@ -787,19 +789,18 @@ body.dark .cal-nav-btn:hover { background: rgba(196,255,69,0.07); border-color: 
 .cal-day .day-dot { position: relative; z-index: 1; }
 .cal-day:hover { box-shadow: inset 0 0 0 2px #006461; z-index: 1; }
 
-/* Day number row */
+/* Day number row — top bar with number left, icon right */
 .cell-day-hdr {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 4px 4px 0;
+  display: flex; align-items: flex-start; justify-content: space-between;
   flex-shrink: 0;
+  margin-bottom: auto;
 }
 .day-num {
-  font-size: 10px; font-weight: 700; color: var(--text-primary);
+  font-size: 12px; font-weight: 700; color: #1C1C1C;
+  font-family: 'Lato', sans-serif;
 }
 .day-muted { color: #8a9096; }
-.cell-lock {
-  width: 11px; height: 13px; color: #6B7280; flex-shrink: 0;
-}
+.cell-lock-ico { flex-shrink: 0; }
 .cell-closed-label {
   display: flex; align-items: center; justify-content: center;
   gap: 4px; margin-top: 6px;
@@ -808,48 +809,39 @@ body.dark .cal-nav-btn:hover { background: rgba(196,255,69,0.07); border-color: 
   text-transform: uppercase;
 }
 
-/* Occ content */
+/* Metric rows — Figma layout */
 .cell-content {
-  padding: 2px 4px 4px;
-  display: flex; flex-direction: column; gap: 2px;
-  flex: 1; overflow: hidden;
-}
-.cell-occ-row {
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 1px;
-}
-.cell-occ-label {
-  font-size: 9px; color: rgba(0,0,0,0.5); white-space: nowrap;
-  overflow: hidden; text-overflow: ellipsis; flex: 1;
-  line-height: 1.2;
-}
-.cell-occ-val {
-  font-size: 10px; font-weight: 700; color: rgba(0,0,0,0.65);
-  white-space: nowrap; flex-shrink: 0; display: flex; align-items: center; gap: 2px;
-}
-.cell-rooms {
-  font-size: 8px; font-weight: 400; opacity: 0.7; letter-spacing: 0;
-}
-
-.cell-occ-bar {
-  position: relative; z-index: 1;
-  height: 8px; margin: 3px 4px 4px;
-  background: rgba(0,0,0,0.12); border-radius: 4px; overflow: hidden;
+  display: flex; flex-direction: column; gap: 4px;
   flex-shrink: 0;
 }
-.cell-occ-bar-to {
-  position: absolute; top: 0; left: 0; height: 100%;
-  background: #006461; border-radius: 4px 0 0 4px;
-  transition: width .15s;
+.cell-m-row {
+  display: flex; align-items: center; justify-content: space-between;
 }
-.cell-occ-bar-other {
-  position: absolute; top: 0; height: 100%;
-  background: #5883ED;
-  transition: width .15s, left .15s;
+.cell-m-left {
+  display: flex; align-items: center; gap: 4px;
 }
-body.dark .cell-occ-bar { background: rgba(255,255,255,0.10); }
-body.dark .cell-occ-bar-to { background: #C4FF45; }
-body.dark .cell-occ-bar-other { background: #4374EB; }
+.cell-m-ico { flex-shrink: 0; }
+.cell-m-label {
+  font-size: 9px; font-weight: 400; color: #1C1C1C;
+  font-family: 'Inter', sans-serif;
+  white-space: nowrap;
+}
+.cell-m-val {
+  font-size: 9px; font-weight: 600; color: #1C1C1C;
+  font-family: 'Inter', sans-serif;
+  white-space: nowrap;
+}
+
+/* Teal indicator dot — bottom-right */
+.cell-teal-dot {
+  position: absolute; bottom: 8px; right: 8px;
+  width: 11px; height: 11px;
+  background: #006461;
+}
+
+/* Legacy compat — hide old elements */
+.cell-occ-row { display: none; }
+.cell-occ-bar { display: none; }
 
 /* Light bg (occ 1–4) → Figma Grey-500 text #8a9096 */
 .cal-day.hotel-occ-1 .day-num, .cal-day.hotel-occ-2 .day-num,
@@ -1425,7 +1417,7 @@ body.dark .cal-day.today .day-num {
 }
 
 /* Empty / locked */
-.cal-day.empty   { cursor: default; pointer-events: none; height: 100px; }
+.cal-day.empty   { cursor: default; pointer-events: none; height: 120px; border-color: transparent; }
 
 /* ── Compact 6 / 12 month view ── */
 .cal-compact .cal-day {
@@ -1494,23 +1486,29 @@ body.dark .cal-day.locked { background: rgba(255,255,255,0.04); }
 .cal-day.hotel-occ-5  .day-num, .cal-day.hotel-occ-6  .day-num,
 .cal-day.hotel-occ-7  .day-num, .cal-day.hotel-occ-8  .day-num,
 .cal-day.hotel-occ-9  .day-num, .cal-day.hotel-occ-10 .day-num { color: #fff; }
-.cal-day.hotel-occ-5  .cell-occ-pct, .cal-day.hotel-occ-6  .cell-occ-pct,
-.cal-day.hotel-occ-7  .cell-occ-pct, .cal-day.hotel-occ-8  .cell-occ-pct,
-.cal-day.hotel-occ-9  .cell-occ-pct, .cal-day.hotel-occ-10 .cell-occ-pct { color: rgba(255,255,255,0.92); }
-.cal-day.hotel-occ-5  .cell-occ-label, .cal-day.hotel-occ-6  .cell-occ-label,
-.cal-day.hotel-occ-7  .cell-occ-label, .cal-day.hotel-occ-8  .cell-occ-label,
-.cal-day.hotel-occ-9  .cell-occ-label, .cal-day.hotel-occ-10 .cell-occ-label { color: rgba(255,255,255,0.75); }
+.cal-day.hotel-occ-5  .cell-m-label, .cal-day.hotel-occ-6  .cell-m-label,
+.cal-day.hotel-occ-7  .cell-m-label, .cal-day.hotel-occ-8  .cell-m-label,
+.cal-day.hotel-occ-9  .cell-m-label, .cal-day.hotel-occ-10 .cell-m-label { color: rgba(255,255,255,0.85); }
+.cal-day.hotel-occ-5  .cell-m-val, .cal-day.hotel-occ-6  .cell-m-val,
+.cal-day.hotel-occ-7  .cell-m-val, .cal-day.hotel-occ-8  .cell-m-val,
+.cal-day.hotel-occ-9  .cell-m-val, .cal-day.hotel-occ-10 .cell-m-val { color: #fff; }
+.cal-day.hotel-occ-5  .cell-m-ico, .cal-day.hotel-occ-6  .cell-m-ico,
+.cal-day.hotel-occ-7  .cell-m-ico, .cal-day.hotel-occ-8  .cell-m-ico,
+.cal-day.hotel-occ-9  .cell-m-ico, .cal-day.hotel-occ-10 .cell-m-ico { fill: #fff; }
 
 /* White text on dark red seg cells (5–10) */
 .cal-day.seg-occ-5  .day-num, .cal-day.seg-occ-6  .day-num,
 .cal-day.seg-occ-7  .day-num, .cal-day.seg-occ-8  .day-num,
 .cal-day.seg-occ-9  .day-num, .cal-day.seg-occ-10 .day-num { color: #fff; }
-.cal-day.seg-occ-5  .cell-occ-pct, .cal-day.seg-occ-6  .cell-occ-pct,
-.cal-day.seg-occ-7  .cell-occ-pct, .cal-day.seg-occ-8  .cell-occ-pct,
-.cal-day.seg-occ-9  .cell-occ-pct, .cal-day.seg-occ-10 .cell-occ-pct { color: rgba(255,255,255,0.92); }
-.cal-day.seg-occ-5  .cell-occ-label, .cal-day.seg-occ-6  .cell-occ-label,
-.cal-day.seg-occ-7  .cell-occ-label, .cal-day.seg-occ-8  .cell-occ-label,
-.cal-day.seg-occ-9  .cell-occ-label, .cal-day.seg-occ-10 .cell-occ-label { color: rgba(255,255,255,0.75); }
+.cal-day.seg-occ-5  .cell-m-label, .cal-day.seg-occ-6  .cell-m-label,
+.cal-day.seg-occ-7  .cell-m-label, .cal-day.seg-occ-8  .cell-m-label,
+.cal-day.seg-occ-9  .cell-m-label, .cal-day.seg-occ-10 .cell-m-label { color: rgba(255,255,255,0.85); }
+.cal-day.seg-occ-5  .cell-m-val, .cal-day.seg-occ-6  .cell-m-val,
+.cal-day.seg-occ-7  .cell-m-val, .cal-day.seg-occ-8  .cell-m-val,
+.cal-day.seg-occ-9  .cell-m-val, .cal-day.seg-occ-10 .cell-m-val { color: #fff; }
+.cal-day.seg-occ-5  .cell-m-ico, .cal-day.seg-occ-6  .cell-m-ico,
+.cal-day.seg-occ-7  .cell-m-ico, .cal-day.seg-occ-8  .cell-m-ico,
+.cal-day.seg-occ-9  .cell-m-ico, .cal-day.seg-occ-10 .cell-m-ico { fill: #fff; }
 
 /* ══════════════════════════════════════════════════════════════
    HEATMAP RED — TO / Segment demand (Figma 2026 Design System)
@@ -1887,18 +1885,16 @@ body.dark .figma-fab { border-color: rgba(255,255,255,.08); }
 /* 1-month view — larger cells */
 .cal-months-grid[style*="repeat(1"] .cal-day,
 .cal-months-grid[style*="repeat(1"] .cal-day.empty {
-  height: 126px;
+  height: 148px;
 }
-.cal-months-grid[style*="repeat(1"] .day-num { font-size: 11px; }
-.cal-months-grid[style*="repeat(1"] .cell-occ-label { font-size: 9px; }
-.cal-months-grid[style*="repeat(1"] .cell-occ-val { font-size: 10px; }
-.cal-months-grid[style*="repeat(1"] .cell-day-hdr { padding: 6px 6px 0; }
-.cal-months-grid[style*="repeat(1"] .cell-content { padding: 4px 6px 6px; gap: 4px; }
+.cal-months-grid[style*="repeat(1"] .day-num { font-size: 13px; }
+.cal-months-grid[style*="repeat(1"] .cell-m-label { font-size: 10px; }
+.cal-months-grid[style*="repeat(1"] .cell-m-val { font-size: 10px; }
 
 /* 2-month view */
 .cal-months-grid[style*="repeat(2"] .cal-day,
 .cal-months-grid[style*="repeat(2"] .cal-day.empty {
-  height: 106px;
+  height: 130px;
 }
 
 /* ─── CELL EYE ICON ─── */
