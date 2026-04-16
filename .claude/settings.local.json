@@ -65,7 +65,8 @@
       "Bash(./deploy.sh \"add monthly/weekly tab bars for switching between views\")",
       "Bash(./deploy.sh \"remove duplicate date switcher from monthly filter bar\")",
       "Bash(./deploy.sh \"normalize tab bar height and padding for monthly and weekly views\")",
-      "Bash(./deploy.sh \"hide empty filter chips bar above monthly tab bar\")"
+      "Bash(./deploy.sh \"hide empty filter chips bar above monthly tab bar\")",
+      "Bash(./deploy.sh \"align tabs flush to bottom of groupby bar, remove bottom padding\")"
     ]
   }
 }
