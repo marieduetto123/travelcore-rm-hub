@@ -1638,6 +1638,7 @@ function renderCalendar() {
 
       const calCl = PARTIAL_CLOSURES[m.month + '-' + d];
       const hasCalCl = !isLocked && calCl && Array.isArray(calCl) && calCl.length > 0;
+      const hasCalEvents = (typeof CAL_EVENTS !== 'undefined') && CAL_EVENTS[m.month + '-' + d] && CAL_EVENTS[m.month + '-' + d].length > 0;
       const _isStopSalesActive = typeof window.hmIsStopSales === 'function' && window.hmIsStopSales();
       const isBulkSel = bulkSelectMode && isLocked && bulkSelected.has(key);
       const isInRange = calSelStart && calSelEnd && (function(){
@@ -1672,7 +1673,7 @@ function renderCalendar() {
           ${!isCompact && !isLocked ? eyeSvg : ''}
         </div>
         ${!isCompact ? `<div class="cell-content">${metricRows}</div>` : ''}
-        ${!isCompact && hasCalCl && !_isStopSalesActive ? '<span class="cell-event-ico" onmouseenter="calShowEventTip(event,\''+m.month+'-'+d+'\')" onmouseleave="calHideEventTip()"><span class="material-icons" style="font-size:16px;color:#006461">today</span></span>' : ''}
+        ${!isCompact && (hasCalCl || hasCalEvents) && !_isStopSalesActive ? '<span class="cell-event-ico" onmouseenter="calShowEventTip(event,\''+m.month+'-'+d+'\')" onmouseleave="calHideEventTip()"><span class="material-icons" style="font-size:16px;color:#006461">today</span></span>' : ''}
       </div>`;
     }
 
@@ -12824,21 +12825,42 @@ setTimeout(function() {
 
   window.calShowEventTip = function(e, key) {
     var events = (typeof CAL_EVENTS !== 'undefined') ? CAL_EVENTS[key] : null;
-    if (!events || events.length === 0) return;
+    var closures = (typeof PARTIAL_CLOSURES !== 'undefined') ? PARTIAL_CLOSURES[key] : null;
+    var hasEvents = events && events.length > 0;
+    var hasClosures = closures && Array.isArray(closures) && closures.length > 0;
+    if (!hasEvents && !hasClosures) return;
 
     // Hide rooms/capacity tooltip first
     window.calHideCapTip();
 
     var t = getTip();
     var calSvg = '<span class="material-icons" style="font-size:18px;color:#006461;vertical-align:middle;margin-right:2px">today</span>';
+    var html = '';
 
-    t.innerHTML = '<div class="cal-event-tooltip-title">' + calSvg + ' Events</div>'
-      + events.map(function(ev) {
-          return '<div style="margin-bottom:' + (events.length > 1 ? '6px' : '0') + '">'
-            + '<div class="cal-event-tooltip-name">• ' + ev.name + '</div>'
-            + '<div class="cal-event-tooltip-meta">| ' + ev.type + '<br>' + ev.date + '</div>'
-            + '</div>';
-        }).join('');
+    if (hasEvents) {
+      html += '<div class="cal-event-tooltip-title">' + calSvg + ' Events</div>'
+        + events.map(function(ev) {
+            return '<div style="margin-bottom:' + (events.length > 1 ? '6px' : '0') + '">'
+              + '<div class="cal-event-tooltip-name">• ' + ev.name + '</div>'
+              + '<div class="cal-event-tooltip-meta">| ' + ev.type + '<br>' + ev.date + '</div>'
+              + '</div>';
+          }).join('');
+    }
+
+    if (hasClosures) {
+      if (hasEvents) html += '<div style="border-top:1px solid #e5e7eb;margin:8px 0 6px"></div>';
+      html += '<div class="cal-event-tooltip-title"><span class="material-icons" style="font-size:18px;color:#fbbf24;vertical-align:middle;margin-right:2px">lock_open</span> Closures</div>'
+        + closures.map(function(cl) {
+            var parts = [];
+            if (cl.tos && cl.tos.length) parts.push(cl.tos.join(', '));
+            if (cl.roomTypes && cl.roomTypes.length) parts.push(cl.roomTypes.join(', '));
+            if (cl.boards && cl.boards.length) parts.push(cl.boards.map(function(b){return b.toUpperCase();}).join(', '));
+            return '<div style="margin-bottom:4px"><div class="cal-event-tooltip-name">• ' + (parts.join(' · ') || 'All') + '</div>'
+              + '<div class="cal-event-tooltip-meta">| ' + (cl.appliedBy || '') + '</div></div>';
+          }).join('');
+    }
+
+    t.innerHTML = html;
 
     // Position below the icon
     var _evEl = e.target.closest('.cell-event-icon') || e.target.closest('.cell-event-ico');

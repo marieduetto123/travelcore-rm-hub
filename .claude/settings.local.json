@@ -78,7 +78,8 @@
       "Bash(./deploy.sh \"restructure monthly header: Close Out + Custom Close + text btns + order per Figma; remove dropdown from Custom Close on both views; remove Open All/Close All from monthly\")",
       "Bash(./deploy.sh \"style monthly tab bar to match Figma: #F8F9FD bg, teal-bordered nav btns, #4F5B60 range text; remove Open All/Close All from monthly\")",
       "Bash(./deploy.sh \"add day checkboxes to monthly view for close-out selection, sync with Close Out button\")",
-      "Bash(./deploy.sh \"style Close All/Open All buttons to match Figma: #4F5B60 text, mint hover, 10px gap\")"
+      "Bash(./deploy.sh \"style Close All/Open All buttons to match Figma: #4F5B60 text, mint hover, 10px gap\")",
+      "Bash(./deploy.sh \"fix monthly event tooltip: show icon for all days with events or closures, display both in tooltip\")"
     ]
   }
 }
