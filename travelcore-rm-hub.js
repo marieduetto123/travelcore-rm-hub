@@ -8735,6 +8735,12 @@ updateContractsStats({ y:2025, m:7, d:17 }, { y:2025, m:7, d:25 });
       console.log('[Close Out] Internal note recorded — message:', message || '(none)');
     }
 
+    // Clear selected days after close-out
+    _wbSelectedDays.clear();
+    _wvSelectedDays.clear();
+    var _coBtn2 = document.getElementById('wbCloseOutBtn');
+    if (_coBtn2) _coBtn2.style.display = 'none';
+
     renderCalendar();
     buildWeekGrid(wvMonth, wvWeekStart, wvWeekStart);
     closeModal();
