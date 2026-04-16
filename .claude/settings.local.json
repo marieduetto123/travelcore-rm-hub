@@ -93,8 +93,7 @@
       "Bash(./deploy.sh \"date range picker popup for close-out modal, fix radio dots on type cards, reduce modal height to 50vh with scroll, rename buttons to Close/Re-Open\")",
       "Bash(./deploy.sh \"show eye icon on all monthly days including closed and partially closed\")",
       "Bash(./deploy.sh \"eye icon click on closed/partial days now opens summary popup\")",
-      "Bash(./deploy.sh \"red padlock for full close-out, orange padlock for partial close-out on monthly\")",
-      "Bash(./deploy.sh \"fix re-open button color to match close-out teal, add cell padding to monthly overview accordion, differentiate TO/hotel metric colors, add close-out timestamp to eye popup\")"
+      "Bash(./deploy.sh \"red padlock for full close-out, orange padlock for partial close-out on monthly\")"
     ]
   }
 }

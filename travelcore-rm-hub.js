@@ -1441,19 +1441,19 @@ const CAL_METRIC_DEFS = {
   lyOcc:       { label: 'LY-Occ',  color: '#93c5fd', maxVal: 100,   fmt: function(v){ return v + '%'; },                        name: 'LY Occ',          group: 'Occupancy'  },
   fcstOcc:     { label: 'Fc-Occ',  color: '#fbbf24', maxVal: 100,   fmt: function(v){ return v + '%'; },                        name: 'Fcst Occ',        group: 'Occupancy'  },
   hotelAdr:    { label: 'H-ADR',   color: '#7c3aed', maxVal: 300,   fmt: function(v){ return '$' + v; },                        name: 'Hotel ADR',       group: 'ADR'        },
-  toAdr:       { label: 'T-ADR',   color: '#0891b2', maxVal: 300,   fmt: function(v){ return '$' + v; },                        name: 'T ADR',           group: 'ADR'        },
+  toAdr:       { label: 'T-ADR',   color: '#4f46e5', maxVal: 300,   fmt: function(v){ return '$' + v; },                        name: 'T ADR',           group: 'ADR'        },
   lyAdr:       { label: 'LY-ADR',  color: '#c4b5fd', maxVal: 300,   fmt: function(v){ return '$' + v; },                        name: 'LY ADR',          group: 'ADR'        },
   fcstAdr:     { label: 'Fc-ADR',  color: '#fde68a', maxVal: 300,   fmt: function(v){ return '$' + v; },                        name: 'Fcst ADR',        group: 'ADR'        },
   hotelRev:    { label: 'H-Rev',   color: '#ea580c', maxVal: 50000, fmt: function(v){ return '$' + Math.round(v/1000) + 'k'; }, name: 'Hotel Revenue',   group: 'Revenue'    },
-  toRev:       { label: 'T-Rev',   color: '#0f766e', maxVal: 50000, fmt: function(v){ return '$' + Math.round(v/1000) + 'k'; }, name: 'T Revenue',       group: 'Revenue'    },
+  toRev:       { label: 'T-Rev',   color: '#b45309', maxVal: 50000, fmt: function(v){ return '$' + Math.round(v/1000) + 'k'; }, name: 'T Revenue',       group: 'Revenue'    },
   lyRev:       { label: 'LY-Rev',  color: '#fdba74', maxVal: 50000, fmt: function(v){ return '$' + Math.round(v/1000) + 'k'; }, name: 'LY Revenue',      group: 'Revenue'    },
   fcstRev:     { label: 'Fc-Rev',  color: '#fcd34d', maxVal: 50000, fmt: function(v){ return '$' + Math.round(v/1000) + 'k'; }, name: 'Fcst Revenue',    group: 'Revenue'    },
-  hotelPickup: { label: 'H-Pkp',   color: '#2e65e8', maxVal: 30,    fmt: function(v){ return (v>=0?'+':'') + v; },              name: 'Hotel Pickup',    group: 'Pickup'     },
+  hotelPickup: { label: 'H-Pkp',   color: '#16a34a', maxVal: 30,    fmt: function(v){ return (v>=0?'+':'') + v; },              name: 'Hotel Pickup',    group: 'Pickup'     },
   toPickup:    { label: 'T-Pkp',   color: '#0d9488', maxVal: 30,    fmt: function(v){ return (v>=0?'+':'') + v; },              name: 'T Pickup',        group: 'Pickup'     },
-  hotelRn:     { label: 'H-RN',    color: '#5883ed', maxVal: 210,   fmt: function(v){ return String(v); },                      name: 'Hotel RN Sold',   group: 'RN Sold'    },
-  toRn:        { label: 'T-RN',    color: '#006461', maxVal: 210,   fmt: function(v){ return String(v); },                      name: 'T RN Sold',       group: 'RN Sold'    },
+  hotelRn:     { label: 'H-RN',    color: '#2e65e8', maxVal: 210,   fmt: function(v){ return String(v); },                      name: 'Hotel RN Sold',   group: 'RN Sold'    },
+  toRn:        { label: 'T-RN',    color: '#0284c7', maxVal: 210,   fmt: function(v){ return String(v); },                      name: 'T RN Sold',       group: 'RN Sold'    },
   hotelTrev:   { label: 'H-TRV',   color: '#9333ea', maxVal: 500,   fmt: function(v){ return '$' + v; },                        name: 'Hotel REVPAR',    group: 'REVPAR'     },
-  toTrev:      { label: 'T-TRV',   color: '#0891b2', maxVal: 500,   fmt: function(v){ return '$' + v; },                        name: 'T REVPAR',        group: 'REVPAR'     },
+  toTrev:      { label: 'T-TRV',   color: '#7c3aed', maxVal: 500,   fmt: function(v){ return '$' + v; },                        name: 'T REVPAR',        group: 'REVPAR'     },
   lyRevpar:    { label: 'LY-RVP',  color: '#d8b4fe', maxVal: 500,   fmt: function(v){ return '$' + v; },                        name: 'LY REVPAR',       group: 'REVPAR'     },
   fcstRevpar:  { label: 'Fc-RVP',  color: '#fef08a', maxVal: 500,   fmt: function(v){ return '$' + v; },                        name: 'Fcst REVPAR',     group: 'REVPAR'     },
   remainRooms:  { label: 'Rem',    color: '#16a34a', maxVal: 210,   fmt: function(v){ return String(v); },                        name: 'Remaining Rooms',    group: 'Other'         },
@@ -2826,16 +2826,9 @@ function clearCalSelection() {
         const toPart = rule.tos.length ? rule.tos.map(function(n){ return popupClChip(n, TO_COLORS_MAP[n]||'#dc2626'); }).join('') : popupClChip('All Operators','#9ca3af');
         const rtPart = rule.roomTypes.length ? rule.roomTypes.map(function(n){ return popupClChip(n, RT_NAME_COLORS[n]||'#b45309'); }).join('') : popupClChip('All Room Types','#9ca3af');
         const bdPart = rule.boards.length ? rule.boards.map(function(b){ return popupClChip(BMAP_P[b]||b,'#7c3aed'); }).join('') : popupClChip('All Meal Plans','#9ca3af');
-        var appliedHtml = rule.appliedAt
-          ? '<div style="display:flex;align-items:center;gap:4px;margin-top:4px;font-size:11px;color:#6b7280">'
-            +'<span class="material-icons" style="font-size:13px;color:#9ca3af">schedule</span>'
-            +'<span>Closed '+coFmtDate(rule.appliedAt)+(rule.appliedBy ? ' by <strong style="color:#374151">'+rule.appliedBy+'</strong>' : '')+'</span>'
-            +'</div>'
-          : '';
         return '<div style="margin-bottom:4px;padding:4px 0;border-bottom:1px solid #f3f4f6">'
-          +'<span style="font-size:12px;font-weight:700;color:#dc2626">Strategy '+(ri+1)+'</span>'
+          +'<span style="font-size:12px;font-weight:700;color:#dc2626">Strategy</span>'
           +'<div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:3px">'+toPart+rtPart+bdPart+'</div>'
-          +appliedHtml
           +'</div>';
       }).join('');
       return '<div class="popup-metrics-section popup-closures-section">'
@@ -2857,21 +2850,6 @@ function clearCalSelection() {
     _pb += _filtLabel;
 
     // ── Close Outs ──
-    var _popIsLocked = LOCKED_DAYS.has(dm + '-' + dd);
-    if (_popIsLocked) {
-      var _popLm = LOCKED_DAYS_META[dm + '-' + dd] || {};
-      _pb += '<div class="popup-metrics-section popup-closures-section">'
-        +'<div class="popup-metrics-title" style="color:#dc2626">FULL DAY CLOSED</div>'
-        +'<div style="display:flex;align-items:center;gap:4px;padding:4px 0;color:#dc2626;font-size:12px;font-weight:600">'
-        +'<span class="material-icons" style="font-size:14px">lock</span> All inventory closed</div>'
-        +(_popLm.appliedAt
-          ? '<div style="display:flex;align-items:center;gap:4px;margin-top:2px;font-size:11px;color:#6b7280">'
-            +'<span class="material-icons" style="font-size:13px;color:#9ca3af">schedule</span>'
-            +'<span>Closed '+coFmtDate(_popLm.appliedAt)+(_popLm.appliedBy ? ' by <strong style="color:#374151">'+_popLm.appliedBy+'</strong>' : '')+'</span>'
-            +'</div>'
-          : '')
-        +'</div>';
-    }
     _pb += popupClHtml;
 
     // ── Daily Metrics ──
@@ -8987,8 +8965,8 @@ updateContractsStats({ y:2025, m:7, d:17 }, { y:2025, m:7, d:25 });
     const confirmBtn = document.getElementById('coConfirmBtn');
     if (confirmBtn) {
       confirmBtn.textContent = isReopen ? 'Re-Open' : 'Close Out';
-      confirmBtn.style.background = '';
-      confirmBtn.style.borderColor = '';
+      confirmBtn.style.background = isReopen ? '#16a34a' : '';
+      confirmBtn.style.borderColor = isReopen ? '#16a34a' : '';
     }
   });
 
@@ -13610,13 +13588,13 @@ window.calHideCapTip = function() {
       htotalGuests:'#0369a1', ttotalGuests:'#0ea5e9',
     };
     var KEY_COLORS = {
-      hocc:'#5883ed', tocc:'#006461', hadr:'#7c3aed', tadr:'#0891b2',
-      hrev:'#ea580c', trev:'#0f766e', hpickup:'#2e65e8', tpickup:'#0d9488',
-      hrn:'#5883ed',  trn:'#006461',  hrevpar:'#9333ea', trevpar:'#0891b2',
-      havgAdults:'#5883ed', tavgAdults:'#006461',
+      hocc:'#5883ed', tocc:'#006461', hadr:'#7c3aed', tadr:'#4f46e5',
+      hrev:'#ea580c', trev:'#b45309', hpickup:'#16a34a', tpickup:'#0d9488',
+      hrn:'#2e65e8',  trn:'#0284c7',  hrevpar:'#9333ea', trevpar:'#7c3aed',
+      havgAdults:'#2e65e8', tavgAdults:'#60a5fa',
       havgChildren:'#d33030', tavgChildren:'#f87171',
-      havgLos:'#5883ed', tavgLos:'#006461',
-      havgLeadTime:'#5883ed', tavgLeadTime:'#006461',
+      havgLos:'#0891b2', tavgLos:'#22d3ee',
+      havgLeadTime:'#6366f1', tavgLeadTime:'#a5b4fc',
       hly:'#93c5fd', tly:'#6ee7b7', hstly:'#bfdbfe', tstly:'#a7f3d0',
       hfcst:'#fbbf24', tfcst:'#fde68a',
       availRooms:'#16a34a', availGuar:'#ea580c',

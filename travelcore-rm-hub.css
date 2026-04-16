@@ -877,8 +877,8 @@ body.dark .cal-nav-btn:hover { background: rgba(196,255,69,0.07); border-color: 
   flex-shrink: 0;
 }
 /* Hotel = black, TO = gold-brown */
-.cell-m-hotel .cell-m-label, .cell-m-hotel .cell-m-val { color: #3b68c9; }
-.cell-m-to .cell-m-label, .cell-m-to .cell-m-val { color: #006461; }
+.cell-m-hotel .cell-m-label, .cell-m-hotel .cell-m-val { color: #1C1C1C; }
+.cell-m-to .cell-m-label, .cell-m-to .cell-m-val { color: #8C7843; }
 
 /* Comparison value colors */
 .cell-cmp { font-size: 10px; font-weight: 500; opacity: .85; }
@@ -7818,6 +7818,5 @@ body.dark .cal-mfilt-btn.active { background: #1a3535; }
   height: 32px;
   display: flex;
   align-items: center;
-  padding: 0 8px;
 }
 
