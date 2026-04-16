@@ -3913,13 +3913,11 @@ function buildDailyBView(days, month, activeDay) {
     html += '<div class="wb-data-cell wb-hdr-cell'
           + (isAct ? ' wb-hdr-active' : '')
           + (isSel ? ' wb-hdr-selected' : '')
-          + '" data-wb-date="' + isoDate + '" onclick="wbDayToggle(\'' + isoDate + '\')" title="Click to select for close-out">'
+          + '" data-wb-date="' + isoDate + '" title="Select for close-out">'
+          + '<input type="checkbox" class="wv-day-chk wb-day-chk"' + (isSel ? ' checked' : '') + ' onclick="event.stopPropagation();wbDayToggle(\'' + isoDate + '\');this.checked=_wbSelectedDays.has(\'' + isoDate + '\')" title="Select for close-out">'
           + '<span class="wb-hdr-dow">' + dow + '</span>'
           + '<span class="wb-hdr-date">' + dv.day + '/' + dv.month + '</span>'
           + (dbaStr ? '<span style="font-size:10px;background:rgba(255,255,255,0.2);border-radius:3px;padding:0 4px;color:#fff;white-space:nowrap">'+dbaStr+'</span>' : '')
-          + '<span class="wb-hdr-sel-icon">'
-          + '<span class="material-icons" style="font-size:13px;color:'+_lockColor+'">lock</span>'
-          + '</span>'
           + '</div>';
   });
   html += '</div>';

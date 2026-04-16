@@ -67,7 +67,8 @@
       "Bash(./deploy.sh \"normalize tab bar height and padding for monthly and weekly views\")",
       "Bash(./deploy.sh \"hide empty filter chips bar above monthly tab bar\")",
       "Bash(./deploy.sh \"align tabs flush to bottom of groupby bar, remove bottom padding\")",
-      "Bash(./deploy.sh \"add day checkboxes to weekly view headers for close-out selection\")"
+      "Bash(./deploy.sh \"add day checkboxes to weekly view headers for close-out selection\")",
+      "Bash(./deploy.sh \"add checkboxes to Daily B day headers for close-out selection\")"
     ]
   }
 }
