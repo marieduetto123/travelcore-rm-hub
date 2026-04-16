@@ -8585,14 +8585,16 @@ updateContractsStats({ y:2025, m:7, d:17 }, { y:2025, m:7, d:25 });
   function renderDateRanges() {
     var list = document.getElementById('coDateRangeList');
     if (!list) return;
-    list.innerHTML = dateRanges.map(function(dr) {
-      return '<div class="co-dr-row">'
-        + '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" width="15" height="15" style="flex-shrink:0;color:#9ca3af"><rect x="1" y="3" width="14" height="12" rx="1.5"/><line x1="5" y1="1" x2="5" y2="5"/><line x1="11" y1="1" x2="11" y2="5"/><line x1="1" y1="7" x2="15" y2="7"/></svg>'
-        + '<input type="date" class="modal-input" value="' + dr.from + '" style="flex:1;min-width:0" data-drid="' + dr.id + '" data-drfld="from" onchange="coDRChange(+this.dataset.drid, this.dataset.drfld, this.value)">'
-        + '<span class="co-date-sep">&ndash;</span>'
-        + '<input type="date" class="modal-input" value="' + dr.to + '" style="flex:1;min-width:0" data-drid="' + dr.id + '" data-drfld="to" onchange="coDRChange(+this.dataset.drid, this.dataset.drfld, this.value)">'
-        + '<button type="button" class="co-dr-remove" data-drid="' + dr.id + '" onclick="coRemoveDateRange(+this.dataset.drid)" title="Remove">&times;</button>'
-        + '</div>';
+    list.innerHTML = dateRanges.map(function(dr, idx) {
+      return '<div class="co2-dr-wrap">'
+        + '<span class="co2-dr-label">Date Range ' + (idx + 1) + '</span>'
+        + '<div class="co2-dr-field">'
+        + '<span class="material-icons" style="font-size:18px;color:#585858">calendar_today</span>'
+        + '<input type="date" value="' + dr.from + '" data-drid="' + dr.id + '" data-drfld="from" onchange="coDRChange(+this.dataset.drid, this.dataset.drfld, this.value)">'
+        + '<span style="color:#585858">–</span>'
+        + '<input type="date" value="' + dr.to + '" data-drid="' + dr.id + '" data-drfld="to" onchange="coDRChange(+this.dataset.drid, this.dataset.drfld, this.value)">'
+        + (dateRanges.length > 1 ? '<button type="button" class="co2-dr-remove" data-drid="' + dr.id + '" onclick="coRemoveDateRange(+this.dataset.drid)" title="Remove">&times;</button>' : '')
+        + '</div></div>';
     }).join('');
   }
 
@@ -8629,50 +8631,69 @@ updateContractsStats({ y:2025, m:7, d:17 }, { y:2025, m:7, d:25 });
     renderRules();
   };
 
+  function buildSelectOpts(items, selectedSet) {
+    var html = '<option value="all"' + (selectedSet.has('all') ? ' selected' : '') + '>All</option>';
+    items.forEach(function(item) {
+      html += '<option value="' + item + '"' + (selectedSet.has(item) ? ' selected' : '') + '>' + item + '</option>';
+    });
+    return html;
+  }
+
   function renderRules() {
     var list = document.getElementById('coRuleList');
     if (!list) return;
     list.innerHTML = rules.map(function(rule, idx) {
-      var num = idx + 1;
-      return '<div class="co-rule-card">'
-        + '<div class="co-rule-header">'
-        + '<span class="co-rule-num">Strategy</span>'
-        + (rules.length > 1
-          ? '<button type="button" class="co-rule-remove" data-ruleid="' + rule.id + '" onclick="coRemoveRule(+this.dataset.ruleid)" title="Remove strategy">&times;</button>'
-          : '')
-        + '</div>'
-        + '<div class="co-rule-body">'
-        + '<div class="co-rule-section"><div class="co-rule-section-label">Operators</div>'
-        + buildChips(OPERATORS,   rule.ops,    rule.id, 'ops')    + '</div>'
-        + '<div class="co-rule-section"><div class="co-rule-section-label">Room Types</div>'
-        + buildChips(ROOM_TYPES,  rule.rooms,  rule.id, 'rooms')  + '</div>'
-        + '<div class="co-rule-section"><div class="co-rule-section-label">Meal Plans</div>'
-        + buildChips(BOARD_TYPES, rule.boards, rule.id, 'boards') + '</div>'
-        + '</div></div>';
+      return '<div class="co2-strategy-group">'
+        + (rules.length > 1 ? '<button type="button" class="co2-strategy-remove" data-ruleid="' + rule.id + '" onclick="coRemoveRule(+this.dataset.ruleid)" title="Remove strategy">&times; Remove</button>' : '')
+        + '<div class="co2-field-group"><label class="co2-field-label">Operators</label>'
+        + '<div class="co2-select-wrap"><select class="co2-select" data-rid="' + rule.id + '" data-fld="ops" onchange="coSelectChange(this)">'
+        + buildSelectOpts(OPERATORS, rule.ops) + '</select>'
+        + '<span class="material-icons co2-select-arrow">arrow_drop_down</span></div></div>'
+        + '<div class="co2-field-group"><label class="co2-field-label">Room Types</label>'
+        + '<div class="co2-select-wrap"><select class="co2-select" data-rid="' + rule.id + '" data-fld="rooms" onchange="coSelectChange(this)">'
+        + buildSelectOpts(ROOM_TYPES, rule.rooms) + '</select>'
+        + '<span class="material-icons co2-select-arrow">arrow_drop_down</span></div></div>'
+        + '<div class="co2-field-group"><label class="co2-field-label">Meal Plans</label>'
+        + '<div class="co2-select-wrap"><select class="co2-select" data-rid="' + rule.id + '" data-fld="boards" onchange="coSelectChange(this)">'
+        + buildSelectOpts(BOARD_TYPES, rule.boards) + '</select>'
+        + '<span class="material-icons co2-select-arrow">arrow_drop_down</span></div></div>'
+        + '</div>';
     }).join('');
   }
 
+  window.coSelectChange = function(el) {
+    var ruleId = parseInt(el.dataset.rid);
+    var field = el.dataset.fld;
+    var rule = rules.find(function(r) { return r.id === ruleId; });
+    if (!rule) return;
+    var val = el.value;
+    if (val === 'all') {
+      rule[field] = new Set(['all']);
+    } else {
+      rule[field] = new Set([val]);
+    }
+  };
+
 
   // ── Open modal ─────────────────────────────────────────────────
-  function openModal(fromDate, toDate) {
-    overlay.classList.add('open');
-
-    // Reset restriction type
+  function resetModalState() {
     const title = document.getElementById('closeOutTitle');
-    if (title) title.textContent = 'Close Out Sales';
+    if (title) title.textContent = 'Close out sales';
     const confirmBtn = document.getElementById('coConfirmBtn');
-    if (confirmBtn) { confirmBtn.textContent = 'CLOSE OUT SALES'; confirmBtn.style.background = ''; confirmBtn.style.borderColor = ''; }
-    document.querySelectorAll('.co-restrict-card').forEach(function(c) { c.classList.remove('active'); });
-    const firstCard = document.querySelector('.co-restrict-card[data-type="full"]');
+    if (confirmBtn) { confirmBtn.textContent = 'Close Out'; confirmBtn.style.background = ''; confirmBtn.style.borderColor = ''; }
+    document.querySelectorAll('.co2-type-card').forEach(function(c) { c.classList.remove('active'); });
+    const firstCard = document.querySelector('.co2-type-card[data-type="full"]');
     if (firstCard) firstCard.classList.add('active');
     const losField = document.getElementById('coLosField');
     if (losField) losField.style.display = 'none';
-    // Reset action selector to "Email Operators"
-    document.querySelectorAll('.co-action-btn').forEach(function(b) { b.classList.remove('active'); });
-    const firstAction = document.querySelector('.co-action-btn[data-action="email"]');
-    if (firstAction) firstAction.classList.add('active');
-    const hint = document.getElementById('coActionHint');
-    if (hint) hint.textContent = 'An email will be sent directly to each selected Operator.';
+    // Reset send action radio to email
+    var emailRadio = document.querySelector('input[name="coSendAction"][value="email"]');
+    if (emailRadio) emailRadio.checked = true;
+  }
+
+  function openModal(fromDate, toDate) {
+    overlay.classList.add('open');
+    resetModalState();
 
     // Reset date ranges
     drIdSeq = 0; dateRanges = [];
@@ -8706,48 +8727,35 @@ updateContractsStats({ y:2025, m:7, d:17 }, { y:2025, m:7, d:25 });
   cancelBtn && cancelBtn.addEventListener('click', closeModal);
   overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
 
-  // ── Action selector ───────────────────────────────────────────
-  const ACTION_HINTS = {
-    email:    'An email will be sent directly to each selected Operator.',
-    internal: 'A note will be recorded internally for the hotel team only — no external emails sent.',
-    both:     'Email sent to each Operator AND an internal note recorded for the hotel team.'
-  };
-
-  window.coSelectAction = function(btn) {
-    document.querySelectorAll('.co-action-btn').forEach(function(b) { b.classList.remove('active'); });
-    btn.classList.add('active');
-    const hint = document.getElementById('coActionHint');
-    if (hint) hint.textContent = ACTION_HINTS[btn.dataset.action] || '';
-  };
-
+  // ── Action selector (now radio buttons) ────────────────────────
   function getSelectedAction() {
-    const active = document.querySelector('.co-action-btn.active');
-    return active ? active.dataset.action : 'email';
+    var checked = document.querySelector('input[name="coSendAction"]:checked');
+    return checked ? checked.value : 'email';
   }
 
   // ── Restriction type card toggle ──────────────────────────────
   document.getElementById('coTypeGroup')?.addEventListener('click', e => {
-    const btn = e.target.closest('.co-restrict-card');
+    const btn = e.target.closest('.co2-type-card');
     if (!btn) return;
-    document.querySelectorAll('.co-restrict-card').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.co2-type-card').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     const type = btn.dataset.type;
     const losField = document.getElementById('coLosField');
     if (losField) losField.style.display = type === 'los' ? '' : 'none';
     const isReopen = type === 'reopen';
     const title = document.getElementById('closeOutTitle');
-    if (title) title.textContent = isReopen ? 'Re-open Sales' : 'Close Out Sales';
+    if (title) title.textContent = isReopen ? 'Re-open sales' : 'Close out sales';
     const confirmBtn = document.getElementById('coConfirmBtn');
     if (confirmBtn) {
-      confirmBtn.textContent = isReopen ? 'RE-OPEN SALES' : 'CLOSE OUT SALES';
+      confirmBtn.textContent = isReopen ? 'Re-Open' : 'Close Out';
       confirmBtn.style.background = isReopen ? '#16a34a' : '';
       confirmBtn.style.borderColor = isReopen ? '#16a34a' : '';
     }
   });
 
   // ── Confirm ────────────────────────────────────────────────────
-  modal.querySelector('.modal-btn-confirm').addEventListener('click', () => {
-    const activeCard = document.querySelector('.co-restrict-card.active');
+  document.getElementById('coConfirmBtn').addEventListener('click', () => {
+    const activeCard = document.querySelector('.co2-type-card.active');
     const isReopen   = activeCard && activeCard.dataset.type === 'reopen';
     const action     = getSelectedAction();
     const email      = document.getElementById('coEmail')?.value || '';
@@ -8791,22 +8799,7 @@ updateContractsStats({ y:2025, m:7, d:17 }, { y:2025, m:7, d:25 });
   // Open modal with specific individual days (not a range)
   function openModalDays(daysArr) {
     overlay.classList.add('open');
-
-    // Reset restriction type
-    const title = document.getElementById('closeOutTitle');
-    if (title) title.textContent = 'Close Out Sales';
-    const confirmBtn = document.getElementById('coConfirmBtn');
-    if (confirmBtn) { confirmBtn.textContent = 'CLOSE OUT SALES'; confirmBtn.style.background = ''; confirmBtn.style.borderColor = ''; }
-    document.querySelectorAll('.co-restrict-card').forEach(function(c) { c.classList.remove('active'); });
-    const firstCard = document.querySelector('.co-restrict-card[data-type="full"]');
-    if (firstCard) firstCard.classList.add('active');
-    const losField = document.getElementById('coLosField');
-    if (losField) losField.style.display = 'none';
-    document.querySelectorAll('.co-action-btn').forEach(function(b) { b.classList.remove('active'); });
-    const firstAction = document.querySelector('.co-action-btn[data-action="email"]');
-    if (firstAction) firstAction.classList.add('active');
-    const hint = document.getElementById('coActionHint');
-    if (hint) hint.textContent = 'An email will be sent directly to each selected Operator.';
+    resetModalState();
 
     // Add each selected day as its own date range (from=to)
     drIdSeq = 0; dateRanges = [];

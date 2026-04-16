@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@33.3.0/styles/ag-grid.css"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@33.3.0/styles/ag-theme-quartz.css"/>
   <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@33.3.0/dist/ag-grid-community.min.js"></script>
-  <link rel="stylesheet" href="travelcore-rm-hub.css?v=59">
+  <link rel="stylesheet" href="travelcore-rm-hub.css?v=60">
 </head>
 <body>
 
@@ -2556,104 +2556,109 @@
 
 <!-- ═══════ CLOSE OUT SALES MODAL ═══════ -->
 <div class="modal-overlay" id="closeOutOverlay">
-  <div class="modal" id="closeOutModal" role="dialog" aria-modal="true" aria-labelledby="closeOutTitle" style="width:600px;max-width:96vw">
-    <div class="modal-header">
-      <h2 class="modal-title" id="closeOutTitle">Close Out Sales</h2>
-      <button class="modal-close" id="closeOutClose" aria-label="Close">
-        <span class="material-icons" style="font-size:18px">close</span>
+  <div class="co2-modal" id="closeOutModal" role="dialog" aria-modal="true" aria-labelledby="closeOutTitle">
+    <!-- Title -->
+    <div class="co2-title-row">
+      <span class="co2-title" id="closeOutTitle">Close out sales</span>
+      <button class="co2-close" id="closeOutClose" aria-label="Close">
+        <span class="material-icons" style="font-size:20px">close</span>
       </button>
     </div>
-    <div class="modal-body" style="gap:20px">
 
-      <!-- Restriction Type -->
-      <div class="modal-field">
-        <label class="modal-label">Restriction Type</label>
-        <div class="co-restriction-cards" id="coTypeGroup">
-          <button type="button" class="co-restrict-card active" data-type="full">
-            <div class="co-rc-top"><span class="co-rc-icon">🔒</span><span class="co-rc-title">Close All Day</span><span class="co-rc-check">✓</span></div>
-            <p class="co-rc-desc">Block all arrivals — no new bookings accepted</p>
-          </button>
-          <button type="button" class="co-restrict-card" data-type="los">
-            <div class="co-rc-top"><span class="co-rc-icon">🗓</span><span class="co-rc-title">Min Length of Stay</span></div>
-            <p class="co-rc-desc">Only accept bookings of ≥N nights</p>
-          </button>
-          <button type="button" class="co-restrict-card" data-type="reopen">
-            <div class="co-rc-top"><span class="co-rc-icon">🔓</span><span class="co-rc-title">Re-open</span></div>
-            <p class="co-rc-desc">Remove restrictions — re-open for bookings</p>
-          </button>
+    <!-- Scrollable body -->
+    <div class="co2-body">
+
+      <!-- Type of Heatmap -->
+      <div class="co2-section">
+        <div class="co2-heading">Type of Heatmap</div>
+        <div class="co2-type-row" id="coTypeGroup">
+          <label class="co2-type-card active" data-type="full">
+            <span class="co2-radio"><span class="co2-radio-dot"></span></span>
+            <span class="material-icons co2-type-ico">lock</span>
+            <span class="co2-type-label">Close all Day</span>
+          </label>
+          <label class="co2-type-card" data-type="los">
+            <span class="co2-radio"></span>
+            <span class="material-icons co2-type-ico">lock</span>
+            <span class="co2-type-label">Min Length of Stay</span>
+          </label>
+          <label class="co2-type-card" data-type="reopen">
+            <span class="co2-radio"></span>
+            <span class="material-icons co2-type-ico">lock_open</span>
+            <span class="co2-type-label">Re-Open</span>
+          </label>
         </div>
       </div>
 
       <!-- Min nights (shown when LOS selected) -->
-      <div class="modal-field" id="coLosField" style="display:none">
-        <label class="modal-label" for="coMinNights">Minimum Nights</label>
-        <input class="modal-input" type="number" id="coMinNights" min="1" max="30" value="3" style="width:90px" />
+      <div class="co2-section" id="coLosField" style="display:none">
+        <label class="co2-field-label">Minimum Nights</label>
+        <input class="co2-input" type="number" id="coMinNights" min="1" max="30" value="3" style="width:90px" />
       </div>
 
-      <!-- DATE RANGES -->
-      <div class="modal-field">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-          <label class="modal-label" style="margin:0">Date Ranges</label>
-          <button type="button" onclick="coAddDateRange()" style="display:flex;align-items:center;gap:5px;padding:4px 10px;border:1px solid #006461;border-radius:6px;background:transparent;color:#006461;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">
-            <span class="material-icons" style="font-size:12px">add</span>
-            Add date range
-          </button>
+      <!-- Date Ranges -->
+      <div class="co2-section">
+        <div id="coDateRangeList" style="display:flex;flex-direction:column;gap:8px"></div>
+        <button type="button" class="co2-add-btn" onclick="coAddDateRange()">
+          <span class="material-icons" style="font-size:16px">add</span>
+          Add Date Range
+        </button>
+      </div>
+
+      <!-- Restriction Strategies -->
+      <div class="co2-section">
+        <div class="co2-heading">Restriction Strategies</div>
+        <div id="coRuleList" style="display:flex;flex-direction:column;gap:16px"></div>
+        <button type="button" class="co2-add-btn" onclick="coAddRule()">
+          <span class="material-icons" style="font-size:16px">add</span>
+          Add Strategy
+        </button>
+      </div>
+
+      <!-- Contact sales team -->
+      <div class="co2-section">
+        <div class="co2-heading">Contact sales team</div>
+        <div class="co2-field-group">
+          <label class="co2-field-label">Email Address</label>
+          <input class="co2-input" type="email" id="coEmail" placeholder="Placeholder" style="width:215px" />
         </div>
-        <div id="coDateRangeList" style="display:flex;flex-direction:column;gap:6px"></div>
-      </div>
-
-      <!-- RESTRICTION RULES -->
-      <div class="modal-field">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-          <label class="modal-label" style="margin:0">Restriction Strategies</label>
-          <button type="button" onclick="coAddRule()" style="display:flex;align-items:center;gap:5px;padding:4px 10px;border:1px solid #006461;border-radius:6px;background:transparent;color:#006461;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">
-            <span class="material-icons" style="font-size:12px">add</span>
-            Add strategy
-          </button>
+        <div class="co2-field-group">
+          <label class="co2-field-label">Sales Messages</label>
+          <textarea class="co2-textarea" id="coMessage" placeholder="Placeholder"></textarea>
         </div>
-        <div id="coRuleList" style="display:flex;flex-direction:column;gap:8px"></div>
-        <p style="font-size:11px;color:#6b7280;margin-top:6px">Each strategy is a unique combination of operators, room types and board types that will be applied across all date ranges above.</p>
       </div>
 
-      <!-- Contact Sales Team -->
-      <div class="modal-field">
-        <label class="modal-label" for="coEmail">Contact to Sales Team</label>
-        <input class="modal-input" type="email" id="coEmail" placeholder="sales@hotel.com" />
-      </div>
-
-      <!-- Sales Message -->
-      <div class="modal-field">
-        <label class="modal-label" for="coMessage">Sales Message</label>
-        <textarea class="modal-textarea" id="coMessage" placeholder="Enter your sales message here..."></textarea>
+      <!-- Send Action -->
+      <div class="co2-section">
+        <div class="co2-send-label">Send Action</div>
+        <div class="co2-radio-group" id="coActionGroup">
+          <label class="co2-radio-row">
+            <input type="radio" name="coSendAction" value="email" checked class="co2-radio-input">
+            <span class="co2-radio-circle"></span>
+            <span>Email Operators</span>
+          </label>
+          <label class="co2-radio-row">
+            <input type="radio" name="coSendAction" value="internal" class="co2-radio-input">
+            <span class="co2-radio-circle"></span>
+            <span>Internal Note</span>
+          </label>
+          <label class="co2-radio-row">
+            <input type="radio" name="coSendAction" value="both" class="co2-radio-input">
+            <span class="co2-radio-circle"></span>
+            <span>Both</span>
+          </label>
+        </div>
       </div>
 
     </div>
-    <!-- Action selector -->
-    <div style="padding:0 20px 0;border-top:1px solid #e5e7eb;background:#f8fafc">
-      <div style="padding:12px 0 10px">
-        <div style="font-size:11px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Send Action</div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap" id="coActionGroup">
-          <button type="button" class="co-action-btn active" data-action="email" onclick="coSelectAction(this)">
-            <span class="material-icons" style="font-size:16px">email</span>
-            Email Operators
-          </button>
-          <button type="button" class="co-action-btn" data-action="internal" onclick="coSelectAction(this)">
-            <span class="material-icons" style="font-size:16px">article</span>
-            Internal Note
-          </button>
-          <button type="button" class="co-action-btn" data-action="both" onclick="coSelectAction(this)">
-            <span class="material-icons" style="font-size:16px">forward_to_inbox</span>
-            Both
-          </button>
-        </div>
-        <p id="coActionHint" style="font-size:11px;color:#6b7280;margin-top:6px">
-          Email will be sent to each selected Operator.
-        </p>
+
+    <!-- Footer -->
+    <div class="co2-footer">
+      <div class="co2-footer-divider"></div>
+      <div class="co2-footer-btns">
+        <button class="co2-btn-cancel" id="closeOutCancel">Cancel</button>
+        <button class="co2-btn-confirm" id="coConfirmBtn">Close Out</button>
       </div>
-    </div>
-    <div class="modal-footer" style="border-top:1px solid #e5e7eb">
-      <button class="modal-btn-cancel" id="closeOutCancel">Cancel</button>
-      <button class="modal-btn-confirm" id="coConfirmBtn">CLOSE OUT SALES</button>
     </div>
   </div>
 </div>
@@ -3434,6 +3439,6 @@
 
 
 
-  <script src="travelcore-rm-hub.js?v=68"></script>
+  <script src="travelcore-rm-hub.js?v=69"></script>
 <div id="calCapTip" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #e0e0e0;border-radius:4px;box-shadow:0 1px 3px rgba(0,0,0,.2),0 2px 1px -1px rgba(0,0,0,.12),0 1px 1px rgba(0,0,0,.14);padding:10px;pointer-events:none;width:245px"></div>
 </body>
