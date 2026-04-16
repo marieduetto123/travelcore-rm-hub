@@ -2522,7 +2522,13 @@ function clearCalSelection() {
 
   // "Custom" option — open modal with no pre-populated dates
   window.calCloseCustom = function() {
-    document.getElementById('calCloseDropdown').style.display = 'none';
+    var dd = document.getElementById('calCloseDropdown');
+    if (dd) dd.style.display = 'none';
+    if (typeof window._coOpenModal === 'function') window._coOpenModal('', '');
+  };
+
+  // Monthly Close Out button (opens modal directly)
+  window.moOpenCloseOut = function() {
     if (typeof window._coOpenModal === 'function') window._coOpenModal('', '');
   };
 
@@ -8078,7 +8084,8 @@ document.getElementById('weekGrid')?.addEventListener('click', function(e) {
   };
 
   window.wvCloseCustom = function() {
-    document.getElementById('wvCloseDropdown').style.display = 'none';
+    var dd = document.getElementById('wvCloseDropdown');
+    if (dd) dd.style.display = 'none';
     if (typeof window._coOpenModal === 'function') window._coOpenModal('', '');
   };
 

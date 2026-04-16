@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@33.3.0/styles/ag-grid.css"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@33.3.0/styles/ag-theme-quartz.css"/>
   <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@33.3.0/dist/ag-grid-community.min.js"></script>
-  <link rel="stylesheet" href="travelcore-rm-hub.css?v=46">
+  <link rel="stylesheet" href="travelcore-rm-hub.css?v=47">
 </head>
 <body>
 
@@ -452,8 +452,16 @@
             </div>
           </div>
           <div class="cal-header-right">
+            <!-- Close Out (primary, disabled until checkbox selection) -->
+            <button class="wv-closeout-primary mo-closeout-btn" id="moCloseOutBtn" disabled onclick="moOpenCloseOut()" style="order:1">
+              <span class="material-icons" style="font-size:14px">lock</span> Close Out
+            </button>
+            <!-- Custom Close (outlined, no dropdown) -->
+            <button class="wv-outline-btn mo-custom-close-btn" id="moCustomCloseBtn" onclick="calCloseCustom()" style="order:2">
+              <span class="material-icons" style="font-size:16px">lock</span> Custom Close
+            </button>
             <!-- Date Range selector -->
-            <div style="position:relative" id="calDRWrap">
+            <div style="position:relative;order:8" id="calDRWrap">
               <button id="calDRTrigger" onclick="calDRToggle()" style="display:flex;align-items:center;gap:8px;padding:6px 14px;background:#fff;border:1px solid #e0e0e0;border-radius:4px;font-size:14px;color:#1c1c1c;cursor:pointer;white-space:nowrap;font-family:inherit;height:36px">
                 <span id="calDRLabel">2/1/2026 – 4/30/2026</span>
                 <span class="material-icons" style="font-size:16px">calendar_today</span>
@@ -508,7 +516,7 @@
               </div>
             </div>
             <!-- Month View Toggle: select -->
-            <div id="calViewToggleWrap" class="cal-view-toggle-wrap">
+            <div id="calViewToggleWrap" class="cal-view-toggle-wrap" style="order:7">
               <select class="wv-cmp-select" id="calViewSelect" onchange="calSetDisplayView(parseInt(this.value))">
                 <option value="1">1 month</option>
                 <option value="2" selected>2 months</option>
@@ -518,8 +526,8 @@
               </select>
             </div>
             <!-- Cell metrics selector -->
-            <div class="cal-metrics-wrap" id="calMetricsWrap">
-              <button class="cal-hdr-btn" id="calMetricsBtn">
+            <div class="cal-metrics-wrap" id="calMetricsWrap" style="order:5">
+              <button class="wv-topbar-text-btn" id="calMetricsBtn">
                 <span class="material-icons" style="font-size:16px">tune</span>
                 Cell Metrics
                 <span class="material-icons cal-filters-chevron" style="font-size:14px">expand_more</span>
@@ -606,7 +614,7 @@
 
                 </div>
             <!-- Compare dropdown -->
-            <div style="position:relative" id="calCompareWrap">
+            <div style="position:relative;order:6" id="calCompareWrap">
               <select class="wv-cmp-select" id="calCompare" onchange="calSetCompare(this.value)">
                 <option value="ly" selected>vs LY</option>
                 <option value="stly">vs STLY</option>
@@ -616,8 +624,8 @@
               </select>
             </div>
             <!-- Filters (moved next to Cell Metrics) -->
-            <div class="cal-filters-wrap" id="calFiltersWrap" style="position:relative">
-              <button class="cal-hdr-btn" id="calFiltBtn" onclick="calToggleFilters(this)">
+            <div class="cal-filters-wrap" id="calFiltersWrap" style="position:relative;order:3">
+              <button class="wv-topbar-text-btn" id="calFiltBtn" onclick="calToggleFilters(this)">
                 <span class="material-icons" style="font-size:16px">filter_list</span>
                 Filters
                 <span class="cal-filter-count" id="calFilterCount" style="display:none"></span>
@@ -671,8 +679,8 @@
             </div>
 
             <!-- Heatmap configurator -->
-            <div style="position:relative" id="hmWrap">
-              <button class="cal-hdr-btn" id="hmBtn" onclick="hmToggle()">
+            <div style="position:relative;order:4" id="hmWrap">
+              <button class="wv-topbar-text-btn" id="hmBtn" onclick="hmToggle()">
                 <span id="hmBtnIcon" style="font-size:13px;line-height:1;display:none"></span>
                 <span class="material-icons" id="hmBtnDefaultIcon" style="font-size:16px">grid_view</span>
                 <span id="hmBtnLabel">Heatmap</span>
@@ -780,26 +788,6 @@
 
               </div>
             </div>
-            <!-- Close button with dropdown -->
-            <div style="position:relative" id="calCloseWrap">
-              <button class="cal-hdr-btn cal-hdr-closeout" id="calCloseOutBtn" onclick="calCloseDropdownToggle(event)">
-                <span class="material-icons" style="font-size:18px">lock</span>
-                Close
-                <span class="closeout-badge" id="calCloseBadge">48</span>
-                <span class="material-icons" style="font-size:14px;margin-left:2px">expand_more</span>
-              </button>
-              <!-- Close dropdown -->
-              <div id="calCloseDropdown" style="display:none;position:absolute;top:calc(100% + 4px);right:0;z-index:400;background:var(--surface-1);border:1px solid var(--border);border-radius:8px;min-width:160px;padding:4px 0;box-shadow:0 6px 18px rgba(0,0,0,.14)">
-                <button onclick="calCloseSelectRange()" style="display:flex;align-items:center;gap:8px;width:100%;padding:9px 14px;border:none;background:none;font-size:13px;color:var(--text-primary);cursor:pointer;font-family:inherit;text-align:left">
-                  <span class="material-icons" style="font-size:15px">calendar_today</span>
-                  Select range
-                </button>
-                <button onclick="calCloseCustom()" style="display:flex;align-items:center;gap:8px;width:100%;padding:9px 14px;border:none;background:none;font-size:13px;color:var(--text-primary);cursor:pointer;font-family:inherit;text-align:left">
-                  <span class="material-icons" style="font-size:15px">lock</span>
-                  Custom
-                </button>
-              </div>
-            </div>
 
             </div>
         </div>
@@ -818,17 +806,7 @@
             <button class="wv-groupby-btn mo-grp-btn" data-mogroupby="daily">Daily</button>
             <button class="wv-groupby-btn mo-grp-btn" data-mogroupby="closeouts">Close Outs</button>
             <button class="wv-groupby-btn mo-grp-btn" data-mogroupby="coReport">Close Out Report</button>
-            <div class="wv-date-acc-controls" style="margin-left:auto">
-              <button class="wv-acc-action-btn" id="moCloseAll" onclick="moAccCloseAll()">
-                <span class="material-icons" style="font-size:16px">unfold_less</span>
-                Close All
-              </button>
-              <button class="wv-acc-action-btn" id="moOpenAll" onclick="moAccOpenAll()">
-                <span class="material-icons" style="font-size:16px">unfold_more</span>
-                Open All
-              </button>
-            </div>
-            <div class="wv-date-shuffler" style="margin-left:6px">
+            <div class="wv-date-shuffler" style="margin-left:auto">
               <button class="wv-nav-btn" id="moShufPrev" title="Previous"><span class="material-icons" style="font-size:18px">chevron_left</span></button>
               <span class="wv-range" id="moShufRange">February – April 2026</span>
               <button class="wv-nav-btn" id="moShufNext" title="Next"><span class="material-icons" style="font-size:18px">chevron_right</span></button>
@@ -890,24 +868,11 @@
               <span class="material-icons" style="font-size:14px">lock</span>
               Close Out
             </button>
-            <!-- Custom Close (outlined teal with dropdown) -->
-            <div style="position:relative" id="wvCloseWrap">
-              <button class="wv-outline-btn" id="wvCloseOutBtn" onclick="wvCloseDropdownToggle(event)">
-                <span class="material-icons" style="font-size:16px">lock</span>
-                Custom Close
-                <span class="material-icons" style="font-size:14px;margin-left:2px">expand_more</span>
-              </button>
-              <div id="wvCloseDropdown" style="display:none;position:absolute;top:calc(100% + 4px);right:0;z-index:400;background:var(--surface-1);border:1px solid var(--border);border-radius:8px;min-width:160px;padding:4px 0;box-shadow:0 6px 18px rgba(0,0,0,.14)">
-                <button onclick="wvCloseSelectRange()" style="display:flex;align-items:center;gap:8px;width:100%;padding:9px 14px;border:none;background:none;font-size:13px;color:var(--text-primary);cursor:pointer;font-family:inherit;text-align:left">
-                  <span class="material-icons" style="font-size:15px">calendar_today</span>
-                  Select range
-                </button>
-                <button onclick="wvCloseCustom()" style="display:flex;align-items:center;gap:8px;width:100%;padding:9px 14px;border:none;background:none;font-size:13px;color:var(--text-primary);cursor:pointer;font-family:inherit;text-align:left">
-                  <span class="material-icons" style="font-size:16px">lock</span>
-                  Custom
-                </button>
-              </div>
-            </div>
+            <!-- Custom Close (outlined teal, no dropdown) -->
+            <button class="wv-outline-btn" id="wvCloseOutBtn" onclick="wvCloseCustom()">
+              <span class="material-icons" style="font-size:16px">lock</span>
+              Custom Close
+            </button>
             <!-- Table Settings (text button) -->
             <button class="wv-topbar-text-btn" id="wvTableSettingsBtn" onclick="dhOpenReorder()">
               <svg viewBox="0 0 17.4 15.04" width="16" height="14" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -3462,6 +3427,6 @@
 
 
 
-  <script src="travelcore-rm-hub.js?v=60"></script>
+  <script src="travelcore-rm-hub.js?v=61"></script>
 <div id="calCapTip" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #e0e0e0;border-radius:4px;box-shadow:0 1px 3px rgba(0,0,0,.2),0 2px 1px -1px rgba(0,0,0,.12),0 1px 1px rgba(0,0,0,.14);padding:10px;pointer-events:none;width:245px"></div>
 </body>
