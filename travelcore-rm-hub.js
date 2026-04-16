@@ -1666,7 +1666,7 @@ function renderCalendar() {
       const capTipAttr = isLocked ? '' : ` onmouseenter="calShowCapTip(event,${hotel},${hotelRooms},${to},${toRoomsSold},${210-hotelRooms-toRoomsSold},${m.month},${d})" onmouseleave="calHideCapTip()"`;
       const moIso = `${m.year}-${String(m.month).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
       const moChk = _moSelectedDays.has(moIso) ? ' checked' : '';
-      const _showEye = !isCompact && !isLocked && !isActionNeeded && !hasCalCl;
+      const _showEye = !isCompact;
       cells += `<div class="${classes}" data-month="${m.month}" data-day="${d}"${capTipAttr}>
         <div class="cell-day-hdr">
           <input type="checkbox" class="wv-day-chk mo-day-chk"${moChk} onclick="event.stopPropagation();moDayCheck('${moIso}',this)" title="Select for close-out">

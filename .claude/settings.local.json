@@ -90,7 +90,8 @@
       "Bash(./deploy.sh \"heatmap modal: match Figma design - Room Type selector with chips, Add condition checkbox, fix eye icon on partial closures\")",
       "Bash(./deploy.sh \"redesign close-out modal to match Figma: radio type cards, date picker fields, select dropdowns for strategies, radio send action, new footer style\")",
       "Bash(./deploy.sh \"date range picker matches monthly style, multiselect dropdowns with chips for restriction strategies\")",
-      "Bash(./deploy.sh \"date range picker popup for close-out modal, fix radio dots on type cards, reduce modal height to 50vh with scroll, rename buttons to Close/Re-Open\")"
+      "Bash(./deploy.sh \"date range picker popup for close-out modal, fix radio dots on type cards, reduce modal height to 50vh with scroll, rename buttons to Close/Re-Open\")",
+      "Bash(./deploy.sh \"show eye icon on all monthly days including closed and partially closed\")"
     ]
   }
 }
