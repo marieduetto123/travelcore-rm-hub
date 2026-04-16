@@ -1573,7 +1573,8 @@ function renderCalendar() {
       // ── Icons (Material: apartment = hotel, confirmation_number = TO) ──
       const icoHotel = `<span class="material-icons cell-m-ico" style="font-size:10px;color:#b0b5ba">apartment</span>`;
       const icoTO    = `<span class="material-icons cell-m-ico" style="font-size:10px;color:#b0b5ba">confirmation_number</span>`;
-      const lockIcoYellow = `<span class="material-icons cell-lock-ico" style="font-size:14px;color:#FF9800">lock</span>`;
+      const lockIcoRed    = `<span class="material-icons cell-lock-ico" style="font-size:14px;color:#dc2626">lock</span>`;
+      const lockIcoOrange = `<span class="material-icons cell-lock-ico" style="font-size:14px;color:#FF9800">lock</span>`;
       const eyeSvg  = `<button class="cell-eye" aria-label="Quick view" data-month="${m.month}" data-day="${d}"><span class="material-icons" style="font-size:14px">visibility</span></button>`;
 
       // ── Build metric rows from Cell Metrics selection ──
@@ -1670,7 +1671,7 @@ function renderCalendar() {
       cells += `<div class="${classes}" data-month="${m.month}" data-day="${d}"${capTipAttr}>
         <div class="cell-day-hdr">
           <input type="checkbox" class="wv-day-chk mo-day-chk"${moChk} onclick="event.stopPropagation();moDayCheck('${moIso}',this)" title="Select for close-out">
-          ${isLocked ? '<span class="mo-lock-ico">' + lockIcoYellow + '</span>' : ''}
+          ${isLocked ? '<span class="mo-lock-ico">' + lockIcoRed + '</span>' : hasCalCl ? '<span class="mo-lock-ico">' + lockIcoOrange + '</span>' : ''}
           <span class="cell-hdr-left"><span class="day-num">${d}</span></span>
           ${_showEye ? eyeSvg : ''}
         </div>
