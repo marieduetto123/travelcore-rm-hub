@@ -2954,14 +2954,12 @@ function clearCalSelection() {
       // Locked day clicked in range mode → still navigate to week view (fall through)
     }
 
-    // Eye icon → quick-view popup (only for unlocked days, not in selection mode)
-    if (!isLocked) {
-      const eye = e.target.closest('.cell-eye');
-      if (eye) {
-        openPopup(cell, +eye.dataset.month, +eye.dataset.day);
-        e.stopPropagation();
-        return;
-      }
+    // Eye icon → quick-view popup (all days including closed/partial)
+    const eye = e.target.closest('.cell-eye');
+    if (eye) {
+      openPopup(cell, +eye.dataset.month, +eye.dataset.day);
+      e.stopPropagation();
+      return;
     }
 
     // Cell click behaviour depends on view mode
