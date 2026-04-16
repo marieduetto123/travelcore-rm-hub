@@ -8588,6 +8588,158 @@ updateContractsStats({ y:2025, m:7, d:17 }, { y:2025, m:7, d:25 });
     return parts[1] + '/' + parts[2] + '/' + parts[0];
   }
 
+  // ── Close-out date range picker (shared panel) ─────────────
+  var _coDRPickState = { drId: null, from: null, to: null, pickingTo: false, hover: null, viewYear: 2026, viewMonth: 2 };
+  var _MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var _DOWS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+  function _coDRFmt(d) { return (d.getMonth()+1)+'/'+d.getDate()+'/'+d.getFullYear(); }
+  function _coDRSame(a,b) { return a&&b&&a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate(); }
+
+  function _coDRBuildMonth(y,m) {
+    var first = new Date(y,m,1).getDay(), days = new Date(y,m+1,0).getDate();
+    var h = '<div><div style="display:grid;grid-template-columns:repeat(7,36px);gap:2px 0;margin-bottom:2px">';
+    _DOWS.forEach(function(d){ h+='<div class="caldr-dow">'+d+'</div>'; });
+    h += '</div><div style="display:grid;grid-template-columns:repeat(7,36px);gap:2px 0">';
+    for(var i=0;i<first;i++) h+='<div class="caldr-day caldr-empty"></div>';
+    for(var d=1;d<=days;d++){
+      var ts=new Date(y,m,d).getTime();
+      h+='<div class="caldr-day" data-ts="'+ts+'" onclick="coDRPickDay('+ts+')">'+d+'</div>';
+    }
+    h+='</div></div>'; return h;
+  }
+
+  function _coDRRefresh() {
+    var s=_coDRPickState, grids=document.getElementById('coDRPickGrids');
+    if(!grids) return;
+    var rangeEnd=s.pickingTo?(s.hover||null):s.to;
+    grids.querySelectorAll('.caldr-day[data-ts]').forEach(function(el){
+      var dt=new Date(parseInt(el.dataset.ts));
+      el.className='caldr-day';
+      var today=new Date(2026,2,29);
+      if(_coDRSame(dt,today)) el.classList.add('caldr-today');
+      if(s.from&&_coDRSame(dt,s.from)) el.classList.add('caldr-start');
+      if(rangeEnd&&_coDRSame(dt,rangeEnd)) el.classList.add('caldr-end');
+      if(s.from&&rangeEnd&&!_coDRSame(s.from,rangeEnd)){
+        var lo=s.from<rangeEnd?s.from:rangeEnd, hi=s.from<rangeEnd?rangeEnd:s.from;
+        if(dt>=lo&&dt<=hi) el.classList.add('caldr-in-range');
+      }
+    });
+    var banner=document.getElementById('coDRPickBanner');
+    if(banner) banner.style.display=s.pickingTo?'':'none';
+    var foot=document.getElementById('coDRPickFooter');
+    if(foot){
+      if(s.from&&(s.to||rangeEnd)) foot.textContent=_coDRFmt(s.from)+' \u2013 '+_coDRFmt(rangeEnd||s.to);
+      else if(s.from) foot.textContent=_coDRFmt(s.from)+' \u2013 ... (click end date)';
+      else foot.textContent='Select start date';
+    }
+  }
+
+  function _coDRRender() {
+    var s=_coDRPickState;
+    var lbl1=document.getElementById('coDRLeftLbl'), lbl2=document.getElementById('coDRRightLbl');
+    var grids=document.getElementById('coDRPickGrids');
+    if(!grids) return;
+    var m2m=s.viewMonth+1, m2y=s.viewYear;
+    if(m2m>11){m2m=0;m2y++;}
+    if(lbl1) lbl1.textContent=_MONTHS[s.viewMonth]+' '+s.viewYear;
+    if(lbl2) lbl2.textContent=_MONTHS[m2m]+' '+m2y;
+    grids.innerHTML=_coDRBuildMonth(s.viewYear,s.viewMonth)+_coDRBuildMonth(m2y,m2m);
+    _coDRRefresh();
+    grids.querySelectorAll('.caldr-day[data-ts]').forEach(function(el){
+      el.addEventListener('mouseenter',function(){
+        if(s.pickingTo){s.hover=new Date(parseInt(this.dataset.ts));_coDRRefresh();}
+      });
+    });
+    grids.addEventListener('mouseleave',function(){if(s.pickingTo){s.hover=null;_coDRRefresh();}});
+  }
+
+  window.coDRPickDay = function(ts) {
+    var s=_coDRPickState, dt=new Date(ts);
+    if(!s.pickingTo){s.from=dt;s.to=null;s.hover=null;s.pickingTo=true;}
+    else{
+      if(_coDRSame(dt,s.from)){s.to=dt;}
+      else if(dt<s.from){s.to=s.from;s.from=dt;}
+      else{s.to=dt;}
+      s.pickingTo=false;s.hover=null;
+    }
+    _coDRRefresh();
+  };
+
+  window.coDRPickNav = function(delta) {
+    var s=_coDRPickState;
+    s.viewMonth+=delta;
+    while(s.viewMonth>11){s.viewMonth-=12;s.viewYear++;}
+    while(s.viewMonth<0){s.viewMonth+=12;s.viewYear--;}
+    _coDRRender();
+  };
+
+  window.coDRPickCancel = function() {
+    document.getElementById('coDRPanel').style.display='none';
+    _coDRPickState.pickingTo=false;_coDRPickState.hover=null;
+  };
+
+  window.coDRPickApply = function() {
+    var s=_coDRPickState;
+    if(!s.from||!s.to) return;
+    document.getElementById('coDRPanel').style.display='none';
+    s.pickingTo=false;
+    var dr=dateRanges.find(function(d){return d.id===s.drId;});
+    if(dr){
+      var pad2=function(n){return n<10?'0'+n:''+n;};
+      dr.from=s.from.getFullYear()+'-'+pad2(s.from.getMonth()+1)+'-'+pad2(s.from.getDate());
+      dr.to=s.to.getFullYear()+'-'+pad2(s.to.getMonth()+1)+'-'+pad2(s.to.getDate());
+    }
+    renderDateRanges();
+  };
+
+  window.coDRPickPreset = function(key) {
+    var s=_coDRPickState;
+    var from=new Date(2026,2,29);from.setHours(0,0,0,0);
+    var to=new Date(from);
+    if(key==='today'){to=new Date(from);}
+    else if(key==='7d'){to.setDate(to.getDate()+6);}
+    else if(key==='14d'){to.setDate(to.getDate()+13);}
+    else if(key==='1m'){to.setMonth(to.getMonth()+1);to.setDate(to.getDate()-1);}
+    else if(key==='2m'){to.setMonth(to.getMonth()+2);to.setDate(to.getDate()-1);}
+    else if(key==='3m'){to.setMonth(to.getMonth()+3);to.setDate(to.getDate()-1);}
+    s.from=from;s.to=to;s.pickingTo=false;s.hover=null;
+    _coDRRender();
+  };
+
+  function openCoDRPicker(drId, triggerEl) {
+    var s=_coDRPickState;
+    s.drId=drId;
+    var dr=dateRanges.find(function(d){return d.id===drId;});
+    if(dr&&dr.from){var p=dr.from.split('-');s.from=new Date(+p[0],+p[1]-1,+p[2]);s.viewYear=+p[0];s.viewMonth=+p[1]-1;}
+    else{s.from=null;s.viewYear=2026;s.viewMonth=2;}
+    if(dr&&dr.to){var p2=dr.to.split('-');s.to=new Date(+p2[0],+p2[1]-1,+p2[2]);}else{s.to=null;}
+    s.pickingTo=false;s.hover=null;
+    var panel=document.getElementById('coDRPanel');
+    if(!panel) return;
+    var rect=triggerEl.getBoundingClientRect();
+    var panelW=Math.min(720,window.innerWidth*0.95);
+    var left=rect.left;
+    if(left+panelW>window.innerWidth-8) left=Math.max(8,window.innerWidth-panelW-8);
+    var top=rect.bottom+6;
+    if(top+400>window.innerHeight) top=Math.max(8,rect.top-410);
+    panel.style.left=left+'px';
+    panel.style.top=top+'px';
+    panel.style.width=panelW+'px';
+    panel.style.display='block';
+    _coDRRender();
+  }
+
+  // Close picker on outside click
+  document.addEventListener('click',function(e){
+    var panel=document.getElementById('coDRPanel');
+    if(!panel||panel.style.display==='none') return;
+    if(panel.contains(e.target)) return;
+    if(e.target.closest('.co2-dr-trigger')) return;
+    panel.style.display='none';
+    _coDRPickState.pickingTo=false;
+  },true);
+
   function renderDateRanges() {
     var list = document.getElementById('coDateRangeList');
     if (!list) return;
@@ -8595,21 +8747,19 @@ updateContractsStats({ y:2025, m:7, d:17 }, { y:2025, m:7, d:25 });
       var label = (fmtDRDate(dr.from) || 'Start') + ' - ' + (fmtDRDate(dr.to) || 'End');
       return '<div class="co2-dr-wrap">'
         + '<span class="co2-dr-label">Date Range ' + (idx + 1) + '</span>'
-        + '<div class="co2-dr-trigger">'
+        + '<div class="co2-dr-trigger" data-drid="' + dr.id + '">'
         + '<span class="material-icons co2-dr-cal-ico">calendar_today</span>'
         + '<span class="co2-dr-text">' + label + '</span>'
-        + '<input type="date" class="co2-dr-input-hidden" value="' + dr.from + '" data-drid="' + dr.id + '" data-drfld="from" onchange="coDRChange(+this.dataset.drid,this.dataset.drfld,this.value);renderDateRanges()">'
-        + '<input type="date" class="co2-dr-input-hidden co2-dr-input-end" value="' + dr.to + '" data-drid="' + dr.id + '" data-drfld="to" onchange="coDRChange(+this.dataset.drid,this.dataset.drfld,this.value);renderDateRanges()">'
         + (dateRanges.length > 1 ? '<button type="button" class="co2-dr-remove" data-drid="' + dr.id + '" onclick="event.stopPropagation();coRemoveDateRange(+this.dataset.drid)" title="Remove">&times;</button>' : '')
         + '</div></div>';
     }).join('');
 
-    // Click trigger opens the first date input
+    // Click trigger opens the date picker popup
     list.querySelectorAll('.co2-dr-trigger').forEach(function(trig) {
       trig.addEventListener('click', function(e) {
         if (e.target.closest('.co2-dr-remove')) return;
-        var inp = trig.querySelector('.co2-dr-input-hidden');
-        if (inp) inp.showPicker ? inp.showPicker() : inp.click();
+        var drId = parseInt(trig.dataset.drid);
+        openCoDRPicker(drId, trig);
       });
     });
   }

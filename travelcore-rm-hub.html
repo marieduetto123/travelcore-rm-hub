@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@33.3.0/styles/ag-grid.css"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@33.3.0/styles/ag-theme-quartz.css"/>
   <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@33.3.0/dist/ag-grid-community.min.js"></script>
-  <link rel="stylesheet" href="travelcore-rm-hub.css?v=61">
+  <link rel="stylesheet" href="travelcore-rm-hub.css?v=62">
 </head>
 <body>
 
@@ -454,11 +454,11 @@
           <div class="cal-header-right">
             <!-- Close Out (primary, disabled until checkbox selection) -->
             <button class="wv-closeout-primary mo-closeout-btn" id="moCloseOutBtn" disabled onclick="moOpenCloseOut()" style="order:1">
-              <span class="material-icons" style="font-size:14px">lock</span> Close Out
+              <span class="material-icons" style="font-size:14px">lock</span> Close/Re-Open
             </button>
             <!-- Custom Close (outlined, no dropdown) -->
             <button class="wv-outline-btn mo-custom-close-btn" id="moCustomCloseBtn" onclick="calCloseCustom()" style="order:2">
-              <span class="material-icons" style="font-size:16px">lock</span> Custom Close
+              <span class="material-icons" style="font-size:16px">lock</span> Custom Close/Re-Open
             </button>
             <!-- Date Range selector -->
             <div style="position:relative;order:8" id="calDRWrap">
@@ -873,12 +873,12 @@
             <!-- Close Out (primary, disabled until checkbox selection) -->
             <button class="wv-closeout-primary" id="wbCloseOutBtn" disabled onclick="_wvSelectedDays.size?wvOpenCloseOut():wbOpenCloseOut()">
               <span class="material-icons" style="font-size:14px">lock</span>
-              Close Out
+              Close/Re-Open
             </button>
             <!-- Custom Close (outlined teal, no dropdown) -->
             <button class="wv-outline-btn" id="wvCloseOutBtn" onclick="wvCloseCustom()">
               <span class="material-icons" style="font-size:16px">lock</span>
-              Custom Close
+              Custom Close/Re-Open
             </button>
             <!-- Table Settings (text button) -->
             <button class="wv-topbar-text-btn" id="wvTableSettingsBtn" onclick="dhOpenReorder()">
@@ -2578,12 +2578,12 @@
             <span class="co2-type-label">Close all Day</span>
           </label>
           <label class="co2-type-card" data-type="los">
-            <span class="co2-radio"></span>
+            <span class="co2-radio"><span class="co2-radio-dot"></span></span>
             <span class="material-icons co2-type-ico">lock</span>
             <span class="co2-type-label">Min Length of Stay</span>
           </label>
           <label class="co2-type-card" data-type="reopen">
-            <span class="co2-radio"></span>
+            <span class="co2-radio"><span class="co2-radio-dot"></span></span>
             <span class="material-icons co2-type-ico">lock_open</span>
             <span class="co2-type-label">Re-Open</span>
           </label>
@@ -2659,6 +2659,48 @@
         <button class="co2-btn-cancel" id="closeOutCancel">Cancel</button>
         <button class="co2-btn-confirm" id="coConfirmBtn">Close Out</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Shared date range picker popup (used by close-out modal) -->
+<div id="coDRPanel" style="display:none;position:fixed;top:0;left:0;z-index:9999;background:#fff;border:1px solid #e2e8f0;border-radius:12px;box-shadow:0 12px 40px rgba(0,0,0,.2);width:720px;max-width:95vw">
+  <div style="display:flex">
+    <div style="flex:1;padding:20px 20px 0">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <div style="display:flex;gap:4px">
+          <button onclick="coDRPickNav(-12)" style="border:none;background:none;cursor:pointer;padding:4px 6px;border-radius:4px;color:#374151;font-size:13px">«</button>
+          <button onclick="coDRPickNav(-1)" style="border:none;background:none;cursor:pointer;padding:4px 6px;border-radius:4px;color:#374151;font-size:13px">‹</button>
+        </div>
+        <span id="coDRLeftLbl" style="font-size:14px;font-weight:700;color:#111827"></span>
+        <div style="display:flex;gap:4px">
+          <button onclick="coDRPickNav(1)" style="border:none;background:none;cursor:pointer;padding:4px 6px;border-radius:4px;color:#374151;font-size:13px">›</button>
+          <button onclick="coDRPickNav(12)" style="border:none;background:none;cursor:pointer;padding:4px 6px;border-radius:4px;color:#374151;font-size:13px">»</button>
+        </div>
+        <span style="width:60px"></span>
+        <span id="coDRRightLbl" style="font-size:14px;font-weight:700;color:#111827"></span>
+        <div style="width:60px"></div>
+      </div>
+      <div id="coDRPickBanner" style="display:none;padding:6px 12px;background:#e0f7f6;border-radius:6px;font-size:12px;color:#0f766e;font-weight:600;margin-bottom:10px">
+        ✓ Start date selected — now click the end date
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px" id="coDRPickGrids"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0 16px;border-top:1px solid #f1f5f9;margin-top:14px">
+        <span id="coDRPickFooter" style="font-size:13px;color:#374151;font-weight:500"></span>
+        <div style="display:flex;gap:10px">
+          <button onclick="coDRPickCancel()" style="padding:8px 18px;border:none;background:none;color:#374151;font-size:13px;cursor:pointer;border-radius:6px">Cancel</button>
+          <button onclick="coDRPickApply()" style="padding:8px 20px;background:#006461;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">Apply</button>
+        </div>
+      </div>
+    </div>
+    <div style="width:130px;border-left:1px solid #f1f5f9;padding:16px 0;display:flex;flex-direction:column">
+      <button onclick="coDRPickPreset('today')" class="caldr-preset">Today</button>
+      <div style="padding:8px 16px;font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.4px">Next:</div>
+      <button onclick="coDRPickPreset('7d')" class="caldr-preset">7 days</button>
+      <button onclick="coDRPickPreset('14d')" class="caldr-preset">14 days</button>
+      <button onclick="coDRPickPreset('1m')" class="caldr-preset">1 month</button>
+      <button onclick="coDRPickPreset('2m')" class="caldr-preset">2 months</button>
+      <button onclick="coDRPickPreset('3m')" class="caldr-preset">3 months</button>
     </div>
   </div>
 </div>
@@ -3439,6 +3481,6 @@
 
 
 
-  <script src="travelcore-rm-hub.js?v=70"></script>
+  <script src="travelcore-rm-hub.js?v=71"></script>
 <div id="calCapTip" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #e0e0e0;border-radius:4px;box-shadow:0 1px 3px rgba(0,0,0,.2),0 2px 1px -1px rgba(0,0,0,.12),0 1px 1px rgba(0,0,0,.14);padding:10px;pointer-events:none;width:245px"></div>
 </body>
