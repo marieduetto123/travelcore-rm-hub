@@ -9035,6 +9035,8 @@ function updateActiveChipTags() {
     return '<span class="fchip fchip-tag">' + d.label + ': ' + text + '<button class="fchip-x" data-close-filter="' + d.id + '">×</button></span>';
   }).filter(Boolean).join('');
   wrap.innerHTML = html;
+  var bar = document.getElementById('filterChipsBar');
+  if (bar) bar.style.display = html ? '' : 'none';
 }
 
 document.addEventListener('click', function(e) {

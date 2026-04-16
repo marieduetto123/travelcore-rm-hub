@@ -64,7 +64,8 @@
       "Bash(./deploy.sh \"remove Close Out Heat Map — Room Types from daily/weekly view\")",
       "Bash(./deploy.sh \"add monthly/weekly tab bars for switching between views\")",
       "Bash(./deploy.sh \"remove duplicate date switcher from monthly filter bar\")",
-      "Bash(./deploy.sh \"normalize tab bar height and padding for monthly and weekly views\")"
+      "Bash(./deploy.sh \"normalize tab bar height and padding for monthly and weekly views\")",
+      "Bash(./deploy.sh \"hide empty filter chips bar above monthly tab bar\")"
     ]
   }
 }
