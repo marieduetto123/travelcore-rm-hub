@@ -3498,8 +3498,11 @@ window.moDayCheck = function(dateStr, cb) {
 window.moOpenCloseOut = function() {
   var dates = Array.from(_moSelectedDays).sort();
   if (!dates.length) return;
-  var from = dates[0], to = dates[dates.length - 1];
-  if (typeof window._coOpenModal === 'function') window._coOpenModal(from, to);
+  if (typeof window._coOpenModalDays === 'function') {
+    window._coOpenModalDays(dates);
+  } else if (typeof window._coOpenModal === 'function') {
+    window._coOpenModal(dates[0], dates[dates.length - 1]);
+  }
 };
 
 // ── Weekly view day close-out checkboxes ─────────────────────────────────────
@@ -3514,8 +3517,11 @@ window.wvDayCheck = function(dateStr, cb) {
 window.wvOpenCloseOut = function() {
   var dates = Array.from(_wvSelectedDays).sort();
   if (!dates.length) return;
-  var from = dates[0], to = dates[dates.length - 1];
-  if (typeof window._coOpenModal === 'function') window._coOpenModal(from, to);
+  if (typeof window._coOpenModalDays === 'function') {
+    window._coOpenModalDays(dates);
+  } else if (typeof window._coOpenModal === 'function') {
+    window._coOpenModal(dates[0], dates[dates.length - 1]);
+  }
 };
 
 // Shared: sync the primary Close Out button enabled/disabled
@@ -3604,8 +3610,11 @@ window.wbDayToggle = function(dateStr) {
 window.wbOpenCloseOut = function() {
   var dates = Array.from(_wbSelectedDays).sort();
   if (!dates.length) return;
-  var from = dates[0], to = dates[dates.length - 1];
-  if (typeof window._coOpenModal === 'function') window._coOpenModal(from, to);
+  if (typeof window._coOpenModalDays === 'function') {
+    window._coOpenModalDays(dates);
+  } else if (typeof window._coOpenModal === 'function') {
+    window._coOpenModal(dates[0], dates[dates.length - 1]);
+  }
 };
 
 function buildDailyBView(days, month, activeDay) {
@@ -8777,8 +8786,40 @@ updateContractsStats({ y:2025, m:7, d:17 }, { y:2025, m:7, d:25 });
     closeModal();
   });
 
+  // Open modal with specific individual days (not a range)
+  function openModalDays(daysArr) {
+    overlay.classList.add('open');
+
+    // Reset restriction type
+    const title = document.getElementById('closeOutTitle');
+    if (title) title.textContent = 'Close Out Sales';
+    const confirmBtn = document.getElementById('coConfirmBtn');
+    if (confirmBtn) { confirmBtn.textContent = 'CLOSE OUT SALES'; confirmBtn.style.background = ''; confirmBtn.style.borderColor = ''; }
+    document.querySelectorAll('.co-restrict-card').forEach(function(c) { c.classList.remove('active'); });
+    const firstCard = document.querySelector('.co-restrict-card[data-type="full"]');
+    if (firstCard) firstCard.classList.add('active');
+    const losField = document.getElementById('coLosField');
+    if (losField) losField.style.display = 'none';
+    document.querySelectorAll('.co-action-btn').forEach(function(b) { b.classList.remove('active'); });
+    const firstAction = document.querySelector('.co-action-btn[data-action="email"]');
+    if (firstAction) firstAction.classList.add('active');
+    const hint = document.getElementById('coActionHint');
+    if (hint) hint.textContent = 'An email will be sent directly to each selected Operator.';
+
+    // Add each selected day as its own date range (from=to)
+    drIdSeq = 0; dateRanges = [];
+    daysArr.forEach(function(d) {
+      coAddDateRange(d, d);
+    });
+
+    // Reset rules
+    ruleIdSeq = 0; rules = [];
+    coAddRule();
+  }
+
   // Expose openModal globally so inline calls work
   window._coOpenModal = openModal;
+  window._coOpenModalDays = openModalDays;
 })();
 
 /* ─── MONTHLY FILTER DROPDOWN — toggle open/close ─── */
