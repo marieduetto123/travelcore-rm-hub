@@ -2243,9 +2243,9 @@ body.dark .wv-outline-select { background: var(--surface-2); border-color: var(-
 }
 /* ── Group-by bar: full-width row — matches monthly grey filter-chips-bar ── */
 .wv-groupby-bar {
-  background: #f8fafc;
+  background: #F8F9FD;
   border-bottom: 1px solid #f0f0f0;
-  padding: 8px 20px 0;
+  padding: 10px 16px 0;
   margin-bottom: 4px;
   min-height: 48px;
   box-sizing: border-box;
@@ -2421,19 +2421,19 @@ body.dark .wv-date-nav { border-bottom-color: var(--border); }
   display: flex; align-items: center; gap: 16px;
 }
 .wv-date-shuffler {
-  display: flex; align-items: center; gap: 8px;
+  display: flex; align-items: center; gap: 10px; padding-bottom: 4px;
 }
 .wv-nav-btn {
-  width: 32px; height: 32px; border-radius: 4px;
-  background: #fff; border: 1px solid #757575;
+  width: 36px; height: 36px; border-radius: 4px;
+  background: #fff; border: 1px solid #006461;
   display: flex; align-items: center; justify-content: center;
-  cursor: pointer; color: var(--text-secondary);
-  transition: border-color .15s, color .15s;
+  cursor: pointer; color: #006461;
+  transition: background .15s, color .15s;
 }
 body.dark .wv-nav-btn { background: var(--surface); border-color: var(--border); }
-.wv-nav-btn:hover { border-color: #006461; color: #006461; }
+.wv-nav-btn:hover { background: #D7F7ED; }
 .wv-nav-btn svg { width: 14px; height: 14px; }
-.wv-range { font-size: 14px; font-weight: 400; color: #1c1c1c; white-space: nowrap; }
+.wv-range { font-size: 14px; font-weight: 400; color: #4F5B60; white-space: nowrap; }
 body.dark .wv-range { color: var(--text-primary); }
 /* Week layout: left section panel + 7-column grid */
 .wv-week-layout {

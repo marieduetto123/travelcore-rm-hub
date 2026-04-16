@@ -75,7 +75,8 @@
       "Bash(./deploy.sh \"change cell metrics, filters, heatmap to text buttons with pale green hover\")",
       "Bash(./deploy.sh \"pale yellow on locked day columns, move close out button next to close\")",
       "Bash(./deploy.sh \"match weekly topbar buttons to Figma: reorder, text buttons with #D7F7ED hover, disabled grey close out, STLY select\")",
-      "Bash(./deploy.sh \"restructure monthly header: Close Out + Custom Close + text btns + order per Figma; remove dropdown from Custom Close on both views; remove Open All/Close All from monthly\")"
+      "Bash(./deploy.sh \"restructure monthly header: Close Out + Custom Close + text btns + order per Figma; remove dropdown from Custom Close on both views; remove Open All/Close All from monthly\")",
+      "Bash(./deploy.sh \"style monthly tab bar to match Figma: #F8F9FD bg, teal-bordered nav btns, #4F5B60 range text; remove Open All/Close All from monthly\")"
     ]
   }
 }
