@@ -707,16 +707,16 @@ body.dark .cal-selector select { color: var(--text-primary); }
 /* Filters button — secondary outlined */
 .cal-hdr-btn {
   display: inline-flex; align-items: center; gap: 8px;
-  height: 36px; padding: 0 16px; border-radius: 4px;
+  height: 36px; padding: 0 12px; border-radius: 4px;
   font-size: 14px; font-weight: 400; font-family: 'Lato', sans-serif;
   cursor: pointer; white-space: nowrap;
-  background: #fff; border: 1px solid #006461;
+  background: transparent; border: none;
   color: #006461;
-  transition: background .15s, border-color .15s, color .15s;
+  transition: background .15s, color .15s;
 }
-.cal-hdr-btn:hover { background: rgba(0,100,97,0.08); }
-.cal-hdr-btn.active { background: rgba(0,100,97,0.08); }
-body.dark .cal-hdr-btn { background: var(--surface-2); border-color: var(--lime); color: var(--lime); }
+.cal-hdr-btn:hover { background: #f0fdfb; }
+.cal-hdr-btn.active { background: #f0fdfb; }
+body.dark .cal-hdr-btn { background: transparent; color: var(--lime); }
 body.dark .cal-hdr-btn:hover, body.dark .cal-hdr-btn.active { background: rgba(196,255,69,0.08); }
 
 /* Close Out — primary button */
