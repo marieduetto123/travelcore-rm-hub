@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@33.3.0/styles/ag-grid.css"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@33.3.0/styles/ag-theme-quartz.css"/>
   <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@33.3.0/dist/ag-grid-community.min.js"></script>
-  <link rel="stylesheet" href="travelcore-rm-hub.css?v=58">
+  <link rel="stylesheet" href="travelcore-rm-hub.css?v=59">
 </head>
 <body>
 
@@ -745,25 +745,26 @@
                   </div>
 
                   <!-- Room Types (stop sales) -->
+                  <!-- Room Type (stop sales) -->
                   <div id="hmRtSection" style="display:none">
-                    <div class="hm-modal-divider"></div>
-                    <div style="font-size:11px;font-weight:700;color:#374151;margin-bottom:8px;text-transform:uppercase;letter-spacing:.3px;padding-top:8px">Room Types</div>
-                    <div class="hm-rt-dropdown" id="hmRtDropdown">
-                      <div class="hm-rt-trigger" id="hmRtTrigger" onclick="hmRtToggleDD()">
-                        <span class="hm-rt-trigger-text" id="hmRtTriggerText">All Room Types</span>
-                        <span class="material-icons" style="font-size:18px;color:#6b7280">expand_more</span>
+                    <div class="hm-rt-block">
+                      <div class="hm-rt-selector-wrap">
+                        <label class="hm-rt-label">Room Type</label>
+                        <div class="hm-rt-select-box" id="hmRtSelectBox" onclick="hmRtToggleDD()">
+                          <span id="hmRtSelectText">All</span>
+                          <span class="material-icons hm-rt-arrow">arrow_drop_down</span>
+                        </div>
+                        <div class="hm-rt-dd-list" id="hmRtDDList"></div>
                       </div>
-                      <div class="hm-rt-dd-list" id="hmRtDDList"></div>
+                      <div class="hm-rt-chips" id="hmRtChips"></div>
                     </div>
                   </div>
 
-                  <!-- Condition (optional) -->
+                  <!-- Add condition -->
                   <div id="hmConditionSection" style="display:none">
-                    <div class="hm-modal-divider"></div>
-                    <label class="hm-cond-toggle">
-                      <input type="checkbox" id="hmCondEnabled" onchange="hmCondToggle(this)">
-                      <span class="hm-cond-label">Condition</span>
-                      <span class="hm-cond-hint">— only colour cells when…</span>
+                    <label class="hm-addcond-toggle">
+                      <input type="checkbox" id="hmCondEnabled" onchange="hmCondToggle(this)" class="hm-addcond-cb">
+                      <span class="hm-addcond-label">Add condition</span>
                     </label>
                     <div id="hmCondControls" class="hm-cond-controls" style="display:none">
                       <select id="hmCondMetric" class="hm-cond-select">
@@ -3433,6 +3434,6 @@
 
 
 
-  <script src="travelcore-rm-hub.js?v=67"></script>
+  <script src="travelcore-rm-hub.js?v=68"></script>
 <div id="calCapTip" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #e0e0e0;border-radius:4px;box-shadow:0 1px 3px rgba(0,0,0,.2),0 2px 1px -1px rgba(0,0,0,.12),0 1px 1px rgba(0,0,0,.14);padding:10px;pointer-events:none;width:245px"></div>
 </body>

@@ -1666,7 +1666,7 @@ function renderCalendar() {
       const capTipAttr = isLocked ? '' : ` onmouseenter="calShowCapTip(event,${hotel},${hotelRooms},${to},${toRoomsSold},${210-hotelRooms-toRoomsSold},${m.month},${d})" onmouseleave="calHideCapTip()"`;
       const moIso = `${m.year}-${String(m.month).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
       const moChk = _moSelectedDays.has(moIso) ? ' checked' : '';
-      const _showEye = !isCompact && !isLocked && !isActionNeeded;
+      const _showEye = !isCompact && !isLocked && !isActionNeeded && !hasCalCl;
       cells += `<div class="${classes}" data-month="${m.month}" data-day="${d}"${capTipAttr}>
         <div class="cell-day-hdr">
           <input type="checkbox" class="wv-day-chk mo-day-chk"${moChk} onclick="event.stopPropagation();moDayCheck('${moIso}',this)" title="Select for close-out">
@@ -13684,7 +13684,7 @@ window.calHideCapTip = function() {
         + '</div>';
     }).join('');
 
-    // Stop Sales room type multiselect dropdown
+    // Stop Sales room type selector + chips
     var rtSection = document.getElementById('hmRtSection');
     if (rtSection) {
       if (isStopSales) {
@@ -13699,6 +13699,7 @@ window.calHideCapTip = function() {
           }).join('');
         }
         hmRtUpdateTrigger();
+        hmRtRenderChips();
       } else {
         rtSection.style.display = 'none';
       }
@@ -13725,44 +13726,53 @@ window.calHideCapTip = function() {
     if (swatch) swatch.style.background = el.value;
   };
 
-  // ── Room type toggle (stop sales multiselect) ──────────────────
+  // ── Room type selector (Figma style) ──────────────────────────
   window.hmRtToggleDD = function() {
-    var trigger = document.getElementById('hmRtTrigger');
+    var box = document.getElementById('hmRtSelectBox');
     var list = document.getElementById('hmRtDDList');
-    if (!trigger || !list) return;
+    if (!box || !list) return;
     var isOpen = list.classList.contains('open');
     if (isOpen) {
       list.classList.remove('open');
-      trigger.classList.remove('open');
+      box.classList.remove('open');
     } else {
       list.classList.add('open');
-      trigger.classList.add('open');
+      box.classList.add('open');
     }
   };
 
   // Close dropdown when clicking outside
   document.addEventListener('click', function(e) {
-    var dd = document.getElementById('hmRtDropdown');
-    if (dd && !dd.contains(e.target)) {
+    var wrap = document.querySelector('.hm-rt-selector-wrap');
+    if (wrap && !wrap.contains(e.target)) {
       var list = document.getElementById('hmRtDDList');
-      var trigger = document.getElementById('hmRtTrigger');
+      var box = document.getElementById('hmRtSelectBox');
       if (list) list.classList.remove('open');
-      if (trigger) trigger.classList.remove('open');
+      if (box) box.classList.remove('open');
     }
   });
 
   window.hmRtItemChange = function() {
     hmRtReadSelect();
     hmRtUpdateTrigger();
+    hmRtRenderChips();
   };
 
   function hmRtUpdateTrigger() {
     var sel = hmState.stopSalesRoomTypes || [];
-    var txt = document.getElementById('hmRtTriggerText');
+    var txt = document.getElementById('hmRtSelectText');
     if (!txt) return;
-    if (sel.length === 0) txt.textContent = 'All Room Types';
-    else if (sel.length <= 2) txt.textContent = sel.join(', ');
-    else txt.textContent = sel.length + ' Room Types selected';
+    txt.textContent = sel.length === 0 ? 'All' : sel.length + ' selected';
+  }
+
+  function hmRtRenderChips() {
+    var el = document.getElementById('hmRtChips');
+    if (!el) return;
+    var sel = hmState.stopSalesRoomTypes || [];
+    if (sel.length === 0) { el.innerHTML = ''; return; }
+    el.innerHTML = sel.map(function(rt) {
+      return '<span class="hm-rt-chip">' + rt + '</span>';
+    }).join('');
   }
 
   window.hmRtReadSelect = function() {
@@ -13886,10 +13896,12 @@ window.calHideCapTip = function() {
     if (rtSect) rtSect.style.display = 'none';
     var rtDDList = document.getElementById('hmRtDDList');
     if (rtDDList) rtDDList.innerHTML = '';
-    var rtTrigger = document.getElementById('hmRtTrigger');
-    if (rtTrigger) rtTrigger.classList.remove('open');
-    var rtTriggerText = document.getElementById('hmRtTriggerText');
-    if (rtTriggerText) rtTriggerText.textContent = 'All Room Types';
+    var rtBox = document.getElementById('hmRtSelectBox');
+    if (rtBox) rtBox.classList.remove('open');
+    var rtSelectText = document.getElementById('hmRtSelectText');
+    if (rtSelectText) rtSelectText.textContent = 'All';
+    var rtChips = document.getElementById('hmRtChips');
+    if (rtChips) rtChips.innerHTML = '';
     hmUpdateBtn();
     renderCalendar();
   };

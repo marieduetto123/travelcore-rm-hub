@@ -86,7 +86,8 @@
       "Bash(./deploy.sh \"move room types multiselect under conditions in stop sales heatmap modal\")",
       "Bash(./deploy.sh \"remove eye icon from closed/partial-closed days, reposition lock icon below checkbox on monthly\")",
       "Bash(./deploy.sh \"move room types above condition in heatmap modal, replace chips with select menu\")",
-      "Bash(./deploy.sh \"room types as dropdown multiselect with checkboxes, increase heading padding\")"
+      "Bash(./deploy.sh \"room types as dropdown multiselect with checkboxes, increase heading padding\")",
+      "Bash(./deploy.sh \"heatmap modal: match Figma design - Room Type selector with chips, Add condition checkbox, fix eye icon on partial closures\")"
     ]
   }
 }
