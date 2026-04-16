@@ -2424,13 +2424,13 @@ body.dark .wv-date-nav { border-bottom-color: var(--border); }
   display: flex; align-items: center; gap: 10px; padding-bottom: 4px;
 }
 .wv-nav-btn {
-  width: 36px; height: 36px; border-radius: 4px;
-  background: #fff; border: 1px solid #006461;
+  width: 32px; height: 32px; border-radius: 22px;
+  background: transparent; border: none;
   display: flex; align-items: center; justify-content: center;
   cursor: pointer; color: #006461;
   transition: background .15s, color .15s;
 }
-body.dark .wv-nav-btn { background: var(--surface); border-color: var(--border); }
+body.dark .wv-nav-btn { color: #5ceade; }
 .wv-nav-btn:hover { background: #D7F7ED; }
 .wv-nav-btn svg { width: 14px; height: 14px; }
 .wv-range { font-size: 14px; font-weight: 400; color: #4F5B60; white-space: nowrap; }
