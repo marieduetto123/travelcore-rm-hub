@@ -1499,6 +1499,8 @@ function renderCalendar() {
     : `${visible[0].name.split(' ')[0]} – ${visible[visible.length-1].name}`;
   const rangeEl = document.getElementById('calRange') || document.querySelector('.cal-range');
   if (rangeEl) rangeEl.textContent = rangeLabel;
+  var moShufR = document.getElementById('moShufRange');
+  if (moShufR) moShufR.textContent = rangeLabel;
 
   // Grid columns
   // 12M: show 6 per row (wraps to 2 rows of 6); 6M: single row of 6
@@ -2256,6 +2258,29 @@ window.moToggle = function(id) {
   renderCalMonthlySummary();
 };
 
+// ── Monthly tab bar ─────────────────────────────────────────────────────
+var _moActiveTab = 'monthly';
+
+window.moSelectTab = function(btn) {
+  _moActiveTab = btn.dataset.mogroupby;
+  document.querySelectorAll('.mo-grp-btn').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  renderCalendar();
+};
+
+// Open All / Close All for monthly accordion groups
+window.moAccCloseAll = function() {
+  ['mo_daily','mo_seg','mo_more','mo_meals','mo_biz','mo_tc','overview'].forEach(function(k) {
+    _calAccState[k] = true;
+  });
+  renderCalMonthlySummary();
+};
+window.moAccOpenAll = function() {
+  ['mo_daily','mo_seg','mo_more','mo_meals','mo_biz','mo_tc','overview'].forEach(function(k) {
+    _calAccState[k] = false;
+  });
+  renderCalMonthlySummary();
+};
 
 // ── View toggle: 1 / 3 / 6 / 12 months ───────────────────────────────────
 window.calSetDisplayView = function(n) {
@@ -2293,6 +2318,10 @@ window.calSetDisplayView = function(n) {
   }
   // Update compare dropdown state based on breakpoint
   _calUpdateCompareState();
+
+  // Show/hide monthly tab bar (only for 1/2/3 month views)
+  var moBar = document.getElementById('moGroupbyBar');
+  if (moBar) moBar.style.display = (n <= 3) ? '' : 'none';
 
   // Clamp start index
   calStartIdx = Math.min(calStartIdx, Math.max(0, ALL_MONTHS.length - calView));
@@ -2427,6 +2456,18 @@ function clearCalSelection() {
       clamp(); renderAndRestoreCompact();
     });
   document.getElementById('calNext')
+    ?.addEventListener('click', () => {
+      calStartIdx += (calDisplayView >= 6 ? calDisplayView : 1);
+      clamp(); renderAndRestoreCompact();
+    });
+
+  // Monthly tab-bar shuffler (mirrors calPrev/calNext)
+  document.getElementById('moShufPrev')
+    ?.addEventListener('click', () => {
+      calStartIdx -= (calDisplayView >= 6 ? calDisplayView : 1);
+      clamp(); renderAndRestoreCompact();
+    });
+  document.getElementById('moShufNext')
     ?.addEventListener('click', () => {
       calStartIdx += (calDisplayView >= 6 ? calDisplayView : 1);
       clamp(); renderAndRestoreCompact();
@@ -3093,6 +3134,8 @@ function renderWeekView(month, day) {
   const wvSection  = document.getElementById('weekView');
   if (calSection) calSection.style.display = 'none';
   if (wvSection)  wvSection.classList.add('visible');
+  var moBar = document.getElementById('moGroupbyBar');
+  if (moBar) moBar.style.display = 'none';
   var backArrow = document.getElementById('wvBack');
   if (backArrow) backArrow.style.display = 'inline-flex';
   var cmpWrap = document.getElementById('wvCmpWrap');
@@ -7892,6 +7935,8 @@ window.goToMonthView = function() {
   if (backArrow) backArrow.style.display = 'none';
   var cmpWrap = document.getElementById('wvCmpWrap');
   if (cmpWrap) cmpWrap.style.display = 'none';
+  var moBar = document.getElementById('moGroupbyBar');
+  if (moBar) moBar.style.display = (calDisplayView <= 3) ? '' : 'none';
   renderCalendar();
 };
 

@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@33.3.0/styles/ag-grid.css"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@33.3.0/styles/ag-theme-quartz.css"/>
   <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@33.3.0/dist/ag-grid-community.min.js"></script>
-  <link rel="stylesheet" href="travelcore-rm-hub.css?v=35">
+  <link rel="stylesheet" href="travelcore-rm-hub.css?v=36">
 </head>
 <body>
 
@@ -823,6 +823,30 @@
         <!-- Date navigation row (hidden — nav merged into filter bar) -->
         <div class="cal-date-nav" style="display:none"></div>
 
+        <!-- Monthly view tab bar (mirrors weekly groupby-bar) -->
+        <div class="wv-groupby-bar" id="moGroupbyBar">
+          <div class="wv-groupby-row">
+            <button class="wv-groupby-btn mo-grp-btn active" data-mogroupby="monthly" onclick="moSelectTab(this)">Monthly</button>
+            <button class="wv-groupby-btn mo-grp-btn" data-mogroupby="daily" onclick="moSelectTab(this)">Daily</button>
+            <button class="wv-groupby-btn mo-grp-btn" data-mogroupby="closeouts" onclick="moSelectTab(this)">Close Outs</button>
+            <button class="wv-groupby-btn mo-grp-btn" data-mogroupby="coReport" onclick="moSelectTab(this)">Close Out Report</button>
+            <div class="wv-date-acc-controls" style="margin-left:auto">
+              <button class="wv-acc-action-btn" id="moCloseAll" onclick="moAccCloseAll()">
+                <span class="material-icons" style="font-size:16px">unfold_less</span>
+                Close All
+              </button>
+              <button class="wv-acc-action-btn" id="moOpenAll" onclick="moAccOpenAll()">
+                <span class="material-icons" style="font-size:16px">unfold_more</span>
+                Open All
+              </button>
+            </div>
+            <div class="wv-date-shuffler" style="margin-left:6px">
+              <button class="wv-nav-btn" id="moShufPrev" title="Previous"><span class="material-icons" style="font-size:18px">chevron_left</span></button>
+              <span class="wv-range" id="moShufRange">February – April 2026</span>
+              <button class="wv-nav-btn" id="moShufNext" title="Next"><span class="material-icons" style="font-size:18px">chevron_right</span></button>
+            </div>
+          </div>
+        </div>
         <!-- Calendar months grid -->
         <div class="cal-months-grid" id="calMonths"></div>
         <!-- Monthly Summary Metrics (1M/2M/3M only) -->
@@ -3447,6 +3471,6 @@
 
 
 
-  <script src="travelcore-rm-hub.js?v=51"></script>
+  <script src="travelcore-rm-hub.js?v=52"></script>
 <div id="calCapTip" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #e0e0e0;border-radius:4px;box-shadow:0 1px 3px rgba(0,0,0,.2),0 2px 1px -1px rgba(0,0,0,.12),0 1px 1px rgba(0,0,0,.14);padding:10px;pointer-events:none;width:245px"></div>
 </body>
