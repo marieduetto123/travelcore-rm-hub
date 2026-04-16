@@ -61,8 +61,7 @@
       "Bash(./deploy.sh \"revert last 4 changes: restore view tabs inline with header controls\")",
       "Bash(./deploy.sh \"remove monthly view tabs, keep everything else unchanged\")",
       "Bash(./deploy.sh \"hide Daily, Daily H, Daily R tabs; rename Daily B to Daily\")",
-      "Bash(./deploy.sh \"remove Close Out Heat Map — Room Types from daily/weekly view\")",
-      "Bash(./deploy.sh \"add monthly tab bar with view toggle, hide in 6/12M and week view\")"
+      "Bash(./deploy.sh \"remove Close Out Heat Map — Room Types from daily/weekly view\")"
     ]
   }
 }
