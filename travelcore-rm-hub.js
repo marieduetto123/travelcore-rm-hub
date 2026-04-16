@@ -13684,20 +13684,21 @@ window.calHideCapTip = function() {
         + '</div>';
     }).join('');
 
-    // Stop Sales room type multiselect
+    // Stop Sales room type multiselect dropdown
     var rtSection = document.getElementById('hmRtSection');
     if (rtSection) {
       if (isStopSales) {
         rtSection.style.display = '';
         var rtOpts = ['Standard','Superior','Deluxe','Suite','Jr. Suite','Family'];
-        var selEl = document.getElementById('hmRtSelect');
-        if (selEl) {
+        var ddList = document.getElementById('hmRtDDList');
+        if (ddList) {
           var sel = hmState.stopSalesRoomTypes || [];
-          selEl.innerHTML = rtOpts.map(function(rt) {
+          ddList.innerHTML = rtOpts.map(function(rt) {
             var isOn = sel.indexOf(rt) >= 0;
-            return '<option value="' + rt + '"' + (isOn ? ' selected' : '') + '>' + rt + '</option>';
+            return '<label class="hm-rt-dd-item"><input type="checkbox" value="' + rt + '"' + (isOn ? ' checked' : '') + ' onchange="hmRtItemChange()">' + rt + '</label>';
           }).join('');
         }
+        hmRtUpdateTrigger();
       } else {
         rtSection.style.display = 'none';
       }
@@ -13725,13 +13726,52 @@ window.calHideCapTip = function() {
   };
 
   // ── Room type toggle (stop sales multiselect) ──────────────────
-  window.hmRtReadSelect = function() {
-    var selEl = document.getElementById('hmRtSelect');
-    if (!selEl) return;
-    var arr = [];
-    for (var i = 0; i < selEl.options.length; i++) {
-      if (selEl.options[i].selected) arr.push(selEl.options[i].value);
+  window.hmRtToggleDD = function() {
+    var trigger = document.getElementById('hmRtTrigger');
+    var list = document.getElementById('hmRtDDList');
+    if (!trigger || !list) return;
+    var isOpen = list.classList.contains('open');
+    if (isOpen) {
+      list.classList.remove('open');
+      trigger.classList.remove('open');
+    } else {
+      list.classList.add('open');
+      trigger.classList.add('open');
     }
+  };
+
+  // Close dropdown when clicking outside
+  document.addEventListener('click', function(e) {
+    var dd = document.getElementById('hmRtDropdown');
+    if (dd && !dd.contains(e.target)) {
+      var list = document.getElementById('hmRtDDList');
+      var trigger = document.getElementById('hmRtTrigger');
+      if (list) list.classList.remove('open');
+      if (trigger) trigger.classList.remove('open');
+    }
+  });
+
+  window.hmRtItemChange = function() {
+    hmRtReadSelect();
+    hmRtUpdateTrigger();
+  };
+
+  function hmRtUpdateTrigger() {
+    var sel = hmState.stopSalesRoomTypes || [];
+    var txt = document.getElementById('hmRtTriggerText');
+    if (!txt) return;
+    if (sel.length === 0) txt.textContent = 'All Room Types';
+    else if (sel.length <= 2) txt.textContent = sel.join(', ');
+    else txt.textContent = sel.length + ' Room Types selected';
+  }
+
+  window.hmRtReadSelect = function() {
+    var ddList = document.getElementById('hmRtDDList');
+    if (!ddList) return;
+    var arr = [];
+    ddList.querySelectorAll('input[type="checkbox"]').forEach(function(cb) {
+      if (cb.checked) arr.push(cb.value);
+    });
     hmState.stopSalesRoomTypes = arr;
   };
 
@@ -13844,8 +13884,12 @@ window.calHideCapTip = function() {
     if (rtFilter) { rtFilter.innerHTML = ''; rtFilter.style.display = 'none'; }
     var rtSect = document.getElementById('hmRtSection');
     if (rtSect) rtSect.style.display = 'none';
-    var rtSelEl = document.getElementById('hmRtSelect');
-    if (rtSelEl) rtSelEl.innerHTML = '';
+    var rtDDList = document.getElementById('hmRtDDList');
+    if (rtDDList) rtDDList.innerHTML = '';
+    var rtTrigger = document.getElementById('hmRtTrigger');
+    if (rtTrigger) rtTrigger.classList.remove('open');
+    var rtTriggerText = document.getElementById('hmRtTriggerText');
+    if (rtTriggerText) rtTriggerText.textContent = 'All Room Types';
     hmUpdateBtn();
     renderCalendar();
   };
