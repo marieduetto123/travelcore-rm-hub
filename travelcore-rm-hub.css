@@ -2200,17 +2200,42 @@ body.dark .wv-topbar-title { color: var(--text-primary); }
   font-family: 'Lato', sans-serif; cursor: pointer; white-space: nowrap;
 }
 .wv-close-btn:hover { background: #004d4a; }
-/* Primary close-out action button in groupby bar */
-.wv-closeout-primary {
-  display: inline-flex; align-items: center; gap: 5px;
-  height: 32px; padding: 0 14px;
-  background: #006461; border: 1px solid #006461; border-radius: 4px;
-  color: #fff; font-size: 13px; font-weight: 600;
+/* Text button for topbar (no border, mint green hover) */
+.wv-topbar-text-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  height: 36px; padding: 0 16px; border-radius: 4px;
+  background: transparent; border: none;
+  color: #4F5B60; font-size: 14px; font-weight: 400;
   font-family: 'Lato', sans-serif; cursor: pointer; white-space: nowrap;
-  transition: background .15s, opacity .15s;
+  transition: background .15s, color .15s;
+}
+.wv-topbar-text-btn:hover { background: #D7F7ED; color: #053C3C; }
+body.dark .wv-topbar-text-btn { color: #d1d5db; }
+body.dark .wv-topbar-text-btn:hover { background: rgba(196,255,69,0.08); }
+
+/* Outlined select dropdown */
+.wv-outline-select {
+  height: 36px; padding: 0 28px 0 12px; border-radius: 4px;
+  background: #fff; border: 1px solid #E0E0E0;
+  color: #1C1C1C; font-size: 14px; font-weight: 400;
+  font-family: 'Lato', sans-serif; cursor: pointer;
+  appearance: auto; -webkit-appearance: auto;
+}
+body.dark .wv-outline-select { background: var(--surface-2); border-color: var(--border); color: var(--text-primary); }
+
+/* Close Out button — disabled (grey) / enabled (teal) */
+.wv-closeout-primary {
+  display: inline-flex; align-items: center; gap: 8px;
+  height: 36px; padding: 0 16px;
+  background: #006461; border: none; border-radius: 4px;
+  color: #fff; font-size: 14px; font-weight: 400;
+  font-family: 'Lato', sans-serif; cursor: pointer; white-space: nowrap;
+  transition: background .15s;
 }
 .wv-closeout-primary:hover:not(:disabled) { background: #004d4a; }
-.wv-closeout-primary:disabled { opacity: 0.4; cursor: default; }
+.wv-closeout-primary:disabled {
+  background: #EAEEEF; color: #AEB4BA; cursor: default;
+}
 
 .wv-close-badge {
   background: #f1f5f9; color: #991f1f; font-size: 12px; font-weight: 600;

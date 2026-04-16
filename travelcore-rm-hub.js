@@ -3059,12 +3059,11 @@ let wvCompare = 'stly';    // 'none' | 'stly' | 'ly' | 'fcst'
 
 function wvSetCompare(val) {
   wvCompare = val;
-  // Sync topbar select
-  var sel = document.getElementById('wvCmpSelect');
-  if (sel) sel.value = val;
-  // Also sync old centre select if present
-  var sel2 = document.getElementById('wvCmpSelectOld');
-  if (sel2) sel2.value = val;
+  // Sync all compare selects
+  ['wvCmpSelect','wvCmpSelect2','wvCmpSelectOld'].forEach(function(id) {
+    var s = document.getElementById(id);
+    if (s) s.value = val;
+  });
   buildWeekGrid(wvMonth, wvWeekStart, wvWeekStart);
 }
 
@@ -3499,8 +3498,6 @@ function _syncCloseOutBtn() {
   if (!btn) return;
   var n = _wvSelectedDays.size + _wbSelectedDays.size;
   btn.disabled = n === 0;
-  var txt = n > 0 ? 'Close Out ' + n + ' Day' + (n !== 1 ? 's' : '') : 'Close Out';
-  btn.childNodes[btn.childNodes.length - 1].textContent = ' ' + txt;
 }
 
 // ── Daily B View ─────────────────────────────────────────────────────────────
