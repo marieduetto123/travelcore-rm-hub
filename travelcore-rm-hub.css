@@ -2492,6 +2492,10 @@ body.dark .wv-range { color: var(--text-primary); }
   position: relative;
 }
 .wv-col-hdr.closed { background: #374151 !important; opacity: 0.9; }
+.wv-day-chk {
+  width: 14px; height: 14px; margin: 0; cursor: pointer;
+  accent-color: #006461; flex-shrink: 0;
+}
 
 /* ── Weekly header heatmap — blue (normal) ─────────────────────── */
 .wv-col-hdr.hotel-occ-1  { background: #E7EFFF; }

@@ -3477,6 +3477,28 @@ function buildCoHeatmap(days) {
     + '</div>';
 }
 
+// ── Weekly view day close-out checkboxes ─────────────────────────────────────
+var _wvSelectedDays = new Set(); // ISO date strings selected for close-out in weekly view
+
+window.wvDayCheck = function(dateStr, cb) {
+  if (cb.checked) _wvSelectedDays.add(dateStr);
+  else _wvSelectedDays.delete(dateStr);
+  // Update close out button
+  var btn = document.getElementById('wbCloseOutBtn');
+  if (btn) {
+    var n = _wvSelectedDays.size;
+    btn.style.display = n > 0 ? '' : 'none';
+    btn.childNodes[btn.childNodes.length - 1].textContent = ' Close Out ' + n + ' Day' + (n !== 1 ? 's' : '');
+  }
+};
+
+window.wvOpenCloseOut = function() {
+  var dates = Array.from(_wvSelectedDays).sort();
+  if (!dates.length) return;
+  var from = dates[0], to = dates[dates.length - 1];
+  if (typeof window._coOpenModal === 'function') window._coOpenModal(from, to);
+};
+
 // ── Daily B View ─────────────────────────────────────────────────────────────
 var _wbCollapsed    = {};   // shared collapse state (used by both HTML fallback and AG Grid)
 var _wbAllIds       = [];   // all toggleable row IDs in Daily B (populated on each render)
@@ -6973,8 +6995,11 @@ function buildWeekGrid(month, weekStart, activeDay) {
     const clHtml = !isLocked ? buildClosuresHtml(dm, dd) : '';
     const hasColCl = clHtml.length > 0;
     const restrictPanelId = `wvrp-${dm}-${dd}`;
+    const wvIso = `2026-${String(dm).padStart(2,'0')}-${String(dd).padStart(2,'0')}`;
+    const wvChk = _wvSelectedDays.has(wvIso) ? ' checked' : '';
     return `<div class="${colClass}${isLocked ? ' wv-locked' : ''}${wvSelClass}" data-dm="${dm}" data-dd="${dd}">
       <div class="wv-col-hdr ${hdrHeatClass}${isLocked ? ' closed' : ''}${isToday ? ' wv-col-hdr-today' : ''}">
+        <input type="checkbox" class="wv-day-chk" data-wv-date="${wvIso}"${wvChk} onclick="event.stopPropagation();wvDayCheck('${wvIso}',this)" title="Select for close-out">
         <div style="display:flex;flex-direction:column;gap:1px;min-width:0">
           <span class="wv-col-hdr-date">${hdrDateStr}</span>
           <span class="wv-col-hdr-dba" style="font-size:9px;font-weight:600;color:#fff;opacity:.75;letter-spacing:.2px">${dbaStr}</span>
@@ -7549,6 +7574,14 @@ function buildWeekGrid(month, weekStart, activeDay) {
   }).join('');
 
   panel.style.display = '';
+
+  // Sync close-out button with weekly checkbox state
+  var _coBtn = document.getElementById('wbCloseOutBtn');
+  if (_coBtn) {
+    var _nSel = _wvSelectedDays.size + _wbSelectedDays.size;
+    _coBtn.style.display = _nSel > 0 ? '' : 'none';
+    if (_nSel > 0) _coBtn.childNodes[_coBtn.childNodes.length - 1].textContent = ' Close Out ' + _nSel + ' Day' + (_nSel !== 1 ? 's' : '');
+  }
 
   // Sync panel item heights to actual rendered section heights (not body.scrollHeight
   // which can diverge from layout height once flex/grid stretching is applied)

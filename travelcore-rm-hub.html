@@ -1085,8 +1085,8 @@
             </button>
             <!-- Open All / Close All -->
             <div class="wv-date-acc-controls" style="margin-left:auto">
-              <!-- Close-out selected days (Daily B only, shown when days are selected) -->
-              <button class="wv-acc-action-btn" id="wbCloseOutBtn" style="display:none;background:#006461;color:#fff;border-color:#006461;gap:5px" onclick="wbOpenCloseOut()">
+              <!-- Close-out selected days (shown when days are selected) -->
+              <button class="wv-acc-action-btn" id="wbCloseOutBtn" style="display:none;background:#006461;color:#fff;border-color:#006461;gap:5px" onclick="_wvSelectedDays.size?wvOpenCloseOut():wbOpenCloseOut()">
                 <span class="material-icons" style="font-size:14px">lock</span>
                 Close Out Days
               </button>
@@ -3461,6 +3461,6 @@
 
 
 
-  <script src="travelcore-rm-hub.js?v=54"></script>
+  <script src="travelcore-rm-hub.js?v=55"></script>
 <div id="calCapTip" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #e0e0e0;border-radius:4px;box-shadow:0 1px 3px rgba(0,0,0,.2),0 2px 1px -1px rgba(0,0,0,.12),0 1px 1px rgba(0,0,0,.14);padding:10px;pointer-events:none;width:245px"></div>
 </body>
