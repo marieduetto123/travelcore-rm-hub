@@ -1499,6 +1499,8 @@ function renderCalendar() {
     : `${visible[0].name.split(' ')[0]} – ${visible[visible.length-1].name}`;
   const rangeEl = document.getElementById('calRange') || document.querySelector('.cal-range');
   if (rangeEl) rangeEl.textContent = rangeLabel;
+  var moRangeEl = document.getElementById('moShufRange');
+  if (moRangeEl) moRangeEl.textContent = rangeLabel;
 
   // Grid columns
   // 12M: show 6 per row (wraps to 2 rows of 6); 6M: single row of 6
@@ -2256,6 +2258,33 @@ window.moToggle = function(id) {
   renderCalMonthlySummary();
 };
 
+// ── Monthly tab bar interactions ──────────────────────────────────────────
+// Tab clicks: Monthly stays in month view; Daily/Close Outs/Close Out Report switch to week view
+document.querySelectorAll('.mo-grp-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    var tab = this.dataset.mogroupby;
+    if (tab === 'monthly') return; // already on monthly
+    // Map monthly tab names to weekly groupby values
+    var groupbyMap = { daily: 'dailyB', closeouts: 'roomType', coReport: 'coReport' };
+    var wvGrp = groupbyMap[tab] || 'dailyB';
+    // Switch to week view with this groupby active
+    wvGroupBy = wvGrp;
+    openWeekView(wvMonth, wvWeekStart);
+    // Highlight correct tab in weekly bar
+    document.querySelectorAll('#weekView .wv-groupby-btn').forEach(function(b) {
+      b.classList.toggle('active', b.dataset.groupby === wvGrp);
+    });
+  });
+});
+
+window.moAccCloseAll = function() {
+  ['mo_daily','mo_seg','mo_more','mo_meals','mo_biz','mo_tc','overview'].forEach(function(k) { _calAccState[k] = true; });
+  renderCalMonthlySummary();
+};
+window.moAccOpenAll = function() {
+  ['mo_daily','mo_seg','mo_more','mo_meals','mo_biz','mo_tc','overview'].forEach(function(k) { _calAccState[k] = false; });
+  renderCalMonthlySummary();
+};
 
 // ── View toggle: 1 / 3 / 6 / 12 months ───────────────────────────────────
 window.calSetDisplayView = function(n) {
@@ -2279,6 +2308,10 @@ window.calSetDisplayView = function(n) {
       if (dd) dd.style.display = 'none';
     }
   }
+
+  // Show/hide monthly tab bar (only for 1/2/3 month views)
+  var moBar = document.getElementById('moGroupbyBar');
+  if (moBar) moBar.style.display = (n <= 3) ? '' : 'none';
 
   // Apply compact CSS class + view class
   var grid = document.getElementById('calMonths');
@@ -2427,6 +2460,18 @@ function clearCalSelection() {
       clamp(); renderAndRestoreCompact();
     });
   document.getElementById('calNext')
+    ?.addEventListener('click', () => {
+      calStartIdx += (calDisplayView >= 6 ? calDisplayView : 1);
+      clamp(); renderAndRestoreCompact();
+    });
+
+  // Monthly tab-bar shuffler (mirrors calPrev/calNext)
+  document.getElementById('moShufPrev')
+    ?.addEventListener('click', () => {
+      calStartIdx -= (calDisplayView >= 6 ? calDisplayView : 1);
+      clamp(); renderAndRestoreCompact();
+    });
+  document.getElementById('moShufNext')
     ?.addEventListener('click', () => {
       calStartIdx += (calDisplayView >= 6 ? calDisplayView : 1);
       clamp(); renderAndRestoreCompact();
@@ -3097,6 +3142,8 @@ function renderWeekView(month, day) {
   if (backArrow) backArrow.style.display = 'inline-flex';
   var cmpWrap = document.getElementById('wvCmpWrap');
   if (cmpWrap) cmpWrap.style.display = 'flex';
+  var moBar = document.getElementById('moGroupbyBar');
+  if (moBar) moBar.style.display = 'none';
 
   buildWeekGrid(month, weekStartDay, day);
 }
@@ -7870,10 +7917,15 @@ window.dhResetReorder = function() {
 };
 
 // ── Group-by toggle ───────────────────────────────────────────────────────
-document.querySelectorAll('.wv-groupby-btn').forEach(function(btn) {
+document.querySelectorAll('#weekView .wv-groupby-btn').forEach(function(btn) {
   btn.addEventListener('click', function() {
+    // "Monthly" tab in weekly bar → switch back to month view
+    if (this.dataset.groupby === 'monthly') {
+      goToMonthView();
+      return;
+    }
     wvGroupBy = this.dataset.groupby;
-    document.querySelectorAll('.wv-groupby-btn').forEach(function(b) { b.classList.remove('active'); });
+    document.querySelectorAll('#weekView .wv-groupby-btn').forEach(function(b) { b.classList.remove('active'); });
     this.classList.add('active');
     // Table Settings inline button visibility handled by topbar
     buildWeekGrid(wvMonth, wvWeekStart, wvWeekStart);
@@ -7892,6 +7944,12 @@ window.goToMonthView = function() {
   if (backArrow) backArrow.style.display = 'none';
   var cmpWrap = document.getElementById('wvCmpWrap');
   if (cmpWrap) cmpWrap.style.display = 'none';
+  // Show monthly tab bar and reset "Monthly" as active tab
+  var moBar = document.getElementById('moGroupbyBar');
+  if (moBar) moBar.style.display = (calDisplayView <= 3) ? '' : 'none';
+  document.querySelectorAll('.mo-grp-btn').forEach(function(b) {
+    b.classList.toggle('active', b.dataset.mogroupby === 'monthly');
+  });
   renderCalendar();
 };
 
