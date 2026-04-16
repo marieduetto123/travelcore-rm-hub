@@ -88,7 +88,8 @@
       "Bash(./deploy.sh \"move room types above condition in heatmap modal, replace chips with select menu\")",
       "Bash(./deploy.sh \"room types as dropdown multiselect with checkboxes, increase heading padding\")",
       "Bash(./deploy.sh \"heatmap modal: match Figma design - Room Type selector with chips, Add condition checkbox, fix eye icon on partial closures\")",
-      "Bash(./deploy.sh \"redesign close-out modal to match Figma: radio type cards, date picker fields, select dropdowns for strategies, radio send action, new footer style\")"
+      "Bash(./deploy.sh \"redesign close-out modal to match Figma: radio type cards, date picker fields, select dropdowns for strategies, radio send action, new footer style\")",
+      "Bash(./deploy.sh \"date range picker matches monthly style, multiselect dropdowns with chips for restriction strategies\")"
     ]
   }
 }

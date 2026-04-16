@@ -8582,20 +8582,36 @@ updateContractsStats({ y:2025, m:7, d:17 }, { y:2025, m:7, d:25 });
     if (dr) dr[field] = val;
   };
 
+  function fmtDRDate(iso) {
+    if (!iso) return '';
+    var parts = iso.split('-');
+    return parts[1] + '/' + parts[2] + '/' + parts[0];
+  }
+
   function renderDateRanges() {
     var list = document.getElementById('coDateRangeList');
     if (!list) return;
     list.innerHTML = dateRanges.map(function(dr, idx) {
+      var label = (fmtDRDate(dr.from) || 'Start') + ' - ' + (fmtDRDate(dr.to) || 'End');
       return '<div class="co2-dr-wrap">'
         + '<span class="co2-dr-label">Date Range ' + (idx + 1) + '</span>'
-        + '<div class="co2-dr-field">'
-        + '<span class="material-icons" style="font-size:18px;color:#585858">calendar_today</span>'
-        + '<input type="date" value="' + dr.from + '" data-drid="' + dr.id + '" data-drfld="from" onchange="coDRChange(+this.dataset.drid, this.dataset.drfld, this.value)">'
-        + '<span style="color:#585858">–</span>'
-        + '<input type="date" value="' + dr.to + '" data-drid="' + dr.id + '" data-drfld="to" onchange="coDRChange(+this.dataset.drid, this.dataset.drfld, this.value)">'
-        + (dateRanges.length > 1 ? '<button type="button" class="co2-dr-remove" data-drid="' + dr.id + '" onclick="coRemoveDateRange(+this.dataset.drid)" title="Remove">&times;</button>' : '')
+        + '<div class="co2-dr-trigger">'
+        + '<span class="material-icons co2-dr-cal-ico">calendar_today</span>'
+        + '<span class="co2-dr-text">' + label + '</span>'
+        + '<input type="date" class="co2-dr-input-hidden" value="' + dr.from + '" data-drid="' + dr.id + '" data-drfld="from" onchange="coDRChange(+this.dataset.drid,this.dataset.drfld,this.value);renderDateRanges()">'
+        + '<input type="date" class="co2-dr-input-hidden co2-dr-input-end" value="' + dr.to + '" data-drid="' + dr.id + '" data-drfld="to" onchange="coDRChange(+this.dataset.drid,this.dataset.drfld,this.value);renderDateRanges()">'
+        + (dateRanges.length > 1 ? '<button type="button" class="co2-dr-remove" data-drid="' + dr.id + '" onclick="event.stopPropagation();coRemoveDateRange(+this.dataset.drid)" title="Remove">&times;</button>' : '')
         + '</div></div>';
     }).join('');
+
+    // Click trigger opens the first date input
+    list.querySelectorAll('.co2-dr-trigger').forEach(function(trig) {
+      trig.addEventListener('click', function(e) {
+        if (e.target.closest('.co2-dr-remove')) return;
+        var inp = trig.querySelector('.co2-dr-input-hidden');
+        if (inp) inp.showPicker ? inp.showPicker() : inp.click();
+      });
+    });
   }
 
   // ── Restriction Strategies ─────────────────────────────────────────
@@ -8631,12 +8647,32 @@ updateContractsStats({ y:2025, m:7, d:17 }, { y:2025, m:7, d:25 });
     renderRules();
   };
 
-  function buildSelectOpts(items, selectedSet) {
-    var html = '<option value="all"' + (selectedSet.has('all') ? ' selected' : '') + '>All</option>';
-    items.forEach(function(item) {
-      html += '<option value="' + item + '"' + (selectedSet.has(item) ? ' selected' : '') + '>' + item + '</option>';
-    });
-    return html;
+  function buildMSDropdown(items, selectedSet, ruleId, field) {
+    var trigText = selectedSet.has('all') ? 'All'
+      : selectedSet.size <= 2 ? Array.from(selectedSet).join(', ')
+      : selectedSet.size + ' selected';
+    var ddItems = items.map(function(item) {
+      var isOn = selectedSet.has(item);
+      return '<label class="co2-ms-item"><input type="checkbox" value="' + item + '"'
+        + (isOn ? ' checked' : '')
+        + ' data-rid="' + ruleId + '" data-fld="' + field + '"'
+        + ' onchange="coMSChange(this)">' + item + '</label>';
+    }).join('');
+    return '<div class="co2-ms-wrap" data-rid="' + ruleId + '" data-fld="' + field + '">'
+      + '<div class="co2-ms-trigger" onclick="coMSToggle(this)">'
+      + '<span class="co2-ms-text">' + trigText + '</span>'
+      + '<span class="material-icons co2-select-arrow">arrow_drop_down</span></div>'
+      + '<div class="co2-ms-list">' + ddItems + '</div>'
+      + '</div>';
+  }
+
+  function buildChipsForSet(selectedSet, ruleId, field) {
+    if (selectedSet.has('all') || selectedSet.size === 0) return '';
+    return '<div class="co2-ms-chips">' + Array.from(selectedSet).map(function(v) {
+      return '<span class="co2-ms-chip">' + v
+        + '<span class="co2-ms-chip-x" data-rid="' + ruleId + '" data-fld="' + field + '" data-val="' + v + '" onclick="coMSRemoveChip(this)">&times;</span>'
+        + '</span>';
+    }).join('') + '</div>';
   }
 
   function renderRules() {
@@ -8646,33 +8682,65 @@ updateContractsStats({ y:2025, m:7, d:17 }, { y:2025, m:7, d:25 });
       return '<div class="co2-strategy-group">'
         + (rules.length > 1 ? '<button type="button" class="co2-strategy-remove" data-ruleid="' + rule.id + '" onclick="coRemoveRule(+this.dataset.ruleid)" title="Remove strategy">&times; Remove</button>' : '')
         + '<div class="co2-field-group"><label class="co2-field-label">Operators</label>'
-        + '<div class="co2-select-wrap"><select class="co2-select" data-rid="' + rule.id + '" data-fld="ops" onchange="coSelectChange(this)">'
-        + buildSelectOpts(OPERATORS, rule.ops) + '</select>'
-        + '<span class="material-icons co2-select-arrow">arrow_drop_down</span></div></div>'
+        + buildMSDropdown(OPERATORS, rule.ops, rule.id, 'ops')
+        + buildChipsForSet(rule.ops, rule.id, 'ops') + '</div>'
         + '<div class="co2-field-group"><label class="co2-field-label">Room Types</label>'
-        + '<div class="co2-select-wrap"><select class="co2-select" data-rid="' + rule.id + '" data-fld="rooms" onchange="coSelectChange(this)">'
-        + buildSelectOpts(ROOM_TYPES, rule.rooms) + '</select>'
-        + '<span class="material-icons co2-select-arrow">arrow_drop_down</span></div></div>'
+        + buildMSDropdown(ROOM_TYPES, rule.rooms, rule.id, 'rooms')
+        + buildChipsForSet(rule.rooms, rule.id, 'rooms') + '</div>'
         + '<div class="co2-field-group"><label class="co2-field-label">Meal Plans</label>'
-        + '<div class="co2-select-wrap"><select class="co2-select" data-rid="' + rule.id + '" data-fld="boards" onchange="coSelectChange(this)">'
-        + buildSelectOpts(BOARD_TYPES, rule.boards) + '</select>'
-        + '<span class="material-icons co2-select-arrow">arrow_drop_down</span></div></div>'
+        + buildMSDropdown(BOARD_TYPES, rule.boards, rule.id, 'boards')
+        + buildChipsForSet(rule.boards, rule.id, 'boards') + '</div>'
         + '</div>';
     }).join('');
   }
 
-  window.coSelectChange = function(el) {
-    var ruleId = parseInt(el.dataset.rid);
-    var field = el.dataset.fld;
-    var rule = rules.find(function(r) { return r.id === ruleId; });
-    if (!rule) return;
-    var val = el.value;
-    if (val === 'all') {
-      rule[field] = new Set(['all']);
-    } else {
-      rule[field] = new Set([val]);
+  window.coMSToggle = function(trigger) {
+    var wrap = trigger.closest('.co2-ms-wrap');
+    var list = wrap.querySelector('.co2-ms-list');
+    var isOpen = list.classList.contains('open');
+    // Close all others
+    document.querySelectorAll('.co2-ms-list.open').forEach(function(l) { l.classList.remove('open'); });
+    document.querySelectorAll('.co2-ms-trigger.open').forEach(function(t) { t.classList.remove('open'); });
+    if (!isOpen) {
+      list.classList.add('open');
+      trigger.classList.add('open');
     }
   };
+
+  window.coMSChange = function(cb) {
+    var ruleId = parseInt(cb.dataset.rid);
+    var field = cb.dataset.fld;
+    var rule = rules.find(function(r) { return r.id === ruleId; });
+    if (!rule) return;
+    var val = cb.value;
+    if (cb.checked) {
+      rule[field].delete('all');
+      rule[field].add(val);
+    } else {
+      rule[field].delete(val);
+    }
+    if (rule[field].size === 0) rule[field].add('all');
+    renderRules();
+  };
+
+  window.coMSRemoveChip = function(el) {
+    var ruleId = parseInt(el.dataset.rid);
+    var field = el.dataset.fld;
+    var val = el.dataset.val;
+    var rule = rules.find(function(r) { return r.id === ruleId; });
+    if (!rule) return;
+    rule[field].delete(val);
+    if (rule[field].size === 0) rule[field].add('all');
+    renderRules();
+  };
+
+  // Close dropdowns on click outside
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.co2-ms-wrap')) {
+      document.querySelectorAll('.co2-ms-list.open').forEach(function(l) { l.classList.remove('open'); });
+      document.querySelectorAll('.co2-ms-trigger.open').forEach(function(t) { t.classList.remove('open'); });
+    }
+  });
 
 
   // ── Open modal ─────────────────────────────────────────────────
