@@ -7432,18 +7432,16 @@ body.dark .cal-mfilt-btn.active { background: #1a3535; }
 }
 .hm-btn-chip svg { display: block; }
 
-/* Room type multiselect chips */
-.hm-rt-chip {
-  display: inline-flex; align-items: center; gap: 4px;
-  padding: 4px 12px; border-radius: 16px;
-  border: 1px solid #d1d5db; background: #fff;
-  font-size: 12px; font-weight: 500; color: #374151;
-  cursor: pointer; transition: all .15s; user-select: none;
+/* Room type select */
+.hm-rt-select {
+  width: 100%; min-height: 80px; padding: 4px;
+  border: 1px solid #d1d5db; border-radius: 8px;
+  background: #fff; font-size: 12px; color: #374151;
+  outline: none; cursor: pointer;
 }
-.hm-rt-chip:hover { border-color: #006461; color: #006461; }
-.hm-rt-chip.active {
-  background: #006461; border-color: #006461; color: #fff;
-}
+.hm-rt-select:focus { border-color: #006461; box-shadow: 0 0 0 2px rgba(0,100,97,.15); }
+.hm-rt-select option { padding: 6px 8px; border-radius: 4px; }
+.hm-rt-select option:checked { background: #006461; color: #fff; }
 
 /* Actions / footer */
 .hm-modal-actions {

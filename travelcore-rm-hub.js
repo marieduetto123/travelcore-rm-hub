@@ -13690,19 +13690,13 @@ window.calHideCapTip = function() {
       if (isStopSales) {
         rtSection.style.display = '';
         var rtOpts = ['Standard','Superior','Deluxe','Suite','Jr. Suite','Family'];
-        var checksEl = document.getElementById('hmRtChecks');
-        if (checksEl) {
+        var selEl = document.getElementById('hmRtSelect');
+        if (selEl) {
           var sel = hmState.stopSalesRoomTypes || [];
-          var allSelected = sel.length === 0;
-          checksEl.innerHTML = '<label class="hm-rt-chip' + (allSelected ? ' active' : '') + '">'
-            + '<input type="checkbox" onchange="hmRtToggle(\'all\',this)" style="display:none"' + (allSelected ? ' checked' : '') + '>'
-            + '<span>All</span></label>'
-            + rtOpts.map(function(rt) {
-              var isOn = sel.indexOf(rt) >= 0;
-              return '<label class="hm-rt-chip' + (isOn ? ' active' : '') + '">'
-                + '<input type="checkbox" onchange="hmRtToggle(\'' + rt + '\',this)" style="display:none"' + (isOn ? ' checked' : '') + '>'
-                + '<span>' + rt + '</span></label>';
-            }).join('');
+          selEl.innerHTML = rtOpts.map(function(rt) {
+            var isOn = sel.indexOf(rt) >= 0;
+            return '<option value="' + rt + '"' + (isOn ? ' selected' : '') + '>' + rt + '</option>';
+          }).join('');
         }
       } else {
         rtSection.style.display = 'none';
@@ -13731,18 +13725,14 @@ window.calHideCapTip = function() {
   };
 
   // ── Room type toggle (stop sales multiselect) ──────────────────
-  window.hmRtToggle = function(rt, el) {
-    if (rt === 'all') {
-      hmState.stopSalesRoomTypes = [];
-      // Re-render chips to update active states
-      if (hmState.type) hmRenderColours(hmState.type);
-      return;
+  window.hmRtReadSelect = function() {
+    var selEl = document.getElementById('hmRtSelect');
+    if (!selEl) return;
+    var arr = [];
+    for (var i = 0; i < selEl.options.length; i++) {
+      if (selEl.options[i].selected) arr.push(selEl.options[i].value);
     }
-    var arr = hmState.stopSalesRoomTypes || [];
-    var idx = arr.indexOf(rt);
-    if (idx >= 0) { arr.splice(idx, 1); } else { arr.push(rt); }
     hmState.stopSalesRoomTypes = arr;
-    if (hmState.type) hmRenderColours(hmState.type);
   };
 
   // ── Condition toggle ───────────────────────────────────────────
@@ -13759,7 +13749,8 @@ window.calHideCapTip = function() {
       if (c && p) hmState[c][p] = parseFloat(el.value) || 0;
     });
     hmState.enabled = !!hmState.type;
-    // Room types already tracked via hmRtToggle — no extra read needed
+    // Read room types from select
+    hmRtReadSelect();
     // Read condition
     var condCb     = document.getElementById('hmCondEnabled');
     var condMetric = document.getElementById('hmCondMetric');
@@ -13853,8 +13844,8 @@ window.calHideCapTip = function() {
     if (rtFilter) { rtFilter.innerHTML = ''; rtFilter.style.display = 'none'; }
     var rtSect = document.getElementById('hmRtSection');
     if (rtSect) rtSect.style.display = 'none';
-    var rtChecks = document.getElementById('hmRtChecks');
-    if (rtChecks) rtChecks.innerHTML = '';
+    var rtSelEl = document.getElementById('hmRtSelect');
+    if (rtSelEl) rtSelEl.innerHTML = '';
     hmUpdateBtn();
     renderCalendar();
   };

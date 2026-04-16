@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@33.3.0/styles/ag-grid.css"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@33.3.0/styles/ag-theme-quartz.css"/>
   <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@33.3.0/dist/ag-grid-community.min.js"></script>
-  <link rel="stylesheet" href="travelcore-rm-hub.css?v=56">
+  <link rel="stylesheet" href="travelcore-rm-hub.css?v=57">
 </head>
 <body>
 
@@ -744,6 +744,13 @@
                     <div id="hmRtFilter" style="display:none"></div>
                   </div>
 
+                  <!-- Room Types (stop sales) -->
+                  <div id="hmRtSection" style="display:none">
+                    <div class="hm-modal-divider"></div>
+                    <div style="font-size:11px;font-weight:700;color:#374151;margin-bottom:8px;text-transform:uppercase;letter-spacing:.3px">Room Types</div>
+                    <select id="hmRtSelect" multiple class="hm-rt-select"></select>
+                  </div>
+
                   <!-- Condition (optional) -->
                   <div id="hmConditionSection" style="display:none">
                     <div class="hm-modal-divider"></div>
@@ -766,11 +773,6 @@
                         <option value="<=">&lt;= at most</option>
                       </select>
                       <input type="number" id="hmCondValue" value="50" min="0" max="9999" class="hm-cond-input">
-                    </div>
-                    <!-- Room Type Selection (stop sales) — multiselect dropdown -->
-                    <div id="hmRtSection" style="display:none;margin-top:12px">
-                      <div style="font-size:11px;font-weight:700;color:#374151;margin-bottom:8px;text-transform:uppercase;letter-spacing:.3px">Room Types</div>
-                      <div id="hmRtChecks" style="display:flex;flex-wrap:wrap;gap:6px"></div>
                     </div>
                   </div>
                 </div>
@@ -3425,6 +3427,6 @@
 
 
 
-  <script src="travelcore-rm-hub.js?v=65"></script>
+  <script src="travelcore-rm-hub.js?v=66"></script>
 <div id="calCapTip" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #e0e0e0;border-radius:4px;box-shadow:0 1px 3px rgba(0,0,0,.2),0 2px 1px -1px rgba(0,0,0,.12),0 1px 1px rgba(0,0,0,.14);padding:10px;pointer-events:none;width:245px"></div>
 </body>
