@@ -7517,9 +7517,9 @@ body.dark .cal-mfilt-btn.active { background: #1a3535; }
 }
 .wb-hdr-cell:hover { background: #006461; }
 .wb-hdr-active { background: #003736; border-left: 2px solid #C4FF45; }
-.wb-hdr-selected { background: #7f1d1d !important; border-bottom: 2px solid #f43f5e; }
+.wb-hdr-selected { }
 .wb-hdr-selected .wb-hdr-dow,
-.wb-hdr-selected .wb-hdr-date { color: #fda4af; }
+.wb-hdr-selected .wb-hdr-date { }
 .wb-hdr-co-badge {
   font-size: 9px; font-weight: 700; letter-spacing: 0.3px; text-transform: uppercase;
   padding: 1px 5px; border-radius: 3px; white-space: nowrap; line-height: 1.4;
