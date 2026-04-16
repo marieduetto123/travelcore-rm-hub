@@ -3483,13 +3483,7 @@ var _wvSelectedDays = new Set(); // ISO date strings selected for close-out in w
 window.wvDayCheck = function(dateStr, cb) {
   if (cb.checked) _wvSelectedDays.add(dateStr);
   else _wvSelectedDays.delete(dateStr);
-  // Update close out button
-  var btn = document.getElementById('wbCloseOutBtn');
-  if (btn) {
-    var n = _wvSelectedDays.size;
-    btn.style.display = n > 0 ? '' : 'none';
-    btn.childNodes[btn.childNodes.length - 1].textContent = ' Close Out ' + n + ' Day' + (n !== 1 ? 's' : '');
-  }
+  _syncCloseOutBtn();
 };
 
 window.wvOpenCloseOut = function() {
@@ -3498,6 +3492,16 @@ window.wvOpenCloseOut = function() {
   var from = dates[0], to = dates[dates.length - 1];
   if (typeof window._coOpenModal === 'function') window._coOpenModal(from, to);
 };
+
+// Shared: sync the primary Close Out button enabled/disabled + label
+function _syncCloseOutBtn() {
+  var btn = document.getElementById('wbCloseOutBtn');
+  if (!btn) return;
+  var n = _wvSelectedDays.size + _wbSelectedDays.size;
+  btn.disabled = n === 0;
+  var txt = n > 0 ? 'Close Out ' + n + ' Day' + (n !== 1 ? 's' : '') : 'Close Out';
+  btn.childNodes[btn.childNodes.length - 1].textContent = ' ' + txt;
+}
 
 // ── Daily B View ─────────────────────────────────────────────────────────────
 var _wbCollapsed    = {};   // shared collapse state (used by both HTML fallback and AG Grid)
@@ -3564,13 +3568,7 @@ window.wbDayToggle = function(dateStr) {
   // Update just this header cell's selected class (no full rebuild)
   var cell = document.querySelector('.wb-hdr-cell[data-wb-date="' + dateStr + '"]');
   if (cell) cell.classList.toggle('wb-hdr-selected', _wbSelectedDays.has(dateStr));
-  // Update the Close Out button visibility + label
-  var btn = document.getElementById('wbCloseOutBtn');
-  if (btn) {
-    var n = _wbSelectedDays.size;
-    btn.style.display = n > 0 ? '' : 'none';
-    btn.childNodes[btn.childNodes.length - 1].textContent = ' Close Out ' + n + ' Day' + (n !== 1 ? 's' : '');
-  }
+  _syncCloseOutBtn();
 };
 
 window.wbOpenCloseOut = function() {
@@ -3910,6 +3908,11 @@ function buildDailyBView(days, month, activeDay) {
     var _coPart2 = (PARTIAL_CLOSURES[_coKey2] || []).length > 0;
     var _lockColor = isSel ? '#f43f5e' : _coFull2 ? '#fca5a5' : _coPart2 ? '#fde68a' : 'rgba(255,255,255,0.35)';
     var _lockWidth = (isSel || _coFull2 || _coPart2) ? '1.5' : '1.3';
+    var _lockIcon = _coFull2
+          ? '<span class="wb-hdr-lock-icon" title="Closed out"><span class="material-icons" style="font-size:13px;color:#fca5a5">lock</span></span>'
+          : _coPart2
+          ? '<span class="wb-hdr-lock-icon" title="Partially closed out"><span class="material-icons" style="font-size:13px;color:#fde68a">lock_open</span></span>'
+          : '';
     html += '<div class="wb-data-cell wb-hdr-cell'
           + (isAct ? ' wb-hdr-active' : '')
           + (isSel ? ' wb-hdr-selected' : '')
@@ -3918,6 +3921,7 @@ function buildDailyBView(days, month, activeDay) {
           + '<span class="wb-hdr-dow">' + dow + '</span>'
           + '<span class="wb-hdr-date">' + dv.day + '/' + dv.month + '</span>'
           + (dbaStr ? '<span style="font-size:10px;background:rgba(255,255,255,0.2);border-radius:3px;padding:0 4px;color:#fff;white-space:nowrap">'+dbaStr+'</span>' : '')
+          + _lockIcon
           + '</div>';
   });
   html += '</div>';
@@ -7574,12 +7578,7 @@ function buildWeekGrid(month, weekStart, activeDay) {
   panel.style.display = '';
 
   // Sync close-out button with weekly checkbox state
-  var _coBtn = document.getElementById('wbCloseOutBtn');
-  if (_coBtn) {
-    var _nSel = _wvSelectedDays.size + _wbSelectedDays.size;
-    _coBtn.style.display = _nSel > 0 ? '' : 'none';
-    if (_nSel > 0) _coBtn.childNodes[_coBtn.childNodes.length - 1].textContent = ' Close Out ' + _nSel + ' Day' + (_nSel !== 1 ? 's' : '');
-  }
+  _syncCloseOutBtn();
 
   // Sync panel item heights to actual rendered section heights (not body.scrollHeight
   // which can diverge from layout height once flex/grid stretching is applied)
@@ -8738,8 +8737,7 @@ updateContractsStats({ y:2025, m:7, d:17 }, { y:2025, m:7, d:25 });
     // Clear selected days after close-out
     _wbSelectedDays.clear();
     _wvSelectedDays.clear();
-    var _coBtn2 = document.getElementById('wbCloseOutBtn');
-    if (_coBtn2) _coBtn2.style.display = 'none';
+    _syncCloseOutBtn();
 
     renderCalendar();
     buildWeekGrid(wvMonth, wvWeekStart, wvWeekStart);
