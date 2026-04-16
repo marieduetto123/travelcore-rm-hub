@@ -4301,7 +4301,8 @@ function buildDailyBView(days, month, activeDay) {
                     + '</div>';
       }
 
-      html += '<div class="wb-data-cell wb-' + row.type + '-cell">' + cellContent + '</div>';
+      var _dayLocked = LOCKED_DAYS.has(dv.month+'-'+dv.day);
+      html += '<div class="wb-data-cell wb-' + row.type + '-cell' + (_dayLocked ? ' wb-col-locked' : '') + '">' + cellContent + '</div>';
     });
 
     html += '</div>'; // wb-row

@@ -7540,6 +7540,7 @@ body.dark .cal-mfilt-btn.active { background: #1a3535; }
 .wb-hdr-co-part { background: rgba(255,255,255,0.18); color: #fde68a; }
 .wb-hdr-sel-icon { margin-left: auto; line-height: 0; flex-shrink: 0; }
 .wb-hdr-lock-icon { margin-left: auto; line-height: 0; flex-shrink: 0; }
+.wb-col-locked { background: #fefce8 !important; }
 .wb-hdr-dow  { font-family: 'Lato', sans-serif; font-size: 14px; font-weight: 700; color: #fff; }
 .wb-hdr-date { font-family: 'Lato', sans-serif; font-size: 14px; font-weight: 400; color: rgba(255,255,255,.7); }
 

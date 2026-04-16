@@ -72,7 +72,8 @@
       "Bash(./deploy.sh \"remove red highlight from selected close-out day headers\")",
       "Bash(./deploy.sh \"clear day checkboxes after close-out is confirmed\")",
       "Bash(./deploy.sh \"secondary close dropdown, primary close out button disabled until selection, lock icons on closed days\")",
-      "Bash(./deploy.sh \"change cell metrics, filters, heatmap to text buttons with pale green hover\")"
+      "Bash(./deploy.sh \"change cell metrics, filters, heatmap to text buttons with pale green hover\")",
+      "Bash(./deploy.sh \"pale yellow on locked day columns, move close out button next to close\")"
     ]
   }
 }
