@@ -1666,11 +1666,13 @@ function renderCalendar() {
       const capTipAttr = isLocked ? '' : ` onmouseenter="calShowCapTip(event,${hotel},${hotelRooms},${to},${toRoomsSold},${210-hotelRooms-toRoomsSold},${m.month},${d})" onmouseleave="calHideCapTip()"`;
       const moIso = `${m.year}-${String(m.month).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
       const moChk = _moSelectedDays.has(moIso) ? ' checked' : '';
+      const _showEye = !isCompact && !isLocked && !isActionNeeded;
       cells += `<div class="${classes}" data-month="${m.month}" data-day="${d}"${capTipAttr}>
         <div class="cell-day-hdr">
           <input type="checkbox" class="wv-day-chk mo-day-chk"${moChk} onclick="event.stopPropagation();moDayCheck('${moIso}',this)" title="Select for close-out">
-          <span class="cell-hdr-left"><span class="day-num">${d}</span>${isLocked ? lockIcoYellow : ''}</span>
-          ${!isCompact && !isLocked ? eyeSvg : ''}
+          ${isLocked ? '<span class="mo-lock-ico">' + lockIcoYellow + '</span>' : ''}
+          <span class="cell-hdr-left"><span class="day-num">${d}</span></span>
+          ${_showEye ? eyeSvg : ''}
         </div>
         ${!isCompact ? `<div class="cell-content">${metricRows}</div>` : ''}
         ${!isCompact && (hasCalCl || hasCalEvents) && !_isStopSalesActive ? '<span class="cell-event-ico" onmouseenter="calShowEventTip(event,\''+m.month+'-'+d+'\')" onmouseleave="calHideEventTip()"><span class="material-icons" style="font-size:16px;color:#006461">today</span></span>' : ''}

@@ -83,7 +83,8 @@
       "Bash(./deploy.sh \"close-out modal shows individual selected days, not a range; works for monthly, weekly, and daily B checkboxes\")",
       "Bash(./deploy.sh \"restyle date shuffler nav buttons to match Figma: borderless circular 32px icons\")",
       "Bash(./deploy.sh \"dark green text on heatmap green cells, today circle always white text, centered day numbers\")",
-      "Bash(./deploy.sh \"move room types multiselect under conditions in stop sales heatmap modal\")"
+      "Bash(./deploy.sh \"move room types multiselect under conditions in stop sales heatmap modal\")",
+      "Bash(./deploy.sh \"remove eye icon from closed/partial-closed days, reposition lock icon below checkbox on monthly\")"
     ]
   }
 }
