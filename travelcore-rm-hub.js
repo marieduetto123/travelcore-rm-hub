@@ -1663,8 +1663,11 @@ function renderCalendar() {
       const hotelRooms = toRooms(hotel);
       const toRoomsSold = toRooms(to);
       const capTipAttr = isLocked ? '' : ` onmouseenter="calShowCapTip(event,${hotel},${hotelRooms},${to},${toRoomsSold},${210-hotelRooms-toRoomsSold},${m.month},${d})" onmouseleave="calHideCapTip()"`;
+      const moIso = `${m.year}-${String(m.month).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+      const moChk = _moSelectedDays.has(moIso) ? ' checked' : '';
       cells += `<div class="${classes}" data-month="${m.month}" data-day="${d}"${capTipAttr}>
         <div class="cell-day-hdr">
+          <input type="checkbox" class="wv-day-chk mo-day-chk"${moChk} onclick="event.stopPropagation();moDayCheck('${moIso}',this)" title="Select for close-out">
           <span class="cell-hdr-left"><span class="day-num">${d}</span>${isLocked ? lockIcoYellow : ''}</span>
           ${!isCompact && !isLocked ? eyeSvg : ''}
         </div>
@@ -3482,6 +3485,22 @@ function buildCoHeatmap(days) {
     + '</div>';
 }
 
+// ── Monthly view day close-out checkboxes ────────────────────────────────────
+var _moSelectedDays = new Set(); // ISO date strings selected for close-out in monthly view
+
+window.moDayCheck = function(dateStr, cb) {
+  if (cb.checked) _moSelectedDays.add(dateStr);
+  else _moSelectedDays.delete(dateStr);
+  _syncCloseOutBtn();
+};
+
+window.moOpenCloseOut = function() {
+  var dates = Array.from(_moSelectedDays).sort();
+  if (!dates.length) return;
+  var from = dates[0], to = dates[dates.length - 1];
+  if (typeof window._coOpenModal === 'function') window._coOpenModal(from, to);
+};
+
 // ── Weekly view day close-out checkboxes ─────────────────────────────────────
 var _wvSelectedDays = new Set(); // ISO date strings selected for close-out in weekly view
 
@@ -3498,12 +3517,19 @@ window.wvOpenCloseOut = function() {
   if (typeof window._coOpenModal === 'function') window._coOpenModal(from, to);
 };
 
-// Shared: sync the primary Close Out button enabled/disabled + label
+// Shared: sync the primary Close Out button enabled/disabled
 function _syncCloseOutBtn() {
+  // Weekly Close Out button
   var btn = document.getElementById('wbCloseOutBtn');
-  if (!btn) return;
-  var n = _wvSelectedDays.size + _wbSelectedDays.size;
-  btn.disabled = n === 0;
+  if (btn) {
+    var n = _wvSelectedDays.size + _wbSelectedDays.size;
+    btn.disabled = n === 0;
+  }
+  // Monthly Close Out button
+  var moBtn = document.getElementById('moCloseOutBtn');
+  if (moBtn) {
+    moBtn.disabled = _moSelectedDays.size === 0;
+  }
 }
 
 // ── Daily B View ─────────────────────────────────────────────────────────────
@@ -8740,6 +8766,7 @@ updateContractsStats({ y:2025, m:7, d:17 }, { y:2025, m:7, d:25 });
     }
 
     // Clear selected days after close-out
+    _moSelectedDays.clear();
     _wbSelectedDays.clear();
     _wvSelectedDays.clear();
     _syncCloseOutBtn();
