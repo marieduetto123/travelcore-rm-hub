@@ -101,7 +101,8 @@
       "Bash(sed -i '' 's/js?v=76/js?v=77/' travelcore-rm-hub.html)",
       "Bash(./deploy.sh \"change T to TO for tour operator labels throughout\")",
       "WebFetch(domain:storybook.duettoresearch.com)",
-      "Bash(./deploy.sh \"two-panel month range picker with pill-shaped range highlighting\")"
+      "Bash(./deploy.sh \"two-panel month range picker with pill-shaped range highlighting\")",
+      "Bash(./deploy.sh \"month picker: three-phase click cycle \\(start → end → clear\\)\")"
     ]
   }
 }
