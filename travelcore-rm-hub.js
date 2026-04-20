@@ -2282,6 +2282,7 @@ document.querySelectorAll('.mo-grp-btn').forEach(function(btn) {
     document.querySelectorAll('#weekView .wv-groupby-btn').forEach(function(b) {
       b.classList.toggle('active', b.dataset.groupby === wvGrp);
     });
+    _updateAccBtnState();
   });
 });
 
@@ -3159,7 +3160,7 @@ function renderWeekView(month, day) {
   buildWeekGrid(month, weekStartDay, day);
 }
 
-function openWeekView(month, day) { renderWeekView(month, day); }
+function openWeekView(month, day) { renderWeekView(month, day); _updateAccBtnState(); }
 
 /* ── Metrics selector state ── */
 const wvMetricState = {
@@ -7705,6 +7706,17 @@ function setAllAccordions(collapse) {
 document.getElementById('wvRtCloseAll')?.addEventListener('click', function() { setAllAccordions(true); });
 document.getElementById('wvRtOpenAll')?.addEventListener('click',  function() { setAllAccordions(false); });
 
+function _updateAccBtnState() {
+  var disabled = (wvGroupBy === 'roomType' || wvGroupBy === 'coReport');
+  ['wvRtCloseAll','wvRtOpenAll'].forEach(function(id) {
+    var btn = document.getElementById(id);
+    if (!btn) return;
+    btn.disabled = disabled;
+    btn.style.opacity = disabled ? '0.35' : '';
+    btn.style.cursor  = disabled ? 'not-allowed' : '';
+  });
+}
+
 // ── Reorder Modal (shared across Daily, Daily H, Daily R) ─────────────────
 var _tsDragEl = null;
 
@@ -7999,6 +8011,7 @@ document.querySelectorAll('#weekView .wv-groupby-btn').forEach(function(btn) {
     wvGroupBy = this.dataset.groupby;
     document.querySelectorAll('#weekView .wv-groupby-btn').forEach(function(b) { b.classList.remove('active'); });
     this.classList.add('active');
+    _updateAccBtnState();
     // Table Settings inline button visibility handled by topbar
     buildWeekGrid(wvMonth, wvWeekStart, wvWeekStart);
   });
