@@ -7456,7 +7456,7 @@ body.dark .cal-mfilt-btn.active { background: #1a3535; }
 .hm-modal-subtitle { font-size: 14px; font-weight: 400; color: #1C1C1C; font-family: Lato, sans-serif; }
 .hm-modal-divider { height: 1px; background: #DDE1E2; flex-shrink: 0; }
 .hm-modal-section { display: flex; flex-direction: column; gap: 8px; }
-.hm-modal-section-heading { font-size: 16px; font-weight: 700; color: #1C1C1C; font-family: Lato, sans-serif; }
+.hm-modal-section-heading { font-size: 14px; font-weight: 400; color: #585858; font-family: Lato, sans-serif; }
 
 /* Type of Heatmap — radio grid */
 .hm-type-grid {
