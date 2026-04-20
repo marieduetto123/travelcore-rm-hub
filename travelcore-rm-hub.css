@@ -7368,7 +7368,7 @@ body.dark .cal-mfilt-btn.active { background: #1a3535; }
   width: 10px !important;
   height: 10px !important;
   border-radius: 2px !important;
-  background: #C4FF45 !important;  /* lime — visible on teal header */
+  background: #ffffff !important;  /* white — visible on dark green header */
   z-index: 3;
 }
 .cell-event-icon svg { flex-shrink: 0; }

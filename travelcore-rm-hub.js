@@ -13732,16 +13732,16 @@ window.calHideCapTip = function() {
       label: 'Hotel Occupancy',
       icon: '🏨',
       svgPath: 'M7 13c1.66 0 3-1.34 3-3S8.66 7 7 7s-3 1.34-3 3 1.34 3 3 3zm12-6h-8v7H3V5H1v15h2v-3h18v3h2v-9c0-2.21-1.79-4-4-4z',
-      grey:  { desc: 'Occupancy above',  input: { param: 'greyT',  def: 85, unit: '%' } },
-      green: { desc: 'Occupancy below',  input: { param: 'greenT', def: 60, unit: '%' } },
+      grey:  { desc: 'Occupancy above (%)',  input: { param: 'greyT',  def: 85, unit: '%' } },
+      green: { desc: 'Occupancy below (%)',  input: { param: 'greenT', def: 60, unit: '%' } },
       blue:  { desc: 'Between Grey & Green thresholds', input: null }
     },
     remaining: {
       label: 'Remaining Rooms',
       icon: '🛏',
       svgPath: 'M19 7h-8v7H3V5H1v15h2v-3h18v3h2V11c0-2.21-1.79-4-4-4z',
-      grey:  { desc: 'Remaining rooms less than',  input: { param: 'greyT',  def: 10, unit: 'rooms' } },
-      green: { desc: 'Remaining rooms more than',  input: { param: 'greenT', def: 50, unit: 'rooms' } },
+      grey:  { desc: 'Remaining rooms less than (room nights)',  input: { param: 'greyT',  def: 10, unit: 'rms' } },
+      green: { desc: 'Remaining rooms more than (room nights)',  input: { param: 'greenT', def: 50, unit: 'rms' } },
       blue:  { desc: 'Between Grey & Green thresholds', input: null }
     },
     mealplan: {
@@ -13756,8 +13756,8 @@ window.calHideCapTip = function() {
       label: 'TO Forecast',
       icon: '📊',
       svgPath: 'M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z',
-      grey:  { desc: 'OTB/Commit above forecast by', input: { param: 'greyT',  def: 20, unit: 'rooms' } },
-      green: { desc: 'OTB/Commit below forecast by', input: { param: 'greenT', def: 20, unit: 'rooms' } },
+      grey:  { desc: 'OTB/Commit above forecast by (room nights)', input: { param: 'greyT',  def: 20, unit: 'rms' } },
+      green: { desc: 'OTB/Commit below forecast by (room nights)', input: { param: 'greenT', def: 20, unit: 'rms' } },
       blue:  { desc: 'Between Grey & Green thresholds', input: null }
     }
   };

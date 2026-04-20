@@ -117,7 +117,8 @@
       "Bash(./deploy.sh \"move Open All / Close All to right of tabs, date shuffler to far right\")",
       "Bash(./deploy.sh \"metrics dropdown: T → T.O column header and Combined label\")",
       "Bash(./deploy.sh \"weekly view: default compare to none on first load\")",
-      "Bash(./deploy.sh \"disable Open All/Close All on Close Outs and Close Out Report tabs\")"
+      "Bash(./deploy.sh \"disable Open All/Close All on Close Outs and Close Out Report tabs\")",
+      "Bash(./deploy.sh \"weekly event icon white; heatmap threshold unit labels; TO Forecast label improvements\")"
     ]
   }
 }
