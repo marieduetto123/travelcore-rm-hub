@@ -113,7 +113,8 @@
       "Bash(./deploy.sh \"default calendar compare to none on load\")",
       "Bash(./deploy.sh \"legend: red=full close out, orange=partial lock; move legend above calendar\")",
       "Bash(./deploy.sh \"increase spacing between months in monthly view\")",
-      "Bash(./deploy.sh \"legend: TO → Tour Operator\")"
+      "Bash(./deploy.sh \"legend: TO → Tour Operator\")",
+      "Bash(./deploy.sh \"move Open All / Close All to right of tabs, date shuffler to far right\")"
     ]
   }
 }
