@@ -7370,7 +7370,7 @@ body.dark .cal-mfilt-btn.active { background: #1a3535; }
 }
 .cell-event-icon:hover { opacity: .75; }
 .cell-event-icon:hover { transform: scale(1.18); }
-/* Event icon — absolute bottom-right of the stay date column header */
+/* Event icon — absolute bottom-right of the stay date column header (legacy dot, kept for month view) */
 .wv-event-icon {
   position: absolute !important;
   bottom: 4px !important;
@@ -7378,9 +7378,16 @@ body.dark .cal-mfilt-btn.active { background: #1a3535; }
   width: 10px !important;
   height: 10px !important;
   border-radius: 2px !important;
-  background: #ffffff !important;  /* white — visible on dark green header */
+  background: #ffffff !important;
   z-index: 3;
 }
+/* Weekly calendar event icon — inline calendar icon in column header */
+.wv-event-cal-icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  cursor: pointer; flex-shrink: 0; margin-left: auto;
+  opacity: .85; transition: opacity .12s;
+}
+.wv-event-cal-icon:hover { opacity: 1; }
 .cell-event-icon svg { flex-shrink: 0; }
 
 /* Tooltip */

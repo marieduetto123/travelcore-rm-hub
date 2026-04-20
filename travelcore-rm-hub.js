@@ -7033,7 +7033,7 @@ function buildWeekGrid(month, weekStart, activeDay) {
     const wvEventKey = `${dm}-${dd}`;
     const wvEvents = (typeof CAL_EVENTS !== 'undefined' && CAL_EVENTS[wvEventKey]) ? CAL_EVENTS[wvEventKey] : null;
     const wvEventIconHtml = wvEvents
-      ? `<span class="cell-event-icon wv-event-icon" data-event-key="${wvEventKey}" onmouseenter="calShowEventTip(event,'${wvEventKey}')" onmouseleave="calHideEventTip()"></span>`
+      ? `<span class="wv-event-cal-icon" data-event-key="${wvEventKey}" onmouseenter="calShowEventTip(event,'${wvEventKey}')" onmouseleave="calHideEventTip()"><span class="material-icons" style="font-size:14px;color:#fff;opacity:.9;display:block">today</span></span>`
       : '';
     const isActionNeeded = hotel >= 65 && to < 40 && !isLocked;
     let wvMetricVal = hotel;

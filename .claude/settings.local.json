@@ -129,7 +129,8 @@
       "Bash(./deploy.sh \"remove dropdown arrow from heatmap button\")",
       "Bash(./deploy.sh \"month picker opens showing currently selected range \\(not always 12 months\\)\")",
       "Bash(./deploy.sh \"Open All/Close All to left of day switcher\")",
-      "Bash(./deploy.sh \"weekly compare: replace dropdown with None/STLY/LY/Forecast pill buttons\")"
+      "Bash(./deploy.sh \"weekly compare: replace dropdown with None/STLY/LY/Forecast pill buttons\")",
+      "Bash(./deploy.sh \"weekly header: replace event dot with white calendar icon; hover shows events\")"
     ]
   }
 }
