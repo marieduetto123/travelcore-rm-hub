@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@33.3.0/styles/ag-grid.css"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@33.3.0/styles/ag-theme-quartz.css"/>
   <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@33.3.0/dist/ag-grid-community.min.js"></script>
-  <link rel="stylesheet" href="travelcore-rm-hub.css?v=64">
+  <link rel="stylesheet" href="travelcore-rm-hub.css?v=65">
 </head>
 <body>
 
@@ -466,22 +466,36 @@
                 <span id="calDRLabel">Jan 2026 – Dec 2026</span>
                 <span class="material-icons" style="font-size:16px">calendar_today</span>
               </button>
-              <!-- Month picker panel -->
-              <div id="calDRPanel" style="display:none;position:fixed;top:0;left:0;z-index:9999;background:#fff;border:1px solid #e2e8f0;border-radius:12px;box-shadow:0 12px 40px rgba(0,0,0,.2);width:300px">
-                <!-- Year nav -->
-                <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px 10px;border-bottom:1px solid #f1f5f9">
-                  <button onclick="calDRNav(-1)" style="border:none;background:none;cursor:pointer;padding:4px 10px;border-radius:4px;color:#374151;font-size:18px;line-height:1">‹</button>
-                  <span id="calDRPickYear" style="font-size:15px;font-weight:700;color:#111827"></span>
-                  <button onclick="calDRNav(1)"  style="border:none;background:none;cursor:pointer;padding:4px 10px;border-radius:4px;color:#374151;font-size:18px;line-height:1">›</button>
+              <!-- Month range picker — two-panel -->
+              <div id="calDRPanel" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #e2e8f0;border-radius:12px;box-shadow:0 12px 40px rgba(0,0,0,.2);user-select:none">
+                <div style="display:flex">
+                  <!-- Left panel -->
+                  <div class="caldr-half">
+                    <div class="caldr-hdr">
+                      <button class="caldr-nav-btn" onclick="calDRNav(-1)">&#8249;</button>
+                      <span id="calDRLeftYear" class="caldr-yr"></span>
+                      <div style="width:32px"></div>
+                    </div>
+                    <div id="calDRLeftGrid" class="caldr-mgrid"></div>
+                  </div>
+                  <!-- Separator -->
+                  <div style="width:1px;background:#e5e7eb"></div>
+                  <!-- Right panel -->
+                  <div class="caldr-half">
+                    <div class="caldr-hdr">
+                      <div style="width:32px"></div>
+                      <span id="calDRRightYear" class="caldr-yr"></span>
+                      <button class="caldr-nav-btn" onclick="calDRNav(1)">&#8250;</button>
+                    </div>
+                    <div id="calDRRightGrid" class="caldr-mgrid"></div>
+                  </div>
                 </div>
-                <!-- 4×3 month grid -->
-                <div id="calDRMonthGrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:14px 14px 10px"></div>
                 <!-- Footer -->
-                <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px 14px;border-top:1px solid #f1f5f9">
-                  <span id="calDRFooterLabel" style="font-size:12px;color:#374151;font-weight:500"></span>
+                <div class="caldr-foot">
+                  <span id="calDRFooterLabel" class="caldr-foot-lbl"></span>
                   <div style="display:flex;gap:8px">
-                    <button onclick="calDRCancel()" style="padding:6px 12px;border:none;background:none;color:#374151;font-size:13px;cursor:pointer;border-radius:6px">Cancel</button>
-                    <button onclick="calDRApply()" style="padding:6px 14px;background:#006461;color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer">Apply</button>
+                    <button onclick="calDRCancel()" class="caldr-btn-cancel">Cancel</button>
+                    <button onclick="calDRApply()" class="caldr-btn-apply">Apply</button>
                   </div>
                 </div>
               </div>
@@ -3442,6 +3456,6 @@
 
 
 
-  <script src="travelcore-rm-hub.js?v=77"></script>
+  <script src="travelcore-rm-hub.js?v=78"></script>
 <div id="calCapTip" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #e0e0e0;border-radius:4px;box-shadow:0 1px 3px rgba(0,0,0,.2),0 2px 1px -1px rgba(0,0,0,.12),0 1px 1px rgba(0,0,0,.14);padding:10px;pointer-events:none;width:245px"></div>
 </body>

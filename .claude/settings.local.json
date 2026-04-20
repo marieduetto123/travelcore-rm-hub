@@ -99,7 +99,9 @@
       "Bash(./deploy.sh \"replace day-picker with month-picker, always show 12 months, remove view toggle\")",
       "Bash(sed -i '' 's/css?v=63/css?v=64/' travelcore-rm-hub.html)",
       "Bash(sed -i '' 's/js?v=76/js?v=77/' travelcore-rm-hub.html)",
-      "Bash(./deploy.sh \"change T to TO for tour operator labels throughout\")"
+      "Bash(./deploy.sh \"change T to TO for tour operator labels throughout\")",
+      "WebFetch(domain:storybook.duettoresearch.com)",
+      "Bash(./deploy.sh \"two-panel month range picker with pill-shaped range highlighting\")"
     ]
   }
 }

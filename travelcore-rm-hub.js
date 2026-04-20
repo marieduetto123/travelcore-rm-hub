@@ -12810,40 +12810,58 @@ setTimeout(function() {
 
 
 
-/* ═══ CALENDAR MONTH PICKER ═══ */
+/* ═══ CALENDAR MONTH PICKER — two-panel ═══ */
 (function() {
-  var MONTH_ABBR = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  var drPickYear    = 2026;
-  var drSelStartIdx = 0; // index into ALL_MONTHS of selected window start
+  var MONTH_ABBR    = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var drLeftYear    = 2026; // left panel year; right panel = drLeftYear+1
+  var drSelStartIdx = 0;    // index into ALL_MONTHS for the selected window start
 
-  /* ── Render the month grid ── */
-  function renderMonthPicker() {
-    var yearEl = document.getElementById('calDRPickYear');
-    if (yearEl) yearEl.textContent = drPickYear;
+  /* End index is always start + 11, capped at last available month */
+  function getEndIdx(startIdx) {
+    return Math.min(startIdx + 11, ALL_MONTHS.length - 1);
+  }
 
-    var grid = document.getElementById('calDRMonthGrid');
-    if (!grid) return;
-
-    var endIdx = Math.min(drSelStartIdx + 11, ALL_MONTHS.length - 1);
-
-    grid.innerHTML = MONTH_ABBR.map(function(name, mi) {
+  /* Build the 4×3 month grid for a given year into containerId */
+  function renderGrid(containerId, year) {
+    var el = document.getElementById(containerId);
+    if (!el) return;
+    var endIdx = getEndIdx(drSelStartIdx);
+    el.innerHTML = MONTH_ABBR.map(function(name, mi) {
+      var col = mi % 4;
+      /* Find index in ALL_MONTHS for (year, month) */
       var idx = -1;
       for (var i = 0; i < ALL_MONTHS.length; i++) {
-        if (ALL_MONTHS[i].year === drPickYear && ALL_MONTHS[i].month === (mi + 1)) { idx = i; break; }
+        if (ALL_MONTHS[i].year === year && ALL_MONTHS[i].month === (mi + 1)) { idx = i; break; }
       }
-      var inData = idx >= 0;
+      var inData  = idx >= 0;
       var isStart = inData && idx === drSelStartIdx;
       var isEnd   = inData && idx === endIdx;
-      var inRange = inData && idx > drSelStartIdx && idx < endIdx;
-      var cls = 'caldr-month-btn';
-      if (!inData) cls += ' caldr-month-disabled';
-      if (isStart || isEnd) cls += ' caldr-month-start';
-      else if (inRange) cls += ' caldr-month-in-range';
-      return '<button class="' + cls + '"'
-        + (inData ? ' onclick="calDRMonthClick(' + idx + ')"' : ' disabled')
-        + '>' + name + '</button>';
-    }).join('');
+      var isMid   = inData && idx > drSelStartIdx && idx < endIdx;
 
+      var cls = 'caldr-cell c-col' + col;
+      if (!inData)           cls += ' c-disabled';
+      if (isStart && isEnd)  cls += ' c-start c-end';
+      else if (isStart)      cls += ' c-start';
+      else if (isEnd)        cls += ' c-end';
+      else if (isMid)        cls += ' c-mid';
+
+      var onclick = inData ? ' onclick="calDRMonthClick(' + idx + ')"' : '';
+      return '<div class="' + cls + '"' + onclick + '>'
+           + '<span class="caldr-cell-bg"></span>'
+           + '<span class="caldr-cell-lbl">' + name + '</span>'
+           + '</div>';
+    }).join('');
+  }
+
+  /* Render both panels + footer */
+  function renderBothGrids() {
+    var leftYearEl  = document.getElementById('calDRLeftYear');
+    var rightYearEl = document.getElementById('calDRRightYear');
+    if (leftYearEl)  leftYearEl.textContent  = drLeftYear;
+    if (rightYearEl) rightYearEl.textContent = drLeftYear + 1;
+    renderGrid('calDRLeftGrid',  drLeftYear);
+    renderGrid('calDRRightGrid', drLeftYear + 1);
+    var endIdx = getEndIdx(drSelStartIdx);
     var foot = document.getElementById('calDRFooterLabel');
     if (foot) {
       var startM = ALL_MONTHS[drSelStartIdx];
@@ -12852,18 +12870,16 @@ setTimeout(function() {
     }
   }
 
-  /* ── Month click — set new start ── */
+  /* ── Month click — set new start and auto-highlight 12 months ── */
   window.calDRMonthClick = function(idx) {
     drSelStartIdx = idx;
-    // Jump picker year to show the selected month's year
-    drPickYear = ALL_MONTHS[idx].year;
-    renderMonthPicker();
+    renderBothGrids();
   };
 
-  /* ── Navigate years ── */
+  /* ── Navigate years (both panels move together) ── */
   window.calDRNav = function(delta) {
-    drPickYear += delta;
-    renderMonthPicker();
+    drLeftYear += delta;
+    renderBothGrids();
   };
 
   /* ── Open / close ── */
@@ -12872,16 +12888,18 @@ setTimeout(function() {
     var trigger = document.getElementById('calDRTrigger');
     if (!panel) return;
     if (panel.style.display !== 'none') { panel.style.display = 'none'; return; }
-    // Sync picker to current state
+    /* Sync to current calendar state */
     drSelStartIdx = calStartIdx;
-    drPickYear    = ALL_MONTHS[calStartIdx] ? ALL_MONTHS[calStartIdx].year : 2026;
-    var rect = trigger.getBoundingClientRect();
-    var left = rect.left;
-    if (left + 300 > window.innerWidth - 8) left = Math.max(8, window.innerWidth - 308);
+    drLeftYear    = ALL_MONTHS[calStartIdx] ? ALL_MONTHS[calStartIdx].year : 2026;
+    /* Position below trigger, keep in viewport */
+    var rect     = trigger.getBoundingClientRect();
+    var panelW   = 443; /* ~210+210+1+padding */
+    var left     = rect.left;
+    if (left + panelW > window.innerWidth - 8) left = Math.max(8, window.innerWidth - panelW - 8);
     panel.style.left    = left + 'px';
     panel.style.top     = (rect.bottom + 6) + 'px';
     panel.style.display = 'block';
-    renderMonthPicker();
+    renderBothGrids();
   };
 
   window.calDRCancel = function() {
@@ -12890,7 +12908,7 @@ setTimeout(function() {
 
   window.calDRApply = function() {
     document.getElementById('calDRPanel').style.display = 'none';
-    var endIdx = Math.min(drSelStartIdx + 11, ALL_MONTHS.length - 1);
+    var endIdx = getEndIdx(drSelStartIdx);
     var startM = ALL_MONTHS[drSelStartIdx];
     var endM   = ALL_MONTHS[endIdx];
     var lbl = document.getElementById('calDRLabel');
@@ -12910,11 +12928,11 @@ setTimeout(function() {
     panel.style.display = 'none';
   }, true);
 
-  /* ── applyOutOfRange (kept for compatibility, no-op in 12-month mode) ── */
-  window.applyOutOfRange = function() {};
+  /* ── Compatibility no-ops ── */
+  window.applyOutOfRange     = function() {};
   window.applyCalDisplayRange = function() {};
 
-  /* ── Init: always 12 months starting Jan 2026 ── */
+  /* ── Init: always 12 months from Jan 2026 ── */
   setTimeout(function() {
     calStartIdx   = 0;
     drSelStartIdx = 0;

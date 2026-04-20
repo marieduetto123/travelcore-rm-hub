@@ -7300,24 +7300,51 @@ body.dark .cal-mfilt-btn.active { background: #1a3535; }
 .caldr-day.caldr-empty, .caldr-day.caldr-other { visibility: hidden; cursor: default; }
 .caldr-dow { width: 36px; text-align: center; font-size: 11px; font-weight: 700; color: #9ca3af; padding-bottom: 4px; }
 
-/* ── Month picker buttons ── */
-.caldr-month-btn {
-  padding: 8px 4px;
-  border: 1px solid #e5e7eb;
-  border-radius: 6px;
-  background: #fff;
-  font-size: 13px;
-  font-weight: 500;
-  color: #374151;
-  cursor: pointer;
-  text-align: center;
-  transition: background 0.12s, border-color 0.12s;
-  font-family: inherit;
-}
-.caldr-month-btn:hover:not(:disabled):not(.caldr-month-disabled) { background: #e0f7f6; border-color: #006461; color: #006461; }
-.caldr-month-btn.caldr-month-start { background: #006461; color: #fff; border-color: #006461; font-weight: 700; }
-.caldr-month-btn.caldr-month-in-range { background: #ccfbf1; border-color: #9ecfcd; color: #0f766e; }
-.caldr-month-btn.caldr-month-disabled, .caldr-month-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+/* ── Two-panel month range picker ── */
+.caldr-half       { width: 210px; padding: 16px 14px 10px; }
+.caldr-hdr        { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.caldr-yr         { font-size: 17px; font-weight: 800; color: #111827; }
+.caldr-nav-btn    { border: none; background: none; cursor: pointer; width: 32px; height: 32px; border-radius: 50%; font-size: 22px; line-height: 1; color: #374151; display: flex; align-items: center; justify-content: center; padding: 0; font-family: inherit; }
+.caldr-nav-btn:hover { background: #f1f5f9; }
+.caldr-mgrid      { display: grid; grid-template-columns: repeat(4, 1fr); }
+
+/* Each month cell */
+.caldr-cell       { position: relative; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.caldr-cell.c-disabled { cursor: default; opacity: 0.35; pointer-events: none; }
+.caldr-cell-bg    { position: absolute; top: 4px; bottom: 4px; left: 0; right: 0; z-index: 0; border-radius: 0; }
+.caldr-cell-lbl   { position: relative; z-index: 1; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 13px; font-weight: 500; color: #374151; }
+
+/* In-range (middle) strip */
+.caldr-cell.c-mid .caldr-cell-bg { background: #5bbfbd; }
+.caldr-cell.c-mid.c-col0 .caldr-cell-bg { border-radius: 50px 0 0 50px; }
+.caldr-cell.c-mid.c-col3 .caldr-cell-bg { border-radius: 0 50px 50px 0; }
+.caldr-cell.c-mid .caldr-cell-lbl { color: #fff; }
+
+/* Start cell — right half strip + dark circle */
+.caldr-cell.c-start .caldr-cell-bg { background: linear-gradient(to right, transparent 50%, #5bbfbd 50%); }
+.caldr-cell.c-start.c-col3 .caldr-cell-bg { background: linear-gradient(to right, transparent 50%, #5bbfbd 50%); border-radius: 0 50px 50px 0; }
+.caldr-cell.c-start .caldr-cell-lbl { background: #006461; color: #fff; font-weight: 700; }
+
+/* End cell — left half strip + dark circle */
+.caldr-cell.c-end .caldr-cell-bg { background: linear-gradient(to right, #5bbfbd 50%, transparent 50%); }
+.caldr-cell.c-end.c-col0 .caldr-cell-bg { background: linear-gradient(to right, #5bbfbd 50%, transparent 50%); border-radius: 50px 0 0 50px; }
+.caldr-cell.c-end .caldr-cell-lbl { background: #006461; color: #fff; font-weight: 700; }
+
+/* Single-month selection (start = end): just the circle, no strip */
+.caldr-cell.c-start.c-end .caldr-cell-bg { background: transparent !important; }
+.caldr-cell.c-start.c-end .caldr-cell-lbl { background: #006461; color: #fff; font-weight: 700; }
+
+/* Hover on unselected cells */
+.caldr-cell:not(.c-disabled):not(.c-start):not(.c-end):not(.c-mid):hover .caldr-cell-lbl { background: #e0f7f6; }
+
+/* Footer */
+.caldr-foot       { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px 14px; border-top: 1px solid #f1f5f9; }
+.caldr-foot-lbl   { font-size: 12px; color: #374151; font-weight: 500; }
+.caldr-btn-cancel { padding: 6px 12px; border: none; background: none; color: #374151; font-size: 13px; cursor: pointer; border-radius: 6px; font-family: inherit; }
+.caldr-btn-cancel:hover { background: #f1f5f9; }
+.caldr-btn-apply  { padding: 6px 14px; background: #006461; color: #fff; border: none; border-radius: 6px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; }
+.caldr-btn-apply:hover  { background: #004d4a; }
+
 /* Out of range — no longer used (always show all 12 months) */
 .cal-day.out-of-range { opacity: 1; pointer-events: auto; }
 
