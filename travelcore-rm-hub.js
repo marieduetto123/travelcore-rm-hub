@@ -13828,10 +13828,10 @@ window.calHideCapTip = function() {
           : c.cfg.input.def;
         var curUnit = (c.cfg.input.allowUnitToggle && hmState[c.key].unitType) ? hmState[c.key].unitType : c.cfg.input.unit;
         var unitToggleHtml = c.cfg.input.allowUnitToggle
-          ? '<div class="hm-unit-toggle">'
-            + '<button class="hm-unit-btn' + (curUnit === 'rms' ? ' active' : '') + '" onclick="hmUnitChange(\'' + c.key + '\',\'rms\')">rms</button>'
-            + '<button class="hm-unit-btn' + (curUnit === '%'   ? ' active' : '') + '" onclick="hmUnitChange(\'' + c.key + '\',\'%\')">%</button>'
-            + '</div>'
+          ? '<select class="hm-unit-select" onchange="hmUnitChange(\'' + c.key + '\',this.value)">'
+            + '<option value="rms"' + (curUnit === 'rms' ? ' selected' : '') + '>rms</option>'
+            + '<option value="%"'   + (curUnit === '%'   ? ' selected' : '') + '>%</option>'
+            + '</select>'
           : '<span class="hm-unit-label">' + c.cfg.input.unit + '</span>';
         bodyHtml = '<div class="hm-threshold-body">'
           + '<div class="hm-threshold-name">' + c.label + '</div>'
