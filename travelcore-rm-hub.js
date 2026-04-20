@@ -153,11 +153,10 @@ function buildRoomTypeTable() {
   const colDefs = [
     { field: 'room',  headerName: 'Room type',    flex: 1.4,
       cellRenderer: p => `<span class="cell-primary">${p.value}</span>` },
-    { field: 'toB',   headerName: 'T bookings',  width: 110, type: 'numericColumn' },
-    { field: 'toR',   headerName: 'T revenue',   width: 110, cellStyle: { textAlign: 'right' } },
-    { field: 'toP',   headerName: 'T profit',    width: 100, cellStyle: { textAlign: 'right' } },
-    { field: 'toAdr', headerName: 'TO ADR',       width: 90,  cellStyle: { textAlign: 'right' } },
-    { field: 'dbB',   headerName: 'DB bookings',  width: 110, type: 'numericColumn' },
+    { field: 'toB',   headerName: 'T.O bookings', width: 110, type: 'numericColumn' },
+    { field: 'toR',   headerName: 'T.O revenue',  width: 110, cellStyle: { textAlign: 'right' } },
+    { field: 'toP',   headerName: 'T.O profit',   width: 100, cellStyle: { textAlign: 'right' } },
+    { field: 'toAdr', headerName: 'TO ADR',        width: 90,  cellStyle: { textAlign: 'right' } },
     { field: 'dbR',   headerName: 'DB revenue',   width: 110, cellStyle: { textAlign: 'right' } },
     { field: 'dbP',   headerName: 'DB profit',    width: 100, cellStyle: { textAlign: 'right' } },
     { field: 'dbAdr', headerName: 'DB ADR',       width: 90,  cellStyle: { textAlign: 'right' } },
@@ -8967,8 +8966,8 @@ updateContractsStats({ y:2025, m:7, d:17 }, { y:2025, m:7, d:25 });
     const confirmBtn = document.getElementById('coConfirmBtn');
     if (confirmBtn) {
       confirmBtn.textContent = isReopen ? 'Re-Open' : 'Close Out';
-      confirmBtn.style.background = isReopen ? '#16a34a' : '';
-      confirmBtn.style.borderColor = isReopen ? '#16a34a' : '';
+      confirmBtn.style.background = '';
+      confirmBtn.style.borderColor = '';
     }
   });
 
