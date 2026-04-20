@@ -3067,7 +3067,7 @@ let wvActiveTab = 'occupancy';
 // Weekly group-by: 'combined' | 'roomType' | 'boardType'
 let wvGroupBy = 'dailyB';
 let wvSegMode = 'combined'; // 'combined' | 'individual'
-let wvCompare = 'stly';    // 'none' | 'stly' | 'ly' | 'fcst'
+let wvCompare = 'none';    // 'none' | 'stly' | 'ly' | 'fcst'
 
 function wvSetCompare(val) {
   wvCompare = val;
