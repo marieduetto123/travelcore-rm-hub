@@ -96,7 +96,10 @@
       "Bash(./deploy.sh \"red padlock for full close-out, orange padlock for partial close-out on monthly\")",
       "Bash(./deploy.sh \"revert last change\")",
       "Bash(./deploy.sh \"fix close-out applying to wrong days due to UTC date parsing\")",
-      "Bash(./deploy.sh \"replace day-picker with month-picker, always show 12 months, remove view toggle\")"
+      "Bash(./deploy.sh \"replace day-picker with month-picker, always show 12 months, remove view toggle\")",
+      "Bash(sed -i '' 's/css?v=63/css?v=64/' travelcore-rm-hub.html)",
+      "Bash(sed -i '' 's/js?v=76/js?v=77/' travelcore-rm-hub.html)",
+      "Bash(./deploy.sh \"change T to TO for tour operator labels throughout\")"
     ]
   }
 }

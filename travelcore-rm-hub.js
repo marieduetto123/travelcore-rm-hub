@@ -156,7 +156,7 @@ function buildRoomTypeTable() {
     { field: 'toB',   headerName: 'T bookings',  width: 110, type: 'numericColumn' },
     { field: 'toR',   headerName: 'T revenue',   width: 110, cellStyle: { textAlign: 'right' } },
     { field: 'toP',   headerName: 'T profit',    width: 100, cellStyle: { textAlign: 'right' } },
-    { field: 'toAdr', headerName: 'T ADR',       width: 90,  cellStyle: { textAlign: 'right' } },
+    { field: 'toAdr', headerName: 'TO ADR',       width: 90,  cellStyle: { textAlign: 'right' } },
     { field: 'dbB',   headerName: 'DB bookings',  width: 110, type: 'numericColumn' },
     { field: 'dbR',   headerName: 'DB revenue',   width: 110, cellStyle: { textAlign: 'right' } },
     { field: 'dbP',   headerName: 'DB profit',    width: 100, cellStyle: { textAlign: 'right' } },
@@ -429,7 +429,7 @@ function updateRevStats() {
   set('rtStatDirectBook', dBook.toLocaleString());
   set('rtStatDirectRev',  fmtStatK(dRev));
   var fnAdr = document.getElementById('rtFnAdr');
-  if (fnAdr) fnAdr.innerHTML = '<span class="fn-dot aug"></span> Avg T ADR $205 | Direct Bookings ADR $266';
+  if (fnAdr) fnAdr.innerHTML = '<span class="fn-dot aug"></span> Avg TO ADR $205 | Direct Bookings ADR $266';
   var fnGap = document.getElementById('rtFnRevGap');
   if (fnGap) fnGap.innerHTML = '<span class="fn-dot rev"></span> Revenue Gap ' + fmtStatK(revGap);
   var fnVol = document.getElementById('rtFnVol');
@@ -1437,23 +1437,23 @@ let calMetric = 'occupancy';
 
 const CAL_METRIC_DEFS = {
   hotelOcc:    { label: 'H-Occ',   color: '#5883ed', maxVal: 100,   fmt: function(v){ return v + '%'; },                        name: 'Hotel Occ',       group: 'Occupancy'  },
-  toOcc:       { label: 'T-Occ',   color: '#006461', maxVal: 100,   fmt: function(v){ return v + '%'; },                        name: 'T Occ',           group: 'Occupancy'  },
+  toOcc:       { label: 'TO-Occ',   color: '#006461', maxVal: 100,   fmt: function(v){ return v + '%'; },                        name: 'TO Occ',           group: 'Occupancy'  },
   lyOcc:       { label: 'LY-Occ',  color: '#93c5fd', maxVal: 100,   fmt: function(v){ return v + '%'; },                        name: 'LY Occ',          group: 'Occupancy'  },
   fcstOcc:     { label: 'Fc-Occ',  color: '#fbbf24', maxVal: 100,   fmt: function(v){ return v + '%'; },                        name: 'Fcst Occ',        group: 'Occupancy'  },
   hotelAdr:    { label: 'H-ADR',   color: '#7c3aed', maxVal: 300,   fmt: function(v){ return '$' + v; },                        name: 'Hotel ADR',       group: 'ADR'        },
-  toAdr:       { label: 'T-ADR',   color: '#4f46e5', maxVal: 300,   fmt: function(v){ return '$' + v; },                        name: 'T ADR',           group: 'ADR'        },
+  toAdr:       { label: 'TO-ADR',   color: '#4f46e5', maxVal: 300,   fmt: function(v){ return '$' + v; },                        name: 'TO ADR',           group: 'ADR'        },
   lyAdr:       { label: 'LY-ADR',  color: '#c4b5fd', maxVal: 300,   fmt: function(v){ return '$' + v; },                        name: 'LY ADR',          group: 'ADR'        },
   fcstAdr:     { label: 'Fc-ADR',  color: '#fde68a', maxVal: 300,   fmt: function(v){ return '$' + v; },                        name: 'Fcst ADR',        group: 'ADR'        },
   hotelRev:    { label: 'H-Rev',   color: '#ea580c', maxVal: 50000, fmt: function(v){ return '$' + Math.round(v/1000) + 'k'; }, name: 'Hotel Revenue',   group: 'Revenue'    },
-  toRev:       { label: 'T-Rev',   color: '#b45309', maxVal: 50000, fmt: function(v){ return '$' + Math.round(v/1000) + 'k'; }, name: 'T Revenue',       group: 'Revenue'    },
+  toRev:       { label: 'TO-Rev',   color: '#b45309', maxVal: 50000, fmt: function(v){ return '$' + Math.round(v/1000) + 'k'; }, name: 'TO Revenue',       group: 'Revenue'    },
   lyRev:       { label: 'LY-Rev',  color: '#fdba74', maxVal: 50000, fmt: function(v){ return '$' + Math.round(v/1000) + 'k'; }, name: 'LY Revenue',      group: 'Revenue'    },
   fcstRev:     { label: 'Fc-Rev',  color: '#fcd34d', maxVal: 50000, fmt: function(v){ return '$' + Math.round(v/1000) + 'k'; }, name: 'Fcst Revenue',    group: 'Revenue'    },
   hotelPickup: { label: 'H-Pkp',   color: '#16a34a', maxVal: 30,    fmt: function(v){ return (v>=0?'+':'') + v; },              name: 'Hotel Pickup',    group: 'Pickup'     },
-  toPickup:    { label: 'T-Pkp',   color: '#0d9488', maxVal: 30,    fmt: function(v){ return (v>=0?'+':'') + v; },              name: 'T Pickup',        group: 'Pickup'     },
+  toPickup:    { label: 'TO-Pkp',   color: '#0d9488', maxVal: 30,    fmt: function(v){ return (v>=0?'+':'') + v; },              name: 'TO Pickup',        group: 'Pickup'     },
   hotelRn:     { label: 'H-RN',    color: '#2e65e8', maxVal: 210,   fmt: function(v){ return String(v); },                      name: 'Hotel RN Sold',   group: 'RN Sold'    },
-  toRn:        { label: 'T-RN',    color: '#0284c7', maxVal: 210,   fmt: function(v){ return String(v); },                      name: 'T RN Sold',       group: 'RN Sold'    },
+  toRn:        { label: 'TO-RN',    color: '#0284c7', maxVal: 210,   fmt: function(v){ return String(v); },                      name: "TO RN Sold",       group: 'RN Sold'    },
   hotelTrev:   { label: 'H-TRV',   color: '#9333ea', maxVal: 500,   fmt: function(v){ return '$' + v; },                        name: 'Hotel REVPAR',    group: 'REVPAR'     },
-  toTrev:      { label: 'T-TRV',   color: '#7c3aed', maxVal: 500,   fmt: function(v){ return '$' + v; },                        name: 'T REVPAR',        group: 'REVPAR'     },
+  toTrev:      { label: 'TO-TRV',   color: '#7c3aed', maxVal: 500,   fmt: function(v){ return '$' + v; },                        name: 'TO REVPAR',        group: 'REVPAR'     },
   lyRevpar:    { label: 'LY-RVP',  color: '#d8b4fe', maxVal: 500,   fmt: function(v){ return '$' + v; },                        name: 'LY REVPAR',       group: 'REVPAR'     },
   fcstRevpar:  { label: 'Fc-RVP',  color: '#fef08a', maxVal: 500,   fmt: function(v){ return '$' + v; },                        name: 'Fcst REVPAR',     group: 'REVPAR'     },
   remainRooms:  { label: 'Rem',    color: '#16a34a', maxVal: 210,   fmt: function(v){ return String(v); },                        name: 'Remaining Rooms',    group: 'Other'         },
@@ -1586,7 +1586,7 @@ function renderCalendar() {
           ? window.cmBuildRows(cellMetricVals)
           : [
               { label: 'H-Occ', value: hotel + '%', raw: hotel, color: '#5883ed' },
-              { label: 'T-Occ', value: to + '%',    raw: to,    color: '#006461' },
+              { label: 'TO-Occ', value: to + '%',    raw: to,    color: '#006461' },
             ];
 
         // Compare multipliers
@@ -1599,13 +1599,13 @@ function renderCalendar() {
           : calCompareMode === 'budget' ? _budgF : 0;
 
         return rows.map(function(r) {
-          // Determine if this is a Hotel (H) or TO (T) metric by label prefix
+          // Determine if this is a Hotel (H-) or TO (TO-) metric by label prefix
           var lbl = r.label || '';
-          var isTO = lbl.charAt(0) === 'T' && lbl.charAt(1) === '-';
+          var isTO = lbl.substring(0, 3) === 'TO-';
           var isH  = lbl.charAt(0) === 'H' && lbl.charAt(1) === '-';
           var metricColorClass = isTO ? 'cell-m-to' : 'cell-m-hotel';
-          // Short label: strip H-/T- prefix, then strip LY-/STLY-/Fcst- for cleanliness
-          var shortLabel = (isH || isTO) ? lbl.substring(2) : lbl;
+          // Short label: strip H-/TO- prefix, then strip LY-/STLY-/Fcst- for cleanliness
+          var shortLabel = isTO ? lbl.substring(3) : (isH ? lbl.substring(2) : lbl);
           shortLabel = shortLabel.replace(/^LY-|^STLY-|^Fcst-/, '');
 
           // Comparison value
@@ -1799,7 +1799,7 @@ function renderCalMonthlySummary() {
         +'<span style="font-size:6px;font-weight:700;color:#9ca3af;text-transform:uppercase">Hotel</span>'
         +'<span style="font-size:8px;color:#6b7280">'+hVal+'</span></span>':'')
       +'<span style="display:flex;flex-direction:column;align-items:flex-end;margin-left:6px">'
-      +'<span style="font-size:6px;font-weight:700;color:'+clr+';text-transform:uppercase">T</span>'
+      +'<span style="font-size:6px;font-weight:700;color:'+clr+';text-transform:uppercase">TO</span>'
       +'<span style="font-size:9px;font-weight:800;color:'+clr+'">'+tVal+'</span></span>'
       +'</div>'
       +(tPct!=null?dualBar(tPct,hPct,clr):'')
@@ -1808,7 +1808,7 @@ function renderCalMonthlySummary() {
   function colHdr(clr) {
     return '<div style="display:flex;justify-content:flex-end;gap:12px;margin-bottom:5px;padding-bottom:3px;border-bottom:1px solid #f3f4f6">'
       +'<span style="font-size:6.5px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.3px">Hotel</span>'
-      +'<span style="font-size:6.5px;font-weight:700;color:'+(clr||'#006461')+';text-transform:uppercase;letter-spacing:.3px;min-width:24px;text-align:right">T</span>'
+      +'<span style="font-size:6.5px;font-weight:700;color:'+(clr||'#006461')+';text-transform:uppercase;letter-spacing:.3px;min-width:24px;text-align:right">TO</span>'
       +'</div>';
   }
   var chevUp   = '<span class="material-icons" style="font-size:16px">expand_less</span>';
@@ -3710,13 +3710,13 @@ function buildDailyBView(days, month, activeDay) {
   }
   if (wvMetricState.adr) {
     grp.g_daily.push({type:'sect', id:'adr',       label:'ADR',          parent:'g_daily'});
-    grp.g_daily.push({type:'sub',  id:'adr_t',     label:'T ADR',        dot:'#004948', parent:'adr'});
+    grp.g_daily.push({type:'sub',  id:'adr_t',     label:'TO ADR',        dot:'#004948', parent:'adr'});
     grp.g_daily.push({type:'sub',  id:'adr_hotel', label:'Hotel ADR',    dot:'#52d9ce', parent:'adr'});
     grp.g_daily.push({type:'sub',  id:'adr_stly',  label:compLabel,      dot:'#C4FF45', parent:'adr'});
   }
   if (wvMetricState.revenue) {
     grp.g_daily.push({type:'sect', id:'rev',       label:'Revenue',       parent:'g_daily'});
-    grp.g_daily.push({type:'sub',  id:'rev_t',     label:'T Revenue',     dot:'#004948', parent:'rev'});
+    grp.g_daily.push({type:'sub',  id:'rev_t',     label:'TO Revenue',     dot:'#004948', parent:'rev'});
     grp.g_daily.push({type:'sub',  id:'rev_hotel', label:'Hotel Revenue', dot:'#52d9ce', parent:'rev'});
     grp.g_daily.push({type:'sub',  id:'rev_stly',  label:compLabel,       dot:'#C4FF45', parent:'rev'});
   }
@@ -3731,7 +3731,7 @@ function buildDailyBView(days, month, activeDay) {
     grp.g_more.push({type:'top', id:'g_more', label:'More Metrics'});
     if (wvMetricState.dm_rnSold) {
       grp.g_more.push({type:'sect', id:'rn',       label:'RN Sold',    parent:'g_more'});
-      grp.g_more.push({type:'sub',  id:'rn_t',     label:'T RN',       dot:'#004948', parent:'rn'});
+      grp.g_more.push({type:'sub',  id:'rn_t',     label:'TO RN',       dot:'#004948', parent:'rn'});
       grp.g_more.push({type:'sub',  id:'rn_hotel', label:'Hotel RN',   dot:'#52d9ce', parent:'rn'});
       grp.g_more.push({type:'sub',  id:'rn_stly',  label:compLabel,    dot:'#C4FF45', parent:'rn'});
     }
@@ -3742,7 +3742,7 @@ function buildDailyBView(days, month, activeDay) {
     }
     if (wvMetricState.dm_pickup) {
       grp.g_more.push({type:'sect', id:'pickup_s', label:'Pickup',       parent:'g_more'});
-      grp.g_more.push({type:'sub',  id:'pickup_t', label:'T Pickup',     dot:'#004948', parent:'pickup_s'});
+      grp.g_more.push({type:'sub',  id:'pickup_t', label:'TO Pickup',     dot:'#004948', parent:'pickup_s'});
       grp.g_more.push({type:'sub',  id:'pickup_h', label:'Hotel Pickup', dot:'#52d9ce', parent:'pickup_s'});
     }
     if (wvMetricState.dm_avgAdults) {
@@ -4525,13 +4525,13 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
   }
   if (wvMetricState.adr) {
     sect('ADR', C1, C1, function(d){ var cv=wvCompare==='stly'?d.sdlyA:wvCompare==='ly'?d.lyA:wvCompare==='fcst'?d.fcstA:null; var cs=cmpSfx(cv!=null?'$'+cv:'',d.toAdr,cv); return sCell('$'+d.toAdr+cs, bar(d.adrBar,C1)); });
-    sub('T ADR',    C1,    false, function(d){ return rCell('$'+d.toAdr); });
+    sub('TO ADR',    C1,    false, function(d){ return rCell('$'+d.toAdr); });
     sub('Hotel ADR', C2,   false, function(d){ return rCell('$'+d.adr); });
     sub('STLY',     CSTLY, false, function(d){ return rCell('$'+d.sdlyA); });
   }
   if (wvMetricState.revenue) {
     sect('Revenue', C1, C1, function(d){ var cv=wvCompare==='stly'?d.sdlyR:wvCompare==='ly'?d.lyR:wvCompare==='fcst'?d.fcstR:null; var cs=cmpSfx(cv!=null?d.fR(cv):'',d.toRev,cv); return sCell(d.fR(d.toRev)+cs, bar(d.revBar,C1)); });
-    sub('T Revenue',     C1,    false, function(d){ return rCell(d.fR(d.toRev)); });
+    sub('TO Revenue',     C1,    false, function(d){ return rCell(d.fR(d.toRev)); });
     sub('Hotel Revenue', C2,    false, function(d){ return rCell(d.fR(d.hnRev)); });
     sub('STLY',          CSTLY, false, function(d){ return rCell(d.fR(d.sdlyR)); });
   }
@@ -4545,7 +4545,7 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
     grp('More Metrics', C1);
     if (wvMetricState.dm_rnSold) {
       sect('RN Sold', C1, C1, function(d){ var cv=wvCompare==='stly'?d.sdlyRn:wvCompare==='ly'?d.lyRn:wvCompare==='fcst'?d.fcstRn:null; var cs=cmpSfx(cv!=null?String(cv):'',d.toRn,cv); return sCell(d.toRn+cs, bar(Math.round(d.toRn/WV_CAP*100),C1)+'<div style="margin-top:2px">'+bar(Math.round(d.hnRn/WV_CAP*100),C2)+'</div>'); });
-      sub('T RN',     C1,    false, function(d){ return sCell(d.toRn+' rms', bar(Math.round(d.toRn/WV_CAP*100),C1)); });
+      sub('TO RN',     C1,    false, function(d){ return sCell(d.toRn+' rms', bar(Math.round(d.toRn/WV_CAP*100),C1)); });
       sub('Hotel RN', C2,    false, function(d){ return sCell(d.hnRn+' rms', bar(Math.round(d.hnRn/WV_CAP*100),C2)); });
       sub('STLY',     CSTLY, false, function(d){ return sCell(d.sdlyRn+' rms', bar(Math.round(d.sdlyRn/WV_CAP*100),CSTLY)); });
     }
@@ -4556,7 +4556,7 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
     }
     if (wvMetricState.dm_pickup) {
       sect('Pickup', C1, C1, function(d){ return sCell('+'+d.pickup, bar(Math.min(90,d.pickup*3),C1)+'<div style="margin-top:2px">'+bar(Math.min(90,d.hPickup*3),C2)+'</div>'); });
-      sub('T Pickup',     C1, false, function(d){ return sCell('+'+d.pickup, bar(Math.min(90,d.pickup*3),C1)); });
+      sub('TO Pickup',     C1, false, function(d){ return sCell('+'+d.pickup, bar(Math.min(90,d.pickup*3),C1)); });
       sub('Hotel Pickup', C2, false, function(d){ return sCell('+'+d.hPickup, bar(Math.min(90,d.hPickup*3),C2)); });
     }
     if (wvMetricState.dm_avgAdults) {
@@ -6822,7 +6822,7 @@ function buildWeekGrid(month, weekStart, activeDay) {
          +'</span>':''
       )
       +'<span style="display:flex;flex-direction:column;align-items:flex-end;margin-left:6px">'
-      +'<span style="font-size:6.5px;font-weight:700;color:'+clr+';letter-spacing:.3px;text-transform:uppercase">T</span>'
+      +'<span style="font-size:6.5px;font-weight:700;color:'+clr+';letter-spacing:.3px;text-transform:uppercase">TO</span>'
       +'<span style="font-size:9px;font-weight:800;color:'+clr+'">'+tVal+'</span>'
       +'</span>'
       +'</div>'
@@ -6832,7 +6832,7 @@ function buildWeekGrid(month, weekStart, activeDay) {
   function colHdr(tClr){
     return '<div style="display:flex;justify-content:flex-end;gap:12px;margin-bottom:5px;padding-bottom:3px;border-bottom:1px solid #f3f4f6">'
       +'<span style="font-size:6.5px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.3px">Hotel</span>'
-      +'<span style="font-size:6.5px;font-weight:700;color:'+(tClr||'#006461')+';text-transform:uppercase;letter-spacing:.3px;min-width:24px;text-align:right">T</span>'
+      +'<span style="font-size:6.5px;font-weight:700;color:'+(tClr||'#006461')+';text-transform:uppercase;letter-spacing:.3px;min-width:24px;text-align:right">TO</span>'
       +'</div>';
   }
   function sumSec(title,content){
@@ -7147,14 +7147,14 @@ function buildWeekGrid(month, weekStart, activeDay) {
                   +'<div class="wv-occ-br-row"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:#0891b2"></span><span class="wv-occ-br-lbl">TO Dynamic</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms">$'+dynAdr+'</span></div></div>'
                   +'<div class="wv-occ-br-row"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:#6366f1"></span><span class="wv-occ-br-lbl">Tour Series</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms">$'+serAdr+'</span></div></div>';
               } else {
-                segRows = '<div class="wv-occ-br-row"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:#94b1f5"></span><span class="wv-occ-br-lbl">T ADR</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms">$'+toAdrV+'</span></div></div>';
+                segRows = '<div class="wv-occ-br-row"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:#94b1f5"></span><span class="wv-occ-br-lbl">TO ADR</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms">$'+toAdrV+'</span></div></div>';
               }
               segRows += '<div class="wv-occ-br-row"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:#e5e7eb"></span><span class="wv-occ-br-lbl">Difference</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms" style="color:'+diffColor+'">'+diffSign+'</span></div></div>';
             }
             const hdrRow = '<div class="wv-occ-br-row"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:#7c3aed"></span><span class="wv-occ-br-lbl">Hotel ADR</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms">$'+hotelAdrV+'</span></div></div>';
             const htick  = showH ? '<div class="wv-bar-ref-tick" style="left:'+hotelAdrTick+'%;background:#7c3aed;width:2px;position:absolute;top:0;bottom:0"></div>' : '';
             return '<div>'
-              +'<div class="wv-occ-bar-labels"><span class="wv-q-label">T ADR</span>'+wvHdrRight('$'+toAdrV,'$'+sdlyA,'$'+(lyA??sdlyA),'$'+fcstA)+'</div>'
+              +'<div class="wv-occ-bar-labels"><span class="wv-q-label">TO ADR</span>'+wvHdrRight('$'+toAdrV,'$'+sdlyA,'$'+(lyA??sdlyA),'$'+fcstA)+'</div>'
               +'<div class="wv-occ-bar-track" style="position:relative;overflow:visible"><div style="width:'+adrBar+'%;height:7px;background:#94b1f5;border-radius:4px;flex-shrink:0"></div>'+htick+barTicks(Math.max(3,adrBarRef-5),adrBarRef,Math.min(92,adrBarRef+5))+'</div>'
               +(showH ? '<div class="wv-occ-breakdown">'+hdrRow+segRows+'</div>' : '')
               +'</div>';
@@ -7179,13 +7179,13 @@ function buildWeekGrid(month, weekStart, activeDay) {
                   +'<div class="wv-occ-br-row"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:#0891b2"></span><span class="wv-occ-br-lbl">TO Dynamic</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms">'+dStr+'</span></div></div>'
                   +'<div class="wv-occ-br-row"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:#6366f1"></span><span class="wv-occ-br-lbl">Tour Series</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms">'+sStr+'</span></div></div>';
               } else {
-                segRows = '<div class="wv-occ-br-row"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:#eba2a2"></span><span class="wv-occ-br-lbl">T Revenue</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms">'+toRevStr+'</span></div></div>';
+                segRows = '<div class="wv-occ-br-row"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:#eba2a2"></span><span class="wv-occ-br-lbl">TO Revenue</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms">'+toRevStr+'</span></div></div>';
               }
             }
             const hotRevRow = '<div class="wv-occ-br-row"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:#ea580c"></span><span class="wv-occ-br-lbl">Hotel Revenue</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms">'+hotRevStr+'</span></div></div>';
             const htick     = showH ? '<div class="wv-bar-ref-tick" style="left:'+hotelRevTick+'%;background:#ea580c;width:2px;position:absolute;top:0;bottom:0"></div>' : '';
             return '<div>'
-              +'<div class="wv-occ-bar-labels"><span class="wv-q-label">T Revenue</span>'+wvHdrRight(toRevStr,'$'+Math.floor(sdlyR/1000)+'k','$'+Math.floor((lyR??sdlyR)/1000)+'k','$'+Math.floor(fcstR/1000)+'k')+'</div>'
+              +'<div class="wv-occ-bar-labels"><span class="wv-q-label">TO Revenue</span>'+wvHdrRight(toRevStr,'$'+Math.floor(sdlyR/1000)+'k','$'+Math.floor((lyR??sdlyR)/1000)+'k','$'+Math.floor(fcstR/1000)+'k')+'</div>'
               +'<div class="wv-occ-bar-track" style="position:relative;overflow:visible"><div style="width:'+revBar+'%;height:7px;background:#eba2a2;border-radius:4px;flex-shrink:0"></div>'+htick+barTicks(Math.max(3,revBarRef-5),revBarRef,Math.min(92,revBarRef+5))+'</div>'
               +(showH ? '<div class="wv-occ-breakdown">'+hotRevRow+segRows+'</div>' : '')
               +'</div>';
@@ -7280,7 +7280,7 @@ function buildWeekGrid(month, weekStart, activeDay) {
                   +'<div class="wv-occ-br-row"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:#0891b2"></span><span class="wv-occ-br-lbl" style="color:#0891b2">TO Dynamic</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms" style="color:#0891b2">'+fmtSeg(0.35)+'</span></div></div>'
                   +'<div class="wv-occ-br-row"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:#6366f1"></span><span class="wv-occ-br-lbl" style="color:#6366f1">Tour Series</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms" style="color:#6366f1">'+fmtSeg(0.20)+'</span></div></div>';
               } else {
-                bdRows += '<div class="wv-occ-br-row"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:#006461"></span><span class="wv-occ-br-lbl" style="color:#006461">T</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms" style="color:#006461">'+val+'</span></div></div>';
+                bdRows += '<div class="wv-occ-br-row"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:#006461"></span><span class="wv-occ-br-lbl" style="color:#006461">TO</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms" style="color:#006461">'+val+'</span></div></div>';
               }
             }
             const headerClr = isHotelOnly ? '#181d1f' : '#006461';
@@ -7426,13 +7426,13 @@ function buildWeekGrid(month, weekStart, activeDay) {
           const availPct     = Math.max(0, 100 - toSoldPct - otherSoldPct - toAllocPct);
           const capBar = '<div class="wv-cap-bar-wrap">'
             +'<div class="wv-cap-bar">'
-            +'<div style="width:'+toSoldPct+'%;background:#006461;height:100%" title="T Sold"></div>'
+            +'<div style="width:'+toSoldPct+'%;background:#006461;height:100%" title="TO Sold"></div>'
             +'<div style="width:'+otherSoldPct+'%;background:#3b82f6;height:100%" title="Other Sold"></div>'
             +'<div style="width:'+toAllocPct+'%;background:#fb923c;opacity:0.6;height:100%" title="T Alloc Remaining"></div>'
             +'<div style="width:'+availPct+'%;background:#d1fae5;height:100%" title="Available"></div>'
             +'</div>'
             +'<div class="wv-cap-legend">'
-            +'<span class="wv-cap-leg-item"><span class="wv-cap-leg-dot" style="background:#006461"></span>T Sold<b>'+totalToSold+'</b></span>'
+            +'<span class="wv-cap-leg-item"><span class="wv-cap-leg-dot" style="background:#006461"></span>TO Sold<b>'+totalToSold+'</b></span>'
             +'<span class="wv-cap-leg-item"><span class="wv-cap-leg-dot" style="background:#3b82f6"></span>Other <b>'+totalOtherSold+'</b></span>'
             +'<span class="wv-cap-leg-item"><span class="wv-cap-leg-dot" style="background:#fb923c"></span>T Alloc Rem. <b>'+totalToAllocRem+'</b></span>'
             +'<span class="wv-cap-leg-item"><span class="wv-cap-leg-dot" style="background:#16a34a"></span>Avail <b>'+totalAvail+'</b></span>'
@@ -13401,14 +13401,14 @@ window.calHideCapTip = function() {
       hfcst:'hotelOcc', tfcst:'toOcc',
     };
     var KEY_LABELS = {
-      hocc:'H-Occ', tocc:'T-Occ', hadr:'H-ADR', tadr:'T-ADR',
-      hrev:'H-Rev', trev:'T-Rev', hpickup:'H-Pkp', tpickup:'T-Pkp',
-      hrn:'H-RN', trn:'T-RN', hrevpar:'H-RVP', trevpar:'T-RVP',
-      havgAdults:'H-AdA', tavgAdults:'T-AdA',
-      havgChildren:'H-AdC', tavgChildren:'T-AdC',
-      havgLos:'H-LOS', tavgLos:'T-LOS',
-      havgLeadTime:'H-Lead', tavgLeadTime:'T-Lead',
-      htotalGuests:'H-Gst', ttotalGuests:'T-Gst',
+      hocc:'H-Occ', tocc:'TO-Occ', hadr:'H-ADR', tadr:'TO-ADR',
+      hrev:'H-Rev', trev:'TO-Rev', hpickup:'H-Pkp', tpickup:'TO-Pkp',
+      hrn:'H-RN', trn:'TO-RN', hrevpar:'H-RVP', trevpar:'TO-RVP',
+      havgAdults:'H-AdA', tavgAdults:'TO-AdA',
+      havgChildren:'H-AdC', tavgChildren:'TO-AdC',
+      havgLos:'H-LOS', tavgLos:'TO-LOS',
+      havgLeadTime:'H-Lead', tavgLeadTime:'TO-Lead',
+      htotalGuests:'H-Gst', ttotalGuests:'TO-Gst',
       // Per-metric LY colors (blue family)
       hlyOcc:'#93c5fd', tlyOcc:'#6ee7b7',
       hstlyOcc:'#bfdbfe', tstlyOcc:'#a7f3d0',
@@ -13429,25 +13429,25 @@ window.calHideCapTip = function() {
       hstlyLos:'#cffafe', tstlyLos:'#e0f2fe',
       hfcstLos:'#fde68a', tfcstLos:'#fef9c3',
       // Per-metric LY/STLY/Fcst
-      hlyOcc:'H-LY-Occ', tlyOcc:'T-LY-Occ',
-      hlyAdr:'H-LY-ADR', tlyAdr:'T-LY-ADR',
-      hlyRev:'H-LY-Rev', tlyRev:'T-LY-Rev',
-      hlyRn:'H-LY-RN', tlyRn:'T-LY-RN',
-      hlyRevpar:'H-LY-RVP', tlyRevpar:'T-LY-RVP',
-      hlyLos:'H-LY-LOS', tlyLos:'T-LY-LOS',
-      hstlyOcc:'H-STLY-Occ', tstlyOcc:'T-STLY-Occ',
-      hstlyAdr:'H-STLY-ADR', tstlyAdr:'T-STLY-ADR',
-      hstlyRev:'H-STLY-Rev', tstlyRev:'T-STLY-Rev',
-      hstlyRn:'H-STLY-RN', tstlyRn:'T-STLY-RN',
-      hstlyRevpar:'H-STLY-RVP', tstlyRevpar:'T-STLY-RVP',
-      hstlyLos:'H-STLY-LOS', tstlyLos:'T-STLY-LOS',
-      hfcstOcc:'H-Fcst-Occ', tfcstOcc:'T-Fcst-Occ',
-      hfcstAdr:'H-Fcst-ADR', tfcstAdr:'T-Fcst-ADR',
-      hfcstRev:'H-Fcst-Rev', tfcstRev:'T-Fcst-Rev',
-      hfcstRn:'H-Fcst-RN', tfcstRn:'T-Fcst-RN',
-      hfcstRevpar:'H-Fcst-RVP', tfcstRevpar:'T-Fcst-RVP',
-      hfcstLos:'H-Fcst-LOS', tfcstLos:'T-Fcst-LOS',
-      hly:'H-LY', tly:'T-LY', hstly:'H-STLY', tstly:'T-STLY', hfcst:'H-Fcst', tfcst:'T-Fcst',
+      hlyOcc:'H-LY-Occ', tlyOcc:'TO-LY-Occ',
+      hlyAdr:'H-LY-ADR', tlyAdr:'TO-LY-ADR',
+      hlyRev:'H-LY-Rev', tlyRev:'TO-LY-Rev',
+      hlyRn:'H-LY-RN', tlyRn:'TO-LY-RN',
+      hlyRevpar:'H-LY-RVP', tlyRevpar:'TO-LY-RVP',
+      hlyLos:'H-LY-LOS', tlyLos:'TO-LY-LOS',
+      hstlyOcc:'H-STLY-Occ', tstlyOcc:'TO-STLY-Occ',
+      hstlyAdr:'H-STLY-ADR', tstlyAdr:'TO-STLY-ADR',
+      hstlyRev:'H-STLY-Rev', tstlyRev:'TO-STLY-Rev',
+      hstlyRn:'H-STLY-RN', tstlyRn:'TO-STLY-RN',
+      hstlyRevpar:'H-STLY-RVP', tstlyRevpar:'TO-STLY-RVP',
+      hstlyLos:'H-STLY-LOS', tstlyLos:'TO-STLY-LOS',
+      hfcstOcc:'H-Fcst-Occ', tfcstOcc:'TO-Fcst-Occ',
+      hfcstAdr:'H-Fcst-ADR', tfcstAdr:'TO-Fcst-ADR',
+      hfcstRev:'H-Fcst-Rev', tfcstRev:'TO-Fcst-Rev',
+      hfcstRn:'H-Fcst-RN', tfcstRn:'TO-Fcst-RN',
+      hfcstRevpar:'H-Fcst-RVP', tfcstRevpar:'TO-Fcst-RVP',
+      hfcstLos:'H-Fcst-LOS', tfcstLos:'TO-Fcst-LOS',
+      hly:'H-LY', tly:'TO-LY', hstly:'H-STLY', tstly:'TO-STLY', hfcst:'H-Fcst', tfcst:'TO-Fcst',
       availRooms:'AvR', availGuar:'T-AvG',
       bizMixTO:'TO%', bizMixDirect:'Dir%', bizMixOTA:'OTA%',
       rateTO:'TO-R', ratePromo:'Prmo%', rateBase:'Base',
