@@ -2282,6 +2282,16 @@ body.dark .wv-groupby-btn.active { background: #1a2f31; color: #5ceade; }
 .wv-cmp-wrap {
   display: flex; align-items: center;
 }
+.wv-cmp-pills { display: flex; gap: 0; border: 1px solid #d1d5db; border-radius: 8px; overflow: hidden; }
+.wv-cmp-pill {
+  padding: 6px 14px; border: none; background: #fff;
+  font-family: 'Lato', sans-serif; font-size: 13px; font-weight: 500; color: #374151;
+  cursor: pointer; white-space: nowrap; transition: background .12s, color .12s;
+  border-right: 1px solid #d1d5db;
+}
+.wv-cmp-pill:last-child { border-right: none; }
+.wv-cmp-pill:hover:not(.active) { background: #f3f4f6; }
+.wv-cmp-pill.active { background: #006461; color: #fff; font-weight: 700; }
 .wv-cmp-label { display: none; } /* hidden — select speaks for itself in header */
 .wv-cmp-select {
   font-family: 'Lato', sans-serif; font-size: 15px; font-weight: 500;

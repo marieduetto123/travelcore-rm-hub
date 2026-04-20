@@ -3072,11 +3072,14 @@ let wvCompare = 'none';    // 'none' | 'stly' | 'ly' | 'fcst'
 
 function wvSetCompare(val) {
   wvCompare = val;
-  // Sync all compare selects
+  // Sync legacy selects (if any remain)
   ['wvCmpSelect','wvCmpSelect2','wvCmpSelectOld'].forEach(function(id) {
     var s = document.getElementById(id);
     if (s) s.value = val;
   });
+  // Sync pill active state
+  var pills = document.querySelectorAll('#wvCmpPills .wv-cmp-pill');
+  pills.forEach(function(p) { p.classList.toggle('active', p.dataset.cmp === val); });
   buildWeekGrid(wvMonth, wvWeekStart, wvWeekStart);
 }
 

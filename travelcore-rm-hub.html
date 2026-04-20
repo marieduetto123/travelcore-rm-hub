@@ -443,13 +443,12 @@
           <!-- Compare select — centered in header, only visible in week view -->
           <div class="cal-header-center">
             <div id="wvCmpWrap" class="wv-cmp-wrap" style="display:none;margin:0">
-              <select class="wv-cmp-select" id="wvCmpSelect" onchange="wvSetCompare(this.value)">
-                <option value="ly">vs LY</option>
-                <option value="stly">vs STLY</option>
-                <option value="fcst">vs Forecast</option>
-                <option value="budget">vs Budget</option>
-                <option value="none" selected>No Compare</option>
-              </select>
+              <div class="wv-cmp-pills" id="wvCmpPills">
+                <button class="wv-cmp-pill active" data-cmp="none"   onclick="wvSetCompare('none')">None</button>
+                <button class="wv-cmp-pill"         data-cmp="stly"   onclick="wvSetCompare('stly')">STLY</button>
+                <button class="wv-cmp-pill"         data-cmp="ly"     onclick="wvSetCompare('ly')">LY</button>
+                <button class="wv-cmp-pill"         data-cmp="fcst"   onclick="wvSetCompare('fcst')">Forecast</button>
+              </div>
             </div>
           </div>
           <div class="cal-header-right">
