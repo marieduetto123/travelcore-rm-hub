@@ -121,7 +121,8 @@
       "Bash(./deploy.sh \"weekly event icon white; heatmap threshold unit labels; TO Forecast label improvements\")",
       "Bash(./deploy.sh \"TO Forecast: amber swatch for above-forecast variance, clearer threshold labels\")",
       "Bash(./deploy.sh \"default calendar to 2 months on first load\")",
-      "Bash(./deploy.sh \"weekly compare dropdown matches monthly; both default to No Compare\")"
+      "Bash(./deploy.sh \"weekly compare dropdown matches monthly; both default to No Compare\")",
+      "Bash(./deploy.sh \"move Open All/Close All to far right of tab bar \\(after date shuffler\\)\")"
     ]
   }
 }
