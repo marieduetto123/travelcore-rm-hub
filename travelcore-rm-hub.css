@@ -7299,13 +7299,27 @@ body.dark .cal-mfilt-btn.active { background: #1a3535; }
 .caldr-day.caldr-today { font-weight: 800; }
 .caldr-day.caldr-empty, .caldr-day.caldr-other { visibility: hidden; cursor: default; }
 .caldr-dow { width: 36px; text-align: center; font-size: 11px; font-weight: 700; color: #9ca3af; padding-bottom: 4px; }
-/* Out of range days on main calendar */
-.cal-day.out-of-range {
-  opacity: 0.15; pointer-events: none;
+
+/* ── Month picker buttons ── */
+.caldr-month-btn {
+  padding: 8px 4px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.12s, border-color 0.12s;
+  font-family: inherit;
 }
-.cal-day.out-of-range .cell-content,
-.cal-day.out-of-range .cell-occ-bar,
-.cal-day.out-of-range .cell-occ-row { display: none; }
+.caldr-month-btn:hover:not(:disabled):not(.caldr-month-disabled) { background: #e0f7f6; border-color: #006461; color: #006461; }
+.caldr-month-btn.caldr-month-start { background: #006461; color: #fff; border-color: #006461; font-weight: 700; }
+.caldr-month-btn.caldr-month-in-range { background: #ccfbf1; border-color: #9ecfcd; color: #0f766e; }
+.caldr-month-btn.caldr-month-disabled, .caldr-month-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+/* Out of range — no longer used (always show all 12 months) */
+.cal-day.out-of-range { opacity: 1; pointer-events: auto; }
 
 
 
