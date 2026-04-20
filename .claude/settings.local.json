@@ -123,7 +123,8 @@
       "Bash(./deploy.sh \"default calendar to 2 months on first load\")",
       "Bash(./deploy.sh \"weekly compare dropdown matches monthly; both default to No Compare\")",
       "Bash(./deploy.sh \"move Open All/Close All to far right of tab bar \\(after date shuffler\\)\")",
-      "Bash(./deploy.sh \"heatmap thresholds: add rms/% unit toggle for Remaining Rooms and TO Forecast\")"
+      "Bash(./deploy.sh \"heatmap thresholds: add rms/% unit toggle for Remaining Rooms and TO Forecast\")",
+      "Bash(./deploy.sh \"fix first load to show 2 months \\(not 12\\)\")"
     ]
   }
 }

@@ -13002,16 +13002,16 @@ setTimeout(function() {
   window.applyOutOfRange     = function() {};
   window.applyCalDisplayRange = function() {};
 
-  /* ── Init: always 12 months from Jan 2026 ── */
+  /* ── Init: 2 months from Jan 2026 on first load ── */
   setTimeout(function() {
     calStartIdx   = 0;
     drSelStartIdx = 0;
-    drSelEndIdx   = Math.min(11, ALL_MONTHS.length - 1);
+    drSelEndIdx   = Math.min(1, ALL_MONTHS.length - 1);
     drPhase       = 2;
     var lbl = document.getElementById('calDRLabel');
-    if (lbl) lbl.textContent = ALL_MONTHS[0].name + ' \u2013 ' + ALL_MONTHS[Math.min(11, ALL_MONTHS.length-1)].name;
-    if (typeof calSetDisplayView === 'function') calSetDisplayView(12);
-    else { calView = 12; calDisplayView = 12; renderCalendar(); }
+    if (lbl) lbl.textContent = ALL_MONTHS[0].name + ' \u2013 ' + ALL_MONTHS[Math.min(1, ALL_MONTHS.length-1)].name;
+    if (typeof calSetDisplayView === 'function') calSetDisplayView(2);
+    else { calView = 2; calDisplayView = 2; renderCalendar(); }
     renderCalMonthlySummary();
   }, 400);
 
