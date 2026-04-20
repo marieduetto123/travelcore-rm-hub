@@ -119,7 +119,8 @@
       "Bash(./deploy.sh \"weekly view: default compare to none on first load\")",
       "Bash(./deploy.sh \"disable Open All/Close All on Close Outs and Close Out Report tabs\")",
       "Bash(./deploy.sh \"weekly event icon white; heatmap threshold unit labels; TO Forecast label improvements\")",
-      "Bash(./deploy.sh \"TO Forecast: amber swatch for above-forecast variance, clearer threshold labels\")"
+      "Bash(./deploy.sh \"TO Forecast: amber swatch for above-forecast variance, clearer threshold labels\")",
+      "Bash(./deploy.sh \"default calendar to 2 months on first load\")"
     ]
   }
 }

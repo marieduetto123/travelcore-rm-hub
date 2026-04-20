@@ -1231,8 +1231,8 @@ const ALL_MONTHS = [
 ];
 
 let calStartIdx = 0; // start at January
-let calView = 12;        // always 12 months
-let calDisplayView = 12; // always 12 months
+let calView = 2;        // default 2 months on load
+let calDisplayView = 2; // default 2 months on load
 let calRangeFrom   = new Date(2026, 0, 1);  // active date-range start (global)
 let calRangeTo     = new Date(2026, 11, 31); // active date-range end   (global)
 let calDateRangeStart = null; // start of selected date range (for navigation)
