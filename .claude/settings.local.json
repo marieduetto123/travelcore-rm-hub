@@ -107,7 +107,8 @@
       "Bash(./deploy.sh \"keep multi-select dropdowns open on item click; use element-level stopPropagation\")",
       "Bash(./deploy.sh \"modal text fixes; T→T.O in room type grid; remove duplicate bookings column; re-open button teal\")",
       "Bash(./deploy.sh \"move Expand/Collapse All to tab bar as outline buttons; modal title always 'Close or re-open sales'\")",
-      "Bash(./deploy.sh \"modal secondary heading: 'Please select', not bold\")"
+      "Bash(./deploy.sh \"modal secondary heading: 'Please select', not bold\")",
+      "Bash(./deploy.sh \"stat labels T → T.O\")"
     ]
   }
 }
