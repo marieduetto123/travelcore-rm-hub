@@ -134,7 +134,8 @@
       "Bash(./deploy.sh \"weekly event calendar icon: absolute position bottom-right of header\")",
       "Bash(./deploy.sh \"weekly header: always show calendar icon; bright white with events, faded without\")",
       "Bash(./deploy.sh \"weekly: move legend above grid; event icon matches monthly \\(teal today\\)\")",
-      "Bash(./deploy.sh \"weekly header: event calendar icon inline next to date text\")"
+      "Bash(./deploy.sh \"weekly header: event calendar icon inline next to date text\")",
+      "Bash(./deploy.sh \"disable table settings/filters/compare on close-outs tabs; remove day gap + divider; increase month gap\")"
     ]
   }
 }

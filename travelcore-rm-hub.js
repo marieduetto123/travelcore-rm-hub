@@ -7713,6 +7713,7 @@ document.getElementById('wvRtOpenAll')?.addEventListener('click',  function() { 
 
 function _updateAccBtnState() {
   var disabled = (wvGroupBy === 'roomType' || wvGroupBy === 'coReport');
+  // Open/Close All
   ['wvRtCloseAll','wvRtOpenAll'].forEach(function(id) {
     var btn = document.getElementById(id);
     if (!btn) return;
@@ -7720,6 +7721,25 @@ function _updateAccBtnState() {
     btn.style.opacity = disabled ? '0.35' : '';
     btn.style.cursor  = disabled ? 'not-allowed' : '';
   });
+  // Table Settings & Filters buttons
+  ['wvTableSettingsBtn','wvFiltersBtn'].forEach(function(id) {
+    var btn = document.getElementById(id);
+    if (!btn) return;
+    btn.disabled = disabled;
+    btn.style.opacity      = disabled ? '0.35' : '';
+    btn.style.cursor       = disabled ? 'not-allowed' : '';
+    btn.style.pointerEvents = disabled ? 'none' : '';
+  });
+  // Compare pills
+  var pillsWrap = document.getElementById('wvCmpPills');
+  if (pillsWrap) {
+    pillsWrap.querySelectorAll('.wv-cmp-pill').forEach(function(p) {
+      p.disabled = disabled;
+      p.style.opacity       = disabled ? '0.35' : '';
+      p.style.cursor        = disabled ? 'not-allowed' : '';
+      p.style.pointerEvents = disabled ? 'none' : '';
+    });
+  }
 }
 
 // ── Reorder Modal (shared across Daily, Daily H, Daily R) ─────────────────
