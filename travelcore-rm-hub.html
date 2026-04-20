@@ -1130,11 +1130,16 @@
       </div>
 
       <!-- Page-level tabs (outside section card per Figma 560-19104) -->
-      <div class="to-tabs to-page-tabs" id="toPageTabs">
+      <div class="to-tabs to-page-tabs" id="toPageTabs" style="justify-content:space-between">
         <div class="to-tabs-inner">
           <button class="to-tab active" data-tab="operators">Contacts</button>
           <button class="to-tab" data-tab="contracts">Contracts &amp; Promotions</button>
           <button class="to-tab" data-tab="insights">Insights</button>
+        </div>
+        <!-- Expand / Collapse — only visible on Insights tab -->
+        <div id="insExpandCollapseWrap" style="display:none;align-items:center;gap:6px;padding-bottom:6px">
+          <button class="wv-outline-btn" onclick="insExpandAll(true)">Expand All</button>
+          <button class="wv-outline-btn" onclick="insExpandAll(false)">Collapse All</button>
         </div>
       </div>
 
@@ -1652,12 +1657,6 @@
                 </div>
 
                 <div class="ins-divider"></div>
-
-                <!-- Expand / Collapse all -->
-                <div class="ins-filter-group">
-                  <button class="ins-toggle" onclick="insExpandAll(true)">Expand All</button>
-                  <button class="ins-toggle" onclick="insExpandAll(false)" style="margin-left:4px">Collapse All</button>
-                </div>
 
               </div><!-- /ins-fb-row -->
             </div><!-- /ins-filter-bar -->
@@ -3456,6 +3455,6 @@
 
 
 
-  <script src="travelcore-rm-hub.js?v=82"></script>
+  <script src="travelcore-rm-hub.js?v=83"></script>
 <div id="calCapTip" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #e0e0e0;border-radius:4px;box-shadow:0 1px 3px rgba(0,0,0,.2),0 2px 1px -1px rgba(0,0,0,.12),0 1px 1px rgba(0,0,0,.14);padding:10px;pointer-events:none;width:245px"></div>
 </body>

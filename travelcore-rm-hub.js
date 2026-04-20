@@ -8896,7 +8896,7 @@ updateContractsStats({ y:2025, m:7, d:17 }, { y:2025, m:7, d:25 });
   // ── Open modal ─────────────────────────────────────────────────
   function resetModalState() {
     const title = document.getElementById('closeOutTitle');
-    if (title) title.textContent = 'Close out sales';
+    if (title) title.textContent = 'Close or re-open sales';
     const confirmBtn = document.getElementById('coConfirmBtn');
     if (confirmBtn) { confirmBtn.textContent = 'Close Out'; confirmBtn.style.background = ''; confirmBtn.style.borderColor = ''; }
     document.querySelectorAll('.co2-type-card').forEach(function(c) { c.classList.remove('active'); });
@@ -8962,7 +8962,7 @@ updateContractsStats({ y:2025, m:7, d:17 }, { y:2025, m:7, d:25 });
     if (losField) losField.style.display = type === 'los' ? '' : 'none';
     const isReopen = type === 'reopen';
     const title = document.getElementById('closeOutTitle');
-    if (title) title.textContent = isReopen ? 'Re-open sales' : 'Close out sales';
+    if (title) title.textContent = 'Close or re-open sales';
     const confirmBtn = document.getElementById('coConfirmBtn');
     if (confirmBtn) {
       confirmBtn.textContent = isReopen ? 'Re-Open' : 'Close Out';
@@ -11199,6 +11199,9 @@ document.querySelectorAll('.ds-search-field').forEach(function(wrap) {
     document.querySelectorAll('.to-tab-panel').forEach(p => p.style.display = 'none');
     const panel = document.getElementById(`toPanel-${name}`);
     if (panel) panel.style.display = '';
+    /* Show Expand/Collapse only on Insights tab */
+    var ecWrap = document.getElementById('insExpandCollapseWrap');
+    if (ecWrap) ecWrap.style.display = name === 'insights' ? 'flex' : 'none';
   });
 })();
 
