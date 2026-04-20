@@ -7048,14 +7048,16 @@ function buildWeekGrid(month, weekStart, activeDay) {
     return `<div class="${colClass}${isLocked ? ' wv-locked' : ''}${wvSelClass}" data-dm="${dm}" data-dd="${dd}">
       <div class="wv-col-hdr ${hdrHeatClass}${isLocked ? ' closed' : ''}${isToday ? ' wv-col-hdr-today' : ''}">
         <input type="checkbox" class="wv-day-chk" data-wv-date="${wvIso}"${wvChk} onclick="event.stopPropagation();wvDayCheck('${wvIso}',this)" title="Select for close-out">
-        <div style="display:flex;flex-direction:column;gap:1px;min-width:0">
-          <span class="wv-col-hdr-date">${hdrDateStr}</span>
+        <div style="display:flex;flex-direction:column;gap:1px;min-width:0;flex:1">
+          <div style="display:flex;align-items:center;gap:4px">
+            <span class="wv-col-hdr-date">${hdrDateStr}</span>
+            ${wvEventIconHtml}
+          </div>
           <span class="wv-col-hdr-dba" style="font-size:9px;font-weight:600;color:#fff;opacity:.75;letter-spacing:.2px">${dbaStr}</span>
         </div>
         ${isLocked ? `<svg class="wv-lock-icon" viewBox="0 0 10 12" fill="none" stroke="#dc2626" stroke-width="1.6" width="11" height="13"><rect x="1" y="5" width="8" height="7" rx="1"/><path d="M3 5V3.5a2 2 0 0 1 4 0V5"/></svg>` : ''}
         ${hasColCl ? `<button class="wv-partial-lock-btn" data-restrict-id="${restrictPanelId}" title="View closed out"><svg viewBox="0 0 10 12" fill="none" stroke="currentColor" stroke-width="1.6" width="10" height="12"><rect x="1" y="5" width="8" height="7" rx="1"/><path d="M3 5V3.5a2 2 0 0 1 4 0V5"/></svg></button>` : ''}
         ${isToday ? `<span class="wv-today-badge">TODAY</span>` : ''}
-        ${wvEventIconHtml}
       </div>
       ${hasColCl ? `<div class="wv-restrict-panel" id="${restrictPanelId}">${clHtml}</div>` : ''}
       <div class="wv-acc-group">
