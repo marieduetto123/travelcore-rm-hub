@@ -12896,25 +12896,20 @@ setTimeout(function() {
     if (applyBtn) applyBtn.style.opacity = drPhase === 2 ? '1' : '0.4';
   }
 
-  /* ── Month click — three-phase cycle ── */
+  /* ── Month click ── */
   window.calDRMonthClick = function(idx) {
-    if (drPhase === 0) {
-      /* Phase 0 → 1: set start, wait for end */
-      drSelStartIdx = idx;
-      drSelEndIdx   = null;
-      drPhase       = 1;
-    } else if (drPhase === 1) {
-      /* Phase 1 → 2: set end; swap if needed so start < end */
+    if (drPhase === 1) {
+      /* Second click: set end; swap if needed so start ≤ end */
       drSelEndIdx = idx;
       if (drSelEndIdx < drSelStartIdx) {
         var tmp = drSelStartIdx; drSelStartIdx = drSelEndIdx; drSelEndIdx = tmp;
       }
       drPhase = 2;
     } else {
-      /* Phase 2 → 0: any click clears the selection */
-      drSelStartIdx = null;
+      /* Phase 0 or 2: any click starts a fresh selection */
+      drSelStartIdx = idx;
       drSelEndIdx   = null;
-      drPhase       = 0;
+      drPhase       = 1;
     }
     renderBothGrids();
   };
