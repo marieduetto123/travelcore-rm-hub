@@ -132,7 +132,8 @@
       "Bash(./deploy.sh \"weekly compare: replace dropdown with None/STLY/LY/Forecast pill buttons\")",
       "Bash(./deploy.sh \"weekly header: replace event dot with white calendar icon; hover shows events\")",
       "Bash(./deploy.sh \"weekly event calendar icon: absolute position bottom-right of header\")",
-      "Bash(./deploy.sh \"weekly header: always show calendar icon; bright white with events, faded without\")"
+      "Bash(./deploy.sh \"weekly header: always show calendar icon; bright white with events, faded without\")",
+      "Bash(./deploy.sh \"weekly: move legend above grid; event icon matches monthly \\(teal today\\)\")"
     ]
   }
 }
