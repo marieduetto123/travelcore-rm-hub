@@ -103,7 +103,8 @@
       "WebFetch(domain:storybook.duettoresearch.com)",
       "Bash(./deploy.sh \"two-panel month range picker with pill-shaped range highlighting\")",
       "Bash(./deploy.sh \"month picker: three-phase click cycle \\(start → end → clear\\)\")",
-      "Bash(./deploy.sh \"month picker: clicking from phase 2 sets new start directly \\(no redundant clear step\\)\")"
+      "Bash(./deploy.sh \"month picker: clicking from phase 2 sets new start directly \\(no redundant clear step\\)\")",
+      "Bash(./deploy.sh \"keep multi-select dropdowns open on item click; use element-level stopPropagation\")"
     ]
   }
 }

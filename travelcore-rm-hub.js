@@ -1113,6 +1113,8 @@ function makeRevMultiSelect(wrapId, btnId, ddId, allLabel) {
   document.addEventListener('click', function(e) {
     if (wrap && !wrap.contains(e.target)) dd.style.display = 'none';
   });
+  /* Keep dropdown open when clicking inside it */
+  dd.addEventListener('click', function(e) { e.stopPropagation(); });
   dd.querySelectorAll('input').forEach(cb => {
     cb.addEventListener('change', function() {
       const checked = Array.from(dd.querySelectorAll('input:checked'));
@@ -9115,10 +9117,12 @@ function applyFilterUI(dropdownId) {
   }
 }
 
-// Multiselect checkbox click handler — works for both cal and wv dropdowns
-document.addEventListener('click', function(e) {
+// Multiselect checkbox click handler — attached directly to each filter dropdown
+// so it fires before any document-level outside-click close handler can see the event.
+function _handleWvFiRbClick(e) {
   const rb = e.target.closest('.wv-fi-rb');
   if (!rb) return;
+  e.stopPropagation(); // keep dropdown open
   const fid = rb.dataset.fid;
   const val = rb.dataset.val;
   if (!fid || !val) return;
@@ -9126,23 +9130,16 @@ document.addEventListener('click', function(e) {
   const dd = rb.closest('.cal-filters-dropdown');
 
   if (val === 'all') {
-    // "All" selected — uncheck everything else in this group, store 'all'
     ctx[fid] = 'all';
   } else {
-    // Toggle this item
     const current = ctx[fid] || 'all';
     const parts = current === 'all' ? [] : current.split(',');
     const idx = parts.indexOf(val);
-    if (idx === -1) {
-      parts.push(val);
-    } else {
-      parts.splice(idx, 1);
-    }
-    // If nothing selected, fall back to 'all'
+    if (idx === -1) parts.push(val);
+    else            parts.splice(idx, 1);
     ctx[fid] = parts.length > 0 ? parts.join(',') : 'all';
   }
 
-  // Update checked state visually
   if (dd) {
     dd.querySelectorAll('.wv-fi-rb[data-fid="' + fid + '"]').forEach(function(item) {
       const v = item.dataset.val;
@@ -9153,7 +9150,6 @@ document.addEventListener('click', function(e) {
         item.classList.toggle('checked', cur !== 'all' && cur.split(',').indexOf(v) !== -1);
       }
     });
-    // update count badge
     const countId = dd.id === 'calFiltersDropdown' ? 'calFilterCount' : 'wvFilterCount';
     const badge = document.getElementById(countId);
     if (badge) {
@@ -9164,13 +9160,16 @@ document.addEventListener('click', function(e) {
     }
   }
 
-  // If calFiltTO changed, also update the module-level calFiltTO and re-render
   if (fid === 'calFiltTO') {
-    // Use first selected value for rendering (or 'all')
     const cur = ctx[fid];
     calFiltTO = (cur === 'all' || !cur) ? 'all' : cur.split(',')[0];
     renderCalendar();
   }
+}
+// Attach to each filter dropdown element so stopPropagation prevents outside-close handlers
+['calFiltersDropdown', 'wvFiltersDropdown'].forEach(function(id) {
+  var el = document.getElementById(id);
+  if (el) el.addEventListener('click', _handleWvFiRbClick);
 });
 
 // Apply button — re-renders
@@ -9272,6 +9271,7 @@ document.addEventListener('click', function(e) {
   }
   var cb = e.target.closest('.cal-md-cb[data-cm-key]');
   if (cb) {
+    e.stopPropagation(); // keep metrics dropdown open
     var key = cb.dataset.cmKey;
     var idx = calCellMetrics.indexOf(key);
     if (idx > -1) {
@@ -11334,6 +11334,12 @@ document.querySelectorAll('.ds-search-field').forEach(function(wrap) {
     insRender();
   };
 
+  // Keep ins dropdown open when clicking items inside it
+  ['insMealDDPanel','insOriginDDPanel','insToDDPanel','insContractDDPanel'].forEach(function(pid) {
+    var el = document.getElementById(pid);
+    if (el) el.addEventListener('click', function(e) { e.stopPropagation(); });
+  });
+
   // Close dropdowns when clicking outside
   document.addEventListener('click', function(e) {
     if (!e.target.closest('.ins-dd-wrap')) {
@@ -12788,6 +12794,12 @@ window.segSelectAll = function(select) {
   segUpdateLabel();
 };
 
+// Keep segment dropdown open when clicking items inside it
+(function() {
+  var panel = document.getElementById('segDropPanel');
+  if (panel) panel.addEventListener('click', function(e) { e.stopPropagation(); });
+})();
+
 // Close on outside click
 document.addEventListener('click', function(e) {
   var wrap = document.getElementById('segDropWrap');
@@ -13879,6 +13891,12 @@ window.calHideCapTip = function() {
       box.classList.add('open');
     }
   };
+
+  // Keep heatmap room-type dropdown open when clicking inside it
+  (function() {
+    var list = document.getElementById('hmRtDDList');
+    if (list) list.addEventListener('click', function(e) { e.stopPropagation(); });
+  })();
 
   // Close dropdown when clicking outside
   document.addEventListener('click', function(e) {
