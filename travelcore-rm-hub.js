@@ -8978,10 +8978,18 @@ updateContractsStats({ y:2025, m:7, d:17 }, { y:2025, m:7, d:25 });
     const email      = document.getElementById('coEmail')?.value || '';
     const message    = document.getElementById('coMessage')?.value || '';
 
+    // Parse ISO date string as local time (not UTC) to avoid off-by-one day in non-UTC zones
+    function parseLocalDate(iso) {
+      var p = iso.split('-');
+      return new Date(+p[0], +p[1]-1, +p[2]);
+    }
+
     // Apply calendar lock/unlock for each date range
     dateRanges.forEach(function(dr) {
       if (!dr.from || !dr.to) return;
-      let cur = new Date(dr.from), end = new Date(dr.to);
+      var cur = parseLocalDate(dr.from), end = parseLocalDate(dr.to);
+      // Ensure correct order
+      if (cur > end) { var tmp = cur; cur = end; end = tmp; }
       while (cur <= end) {
         const m = cur.getMonth()+1, d = cur.getDate();
         if (isReopen) LOCKED_DAYS.delete(m+'-'+d);

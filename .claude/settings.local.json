@@ -94,7 +94,8 @@
       "Bash(./deploy.sh \"show eye icon on all monthly days including closed and partially closed\")",
       "Bash(./deploy.sh \"eye icon click on closed/partial days now opens summary popup\")",
       "Bash(./deploy.sh \"red padlock for full close-out, orange padlock for partial close-out on monthly\")",
-      "Bash(./deploy.sh \"revert last change\")"
+      "Bash(./deploy.sh \"revert last change\")",
+      "Bash(./deploy.sh \"fix close-out applying to wrong days due to UTC date parsing\")"
     ]
   }
 }
