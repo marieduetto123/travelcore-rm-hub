@@ -773,7 +773,7 @@ body.dark .cal-nav-btn:hover { background: rgba(196,255,69,0.07); border-color: 
   gap: 0; padding: 16px 20px 0;
 }
 .cal-month {
-  padding: 0 6px;
+  padding: 0 18px;
   border-right: 1px solid var(--border);
 }
 .cal-month:last-child { border-right: none; }

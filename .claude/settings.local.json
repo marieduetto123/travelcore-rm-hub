@@ -111,7 +111,8 @@
       "Bash(./deploy.sh \"stat labels T → T.O\")",
       "Bash(./deploy.sh \"Please select font size 14px to match Date Range 1; remove heatmap room type arrow\")",
       "Bash(./deploy.sh \"default calendar compare to none on load\")",
-      "Bash(./deploy.sh \"legend: red=full close out, orange=partial lock; move legend above calendar\")"
+      "Bash(./deploy.sh \"legend: red=full close out, orange=partial lock; move legend above calendar\")",
+      "Bash(./deploy.sh \"increase spacing between months in monthly view\")"
     ]
   }
 }
