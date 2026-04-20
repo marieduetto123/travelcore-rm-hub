@@ -12955,7 +12955,7 @@ setTimeout(function() {
     if (panel.style.display !== 'none') { panel.style.display = 'none'; return; }
     /* Sync to current calendar state — open with a confirmed range showing */
     drSelStartIdx = calStartIdx;
-    drSelEndIdx   = getEndIdx(calStartIdx);
+    drSelEndIdx   = Math.min(calStartIdx + calDisplayView - 1, ALL_MONTHS.length - 1);
     drPhase       = 2;
     drLeftYear    = ALL_MONTHS[calStartIdx] ? ALL_MONTHS[calStartIdx].year : 2026;
     /* Position below trigger, keep in viewport */

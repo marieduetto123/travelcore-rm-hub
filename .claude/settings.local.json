@@ -126,7 +126,8 @@
       "Bash(./deploy.sh \"heatmap thresholds: add rms/% unit toggle for Remaining Rooms and TO Forecast\")",
       "Bash(./deploy.sh \"fix first load to show 2 months \\(not 12\\)\")",
       "Bash(./deploy.sh \"heatmap unit selector: change rms/% toggle buttons to dropdown\")",
-      "Bash(./deploy.sh \"remove dropdown arrow from heatmap button\")"
+      "Bash(./deploy.sh \"remove dropdown arrow from heatmap button\")",
+      "Bash(./deploy.sh \"month picker opens showing currently selected range \\(not always 12 months\\)\")"
     ]
   }
 }
