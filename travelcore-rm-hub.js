@@ -13740,8 +13740,8 @@ window.calHideCapTip = function() {
       label: 'Remaining Rooms',
       icon: '🛏',
       svgPath: 'M19 7h-8v7H3V5H1v15h2v-3h18v3h2V11c0-2.21-1.79-4-4-4z',
-      grey:  { desc: 'Remaining rooms less than (room nights)',  input: { param: 'greyT',  def: 10, unit: 'rms' } },
-      green: { desc: 'Remaining rooms more than (room nights)',  input: { param: 'greenT', def: 50, unit: 'rms' } },
+      grey:  { desc: 'Remaining rooms less than',  input: { param: 'greyT',  def: 10, unit: 'rms', allowUnitToggle: true } },
+      green: { desc: 'Remaining rooms more than',  input: { param: 'greenT', def: 50, unit: 'rms', allowUnitToggle: true } },
       blue:  { desc: 'Between Grey & Green thresholds', input: null }
     },
     mealplan: {
@@ -13756,8 +13756,8 @@ window.calHideCapTip = function() {
       label: 'TO Forecast',
       icon: '📊',
       svgPath: 'M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z',
-      grey:  { desc: 'OTB exceeds the forecast by (room nights)', input: { param: 'greyT',  def: 20, unit: 'rms' } },
-      green: { desc: 'OTB is below the forecast by (room nights)', input: { param: 'greenT', def: 20, unit: 'rms' } },
+      grey:  { desc: 'OTB exceeds the forecast by', input: { param: 'greyT',  def: 20, unit: 'rms', allowUnitToggle: true } },
+      green: { desc: 'OTB is below the forecast by', input: { param: 'greenT', def: 20, unit: 'rms', allowUnitToggle: true } },
       blue:  { desc: 'OTB within forecast variance', input: null }
     }
   };
@@ -13826,13 +13826,23 @@ window.calHideCapTip = function() {
         var val = hmState[c.key][c.cfg.input.param] !== undefined
           ? hmState[c.key][c.cfg.input.param]
           : c.cfg.input.def;
+        var curUnit = (c.cfg.input.allowUnitToggle && hmState[c.key].unitType) ? hmState[c.key].unitType : c.cfg.input.unit;
+        var unitToggleHtml = c.cfg.input.allowUnitToggle
+          ? '<div class="hm-unit-toggle">'
+            + '<button class="hm-unit-btn' + (curUnit === 'rms' ? ' active' : '') + '" onclick="hmUnitChange(\'' + c.key + '\',\'rms\')">rms</button>'
+            + '<button class="hm-unit-btn' + (curUnit === '%'   ? ' active' : '') + '" onclick="hmUnitChange(\'' + c.key + '\',\'%\')">%</button>'
+            + '</div>'
+          : '<span class="hm-unit-label">' + c.cfg.input.unit + '</span>';
         bodyHtml = '<div class="hm-threshold-body">'
           + '<div class="hm-threshold-name">' + c.label + '</div>'
           + '<div class="hm-threshold-field">'
           + '<div class="hm-threshold-field-label">' + c.cfg.desc + '</div>'
+          + '<div style="display:flex;align-items:center;gap:6px">'
           + '<input type="number" class="hm-input" min="0" max="9999" value="' + val + '"'
           + ' data-hm-color="' + c.key + '" data-hm-param="' + c.cfg.input.param + '"'
-          + ' onchange="hmParamChange(this)" placeholder="' + c.cfg.input.def + ' ' + c.cfg.input.unit + '">'
+          + ' onchange="hmParamChange(this)" placeholder="' + c.cfg.input.def + '">'
+          + unitToggleHtml
+          + '</div>'
           + '</div></div>';
       } else {
         bodyHtml = '<div class="hm-threshold-body">'
@@ -13882,6 +13892,12 @@ window.calHideCapTip = function() {
     var param = el.dataset.hmParam;
     if (!hmState[color]) hmState[color] = { params: {} };
     hmState[color][param] = parseFloat(el.value) || 0;
+  };
+
+  window.hmUnitChange = function(colorKey, unit) {
+    if (!hmState[colorKey]) hmState[colorKey] = { params: {} };
+    hmState[colorKey].unitType = unit;
+    hmRenderColours(hmState.type);
   };
 
   // ── Swatch colour change ────────────────────────────────────────

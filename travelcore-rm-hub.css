@@ -7503,10 +7503,15 @@ body.dark .cal-mfilt-btn.active { background: #1a3535; }
 .hm-threshold-field { display: flex; flex-direction: column; gap: 2px; }
 .hm-threshold-field-label { font-size: 14px; font-weight: 400; color: #585858; font-family: Lato, sans-serif; }
 .hm-input {
-  width: 215px; padding: 6px 8px; border: 1px solid #E0E0E0; border-radius: 4px;
+  width: 140px; padding: 6px 8px; border: 1px solid #E0E0E0; border-radius: 4px;
   font-size: 14px; color: #1C1C1C; font-family: Lato, sans-serif; background: #fff;
 }
 .hm-input:focus { outline: none; border-color: #006461; }
+.hm-unit-toggle { display: flex; border: 1px solid #e0e0e0; border-radius: 4px; overflow: hidden; flex-shrink: 0; }
+.hm-unit-btn { padding: 6px 10px; border: none; background: #fff; font-size: 12px; font-weight: 500; color: #6b7280; cursor: pointer; font-family: Lato, sans-serif; transition: background .1s, color .1s; }
+.hm-unit-btn.active { background: #006461; color: #fff; font-weight: 700; }
+.hm-unit-btn:not(.active):hover { background: #f0fdf4; color: #006461; }
+.hm-unit-label { font-size: 12px; color: #6b7280; font-family: Lato, sans-serif; align-self: center; }
 
 /* Add condition */
 .hm-addcond-toggle {
