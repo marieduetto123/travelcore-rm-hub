@@ -795,25 +795,19 @@
           </div>
         </div>
 
-        <!-- Calendar months grid -->
-        <div class="cal-months-grid" id="calMonths"></div>
-        <!-- Monthly Summary Metrics (1M/2M/3M only) -->
-        <div id="calMonthlySummary" style="display:none"></div>
-
         <!-- Legend -->
         <div class="cal-legend">
-
           <div class="leg-item">
             <span class="material-icons" style="font-size:14px">visibility</span>
             <span>Hover cell for quick view</span>
           </div>
           <div class="leg-item">
-            <span class="material-icons" style="font-size:14px">lock</span>
-            <span>Closed Out</span>
+            <span class="material-icons" style="font-size:14px;color:#dc2626">lock</span>
+            <span>Full close out</span>
           </div>
           <div class="leg-item">
-            <span class="cell-restrict-badge" style="position:static"><span class="material-icons" style="font-size:12px;color:#ea580c">lock_open</span></span>
-            <span>Partial closed out</span>
+            <span class="material-icons" style="font-size:14px;color:#ea580c">lock</span>
+            <span>Partial lock</span>
           </div>
           <div class="leg-item leg-item-event">
             <span class="material-icons" style="font-size:18px;color:#006461">today</span>
@@ -828,6 +822,11 @@
             <span>TO</span>
           </div>
         </div>
+
+        <!-- Calendar months grid -->
+        <div class="cal-months-grid" id="calMonths"></div>
+        <!-- Monthly Summary Metrics (1M/2M/3M only) -->
+        <div id="calMonthlySummary" style="display:none"></div>
       </div>
 
       <!-- ╔══════════════════════════════════════════════╗ -->
@@ -1065,8 +1064,8 @@
         <div class="cal-legend">
           <div class="leg-item"><span class="leg-dot-blue"></span><span>Online | Offline</span></div>
           <div class="leg-item"><span class="material-icons" style="font-size:14px">visibility</span><span>Quick view (hover)</span></div>
-          <div class="leg-item"><span class="material-icons" style="font-size:14px">lock</span><span>Closed Out</span></div>
-          <div class="leg-item"><span class="cell-restrict-badge" style="position:static"><span class="material-icons" style="font-size:12px;color:#ea580c">lock_open</span></span><span>Partial closed out</span></div>
+          <div class="leg-item"><span class="material-icons" style="font-size:14px;color:#dc2626">lock</span><span>Full close out</span></div>
+          <div class="leg-item"><span class="material-icons" style="font-size:14px;color:#ea580c">lock</span><span>Partial lock</span></div>
           <div class="leg-item leg-item-event"><span class="leg-event-badge"></span><span>Event</span></div>
         </div>
       </div>
