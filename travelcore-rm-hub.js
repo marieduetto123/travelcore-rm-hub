@@ -13756,9 +13756,9 @@ window.calHideCapTip = function() {
       label: 'TO Forecast',
       icon: '📊',
       svgPath: 'M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z',
-      grey:  { desc: 'OTB/Commit above forecast by (room nights)', input: { param: 'greyT',  def: 20, unit: 'rms' } },
-      green: { desc: 'OTB/Commit below forecast by (room nights)', input: { param: 'greenT', def: 20, unit: 'rms' } },
-      blue:  { desc: 'Between Grey & Green thresholds', input: null }
+      grey:  { desc: 'OTB exceeds the forecast by (room nights)', input: { param: 'greyT',  def: 20, unit: 'rms' } },
+      green: { desc: 'OTB is below the forecast by (room nights)', input: { param: 'greenT', def: 20, unit: 'rms' } },
+      blue:  { desc: 'OTB within forecast variance', input: null }
     }
   };
 
@@ -13811,11 +13811,12 @@ window.calHideCapTip = function() {
     if (condVal) condVal.value = hmState.condition.value;
 
     // Figma 2026 swatches
-    var isStopSales = type === 'stopsales';
+    var isStopSales  = type === 'stopsales';
+    var isToForecast = type === 'toforecast';
     var colours = [
-      { key: 'grey',  swatch: isStopSales ? '#D33030' : '#D9D9D9', label: isStopSales ? 'Closed'  : 'Grey',  cfg: def.grey  },
-      { key: 'blue',  swatch: isStopSales ? '#FDCF61' : '#D7F7ED', label: isStopSales ? 'Partial' : 'Blue',  cfg: def.blue  },
-      { key: 'green', swatch: isStopSales ? '#CEF2D1' : '#388C3F', label: isStopSales ? 'Open'    : 'Green', cfg: def.green }
+      { key: 'grey',  swatch: isStopSales ? '#D33030' : isToForecast ? '#F97316' : '#D9D9D9', label: isStopSales ? 'Closed'  : isToForecast ? 'Above Forecast' : 'Grey',  cfg: def.grey  },
+      { key: 'blue',  swatch: isStopSales ? '#FDCF61' : isToForecast ? '#D7F7ED' : '#D7F7ED', label: isStopSales ? 'Partial' : isToForecast ? 'Within Range'   : 'Blue',  cfg: def.blue  },
+      { key: 'green', swatch: isStopSales ? '#CEF2D1' : '#388C3F',                            label: isStopSales ? 'Open'    : isToForecast ? 'Below Forecast'  : 'Green', cfg: def.green }
     ];
 
     rows.innerHTML = colours.map(function(c) {
