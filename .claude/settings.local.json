@@ -109,7 +109,8 @@
       "Bash(./deploy.sh \"move Expand/Collapse All to tab bar as outline buttons; modal title always 'Close or re-open sales'\")",
       "Bash(./deploy.sh \"modal secondary heading: 'Please select', not bold\")",
       "Bash(./deploy.sh \"stat labels T → T.O\")",
-      "Bash(./deploy.sh \"Please select font size 14px to match Date Range 1; remove heatmap room type arrow\")"
+      "Bash(./deploy.sh \"Please select font size 14px to match Date Range 1; remove heatmap room type arrow\")",
+      "Bash(./deploy.sh \"default calendar compare to none on load\")"
     ]
   }
 }

@@ -1243,7 +1243,7 @@ let calSelPicking = false; // true after first click, waiting for end
 // Filter bar state
 const TO_FILTER_MULT = { all:1.0, sunwing:0.82, tui:1.18, 'thomas-cook':0.71, 'club-med':1.08 };
 let calFiltTO = 'all';
-let calCompareMode = 'ly'; // 'ly', 'stly', 'fcst', 'budget', 'none'
+let calCompareMode = 'none'; // 'ly', 'stly', 'fcst', 'budget', 'none'
 function calSetCompare(val) {
   calCompareMode = val || 'ly';
   renderCalendar();
