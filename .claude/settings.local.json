@@ -127,7 +127,8 @@
       "Bash(./deploy.sh \"fix first load to show 2 months \\(not 12\\)\")",
       "Bash(./deploy.sh \"heatmap unit selector: change rms/% toggle buttons to dropdown\")",
       "Bash(./deploy.sh \"remove dropdown arrow from heatmap button\")",
-      "Bash(./deploy.sh \"month picker opens showing currently selected range \\(not always 12 months\\)\")"
+      "Bash(./deploy.sh \"month picker opens showing currently selected range \\(not always 12 months\\)\")",
+      "Bash(./deploy.sh \"Open All/Close All to left of day switcher\")"
     ]
   }
 }
