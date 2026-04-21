@@ -1555,6 +1555,12 @@ function renderCalendar() {
         hotelRev: cellRev, toRev: toRevVal,
         lyRev: Math.round(cellRev * lyF), fcstRev: Math.round(cellRev * fcF),
         hotelPickup: cellPickup, toPickup: toPickupV,
+        hotelPickup_0: Math.max(0, Math.round(cellPickup * (pickupDayValues[0]<=1?0.3:pickupDayValues[0]<=3?0.6:pickupDayValues[0]<=7?1:Math.min(2,pickupDayValues[0]/7)))),
+        hotelPickup_1: Math.max(0, Math.round(cellPickup * (pickupDayValues[1]<=1?0.3:pickupDayValues[1]<=3?0.6:pickupDayValues[1]<=7?1:Math.min(2,pickupDayValues[1]/7)))),
+        hotelPickup_2: Math.max(0, Math.round(cellPickup * (pickupDayValues[2]<=1?0.3:pickupDayValues[2]<=3?0.6:pickupDayValues[2]<=7?1:Math.min(2,pickupDayValues[2]/7)))),
+        toPickup_0: Math.max(0, Math.round(toPickupV * (pickupDayValues[0]<=1?0.3:pickupDayValues[0]<=3?0.6:pickupDayValues[0]<=7?1:Math.min(2,pickupDayValues[0]/7)))),
+        toPickup_1: Math.max(0, Math.round(toPickupV * (pickupDayValues[1]<=1?0.3:pickupDayValues[1]<=3?0.6:pickupDayValues[1]<=7?1:Math.min(2,pickupDayValues[1]/7)))),
+        toPickup_2: Math.max(0, Math.round(toPickupV * (pickupDayValues[2]<=1?0.3:pickupDayValues[2]<=3?0.6:pickupDayValues[2]<=7?1:Math.min(2,pickupDayValues[2]/7)))),
         hotelRn: cellRnSold, toRn: toRnSold,
         hotelTrev: cellTrevpar, toTrev: toTrevVal,
         lyRevpar: Math.round(cellTrevpar * lyF), fcstRevpar: Math.round(cellTrevpar * fcF),
@@ -1631,6 +1637,7 @@ function renderCalendar() {
             compHtml = '<span class="cell-cmp"> / <span class="' + upOrDown + '">' + compStr + '</span></span>';
           }
 
+          if (r._html) return r._html;
           return '<div class="cell-m-row ' + metricColorClass + '">'
             + '<span class="cell-m-label">' + shortLabel + '</span>'
             + '<span class="cell-m-val">' + r.value + compHtml + '</span>'
@@ -13817,6 +13824,27 @@ window.calHideCapTip = function() {
 
     cmMetrics.forEach(function(key) {
       if (rows.length >= 4) return;
+
+      // Pickup keys: render compact 3-window grid row
+      if (key === 'hpickup' || key === 'tpickup') {
+        var isH = key === 'hpickup';
+        var pfx = isH ? 'hotelPickup' : 'toPickup';
+        var clr = isH ? '#16a34a' : '#0d9488';
+        var cells = '';
+        pickupDayValues.forEach(function(dv, i) {
+          var pv = cellVals[pfx + '_' + i];
+          if (pv === undefined) {
+            var sc = dv<=1?0.3:dv<=3?0.6:dv<=7?1:Math.min(2,dv/7);
+            pv = Math.max(0, Math.round((cellVals[pfx]||0) * sc));
+          }
+          cells += '<div class="cal-pu-cell">'
+            + '<span class="cal-pu-win">' + dv + '</span>'
+            + '<span class="cal-pu-val" style="color:' + clr + '">+' + pv + '</span>'
+            + '</div>';
+        });
+        rows.push({ _html: '<div class="cal-pu-grid">' + cells + '</div>', label:'Pkp', color: clr, value:'', raw:0 });
+        return;
+      }
 
       // Segment-filtered metric: one row, value scaled by selected segments
       if (cmMode === 'individual' && SRC_KEYS.indexOf(key) >= 0 && COMP_KEYS.indexOf(key) < 0) {
