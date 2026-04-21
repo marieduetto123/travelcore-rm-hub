@@ -155,7 +155,8 @@
       "Bash(./deploy.sh \"pickup: remove all outer cell padding\")",
       "Bash(./deploy.sh \"pickup: remove expand/collapse dropdown chevron from row label\")",
       "Bash(./deploy.sh \"cell metrics: remove mode toggle, always show segments with All checkbox \\(min 1 required\\)\")",
-      "Bash(./deploy.sh \"back button: match wv-outline-btn style \\(teal border, white bg, hover tint\\)\")"
+      "Bash(./deploy.sh \"back button: match wv-outline-btn style \\(teal border, white bg, hover tint\\)\")",
+      "Bash(./deploy.sh \"cell metrics: hide segment prefix in labels when all segments selected\")"
     ]
   }
 }

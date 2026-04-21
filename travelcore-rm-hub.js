@@ -13817,7 +13817,8 @@ window.calHideCapTip = function() {
           var segLbls = { fit:'FIT', dynamic:'Dyn', series:'Ser' };
           var segClrs = { fit:'#0891b2', dynamic:'#7c3aed', series:'#f59e0b' };
           var metricLbl = KEY_LABELS[key] ? KEY_LABELS[key].replace(/^[HT]-/,'') : key;
-          rows.push({ label: segLbls[seg]+'-'+metricLbl, color: segClrs[seg]||'#6b7280',
+          var rowLbl = cmSegs.length < 3 ? segLbls[seg]+'-'+metricLbl : metricLbl;
+          rows.push({ label: rowLbl, color: segClrs[seg]||'#6b7280',
             value: String(v), raw: v });
         });
         return;
