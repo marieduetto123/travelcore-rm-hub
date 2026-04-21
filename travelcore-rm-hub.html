@@ -637,9 +637,9 @@
                   <span class="wv-ms-hdr-label">CUSTOMIZE PICKUP <span id="calPickupLabel" style="color:#006461;font-weight:600;text-transform:none;letter-spacing:0">All time</span></span>
                 </div>
                 <div class="pickup-btns-wrap" id="calPickupBtns">
-                  <button class="pickup-day-btn" data-val="1"   onclick="pickupBtnClick(this,'cal')">1</button>
-                  <button class="pickup-day-btn" data-val="3"   onclick="pickupBtnClick(this,'cal')">3</button>
-                  <button class="pickup-day-btn" data-val="7"   onclick="pickupBtnClick(this,'cal')">7</button>
+                  <input type="number" class="pickup-day-input" value="1" min="1" max="365" onfocus="pickupInputFocus(this,'cal')" oninput="pickupInputChange(this,'cal')">
+                  <input type="number" class="pickup-day-input" value="3" min="1" max="365" onfocus="pickupInputFocus(this,'cal')" oninput="pickupInputChange(this,'cal')">
+                  <input type="number" class="pickup-day-input" value="7" min="1" max="365" onfocus="pickupInputFocus(this,'cal')" oninput="pickupInputChange(this,'cal')">
                   <button class="pickup-day-btn active" data-val="all" onclick="pickupBtnClick(this,'cal')">All</button>
                   <span class="pickup-days-label">Days</span>
                 </div>
@@ -909,9 +909,9 @@
                   <span class="wv-ms-hdr-label">CUSTOMIZE PICKUP <span id="wvPickupLabel" style="color:#006461;font-weight:600;text-transform:none;letter-spacing:0">All time</span></span>
                 </div>
                 <div class="pickup-btns-wrap" id="wvPickupBtns">
-                  <button class="pickup-day-btn" data-val="1"   onclick="pickupBtnClick(this,'wv')">1</button>
-                  <button class="pickup-day-btn" data-val="3"   onclick="pickupBtnClick(this,'wv')">3</button>
-                  <button class="pickup-day-btn" data-val="7"   onclick="pickupBtnClick(this,'wv')">7</button>
+                  <input type="number" class="pickup-day-input" value="1" min="1" max="365" onfocus="pickupInputFocus(this,'wv')" oninput="pickupInputChange(this,'wv')">
+                  <input type="number" class="pickup-day-input" value="3" min="1" max="365" onfocus="pickupInputFocus(this,'wv')" oninput="pickupInputChange(this,'wv')">
+                  <input type="number" class="pickup-day-input" value="7" min="1" max="365" onfocus="pickupInputFocus(this,'wv')" oninput="pickupInputChange(this,'wv')">
                   <button class="pickup-day-btn active" data-val="all" onclick="pickupBtnClick(this,'wv')">All</button>
                   <span class="pickup-days-label">Days</span>
                 </div>

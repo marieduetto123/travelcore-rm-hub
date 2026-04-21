@@ -6596,16 +6596,30 @@ body.dark .cal-view-btn.active { background: #006461; color: #fff; }
 .fchips-divider { width: 1px; height: 18px; background: #e5e7eb; margin: 0 2px; }
 .fchips-active-wrap { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
 
-/* ── Pickup day buttons ── */
+/* ── Pickup day inputs + All button ── */
 .pickup-btns-wrap {
   display: flex; align-items: center; gap: 6px;
   padding: 8px 8px 10px;
 }
-.pickup-day-btn {
-  width: 40px; height: 36px;
+.pickup-day-input {
+  width: 44px; height: 36px;
   border: 1px solid #d1d5db; border-radius: 8px;
   background: #fff; font-family: 'Lato', sans-serif;
   font-size: 14px; font-weight: 600; color: #374151;
+  text-align: center; outline: none; cursor: text;
+  transition: border-color .12s, color .12s;
+  -moz-appearance: textfield;
+}
+.pickup-day-input::-webkit-inner-spin-button,
+.pickup-day-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+.pickup-day-input:hover { border-color: #9ca3af; }
+.pickup-day-input:focus { border: 2px solid #006461; color: #006461; }
+.pickup-day-input.active { border: 2px solid #006461; color: #006461; background: #f0fffe; }
+.pickup-day-btn {
+  height: 36px; padding: 0 12px;
+  border: 1px solid #d1d5db; border-radius: 8px;
+  background: #fff; font-family: 'Lato', sans-serif;
+  font-size: 13px; font-weight: 600; color: #374151;
   cursor: pointer; transition: background .12s, color .12s, border-color .12s;
   flex-shrink: 0;
 }

@@ -9408,31 +9408,45 @@ document.addEventListener('click', function(e) {
   updateActiveChipTags();
 });
 
-// ── Pickup day buttons ────────────────────────────────────────
+// ── Pickup day inputs + All button ───────────────────────────
+function _pickupSetFilter(panel, val) {
+  var isAll = (val === 'all');
+  var labelText = isAll ? 'All time' : (val == 1 ? '1 day' : val + ' days');
+  var hiddenVal = isAll ? 'all' : String(val);
+  var lbl    = document.getElementById(panel === 'cal' ? 'calPickupLabel' : 'wvPickupLabel');
+  var hidden = document.getElementById(panel === 'cal' ? 'calFiltPickup'  : 'wvFiltPickup');
+  if (lbl)    lbl.textContent = labelText;
+  if (hidden) { hidden.value = hiddenVal; hidden.dispatchEvent(new Event('change')); }
+}
+window.pickupInputFocus = function(input, panel) {
+  var wrap = input.closest('.pickup-btns-wrap');
+  if (wrap) {
+    wrap.querySelectorAll('.pickup-day-btn').forEach(function(b)  { b.classList.remove('active'); });
+    wrap.querySelectorAll('.pickup-day-input').forEach(function(i) { i.classList.remove('active'); });
+    input.classList.add('active');
+  }
+  var val = parseInt(input.value) || 1;
+  _pickupSetFilter(panel, val);
+};
+window.pickupInputChange = function(input, panel) {
+  var val = parseInt(input.value);
+  if (!val || val < 1) return;
+  if (val > 365) { input.value = 365; val = 365; }
+  _pickupSetFilter(panel, val);
+};
 window.pickupBtnClick = function(btn, panel) {
-  var val = btn.dataset.val;
   var wrap = btn.closest('.pickup-btns-wrap');
   if (wrap) {
-    wrap.querySelectorAll('.pickup-day-btn').forEach(function(b) { b.classList.remove('active'); });
+    wrap.querySelectorAll('.pickup-day-btn').forEach(function(b)  { b.classList.remove('active'); });
+    wrap.querySelectorAll('.pickup-day-input').forEach(function(i) { i.classList.remove('active'); });
     btn.classList.add('active');
   }
-  var labelText = val === 'all' ? 'All time' : (val === '1' ? '1 day' : val + ' days');
-  var hiddenVal = val === 'all' ? 'all' : val;
-  if (panel === 'cal') {
-    var lbl = document.getElementById('calPickupLabel');
-    if (lbl) lbl.textContent = labelText;
-    var hidden = document.getElementById('calFiltPickup');
-    if (hidden) { hidden.value = hiddenVal; hidden.dispatchEvent(new Event('change')); }
-  } else {
-    var lbl = document.getElementById('wvPickupLabel');
-    if (lbl) lbl.textContent = labelText;
-    var hidden = document.getElementById('wvFiltPickup');
-    if (hidden) { hidden.value = hiddenVal; hidden.dispatchEvent(new Event('change')); }
-  }
+  _pickupSetFilter(panel, 'all');
 };
 function pickupBtnReset(panel) {
   var wrap = document.getElementById(panel === 'cal' ? 'calPickupBtns' : 'wvPickupBtns');
   if (wrap) {
+    wrap.querySelectorAll('.pickup-day-input').forEach(function(i) { i.classList.remove('active'); });
     wrap.querySelectorAll('.pickup-day-btn').forEach(function(b) {
       b.classList.toggle('active', b.dataset.val === 'all');
     });
