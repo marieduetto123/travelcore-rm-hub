@@ -146,7 +146,8 @@
       "Bash(./deploy.sh \"pickup: 3-column grouped metric cell + remove All button\")",
       "Bash(./deploy.sh \"pickup: 3-column inline display in Daily B and Daily H accordion rows\")",
       "Bash(./deploy.sh \"pickup metric: proper 2-row grid table \\(numbers header above values\\)\")",
-      "Bash(./deploy.sh \"pickup as proper grid rows; back-to-month secondary button\")"
+      "Bash(./deploy.sh \"pickup as proper grid rows; back-to-month secondary button\")",
+      "Bash(./deploy.sh \"rename Close out strategies to Add conditions in close out modal\")"
     ]
   }
 }
