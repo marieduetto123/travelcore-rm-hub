@@ -3747,9 +3747,7 @@ function buildDailyBView(days, month, activeDay) {
       grp.g_more.push({type:'sub',  id:'revpar_stly', label:compLabel,   dot:'#C4FF45', parent:'revpar_s'});
     }
     if (wvMetricState.dm_pickup) {
-      grp.g_more.push({type:'sect', id:'pickup_s', label:'Pickup',       parent:'g_more'});
-      grp.g_more.push({type:'sub',  id:'pickup_t', label:'TO Pickup',     dot:'#004948', parent:'pickup_s'});
-      grp.g_more.push({type:'sub',  id:'pickup_h', label:'Hotel Pickup', dot:'#52d9ce', parent:'pickup_s'});
+      grp.g_more.push({type:'sect', id:'pickup_s', label:'Pickup', parent:'g_more'});
     }
     if (wvMetricState.dm_avgAdults) {
       grp.g_more.push({type:'sect', id:'avga_s', label:'Avg Adults',   parent:'g_more'});
@@ -4129,10 +4127,16 @@ function buildDailyBView(days, month, activeDay) {
               + wbBarMark(wbBar(Math.min(90,Math.round(d.hRevpar/4)), '#004948'), cvPct);
             break;
           }
-          case 'pickup_s':
-            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">+'+d.pickup+'</span></div>'
-              + wbBar(Math.min(90,d.pickup*3), '#004948') + wbBar(Math.min(90,d.hPickup*3), '#52d9ce');
+          case 'pickup_s': {
+            var _pcols = pickupDayValues.map(function(dv,i){
+              if (!wvMetricState['dm_pickup_'+i]) return '';
+              var scale = dv<=1?0.3:dv<=3?0.6:dv<=7?1:Math.min(2,dv/7);
+              var val = Math.max(0,Math.round(d.pickup*scale));
+              return '<div class="wv-pickup-col"><div class="wv-pickup-col-lbl">'+dv+'</div><div class="wv-pickup-col-val">+'+val+'</div></div>';
+            }).join('');
+            cellContent = '<div class="wv-pickup-3col">'+_pcols+'</div>';
             break;
+          }
           case 'avga_s':
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.avgA+'</span></div>'
               + wbBar(Math.min(90,parseFloat(d.avgA)/3*100), '#004948') + wbBar(Math.min(90,parseFloat(d.hAvgA)/3*100), '#52d9ce');
@@ -4561,9 +4565,15 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
       sub('STLY',     CSTLY, false, function(d){ return sCell('$'+d.sdlyRevpar, bar(Math.min(90,Math.round(d.sdlyRevpar/4)),CSTLY)); });
     }
     if (wvMetricState.dm_pickup) {
-      sect('Pickup', C1, C1, function(d){ return sCell('+'+d.pickup, bar(Math.min(90,d.pickup*3),C1)+'<div style="margin-top:2px">'+bar(Math.min(90,d.hPickup*3),C2)+'</div>'); });
-      sub('TO Pickup',     C1, false, function(d){ return sCell('+'+d.pickup, bar(Math.min(90,d.pickup*3),C1)); });
-      sub('Hotel Pickup', C2, false, function(d){ return sCell('+'+d.hPickup, bar(Math.min(90,d.hPickup*3),C2)); });
+      sect('Pickup', C1, C1, function(d){
+        var cols = pickupDayValues.map(function(dv,i){
+          if (!wvMetricState['dm_pickup_'+i]) return '';
+          var scale = dv<=1?0.3:dv<=3?0.6:dv<=7?1:Math.min(2,dv/7);
+          var val = Math.max(0,Math.round(d.pickup*scale));
+          return '<div class="wv-pickup-col"><div class="wv-pickup-col-lbl">'+dv+'</div><div class="wv-pickup-col-val">+'+val+'</div></div>';
+        }).join('');
+        return '<div class="wv-pickup-3col">'+cols+'</div>';
+      });
     }
     if (wvMetricState.dm_avgAdults) {
       sect('Avg Adults', C1, C1, function(d){ return sCell(d.avgA, bar(Math.min(90,parseFloat(d.avgA)/3*100),C1)+'<div style="margin-top:2px">'+bar(Math.min(90,parseFloat(d.hAvgA)/3*100),C2)+'</div>'); });
