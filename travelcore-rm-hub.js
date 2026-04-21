@@ -2677,11 +2677,17 @@ function clearCalSelection() {
       _filtLabel = '<div style="font-size:8px;font-weight:600;color:#006461;background:#d7f7ed;padding:2px 8px;border-radius:4px;margin-bottom:6px;text-align:center">Filtered: '+_parts.join(' · ')+'</div>';
     }
 
+    var _basePickup = Math.max(1, Math.floor((v%25+5)*_filterMult));
     var detRows = [
       ['RN Sold',      rnSold,                            Math.floor(rnSold*0.88),          '+' + Math.floor(v%30+5)],
       ['ADR',          '$' + adr,                         '$' + adrSDLY,                    '+' + (3+v%12)+'%'],
       ['Revenue',      '$' + Math.floor(rev/1000) + 'k',  '$' + Math.floor(sdlyR/1000)+'k','+' + (5+v%15)+'%'],
-      ['Pickup',       '+' + Math.max(1,Math.floor((v%25+5)*_filterMult)), '+0',            '+' + Math.floor(v%15+5)],
+      ...pickupDayValues.map(function(dv, i) {
+        if (!wvMetricState['dm_pickup_' + i]) return null;
+        var sc  = dv<=1?0.3:dv<=3?0.6:dv<=7?1:Math.min(2,dv/7);
+        var val = Math.max(0, Math.round(_basePickup * sc));
+        return ['Pickup ' + dv, '+' + val, '+0', '+' + Math.floor((v%15+5)*sc)];
+      }).filter(Boolean),
       ['Avg Adults',   (1.8+v%3*.1).toFixed(1),           '1.9',                            '-0.1'],
       ['Avg Children', (0.3+v%2*.1).toFixed(1),           '0.4',                            '-0.1'],
       ['REVPAR',       '$' + Math.round(adr*hotel/100),   '$' + Math.floor(adr*0.92),       '+' + (10+v%20)+'%'],
