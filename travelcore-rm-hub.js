@@ -7251,7 +7251,7 @@ function buildWeekGrid(month, weekStart, activeDay) {
               var scale = d <= 1 ? 0.3 : d <= 3 ? 0.6 : d <= 7 ? 1 : Math.min(2, d/7);
               var toP   = Math.max(0, Math.round(dmToPickup    * scale));
               var htlP  = Math.max(0, Math.round(dmHotelPickup * scale));
-              var lbl   = d === 1 ? '1d Pickup' : d + 'd Pickup';
+              var lbl   = 'Pickup · ' + d;
               return [lbl, '+'+toP, null, null, null, '#006461', Math.min(92,30+v%50), 'dm_pickup_'+i, '+'+htlP, Math.min(92,30+v%50+10)];
             }),
             ['Avg Adults',     dmAvgAdults,    null,  null,  null,  '#2e65e8', Math.min(92, 55+v%30),               'dm_avgAdults',    hotelAvgAdults,    Math.min(92, 55+v%30+8)],
@@ -9520,7 +9520,7 @@ window.renderPickupMetricItems = function() {
   if (!container) return;
   container.innerHTML = pickupDayValues.map(function(d, i) {
     var key   = 'dm_pickup_' + i;
-    var label = d === 1 ? 'Pickup · 1 Day' : 'Pickup · ' + d + ' Days';
+    var label = 'Pickup · ' + d;
     if (!(key in wvMetricState)) wvMetricState[key] = true;
     var checked = wvMetricState[key] !== false;
     return '<label class="wv-ms-item"><span class="wv-ms-cb' + (checked ? ' checked' : '') + '" data-key="' + key + '"></span><span class="wv-ms-label">' + label + '</span></label>';

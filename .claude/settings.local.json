@@ -141,7 +141,8 @@
       "mcp__Claude_in_Chrome__tabs_context_mcp",
       "Bash(./deploy.sh \"sync filters between monthly/weekly incl pickup button state; fix badge count\")",
       "Bash(./deploy.sh \"match pickup inputs to Storybook InputComponent style\")",
-      "Bash(./deploy.sh \"dynamic pickup metric items in More Metrics based on input values\")"
+      "Bash(./deploy.sh \"dynamic pickup metric items in More Metrics based on input values\")",
+      "Bash(./deploy.sh \"remove Days label from pickup inputs and metric items\")"
     ]
   }
 }
