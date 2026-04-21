@@ -2449,7 +2449,7 @@ body.dark .wv-date-nav { border-bottom-color: var(--border); }
 body.dark .wv-nav-btn { color: #5ceade; }
 .wv-nav-btn:hover { background: #D7F7ED; }
 .wv-nav-btn svg { width: 14px; height: 14px; }
-.wv-range { font-size: 14px; font-weight: 400; color: #4F5B60; white-space: nowrap; display:flex; align-items:center; }
+.wv-range { font-size: 14px; font-weight: 400; color: #4F5B60; white-space: nowrap; }
 .wv-range-cal-icon { color: #006461; }
 body.dark .wv-range { color: var(--text-primary); }
 /* Week layout: left section panel + 7-column grid */
