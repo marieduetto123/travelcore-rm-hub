@@ -3747,7 +3747,10 @@ function buildDailyBView(days, month, activeDay) {
       grp.g_more.push({type:'sub',  id:'revpar_stly', label:compLabel,   dot:'#C4FF45', parent:'revpar_s'});
     }
     if (wvMetricState.dm_pickup) {
-      grp.g_more.push({type:'sect', id:'pickup_s', label:'Pickup', parent:'g_more'});
+      pickupDayValues.forEach(function(dv, i) {
+        if (!wvMetricState['dm_pickup_' + i]) return;
+        grp.g_more.push({type:'sect', id:'pickup_' + i, label:'Pickup ' + dv, parent:'g_more'});
+      });
     }
     if (wvMetricState.dm_avgAdults) {
       grp.g_more.push({type:'sect', id:'avga_s', label:'Avg Adults',   parent:'g_more'});
@@ -4127,12 +4130,15 @@ function buildDailyBView(days, month, activeDay) {
               + wbBarMark(wbBar(Math.min(90,Math.round(d.hRevpar/4)), '#004948'), cvPct);
             break;
           }
-          case 'pickup_s':
-            cellContent = _mkPickupGrid(function(dv) {
-              var scale = dv<=1?0.3:dv<=3?0.6:dv<=7?1:Math.min(2,dv/7);
-              return '+' + Math.max(0, Math.round(d.pickup * scale));
-            });
+          case 'pickup_0': case 'pickup_1': case 'pickup_2': {
+            var _pi = parseInt(row.id.split('_')[1]);
+            var _dv = pickupDayValues[_pi] || 7;
+            var _sc = _dv<=1?0.3:_dv<=3?0.6:_dv<=7?1:Math.min(2,_dv/7);
+            var _pv = Math.max(0, Math.round(d.pickup * _sc));
+            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">+'+_pv+'</span></div>'
+              + wbBar(Math.min(90, _pv * 3), '#004948') + wbBar(Math.min(90, d.hPickup * _sc * 3), '#52d9ce');
             break;
+          }
           case 'avga_s':
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.avgA+'</span></div>'
               + wbBar(Math.min(90,parseFloat(d.avgA)/3*100), '#004948') + wbBar(Math.min(90,parseFloat(d.hAvgA)/3*100), '#52d9ce');
@@ -4561,11 +4567,15 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
       sub('STLY',     CSTLY, false, function(d){ return sCell('$'+d.sdlyRevpar, bar(Math.min(90,Math.round(d.sdlyRevpar/4)),CSTLY)); });
     }
     if (wvMetricState.dm_pickup) {
-      sect('Pickup', C1, C1, function(d){
-        return _mkPickupGrid(function(dv) {
-          var scale = dv<=1?0.3:dv<=3?0.6:dv<=7?1:Math.min(2,dv/7);
-          return '+' + Math.max(0, Math.round(d.pickup * scale));
-        });
+      pickupDayValues.forEach(function(dv, i) {
+        if (!wvMetricState['dm_pickup_' + i]) return;
+        (function(dv) {
+          sect('Pickup ' + dv, C1, C1, function(d) {
+            var scale = dv<=1?0.3:dv<=3?0.6:dv<=7?1:Math.min(2,dv/7);
+            var val = Math.max(0, Math.round(d.pickup * scale));
+            return sCell('+'+val, bar(Math.min(90,val*3),C1)+'<div style="margin-top:2px">'+bar(Math.min(90,d.hPickup*scale*3),C2)+'</div>');
+          });
+        })(dv);
       });
     }
     if (wvMetricState.dm_avgAdults) {
@@ -7265,16 +7275,29 @@ function buildWeekGrid(month, weekStart, activeDay) {
             if (row.__type==='pickup_group') return wvMetricState.dm_pickup;
             return wvMetricState[row[7]];
           }).map(function(row){
-            // ── Grouped pickup cell ──────────────────────────────────────
+            // ── Grouped pickup cells (one per active window) ─────────────
             if (row.__type === 'pickup_group') {
-              var grid = _mkPickupGrid(function(dv) {
+              return pickupDayValues.map(function(dv, i) {
+                if (!wvMetricState['dm_pickup_' + i]) return '';
                 var scale = dv<=1?0.3:dv<=3?0.6:dv<=7?1:Math.min(2,dv/7);
-                return '+' + Math.max(0, Math.round(row.__dmToPickup * scale));
-              });
-              return '<div>'
-                + '<div class="wv-occ-bar-labels"><span class="wv-q-label">Pickup</span></div>'
-                + grid
-                + '</div>';
+                var toP  = Math.max(0, Math.round(row.__dmToPickup * scale));
+                var htlP = Math.max(0, Math.round(row.__dmHotelPickup * scale));
+                var bp   = Math.min(92, 30 + row.__v % 50);
+                var tPct = Math.round(bp * Math.min(1, row.__toFrac));
+                var hPct = Math.round(bp * 1.1);
+                var dualBar = '<div class="wv-dm-bar-wrap" style="position:relative">'
+                  +'<div class="wv-dm-bar-fill" style="width:'+hPct+'%;background:#006461;opacity:0.2"></div>'
+                  +'<div class="wv-dm-bar-fill" style="width:'+tPct+'%;background:#006461"></div>'
+                  +'</div>';
+                var bdRows = '<div class="wv-occ-br-row"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:#006461;opacity:.45"></span><span class="wv-occ-br-lbl">Hotel</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms">+'+htlP+'</span></div></div>'
+                  +'<div class="wv-occ-br-row"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:#006461"></span><span class="wv-occ-br-lbl" style="color:#006461">TO</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms" style="color:#006461">+'+toP+'</span></div></div>';
+                return '<div>'
+                  +'<div class="wv-occ-bar-labels"><span class="wv-q-label">Pickup '+dv+'</span>'
+                  +'<div class="wv-hdr-right"><span class="wv-occ-total" style="color:#006461">+'+toP+'</span></div></div>'
+                  +dualBar
+                  +'<div class="wv-occ-breakdown" style="margin-top:2px">'+bdRows+'</div>'
+                  +'</div>';
+              }).join('');
             }
             const lbl=row[0],val=row[1],sv=row[2],lv=row[3],fv=row[4],barClr=row[5],barPct=row[6],hv=row[8],hbp=row[9];
             const isHotelOnly = hv === '__hotelOnly';

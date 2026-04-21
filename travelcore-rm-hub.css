@@ -2144,6 +2144,17 @@ body.dark .wv-topbar-title { color: var(--text-primary); }
   border-radius: 4px; transition: background 0.12s;
 }
 .wv-topbar-back:hover { background: rgba(0,100,97,0.08); color: #006461; }
+/* Secondary "Back to month" button */
+.wv-back-btn {
+  display: inline-flex; align-items: center; gap: 4px;
+  height: 34px; padding: 0 14px 0 10px;
+  border: 1px solid #006461; border-radius: 8px;
+  background: #fff; color: #006461;
+  font-family: 'Lato', sans-serif; font-size: 13px; font-weight: 600;
+  cursor: pointer; flex-shrink: 0;
+  transition: background .12s, color .12s;
+}
+.wv-back-btn:hover { background: #006461; color: #fff; }
 
 /* Centred compare select */
 .wv-topbar-cmp-select {
