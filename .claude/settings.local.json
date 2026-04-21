@@ -168,7 +168,8 @@
       "Bash(awk 'NR>=3680 && NR<=3730' /Users/marie/Melia/travelcore-rm-hub.js)",
       "Bash(./deploy.sh \"Fix calendar blank: expose pickupDayValues globally so renderCalendar \\(global scope\\) can access it; bump script v84\")",
       "Bash(./deploy.sh \"Fix calendar icon in weekly date bar: move icon outside wvRange span so textContent updates don't wipe it\")",
-      "Bash(./deploy.sh \"Make column header event icons visible: non-event days 70% white, event days lime highlight\")"
+      "Bash(./deploy.sh \"Make column header event icons visible: non-event days 70% white, event days lime highlight\")",
+      "Bash(./deploy.sh \"Add event calendar icon to Daily B column headers\")"
     ]
   }
 }

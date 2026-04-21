@@ -3987,6 +3987,11 @@ function buildDailyBView(days, month, activeDay) {
           : _coPart2
           ? '<span class="wb-hdr-lock-icon" title="Partially closed out"><span class="material-icons" style="font-size:13px;color:#fde68a">lock_open</span></span>'
           : '';
+    var _wbEvtKey = dv.month + '-' + dv.day;
+    var _wbHasEvt = (typeof CAL_EVENTS !== 'undefined' && CAL_EVENTS[_wbEvtKey]);
+    var _evtIcon = _wbHasEvt
+          ? '<span class="wv-event-cal-icon has-events" data-event-key="' + _wbEvtKey + '" onmouseenter="calShowEventTip(event,\'' + _wbEvtKey + '\')" onmouseleave="calHideEventTip()" style="display:inline-flex;align-items:center"><span class="material-icons" style="font-size:14px;color:#c4ff45">today</span></span>'
+          : '<span class="wv-event-cal-icon" style="display:inline-flex;align-items:center"><span class="material-icons" style="font-size:14px;color:rgba(255,255,255,0.7)">today</span></span>';
     html += '<div class="wb-data-cell wb-hdr-cell'
           + (isAct ? ' wb-hdr-active' : '')
           + (isSel ? ' wb-hdr-selected' : '')
@@ -3994,6 +3999,7 @@ function buildDailyBView(days, month, activeDay) {
           + '<input type="checkbox" class="wv-day-chk wb-day-chk"' + (isSel ? ' checked' : '') + ' onclick="event.stopPropagation();wbDayToggle(\'' + isoDate + '\');this.checked=_wbSelectedDays.has(\'' + isoDate + '\')" title="Select for close-out">'
           + '<span class="wb-hdr-dow">' + dow + '</span>'
           + '<span class="wb-hdr-date">' + dv.day + '/' + dv.month + '</span>'
+          + _evtIcon
           + (dbaStr ? '<span style="font-size:10px;background:rgba(255,255,255,0.2);border-radius:3px;padding:0 4px;color:#fff;white-space:nowrap">'+dbaStr+'</span>' : '')
           + _lockIcon
           + '</div>';
