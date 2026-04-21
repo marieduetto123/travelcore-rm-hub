@@ -4153,8 +4153,6 @@ function buildDailyBView(days, month, activeDay) {
                 + '</div>';
             });
             cellContent = '<div class="wv-pu-fig-wrap">'
-              + wbBar(Math.min(90, Math.round(d.pickup * 3)), '#004948')
-              + wbBar(Math.min(90, Math.round(d.hPickup * 3)), '#52d9ce')
               + '<div class="wv-pu-fig-hdr-row" style="grid-template-columns:repeat('+_pun+',1fr)">'+_puHdrs+'</div>'
               + '<div class="wv-pu-fig-val-row" style="grid-template-columns:repeat('+_pun+',1fr)">'+_puVals+'</div>'
               + '</div>';
@@ -4608,8 +4606,6 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
                 + '</div>';
             });
             return '<div class="wv-pu-fig-wrap">'
-              + bar(Math.min(90,Math.round(d.pickup*3)),C1)
-              + '<div style="margin-top:2px">'+bar(Math.min(90,Math.round(d.hPickup*3)),C2)+'</div>'
               + '<div class="wv-pu-fig-hdr-row" style="grid-template-columns:repeat('+n+',1fr)">'+hdrs+'</div>'
               + '<div class="wv-pu-fig-val-row" style="grid-template-columns:repeat('+n+',1fr)">'+vals+'</div>'
               + '</div>';
