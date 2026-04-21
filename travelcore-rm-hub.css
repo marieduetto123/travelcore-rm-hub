@@ -6596,6 +6596,26 @@ body.dark .cal-view-btn.active { background: #006461; color: #fff; }
 .fchips-divider { width: 1px; height: 18px; background: #e5e7eb; margin: 0 2px; }
 .fchips-active-wrap { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
 
+/* ── Pickup 3-column metric cell ── */
+.wv-pickup-3col {
+  display: flex; gap: 6px; padding: 4px 0 2px;
+}
+.wv-pickup-col {
+  flex: 1; min-width: 0;
+}
+.wv-pickup-col-lbl {
+  font-size: 9px; font-weight: 700; color: #9ca3af;
+  text-transform: uppercase; letter-spacing: .4px;
+  margin-bottom: 2px;
+}
+.wv-pickup-col-val {
+  font-size: 13px; font-weight: 700; color: #006461;
+  line-height: 1.2;
+}
+.wv-pickup-col-sub {
+  font-size: 10px; color: #9ca3af; margin-bottom: 2px;
+}
+
 /* ── Pickup day inputs + All button ── */
 .pickup-btns-wrap {
   display: flex; align-items: center; gap: 6px;

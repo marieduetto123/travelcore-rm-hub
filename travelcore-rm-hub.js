@@ -7247,13 +7247,7 @@ function buildWeekGrid(month, weekStart, activeDay) {
           const hotelTotalGuests = Math.round(dmHotelRn * (parseFloat(hotelAvgAdults) + parseFloat(hotelAvgChildren)));
           return [
             ['RN Sold',        dmToRn,         S.rn,  L.rn,  F.rn,  '#2e65e8', Math.min(92, 55+(v%37)),             'dm_rnSold',       dmHotelRn,         Math.min(92, 55+(v%37)+10)],
-            ...pickupDayValues.map(function(d,i){
-              var scale = d <= 1 ? 0.3 : d <= 3 ? 0.6 : d <= 7 ? 1 : Math.min(2, d/7);
-              var toP   = Math.max(0, Math.round(dmToPickup    * scale));
-              var htlP  = Math.max(0, Math.round(dmHotelPickup * scale));
-              var lbl   = 'Pickup · ' + d;
-              return [lbl, '+'+toP, null, null, null, '#006461', Math.min(92,30+v%50), 'dm_pickup_'+i, '+'+htlP, Math.min(92,30+v%50+10)];
-            }),
+            {__type:'pickup_group', __dmToPickup:dmToPickup, __dmHotelPickup:dmHotelPickup, __toFrac:toFrac, __v:v},
             ['Avg Adults',     dmAvgAdults,    null,  null,  null,  '#2e65e8', Math.min(92, 55+v%30),               'dm_avgAdults',    hotelAvgAdults,    Math.min(92, 55+v%30+8)],
             ['Avg Children',   dmAvgChildren,  null,  null,  null,  '#d33030', Math.min(92, 20+v%40),               'dm_avgChildren',  hotelAvgChildren,  Math.min(92, 20+v%40+8)],
             ['Total Adults',   dmTotalAdults,  null,  null,  null,  '#2e65e8', Math.min(92, 60+v%28),               'dm_totalAdults',  hotelTotalAdults,  Math.min(92, 60+v%28+8)],
@@ -7264,7 +7258,35 @@ function buildWeekGrid(month, weekStart, activeDay) {
             ['Avg LOS',        (2.8+v%5*.3).toFixed(1)+'n', null,null,null,'#0891b2', Math.min(92, 40+v%40), 'dm_avgLos',       hotelAvgLos,       Math.min(92, 40+v%40+8)],
             ['Avg Lead Time',  (18+v%60)+'d',               null,null,null,'#6366f1', Math.min(92, 25+v%55), 'dm_avgLeadTime',  hotelAvgLeadTime,  Math.min(92, 25+v%55+8)],
             ['Total Guests',   dmTotalGuestsT, null,null,null,'#0369a1', Math.min(92, 55+v%35),               'dm_totalGuests',  hotelTotalGuests,  Math.min(92, 55+v%35+8)],
-          ].filter(function(row){return wvMetricState[row[7]];}).map(function(row){
+          ].filter(function(row){
+            if (row.__type==='pickup_group') return wvMetricState.dm_pickup;
+            return wvMetricState[row[7]];
+          }).map(function(row){
+            // ── Grouped pickup cell ──────────────────────────────────────
+            if (row.__type === 'pickup_group') {
+              var cols = pickupDayValues.map(function(d,i){
+                if (!wvMetricState['dm_pickup_'+i]) return null;
+                var scale = d<=1?0.3:d<=3?0.6:d<=7?1:Math.min(2,d/7);
+                var toP  = Math.max(0,Math.round(row.__dmToPickup*scale));
+                var htlP = Math.max(0,Math.round(row.__dmHotelPickup*scale));
+                var bp   = Math.min(92,30+row.__v%50);
+                var tPct = Math.round(bp*Math.min(1,row.__toFrac));
+                var hPct = Math.round(bp*1.1);
+                return '<div class="wv-pickup-col">'
+                  +'<div class="wv-pickup-col-lbl">'+d+'</div>'
+                  +'<div class="wv-pickup-col-val">+'+toP+'</div>'
+                  +'<div class="wv-pickup-col-sub">H +'+htlP+'</div>'
+                  +'<div class="wv-dm-bar-wrap" style="position:relative;margin-top:4px">'
+                  +'<div class="wv-dm-bar-fill" style="width:'+hPct+'%;background:#006461;opacity:0.2"></div>'
+                  +'<div class="wv-dm-bar-fill" style="width:'+tPct+'%;background:#006461"></div>'
+                  +'</div>'
+                  +'</div>';
+              }).filter(Boolean);
+              return '<div>'
+                +'<div class="wv-occ-bar-labels"><span class="wv-q-label">Pickup</span></div>'
+                +'<div class="wv-pickup-3col">'+cols.join('')+'</div>'
+                +'</div>';
+            }
             const lbl=row[0],val=row[1],sv=row[2],lv=row[3],fv=row[4],barClr=row[5],barPct=row[6],hv=row[8],hbp=row[9];
             const isHotelOnly = hv === '__hotelOnly';
             const hvDisplay   = (hv && hv !== '__hotelOnly') ? hv : null;
