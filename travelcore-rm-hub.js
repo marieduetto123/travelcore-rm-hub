@@ -13818,20 +13818,18 @@ window.calHideCapTip = function() {
     cmMetrics.forEach(function(key) {
       if (rows.length >= 4) return;
 
-      // Individual segment mode (non-comparison metrics)
+      // Segment-filtered metric: one row, value scaled by selected segments
       if (cmMode === 'individual' && SRC_KEYS.indexOf(key) >= 0 && COMP_KEYS.indexOf(key) < 0) {
         var baseVal = cellVals[KEY_MAP[key]] || 0;
-        cmSegs.forEach(function(seg) {
-          if (rows.length >= 4) return;
-          var mults = { fit:0.62, dynamic:0.53, series:0.31 };
-          var v = Math.round(baseVal * (mults[seg] || 0.5));
-          var segLbls = { fit:'FIT', dynamic:'Dyn', series:'Ser' };
-          var segClrs = { fit:'#0891b2', dynamic:'#7c3aed', series:'#f59e0b' };
-          var metricLbl = KEY_LABELS[key] ? KEY_LABELS[key].replace(/^[HT]-/,'') : key;
-          var rowLbl = cmSegs.length < 3 ? segLbls[seg]+'-'+metricLbl : metricLbl;
-          rows.push({ label: rowLbl, color: segClrs[seg]||'#6b7280',
-            value: String(v), raw: v });
-        });
+        var segMults = { fit:0.62, dynamic:0.53, series:0.31 };
+        var totalMult = 0.62 + 0.53 + 0.31;
+        var selMult = 0;
+        cmSegs.forEach(function(s){ selMult += (segMults[s] || 0); });
+        var scale = totalMult > 0 ? selMult / totalMult : 1;
+        var v = Math.round(baseVal * scale);
+        var metricLbl = KEY_LABELS[key] ? KEY_LABELS[key].replace(/^[HT]-/,'') : key;
+        var clr = KEY_COLORS[key] || '#006461';
+        rows.push({ label: metricLbl, color: clr, value: String(v), raw: v });
         return;
       }
 

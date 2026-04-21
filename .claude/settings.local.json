@@ -157,7 +157,8 @@
       "Bash(./deploy.sh \"cell metrics: remove mode toggle, always show segments with All checkbox \\(min 1 required\\)\")",
       "Bash(./deploy.sh \"back button: match wv-outline-btn style \\(teal border, white bg, hover tint\\)\")",
       "Bash(./deploy.sh \"cell metrics: hide segment prefix in labels when all segments selected\")",
-      "Bash(./deploy.sh \"close out: merge to single smart button \\(pre-fills dates if selected, else opens empty\\)\")"
+      "Bash(./deploy.sh \"close out: merge to single smart button \\(pre-fills dates if selected, else opens empty\\)\")",
+      "Bash(./deploy.sh \"cell metrics: segment selection scales value but keeps same label/colour appearance\")"
     ]
   }
 }
