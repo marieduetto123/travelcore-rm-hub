@@ -1535,6 +1535,7 @@ function renderCalendar() {
       const cellRev = Math.floor(hotel * cellAdr * HOTEL_CAPACITY / 100 * 1.1);
       const cellRnSold = Math.floor(hotel * HOTEL_CAPACITY / 100);
       const cellPickup = getPickupPct(m.month, d) - 10;
+      const _pdv = (typeof pickupDayValues !== 'undefined' && pickupDayValues) || window.pickupDayValues || [1, 3, 7];
       const cellRemainRooms = HOTEL_CAPACITY - cellRnSold;
       const cellAvgAdults = parseFloat((1.8 + Math.abs((m.month * 11 + d * 7) % 3) * 0.1).toFixed(1));
       const cellAvgChildren = parseFloat((0.3 + Math.abs((m.month * 7 + d * 13) % 5) * 0.1).toFixed(1));
@@ -1555,12 +1556,12 @@ function renderCalendar() {
         hotelRev: cellRev, toRev: toRevVal,
         lyRev: Math.round(cellRev * lyF), fcstRev: Math.round(cellRev * fcF),
         hotelPickup: cellPickup, toPickup: toPickupV,
-        hotelPickup_0: Math.max(0, Math.round(cellPickup * (pickupDayValues[0]<=1?0.3:pickupDayValues[0]<=3?0.6:pickupDayValues[0]<=7?1:Math.min(2,pickupDayValues[0]/7)))),
-        hotelPickup_1: Math.max(0, Math.round(cellPickup * (pickupDayValues[1]<=1?0.3:pickupDayValues[1]<=3?0.6:pickupDayValues[1]<=7?1:Math.min(2,pickupDayValues[1]/7)))),
-        hotelPickup_2: Math.max(0, Math.round(cellPickup * (pickupDayValues[2]<=1?0.3:pickupDayValues[2]<=3?0.6:pickupDayValues[2]<=7?1:Math.min(2,pickupDayValues[2]/7)))),
-        toPickup_0: Math.max(0, Math.round(toPickupV * (pickupDayValues[0]<=1?0.3:pickupDayValues[0]<=3?0.6:pickupDayValues[0]<=7?1:Math.min(2,pickupDayValues[0]/7)))),
-        toPickup_1: Math.max(0, Math.round(toPickupV * (pickupDayValues[1]<=1?0.3:pickupDayValues[1]<=3?0.6:pickupDayValues[1]<=7?1:Math.min(2,pickupDayValues[1]/7)))),
-        toPickup_2: Math.max(0, Math.round(toPickupV * (pickupDayValues[2]<=1?0.3:pickupDayValues[2]<=3?0.6:pickupDayValues[2]<=7?1:Math.min(2,pickupDayValues[2]/7)))),
+        hotelPickup_0: Math.max(0, Math.round(cellPickup * (_pdv[0]<=1?0.3:_pdv[0]<=3?0.6:_pdv[0]<=7?1:Math.min(2,_pdv[0]/7)))),
+        hotelPickup_1: Math.max(0, Math.round(cellPickup * (_pdv[1]<=1?0.3:_pdv[1]<=3?0.6:_pdv[1]<=7?1:Math.min(2,_pdv[1]/7)))),
+        hotelPickup_2: Math.max(0, Math.round(cellPickup * (_pdv[2]<=1?0.3:_pdv[2]<=3?0.6:_pdv[2]<=7?1:Math.min(2,_pdv[2]/7)))),
+        toPickup_0: Math.max(0, Math.round(toPickupV * (_pdv[0]<=1?0.3:_pdv[0]<=3?0.6:_pdv[0]<=7?1:Math.min(2,_pdv[0]/7)))),
+        toPickup_1: Math.max(0, Math.round(toPickupV * (_pdv[1]<=1?0.3:_pdv[1]<=3?0.6:_pdv[1]<=7?1:Math.min(2,_pdv[1]/7)))),
+        toPickup_2: Math.max(0, Math.round(toPickupV * (_pdv[2]<=1?0.3:_pdv[2]<=3?0.6:_pdv[2]<=7?1:Math.min(2,_pdv[2]/7)))),
         hotelRn: cellRnSold, toRn: toRnSold,
         hotelTrev: cellTrevpar, toTrev: toTrevVal,
         lyRevpar: Math.round(cellTrevpar * lyF), fcstRevpar: Math.round(cellTrevpar * fcF),
@@ -9605,6 +9606,7 @@ function pickupBtnReset(panel) {
 
 // ── Pickup metric items (dynamic labels based on input values) ───────────
 var pickupDayValues = [1, 3, 7];
+window.pickupDayValues = pickupDayValues; // expose globally for renderCalendar (which is at global scope)
 
 // Build a 2-row grid: window numbers on top, values below
 function _mkPickupGrid(getValFn) {
@@ -9632,6 +9634,7 @@ function getPickupInputValues() {
 }
 window.renderPickupMetricItems = function() {
   pickupDayValues = getPickupInputValues();
+  window.pickupDayValues = pickupDayValues; // keep global in sync
   var container = document.getElementById('wvPickupMetricItems');
   if (!container) return;
   container.innerHTML = pickupDayValues.map(function(d, i) {

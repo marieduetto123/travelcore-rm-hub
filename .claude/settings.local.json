@@ -163,7 +163,10 @@
       "WebSearch",
       "WebFetch(domain:help.figma.com)",
       "Bash(claude mcp *)",
-      "Bash(./deploy.sh \"Add calendar icon to weekly date range; fix Table Settings close outs tick and remove ability\")"
+      "Bash(./deploy.sh \"Add calendar icon to weekly date range; fix Table Settings close outs tick and remove ability\")",
+      "Bash(node --check travelcore-rm-hub.js)",
+      "Bash(awk 'NR>=3680 && NR<=3730' /Users/marie/Melia/travelcore-rm-hub.js)",
+      "Bash(./deploy.sh \"Fix calendar blank: expose pickupDayValues globally so renderCalendar \\(global scope\\) can access it; bump script v84\")"
     ]
   }
 }
