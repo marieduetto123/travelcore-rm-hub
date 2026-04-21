@@ -4127,16 +4127,12 @@ function buildDailyBView(days, month, activeDay) {
               + wbBarMark(wbBar(Math.min(90,Math.round(d.hRevpar/4)), '#004948'), cvPct);
             break;
           }
-          case 'pickup_s': {
-            var _pcols = pickupDayValues.map(function(dv,i){
-              if (!wvMetricState['dm_pickup_'+i]) return '';
+          case 'pickup_s':
+            cellContent = _mkPickupGrid(function(dv) {
               var scale = dv<=1?0.3:dv<=3?0.6:dv<=7?1:Math.min(2,dv/7);
-              var val = Math.max(0,Math.round(d.pickup*scale));
-              return '<div class="wv-pickup-col"><div class="wv-pickup-col-lbl">'+dv+'</div><div class="wv-pickup-col-val">+'+val+'</div></div>';
-            }).join('');
-            cellContent = '<div class="wv-pickup-3col">'+_pcols+'</div>';
+              return '+' + Math.max(0, Math.round(d.pickup * scale));
+            });
             break;
-          }
           case 'avga_s':
             cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.avgA+'</span></div>'
               + wbBar(Math.min(90,parseFloat(d.avgA)/3*100), '#004948') + wbBar(Math.min(90,parseFloat(d.hAvgA)/3*100), '#52d9ce');
@@ -4566,13 +4562,10 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
     }
     if (wvMetricState.dm_pickup) {
       sect('Pickup', C1, C1, function(d){
-        var cols = pickupDayValues.map(function(dv,i){
-          if (!wvMetricState['dm_pickup_'+i]) return '';
+        return _mkPickupGrid(function(dv) {
           var scale = dv<=1?0.3:dv<=3?0.6:dv<=7?1:Math.min(2,dv/7);
-          var val = Math.max(0,Math.round(d.pickup*scale));
-          return '<div class="wv-pickup-col"><div class="wv-pickup-col-lbl">'+dv+'</div><div class="wv-pickup-col-val">+'+val+'</div></div>';
-        }).join('');
-        return '<div class="wv-pickup-3col">'+cols+'</div>';
+          return '+' + Math.max(0, Math.round(d.pickup * scale));
+        });
       });
     }
     if (wvMetricState.dm_avgAdults) {
@@ -7274,28 +7267,14 @@ function buildWeekGrid(month, weekStart, activeDay) {
           }).map(function(row){
             // ── Grouped pickup cell ──────────────────────────────────────
             if (row.__type === 'pickup_group') {
-              var cols = pickupDayValues.map(function(d,i){
-                if (!wvMetricState['dm_pickup_'+i]) return null;
-                var scale = d<=1?0.3:d<=3?0.6:d<=7?1:Math.min(2,d/7);
-                var toP  = Math.max(0,Math.round(row.__dmToPickup*scale));
-                var htlP = Math.max(0,Math.round(row.__dmHotelPickup*scale));
-                var bp   = Math.min(92,30+row.__v%50);
-                var tPct = Math.round(bp*Math.min(1,row.__toFrac));
-                var hPct = Math.round(bp*1.1);
-                return '<div class="wv-pickup-col">'
-                  +'<div class="wv-pickup-col-lbl">'+d+'</div>'
-                  +'<div class="wv-pickup-col-val">+'+toP+'</div>'
-                  +'<div class="wv-pickup-col-sub">H +'+htlP+'</div>'
-                  +'<div class="wv-dm-bar-wrap" style="position:relative;margin-top:4px">'
-                  +'<div class="wv-dm-bar-fill" style="width:'+hPct+'%;background:#006461;opacity:0.2"></div>'
-                  +'<div class="wv-dm-bar-fill" style="width:'+tPct+'%;background:#006461"></div>'
-                  +'</div>'
-                  +'</div>';
-              }).filter(Boolean);
+              var grid = _mkPickupGrid(function(dv) {
+                var scale = dv<=1?0.3:dv<=3?0.6:dv<=7?1:Math.min(2,dv/7);
+                return '+' + Math.max(0, Math.round(row.__dmToPickup * scale));
+              });
               return '<div>'
-                +'<div class="wv-occ-bar-labels"><span class="wv-q-label">Pickup</span></div>'
-                +'<div class="wv-pickup-3col">'+cols.join('')+'</div>'
-                +'</div>';
+                + '<div class="wv-occ-bar-labels"><span class="wv-q-label">Pickup</span></div>'
+                + grid
+                + '</div>';
             }
             const lbl=row[0],val=row[1],sv=row[2],lv=row[3],fv=row[4],barClr=row[5],barPct=row[6],hv=row[8],hbp=row[9];
             const isHotelOnly = hv === '__hotelOnly';
@@ -9535,6 +9514,20 @@ function pickupBtnReset(panel) {
 
 // ── Pickup metric items (dynamic labels based on input values) ───────────
 var pickupDayValues = [1, 3, 7];
+
+// Build a 2-row grid: window numbers on top, values below
+function _mkPickupGrid(getValFn) {
+  var hdrs = '', vals = '', n = 0;
+  pickupDayValues.forEach(function(dv, i) {
+    if (!wvMetricState['dm_pickup_' + i]) return;
+    n++;
+    hdrs += '<div class="wv-pickup-hdr-cell">' + dv + '</div>';
+    vals += '<div class="wv-pickup-val-cell">' + getValFn(dv, i) + '</div>';
+  });
+  if (!n) return '';
+  return '<div class="wv-pickup-grid" style="grid-template-columns:repeat(' + n + ',1fr)">'
+    + hdrs + vals + '</div>';
+}
 function getPickupInputValues() {
   // Try wv inputs first, then cal inputs
   var wrap = document.getElementById('wvPickupBtns') || document.getElementById('calPickupBtns');

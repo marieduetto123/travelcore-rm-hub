@@ -6596,25 +6596,33 @@ body.dark .cal-view-btn.active { background: #006461; color: #fff; }
 .fchips-divider { width: 1px; height: 18px; background: #e5e7eb; margin: 0 2px; }
 .fchips-active-wrap { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
 
-/* ── Pickup 3-column metric cell ── */
-.wv-pickup-3col {
-  display: flex; gap: 6px; padding: 4px 0 2px;
+/* ── Pickup grid cell (header row + value row) ── */
+.wv-pickup-grid {
+  display: grid;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 4px 0 2px;
+  width: 100%;
 }
-.wv-pickup-col {
-  flex: 1; min-width: 0;
+.wv-pickup-hdr-cell {
+  background: #f3f4f6;
+  border-bottom: 1px solid #e5e7eb;
+  border-right: 1px solid #e5e7eb;
+  text-align: center;
+  padding: 3px 2px;
+  font-size: 9px; font-weight: 700; color: #6b7280;
+  text-transform: uppercase; letter-spacing: .3px;
 }
-.wv-pickup-col-lbl {
-  font-size: 9px; font-weight: 700; color: #9ca3af;
-  text-transform: uppercase; letter-spacing: .4px;
-  margin-bottom: 2px;
+.wv-pickup-hdr-cell:last-child { border-right: none; }
+.wv-pickup-val-cell {
+  text-align: center;
+  padding: 5px 2px;
+  font-size: 12px; font-weight: 700; color: #006461;
+  border-right: 1px solid #e5e7eb;
+  background: #fff;
 }
-.wv-pickup-col-val {
-  font-size: 13px; font-weight: 700; color: #006461;
-  line-height: 1.2;
-}
-.wv-pickup-col-sub {
-  font-size: 10px; color: #9ca3af; margin-bottom: 2px;
-}
+.wv-pickup-val-cell:last-child { border-right: none; }
 
 /* ── Pickup day inputs + All button ── */
 .pickup-btns-wrap {

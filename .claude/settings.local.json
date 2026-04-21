@@ -144,7 +144,8 @@
       "Bash(./deploy.sh \"dynamic pickup metric items in More Metrics based on input values\")",
       "Bash(./deploy.sh \"remove Days label from pickup inputs and metric items\")",
       "Bash(./deploy.sh \"pickup: 3-column grouped metric cell + remove All button\")",
-      "Bash(./deploy.sh \"pickup: 3-column inline display in Daily B and Daily H accordion rows\")"
+      "Bash(./deploy.sh \"pickup: 3-column inline display in Daily B and Daily H accordion rows\")",
+      "Bash(./deploy.sh \"pickup metric: proper 2-row grid table \\(numbers header above values\\)\")"
     ]
   }
 }
