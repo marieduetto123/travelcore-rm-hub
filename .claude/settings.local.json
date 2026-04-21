@@ -158,7 +158,8 @@
       "Bash(./deploy.sh \"back button: match wv-outline-btn style \\(teal border, white bg, hover tint\\)\")",
       "Bash(./deploy.sh \"cell metrics: hide segment prefix in labels when all segments selected\")",
       "Bash(./deploy.sh \"close out: merge to single smart button \\(pre-fills dates if selected, else opens empty\\)\")",
-      "Bash(./deploy.sh \"cell metrics: segment selection scales value but keeps same label/colour appearance\")"
+      "Bash(./deploy.sh \"cell metrics: segment selection scales value but keeps same label/colour appearance\")",
+      "Bash(./deploy.sh \"close/re-open: switch to primary teal filled button style\")"
     ]
   }
 }
