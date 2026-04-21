@@ -452,13 +452,9 @@
             </div>
           </div>
           <div class="cal-header-right">
-            <!-- Close Out (primary, disabled until checkbox selection) -->
-            <button class="wv-closeout-primary mo-closeout-btn" id="moCloseOutBtn" disabled onclick="moOpenCloseOut()" style="order:1">
-              <span class="material-icons" style="font-size:14px">lock</span> Close/Re-Open
-            </button>
-            <!-- Custom Close (outlined, no dropdown) -->
-            <button class="wv-outline-btn mo-custom-close-btn" id="moCustomCloseBtn" onclick="calCloseCustom()" style="order:2">
-              <span class="material-icons" style="font-size:16px">lock</span> Custom Close/Re-Open
+            <!-- Single smart Close/Re-Open button -->
+            <button class="wv-outline-btn mo-custom-close-btn" id="moCloseOutBtn" onclick="moSmartClose()" style="order:1">
+              <span class="material-icons" style="font-size:16px">lock</span> Close/Re-Open
             </button>
             <!-- Date Range selector -->
             <div style="position:relative;order:8" id="calDRWrap">
@@ -833,15 +829,10 @@
           </div>
           <!-- Right: Compare select / Filters / Metrics / Close -->
           <div class="wv-topbar-right">
-            <!-- Close Out (primary, disabled until checkbox selection) -->
-            <button class="wv-closeout-primary" id="wbCloseOutBtn" disabled onclick="_wvSelectedDays.size?wvOpenCloseOut():wbOpenCloseOut()">
-              <span class="material-icons" style="font-size:14px">lock</span>
-              Close/Re-Open
-            </button>
-            <!-- Custom Close (outlined teal, no dropdown) -->
-            <button class="wv-outline-btn" id="wvCloseOutBtn" onclick="wvCloseCustom()">
+            <!-- Single smart Close/Re-Open button -->
+            <button class="wv-outline-btn" id="wbCloseOutBtn" onclick="wvSmartClose()">
               <span class="material-icons" style="font-size:16px">lock</span>
-              Custom Close/Re-Open
+              Close/Re-Open
             </button>
             <!-- Table Settings (text button) -->
             <button class="wv-topbar-text-btn" id="wvTableSettingsBtn" onclick="dhOpenReorder()">

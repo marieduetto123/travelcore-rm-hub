@@ -3518,6 +3518,29 @@ window.moOpenCloseOut = function() {
   }
 };
 
+// Smart single button: pre-fill dates if cells selected, else open empty
+window.moSmartClose = function() {
+  var dates = Array.from(_moSelectedDays).sort();
+  if (dates.length) {
+    if (typeof window._coOpenModalDays === 'function') window._coOpenModalDays(dates);
+    else if (typeof window._coOpenModal === 'function') window._coOpenModal(dates[0], dates[dates.length - 1]);
+  } else {
+    if (typeof window._coOpenModal === 'function') window._coOpenModal('', '');
+  }
+};
+
+window.wvSmartClose = function() {
+  var wvDates = Array.from(_wvSelectedDays).sort();
+  var wbDates = Array.from(_wbSelectedDays).sort();
+  var dates = wvDates.concat(wbDates).filter(function(v,i,a){ return a.indexOf(v)===i; }).sort();
+  if (dates.length) {
+    if (typeof window._coOpenModalDays === 'function') window._coOpenModalDays(dates);
+    else if (typeof window._coOpenModal === 'function') window._coOpenModal(dates[0], dates[dates.length - 1]);
+  } else {
+    if (typeof window._coOpenModal === 'function') window._coOpenModal('', '');
+  }
+};
+
 // ── Weekly view day close-out checkboxes ─────────────────────────────────────
 var _wvSelectedDays = new Set(); // ISO date strings selected for close-out in weekly view
 
@@ -3537,20 +3560,8 @@ window.wvOpenCloseOut = function() {
   }
 };
 
-// Shared: sync the primary Close Out button enabled/disabled
-function _syncCloseOutBtn() {
-  // Weekly Close Out button
-  var btn = document.getElementById('wbCloseOutBtn');
-  if (btn) {
-    var n = _wvSelectedDays.size + _wbSelectedDays.size;
-    btn.disabled = n === 0;
-  }
-  // Monthly Close Out button
-  var moBtn = document.getElementById('moCloseOutBtn');
-  if (moBtn) {
-    moBtn.disabled = _moSelectedDays.size === 0;
-  }
-}
+// No-op — single button is always enabled; kept for compatibility
+function _syncCloseOutBtn() {}
 
 // ── Daily B View ─────────────────────────────────────────────────────────────
 var _wbCollapsed    = {};   // shared collapse state (used by both HTML fallback and AG Grid)
