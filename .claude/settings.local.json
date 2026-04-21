@@ -137,7 +137,9 @@
       "Bash(./deploy.sh \"weekly header: event calendar icon inline next to date text\")",
       "Bash(./deploy.sh \"disable table settings/filters/compare on close-outs tabs; remove day gap + divider; increase month gap\")",
       "Bash(./deploy.sh \"replace pickup slider with day pill buttons \\(1/3/7/All\\) in both filter dropdowns\")",
-      "Bash(./deploy.sh \"pickup window: 1/3/7 as editable number inputs, All as button\")"
+      "Bash(./deploy.sh \"pickup window: 1/3/7 as editable number inputs, All as button\")",
+      "mcp__Claude_in_Chrome__tabs_context_mcp",
+      "Bash(./deploy.sh \"sync filters between monthly/weekly incl pickup button state; fix badge count\")"
     ]
   }
 }

@@ -3148,6 +3148,7 @@ function renderWeekView(month, day) {
   // Sync calendar filters → weekly so selections persist across views
   syncFiltersCalToWv();
   applyFilterUI('wvFiltersDropdown');
+  _syncPickupBtnUI('wv');
 
   const calSection = document.getElementById('demand-calendar');
   const wvSection  = document.getElementById('weekView');
@@ -8047,6 +8048,7 @@ window.goToMonthView = function() {
   // Sync weekly filters → calendar so selections persist across views
   syncFiltersWvToCal();
   applyFilterUI('calFiltersDropdown');
+  _syncPickupBtnUI('cal');
 
   document.getElementById('demand-calendar').style.display = '';
   document.getElementById('weekView').classList.remove('visible');
@@ -9104,9 +9106,42 @@ updateContractsStats({ y:2025, m:7, d:17 }, { y:2025, m:7, d:25 });
 
 /* ─── FILTER STATE (for list-form filters) ─── */
 const filterState = {
-  cal: { calFiltTO: 'all', calFiltRoom: 'all', calFiltBoard: 'all', calFiltMarket: 'all', calFiltPickup: '365' },
-  wv:  { wvFiltTO:  'all', wvFiltRoom:  'all', wvFiltBoard:  'all', wvFiltMarket:  'all', wvFiltPickup:  '365' },
+  cal: { calFiltTO: 'all', calFiltRoom: 'all', calFiltBoard: 'all', calFiltMarket: 'all', calFiltPickup: 'all' },
+  wv:  { wvFiltTO:  'all', wvFiltRoom:  'all', wvFiltBoard:  'all', wvFiltMarket:  'all', wvFiltPickup:  'all' },
 };
+
+/* Update pickup button/input active state to match current filterState */
+function _syncPickupBtnUI(panel) {
+  var val    = panel === 'cal' ? filterState.cal.calFiltPickup : filterState.wv.wvFiltPickup;
+  var wrap   = document.getElementById(panel === 'cal' ? 'calPickupBtns'  : 'wvPickupBtns');
+  var lbl    = document.getElementById(panel === 'cal' ? 'calPickupLabel' : 'wvPickupLabel');
+  var hidden = document.getElementById(panel === 'cal' ? 'calFiltPickup'  : 'wvFiltPickup');
+  var isAll  = (!val || val === 'all' || val === '365');
+  if (hidden) hidden.value = isAll ? 'all' : String(val);
+  if (lbl)    lbl.textContent = isAll ? 'All time' : (val == '1' ? '1 day' : val + ' days');
+  if (wrap) {
+    // All button
+    wrap.querySelectorAll('.pickup-day-btn').forEach(function(b) {
+      b.classList.toggle('active', isAll && b.dataset.val === 'all');
+    });
+    // Number inputs — activate whichever input currently shows this value
+    var matched = false;
+    wrap.querySelectorAll('.pickup-day-input').forEach(function(inp) {
+      var matches = !isAll && String(inp.value) === String(val);
+      inp.classList.toggle('active', matches);
+      if (matches) matched = true;
+    });
+    // If a custom value (not matching any preset input), activate first input and set its value
+    if (!isAll && !matched) {
+      var inputs = wrap.querySelectorAll('.pickup-day-input');
+      if (inputs.length) {
+        inputs.forEach(function(i) { i.classList.remove('active'); });
+        inputs[0].value = val;
+        inputs[0].classList.add('active');
+      }
+    }
+  }
+}
 
 /* Sync filters between cal↔wv so switching views preserves selections */
 function syncFiltersCalToWv() {
@@ -9148,7 +9183,7 @@ function applyFilterUI(dropdownId) {
   const badge = document.getElementById(countId);
   if (badge) {
     const ctx = dropdownId === 'calFiltersDropdown' ? filterState.cal : filterState.wv;
-    const n = Object.keys(ctx).filter(function(k){ return ctx[k] !== 'all' && ctx[k] !== '365'; }).length;
+    const n = Object.keys(ctx).filter(function(k){ return ctx[k] !== 'all'; }).length;
     badge.textContent = n;
     badge.style.display = n > 0 ? '' : 'none';
   }
@@ -9226,14 +9261,14 @@ document.getElementById('wvFilterApply')?.addEventListener('click', function() {
 
 // Reset buttons
 document.getElementById('calFilterReset')?.addEventListener('click', function() {
-  Object.keys(filterState.cal).forEach(function(k){ filterState.cal[k] = k === 'calFiltPickup' ? 'all' : 'all'; });
+  Object.keys(filterState.cal).forEach(function(k){ filterState.cal[k] = 'all'; });
   calFiltTO = 'all';
   pickupBtnReset('cal');
   applyFilterUI('calFiltersDropdown');
   renderCalendar();
 });
 document.getElementById('wvFilterReset')?.addEventListener('click', function() {
-  Object.keys(filterState.wv).forEach(function(k){ filterState.wv[k] = k === 'wvFiltPickup' ? 'all' : 'all'; });
+  Object.keys(filterState.wv).forEach(function(k){ filterState.wv[k] = 'all'; });
   pickupBtnReset('wv');
   applyFilterUI('wvFiltersDropdown');
   buildWeekGrid(wvMonth, wvWeekStart, wvWeekStart);
