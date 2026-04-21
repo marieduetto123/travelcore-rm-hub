@@ -148,7 +148,8 @@
       "Bash(./deploy.sh \"pickup metric: proper 2-row grid table \\(numbers header above values\\)\")",
       "Bash(./deploy.sh \"pickup as proper grid rows; back-to-month secondary button\")",
       "Bash(./deploy.sh \"rename Close out strategies to Add conditions in close out modal\")",
-      "Bash(./deploy.sh \"monthly cell popup: 3 dynamic pickup window rows in More Metrics\")"
+      "Bash(./deploy.sh \"monthly cell popup: 3 dynamic pickup window rows in More Metrics\")",
+      "Bash(./deploy.sh \"pickup: Figma-style compound cell with dual bar + window grid + per-window mini bars\")"
     ]
   }
 }

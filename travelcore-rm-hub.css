@@ -6607,6 +6607,49 @@ body.dark .cal-view-btn.active { background: #006461; color: #fff; }
 .fchips-divider { width: 1px; height: 18px; background: #e5e7eb; margin: 0 2px; }
 .fchips-active-wrap { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
 
+/* ── Pickup Figma-style compound cell ── */
+.wv-pu-fig-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 4px 0 2px;
+  width: 100%;
+}
+.wv-pu-fig-hdr-row,
+.wv-pu-fig-val-row {
+  display: grid;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.wv-pu-fig-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 30px;
+  font-family: 'Lato', sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  color: #1c1c1c;
+  background: #f9fafb;
+}
+.wv-pu-fig-val-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 4px 4px;
+  background: #fff;
+}
+.wv-pu-fig-num {
+  font-family: 'Lato', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #006461;
+  line-height: 1.2;
+  margin-bottom: 3px;
+}
+
 /* ── Pickup grid cell (header row + value row) ── */
 .wv-pickup-grid {
   display: grid;

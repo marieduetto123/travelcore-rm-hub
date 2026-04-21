@@ -3753,10 +3753,8 @@ function buildDailyBView(days, month, activeDay) {
       grp.g_more.push({type:'sub',  id:'revpar_stly', label:compLabel,   dot:'#C4FF45', parent:'revpar_s'});
     }
     if (wvMetricState.dm_pickup) {
-      pickupDayValues.forEach(function(dv, i) {
-        if (!wvMetricState['dm_pickup_' + i]) return;
-        grp.g_more.push({type:'sect', id:'pickup_' + i, label:'Pickup ' + dv, parent:'g_more'});
-      });
+      var _anyPU = pickupDayValues.some(function(dv, i) { return wvMetricState['dm_pickup_' + i] !== false; });
+      if (_anyPU) grp.g_more.push({type:'sect', id:'pickup_s', label:'Pickup', parent:'g_more'});
     }
     if (wvMetricState.dm_avgAdults) {
       grp.g_more.push({type:'sect', id:'avga_s', label:'Avg Adults',   parent:'g_more'});
@@ -4136,13 +4134,30 @@ function buildDailyBView(days, month, activeDay) {
               + wbBarMark(wbBar(Math.min(90,Math.round(d.hRevpar/4)), '#004948'), cvPct);
             break;
           }
-          case 'pickup_0': case 'pickup_1': case 'pickup_2': {
-            var _pi = parseInt(row.id.split('_')[1]);
-            var _dv = pickupDayValues[_pi] || 7;
-            var _sc = _dv<=1?0.3:_dv<=3?0.6:_dv<=7?1:Math.min(2,_dv/7);
-            var _pv = Math.max(0, Math.round(d.pickup * _sc));
-            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">+'+_pv+'</span></div>'
-              + wbBar(Math.min(90, _pv * 3), '#004948') + wbBar(Math.min(90, d.hPickup * _sc * 3), '#52d9ce');
+          case 'pickup_s': {
+            var _activePUw = pickupDayValues.filter(function(dv, i) { return wvMetricState['dm_pickup_' + i] !== false; });
+            var _pun = _activePUw.length;
+            if (!_pun) { cellContent = ''; break; }
+            var _puHdrs = '', _puVals = '';
+            _activePUw.forEach(function(dv, idx) {
+              var _sc = dv<=1?0.3:dv<=3?0.6:dv<=7?1:Math.min(2,dv/7);
+              var _pv = Math.max(0, Math.round(d.pickup * _sc));
+              var _pvBar = Math.min(90, _pv * 3);
+              var _hpvBar = Math.min(90, d.hPickup * _sc * 3);
+              var _bL = idx===0 ? '' : 'border-left:1px solid #e0e0e0;';
+              _puHdrs += '<div class="wv-pu-fig-cell" style="'+_bL+'">'+dv+'</div>';
+              _puVals += '<div class="wv-pu-fig-val-cell" style="'+_bL+'">'
+                + '<span class="wv-pu-fig-num">+'+_pv+'</span>'
+                + '<div class="wv-occ-bar-track" style="height:4px;margin:2px 0 1px"><div style="width:'+_pvBar+'%;background:'+wbGrad('#004948')+';height:4px"></div></div>'
+                + '<div class="wv-occ-bar-track" style="height:4px"><div style="width:'+_hpvBar+'%;background:'+wbGrad('#52d9ce')+';height:4px"></div></div>'
+                + '</div>';
+            });
+            cellContent = '<div class="wv-pu-fig-wrap">'
+              + wbBar(Math.min(90, Math.round(d.pickup * 3)), '#004948')
+              + wbBar(Math.min(90, Math.round(d.hPickup * 3)), '#52d9ce')
+              + '<div class="wv-pu-fig-hdr-row" style="grid-template-columns:repeat('+_pun+',1fr)">'+_puHdrs+'</div>'
+              + '<div class="wv-pu-fig-val-row" style="grid-template-columns:repeat('+_pun+',1fr)">'+_puVals+'</div>'
+              + '</div>';
             break;
           }
           case 'avga_s':
@@ -4573,16 +4588,34 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
       sub('STLY',     CSTLY, false, function(d){ return sCell('$'+d.sdlyRevpar, bar(Math.min(90,Math.round(d.sdlyRevpar/4)),CSTLY)); });
     }
     if (wvMetricState.dm_pickup) {
-      pickupDayValues.forEach(function(dv, i) {
-        if (!wvMetricState['dm_pickup_' + i]) return;
-        (function(dv) {
-          sect('Pickup ' + dv, C1, C1, function(d) {
-            var scale = dv<=1?0.3:dv<=3?0.6:dv<=7?1:Math.min(2,dv/7);
-            var val = Math.max(0, Math.round(d.pickup * scale));
-            return sCell('+'+val, bar(Math.min(90,val*3),C1)+'<div style="margin-top:2px">'+bar(Math.min(90,d.hPickup*scale*3),C2)+'</div>');
+      var _dhActivePU = pickupDayValues.filter(function(dv, i) { return wvMetricState['dm_pickup_' + i] !== false; });
+      if (_dhActivePU.length) {
+        (function(activePU) {
+          sect('Pickup', C1, C1, function(d) {
+            var n = activePU.length;
+            var hdrs = '', vals = '';
+            activePU.forEach(function(dv, idx) {
+              var sc = dv<=1?0.3:dv<=3?0.6:dv<=7?1:Math.min(2,dv/7);
+              var pv = Math.max(0, Math.round(d.pickup * sc));
+              var pvBar = Math.min(90, pv * 3);
+              var hpvBar = Math.min(90, d.hPickup * sc * 3);
+              var bL = idx===0?'':'border-left:1px solid #e0e0e0;';
+              hdrs += '<div class="wv-pu-fig-cell" style="'+bL+'">'+dv+'</div>';
+              vals += '<div class="wv-pu-fig-val-cell" style="'+bL+'">'
+                + '<span class="wv-pu-fig-num">+'+pv+'</span>'
+                + '<div class="wv-occ-bar-track" style="height:4px;margin:2px 0 1px"><div style="width:'+pvBar+'%;background:'+wbGrad2(C1)+';height:4px"></div></div>'
+                + '<div class="wv-occ-bar-track" style="height:4px"><div style="width:'+hpvBar+'%;background:'+wbGrad2(C2)+';height:4px"></div></div>'
+                + '</div>';
+            });
+            return '<div class="wv-pu-fig-wrap">'
+              + bar(Math.min(90,Math.round(d.pickup*3)),C1)
+              + '<div style="margin-top:2px">'+bar(Math.min(90,Math.round(d.hPickup*3)),C2)+'</div>'
+              + '<div class="wv-pu-fig-hdr-row" style="grid-template-columns:repeat('+n+',1fr)">'+hdrs+'</div>'
+              + '<div class="wv-pu-fig-val-row" style="grid-template-columns:repeat('+n+',1fr)">'+vals+'</div>'
+              + '</div>';
           });
-        })(dv);
-      });
+        })(_dhActivePU);
+      }
     }
     if (wvMetricState.dm_avgAdults) {
       sect('Avg Adults', C1, C1, function(d){ return sCell(d.avgA, bar(Math.min(90,parseFloat(d.avgA)/3*100),C1)+'<div style="margin-top:2px">'+bar(Math.min(90,parseFloat(d.hAvgA)/3*100),C2)+'</div>'); });
