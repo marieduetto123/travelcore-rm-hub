@@ -9226,21 +9226,15 @@ document.getElementById('wvFilterApply')?.addEventListener('click', function() {
 
 // Reset buttons
 document.getElementById('calFilterReset')?.addEventListener('click', function() {
-  Object.keys(filterState.cal).forEach(function(k){ filterState.cal[k] = k === 'calFiltPickup' ? '365' : 'all'; });
+  Object.keys(filterState.cal).forEach(function(k){ filterState.cal[k] = k === 'calFiltPickup' ? 'all' : 'all'; });
   calFiltTO = 'all';
-  const slider = document.getElementById('calFiltPickupSlider');
-  if (slider) { slider.value = 365; }
-  const lbl = document.getElementById('calPickupLabel');
-  if (lbl) lbl.textContent = 'All time';
+  pickupBtnReset('cal');
   applyFilterUI('calFiltersDropdown');
   renderCalendar();
 });
 document.getElementById('wvFilterReset')?.addEventListener('click', function() {
-  Object.keys(filterState.wv).forEach(function(k){ filterState.wv[k] = k === 'wvFiltPickup' ? '365' : 'all'; });
-  const slider = document.getElementById('wvFiltPickupSlider');
-  if (slider) { slider.value = 365; }
-  const lbl = document.getElementById('wvPickupLabel');
-  if (lbl) lbl.textContent = 'All time';
+  Object.keys(filterState.wv).forEach(function(k){ filterState.wv[k] = k === 'wvFiltPickup' ? 'all' : 'all'; });
+  pickupBtnReset('wv');
   applyFilterUI('wvFiltersDropdown');
   buildWeekGrid(wvMonth, wvWeekStart, wvWeekStart);
 });
@@ -9414,26 +9408,38 @@ document.addEventListener('click', function(e) {
   updateActiveChipTags();
 });
 
-// ── Pickup sliders ────────────────────────────────────────────
-function pickupSliderLabel(days) {
-  if (days >= 365) return 'All time';
-  if (days === 1) return '1 day';
-  return days + ' days';
+// ── Pickup day buttons ────────────────────────────────────────
+window.pickupBtnClick = function(btn, panel) {
+  var val = btn.dataset.val;
+  var wrap = btn.closest('.pickup-btns-wrap');
+  if (wrap) {
+    wrap.querySelectorAll('.pickup-day-btn').forEach(function(b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+  }
+  var labelText = val === 'all' ? 'All time' : (val === '1' ? '1 day' : val + ' days');
+  var hiddenVal = val === 'all' ? 'all' : val;
+  if (panel === 'cal') {
+    var lbl = document.getElementById('calPickupLabel');
+    if (lbl) lbl.textContent = labelText;
+    var hidden = document.getElementById('calFiltPickup');
+    if (hidden) { hidden.value = hiddenVal; hidden.dispatchEvent(new Event('change')); }
+  } else {
+    var lbl = document.getElementById('wvPickupLabel');
+    if (lbl) lbl.textContent = labelText;
+    var hidden = document.getElementById('wvFiltPickup');
+    if (hidden) { hidden.value = hiddenVal; hidden.dispatchEvent(new Event('change')); }
+  }
+};
+function pickupBtnReset(panel) {
+  var wrap = document.getElementById(panel === 'cal' ? 'calPickupBtns' : 'wvPickupBtns');
+  if (wrap) {
+    wrap.querySelectorAll('.pickup-day-btn').forEach(function(b) {
+      b.classList.toggle('active', b.dataset.val === 'all');
+    });
+  }
+  var lbl = document.getElementById(panel === 'cal' ? 'calPickupLabel' : 'wvPickupLabel');
+  if (lbl) lbl.textContent = 'All time';
 }
-document.getElementById('calFiltPickupSlider')?.addEventListener('input', function() {
-  var days = parseInt(this.value);
-  var lbl = document.getElementById('calPickupLabel');
-  if (lbl) lbl.textContent = pickupSliderLabel(days);
-  var hidden = document.getElementById('calFiltPickup');
-  if (hidden) { hidden.value = days >= 365 ? 'all' : String(days); hidden.dispatchEvent(new Event('change')); }
-});
-document.getElementById('wvFiltPickupSlider')?.addEventListener('input', function() {
-  var days = parseInt(this.value);
-  var lbl = document.getElementById('wvPickupLabel');
-  if (lbl) lbl.textContent = pickupSliderLabel(days);
-  var hidden = document.getElementById('wvFiltPickup');
-  if (hidden) { hidden.value = days >= 365 ? 'all' : String(days); hidden.dispatchEvent(new Event('change')); }
-});
 
 /* ─── TOUR OPERATORS & CONTRACTS PAGE ─── */
 (function() {
@@ -13271,15 +13277,12 @@ window.calHideCapTip = function() {
     // Reset unified filterState.cal
     if (typeof filterState !== 'undefined') {
       Object.keys(filterState.cal).forEach(function(k) {
-        filterState.cal[k] = k === 'calFiltPickup' ? '365' : 'all';
+        filterState.cal[k] = 'all';
       });
       if (typeof calFiltTO !== 'undefined') calFiltTO = 'all';
     }
-    // Reset pickup slider
-    var slider = document.getElementById('calFiltPickupSlider');
-    if (slider) slider.value = 365;
-    var lbl = document.getElementById('calPickupLabel');
-    if (lbl) lbl.textContent = 'All time';
+    // Reset pickup buttons
+    if (typeof pickupBtnReset === 'function') pickupBtnReset('cal');
     // Refresh checkbox UI
     if (typeof applyFilterUI === 'function') applyFilterUI('calFiltersDropdown');
     // Close dropdown

@@ -634,15 +634,16 @@
                 <label class="wv-ms-item"><span class="wv-ms-cb wv-fi-rb" data-fid="calFiltMarket" data-val="US"></span><span class="wv-ms-label">US</span></label>
                 <label class="wv-ms-item"><span class="wv-ms-cb wv-fi-rb" data-fid="calFiltMarket" data-val="MX"></span><span class="wv-ms-label">Mexico</span></label>
                 <div class="wv-ms-hdr wv-ms-hdr-divider">
-                  <span class="wv-ms-hdr-label">PICKUP WINDOW <span id="calPickupLabel" style="color:#006461;font-weight:600;text-transform:none;letter-spacing:0">All time</span></span>
+                  <span class="wv-ms-hdr-label">CUSTOMIZE PICKUP <span id="calPickupLabel" style="color:#006461;font-weight:600;text-transform:none;letter-spacing:0">All time</span></span>
                 </div>
-                <div class="pickup-slider-wrap" style="padding:4px 8px 6px">
-                  <input type="range" min="1" max="365" value="365" class="pickup-slider" id="calFiltPickupSlider" oninput="calPickupSliderUpdate(this.value)">
-                  <input type="hidden" id="calFiltPickup" value="">
-                  <div class="pickup-slider-ticks">
-                    <span>1d</span><span>7d</span><span>30d</span><span>90d</span><span>All</span>
-                  </div>
+                <div class="pickup-btns-wrap" id="calPickupBtns">
+                  <button class="pickup-day-btn" data-val="1"   onclick="pickupBtnClick(this,'cal')">1</button>
+                  <button class="pickup-day-btn" data-val="3"   onclick="pickupBtnClick(this,'cal')">3</button>
+                  <button class="pickup-day-btn" data-val="7"   onclick="pickupBtnClick(this,'cal')">7</button>
+                  <button class="pickup-day-btn active" data-val="all" onclick="pickupBtnClick(this,'cal')">All</button>
+                  <span class="pickup-days-label">Days</span>
                 </div>
+                <input type="hidden" id="calFiltPickup" value="all">
                 <div class="cal-filters-footer">
                   <button class="cal-filter-reset" onclick="calResetFilters()">
                     <span class="material-icons" style="font-size:14px">close</span>
@@ -905,15 +906,16 @@
                 <label class="wv-ms-item"><span class="wv-ms-cb wv-fi-rb" data-fid="wvFiltMarket" data-val="es"></span><span class="wv-ms-label">Spain</span></label>
                 <!-- Pickup Window -->
                 <div class="wv-ms-hdr wv-ms-hdr-divider">
-                  <span class="wv-ms-hdr-label">PICKUP WINDOW <span id="wvPickupLabel" style="color:#006461;font-weight:600;text-transform:none;letter-spacing:0">All time</span></span>
+                  <span class="wv-ms-hdr-label">CUSTOMIZE PICKUP <span id="wvPickupLabel" style="color:#006461;font-weight:600;text-transform:none;letter-spacing:0">All time</span></span>
                 </div>
-                <div class="pickup-slider-wrap" style="padding:4px 8px 6px">
-                  <input type="range" min="1" max="365" value="365" class="pickup-slider" id="wvFiltPickupSlider">
-                  <input type="hidden" id="wvFiltPickup" value="365">
-                  <div class="pickup-slider-ticks">
-                    <span>1d</span><span>7d</span><span>30d</span><span>90d</span><span>All</span>
-                  </div>
+                <div class="pickup-btns-wrap" id="wvPickupBtns">
+                  <button class="pickup-day-btn" data-val="1"   onclick="pickupBtnClick(this,'wv')">1</button>
+                  <button class="pickup-day-btn" data-val="3"   onclick="pickupBtnClick(this,'wv')">3</button>
+                  <button class="pickup-day-btn" data-val="7"   onclick="pickupBtnClick(this,'wv')">7</button>
+                  <button class="pickup-day-btn active" data-val="all" onclick="pickupBtnClick(this,'wv')">All</button>
+                  <span class="pickup-days-label">Days</span>
                 </div>
+                <input type="hidden" id="wvFiltPickup" value="all">
                 <!-- Footer -->
                 <div class="cal-filters-footer">
                   <button class="cal-filter-reset" id="wvFilterReset">
