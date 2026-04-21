@@ -3189,6 +3189,7 @@ const wvMetricState = {
   dm_avgLos: true, dm_avgLeadTime: true, dm_totalGuests: true,
   bizMix: true, mealsSummary: true,
   cmp_sdly: true, cmp_final_ly: true, cmp_forecast: true, cmp_hotel: true,
+  dm_closeouts: true, dm_co_rooms: true, dm_co_boards: true, dm_co_tos: true,
 };
 
 function wvAcc(title, section, bodyHtml, badge) {
@@ -3720,10 +3721,12 @@ function buildDailyBView(days, month, activeDay) {
   window._wbGrpData = grp; // expose for Table Settings modal
 
   // Group: Close Outs (details directly under group — summary shown in collapsed header)
-  grp.g_closeouts.push({type:'top', id:'g_closeouts', label:'Close Outs'});
-  grp.g_closeouts.push({type:'sub', id:'co_rooms',    label:'Room Types',          dot:'#6b7280', parent:'g_closeouts'});
-  grp.g_closeouts.push({type:'sub', id:'co_boards',   label:'Board Types',         dot:'#6b7280', parent:'g_closeouts'});
-  grp.g_closeouts.push({type:'sub', id:'co_tos',      label:'Tour Operators',      dot:'#6b7280', parent:'g_closeouts'});
+  if (wvMetricState.dm_closeouts) {
+    grp.g_closeouts.push({type:'top', id:'g_closeouts', label:'Close Outs'});
+    if (wvMetricState.dm_co_rooms)  grp.g_closeouts.push({type:'sub', id:'co_rooms',  label:'Room Types',     dot:'#6b7280', parent:'g_closeouts'});
+    if (wvMetricState.dm_co_boards) grp.g_closeouts.push({type:'sub', id:'co_boards', label:'Board Types',    dot:'#6b7280', parent:'g_closeouts'});
+    if (wvMetricState.dm_co_tos)    grp.g_closeouts.push({type:'sub', id:'co_tos',    label:'Tour Operators', dot:'#6b7280', parent:'g_closeouts'});
+  }
 
   // Group: Daily Metrics
   grp.g_daily.push({type:'top', id:'g_daily', label:'Daily Metrics'});
@@ -7852,7 +7855,7 @@ var _tsDragEl = null;
 // Mapping: sect/group IDs → wvMetricState keys
 var _tsMetricMap = {
   // Group-level (top)
-  g_closeouts: [],
+  g_closeouts: ['dm_closeouts'],
   g_daily:   ['capacity','onlineOffline','adr','revenue'],
   g_more:    ['dm_rnSold','dm_trevpar','dm_pickup','dm_avgAdults','dm_avgChildren',
               'dm_totalAdults','dm_totalChildren','dm_totalGuests','dm_avgLos','dm_avgLeadTime',
@@ -7861,6 +7864,8 @@ var _tsMetricMap = {
   g_biz:     ['bizMix'],
   g_avail:   ['avail','availAlloc'],
   g_torates: ['toRates'],
+  // Close-outs sub-rows
+  co_rooms: ['dm_co_rooms'], co_boards: ['dm_co_boards'], co_tos: ['dm_co_tos'],
   // Sect-level (child)
   occ: ['capacity'], onoff: ['onlineOffline'], adr: ['adr'], rev: ['revenue'],
   rn: ['dm_rnSold'], revpar_s: ['dm_trevpar'], pickup_s: ['dm_pickup'],
@@ -7963,7 +7968,7 @@ function _tsAddRow(list, key, label, depth, draggable, checked) {
 
 function _tsIsChecked(key) {
   var mks = _tsMetricMap[key];
-  if (!mks) return true;
+  if (!mks || mks.length === 0) return true;
   for (var i = 0; i < mks.length; i++) {
     if (wvMetricState[mks[i]]) return true;
   }
@@ -8080,8 +8085,8 @@ window.dhApplyReorder = function() {
   var order = [];
   list.querySelectorAll('.ts-tree-row[data-depth="0"]').forEach(function(li) { order.push(li.dataset.parKey); });
 
-  // Update wvMetricState from checkbox states (dailyB only for now)
-  if (wvGroupBy === 'dailyB') {
+  // Update wvMetricState from checkbox states
+  if (wvGroupBy === 'dailyB' || wvGroupBy === 'dailyH') {
     list.querySelectorAll('.ts-tree-row').forEach(function(row) {
       var key = row.dataset.parKey;
       var isChecked = !row.querySelector('.ts-checkbox').classList.contains('unchecked');

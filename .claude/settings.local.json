@@ -159,7 +159,11 @@
       "Bash(./deploy.sh \"cell metrics: hide segment prefix in labels when all segments selected\")",
       "Bash(./deploy.sh \"close out: merge to single smart button \\(pre-fills dates if selected, else opens empty\\)\")",
       "Bash(./deploy.sh \"cell metrics: segment selection scales value but keeps same label/colour appearance\")",
-      "Bash(./deploy.sh \"close/re-open: switch to primary teal filled button style\")"
+      "Bash(./deploy.sh \"close/re-open: switch to primary teal filled button style\")",
+      "WebSearch",
+      "WebFetch(domain:help.figma.com)",
+      "Bash(claude mcp *)",
+      "Bash(./deploy.sh \"Add calendar icon to weekly date range; fix Table Settings close outs tick and remove ability\")"
     ]
   }
 }
