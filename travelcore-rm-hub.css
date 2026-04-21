@@ -6602,28 +6602,29 @@ body.dark .cal-view-btn.active { background: #006461; color: #fff; }
   padding: 8px 8px 10px;
 }
 .pickup-day-input {
-  width: 44px; height: 36px;
-  border: 1px solid #d1d5db; border-radius: 8px;
+  width: 52px; height: 42px;
+  border: 1px solid #e5e7eb; border-radius: 8px;
   background: #fff; font-family: 'Lato', sans-serif;
-  font-size: 14px; font-weight: 600; color: #374151;
+  font-size: 14px; font-weight: 400; color: #111827;
   text-align: center; outline: none; cursor: text;
-  transition: border-color .12s, color .12s;
+  transition: border-color .15s;
   -moz-appearance: textfield;
+  box-shadow: none;
 }
 .pickup-day-input::-webkit-inner-spin-button,
 .pickup-day-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
 .pickup-day-input:hover { border-color: #9ca3af; }
-.pickup-day-input:focus { border: 2px solid #006461; color: #006461; }
-.pickup-day-input.active { border: 2px solid #006461; color: #006461; background: #f0fffe; }
+.pickup-day-input:focus { border-color: #006461; }
+.pickup-day-input.active { border-color: #006461; color: #006461; }
 .pickup-day-btn {
-  height: 36px; padding: 0 12px;
-  border: 1px solid #d1d5db; border-radius: 8px;
+  height: 42px; padding: 0 14px;
+  border: 1px solid #e5e7eb; border-radius: 8px;
   background: #fff; font-family: 'Lato', sans-serif;
-  font-size: 13px; font-weight: 600; color: #374151;
-  cursor: pointer; transition: background .12s, color .12s, border-color .12s;
+  font-size: 13px; font-weight: 500; color: #374151;
+  cursor: pointer; transition: background .15s, color .15s, border-color .15s;
   flex-shrink: 0;
 }
-.pickup-day-btn:hover:not(.active) { background: #f3f4f6; border-color: #9ca3af; }
+.pickup-day-btn:hover:not(.active) { border-color: #9ca3af; background: #f9fafb; }
 .pickup-day-btn.active { background: #006461; color: #fff; border-color: #006461; }
 .pickup-days-label {
   font-size: 13px; font-weight: 500; color: #6b7280;
