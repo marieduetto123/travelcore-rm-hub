@@ -153,8 +153,7 @@
       "Bash(./deploy.sh \"pickup: remove full-width bars, keep only per-window bars\")",
       "Bash(./deploy.sh \"close out modal: rename 'Add conditions' to 'What to Close'\")",
       "Bash(./deploy.sh \"pickup: remove all outer cell padding\")",
-      "Bash(./deploy.sh \"pickup: remove expand/collapse dropdown chevron from row label\")",
-      "Bash(./deploy.sh \"cell metrics: remove mode toggle & segment section, add All checkbox\")"
+      "Bash(./deploy.sh \"pickup: remove expand/collapse dropdown chevron from row label\")"
     ]
   }
 }

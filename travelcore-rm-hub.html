@@ -522,23 +522,47 @@
               </div>
 
               <div class="cal-metrics-dropdown" id="calMetricsDropdown" style="display:none">
-  <!-- ── Header ─────────────────────────────────────────────────── -->
-  <div class="cal-md-hdr" style="flex-direction:column;align-items:flex-start;gap:0">
+                <!-- ── SECTION 1: Segment Display Mode ────────────────────── -->
+  <div class="cal-md-hdr" style="flex-direction:column;align-items:flex-start;gap:8px">
     <div style="display:flex;align-items:center;justify-content:space-between;width:100%">
       <span class="cal-md-title">CELL METRICS</span>
-      <span class="cal-md-hint" id="calCmHint">Max 4 rows</span>
+<span class="cal-md-hint" id="calCmHint">Max 4 rows</span>
+    </div>
+    <!-- Segment mode toggle -->
+    <div style="display:flex;gap:0;border:1px solid var(--border);border-radius:6px;overflow:hidden;width:100%">
+      <button id="cmModeCombined" onclick="cmSetMode('combined')"
+        style="flex:1;padding:5px 8px;border:none;background:#006461;color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">
+        Combined (T.O)
+      </button>
+      <button id="cmModeIndividual" onclick="cmSetMode('individual')"
+        style="flex:1;padding:5px 8px;border:none;background:transparent;color:var(--text-muted);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit">
+        Individual
+      </button>
     </div>
   </div>
 
-  <!-- ── All checkbox ───────────────────────────────────────────── -->
-  <div style="padding:6px 12px 6px;border-bottom:1px solid var(--border-sub)">
-    <label class="cal-md-item" style="padding:2px 0;cursor:pointer" onclick="cmSelectAll()">
-      <span class="cal-md-cb" id="cmAllCb"></span>
-      <span class="cal-md-label" style="font-weight:600;color:#1c1c1c;font-size:13px">All</span>
+<!-- ── SECTION 2: Segment selector (Individual mode only) ─── -->
+  <div id="cmSegSection" style="display:none;padding:6px 12px 2px;border-top:1px solid var(--border-sub)">
+    <div style="font-size:9px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">Segments to show</div>
+    <label class="cal-md-item" style="padding:4px 0">
+      <span class="cal-md-cb" data-seg-key="fit" onclick="cmToggleSeg('fit',this)"></span>
+      <span class="cal-md-swatch" style="background:#0891b2"></span>
+      <span class="cal-md-label">Static FIT Rates</span>
     </label>
+    <label class="cal-md-item" style="padding:4px 0">
+      <span class="cal-md-cb" data-seg-key="dynamic" onclick="cmToggleSeg('dynamic',this)"></span>
+      <span class="cal-md-swatch" style="background:#7c3aed"></span>
+      <span class="cal-md-label">Operator Dynamic</span>
+    </label>
+    <label class="cal-md-item" style="padding:4px 0">
+      <span class="cal-md-cb" data-seg-key="series" onclick="cmToggleSeg('series',this)"></span>
+      <span class="cal-md-swatch" style="background:#f59e0b"></span>
+      <span class="cal-md-label">Tour Series</span>
+    </label>
+    <div style="margin-top:4px;padding:5px 8px;background:#fef3c7;border-radius:5px;font-size:10px;color:#92400e" id="cmSegWarning" style="display:none"></div>
   </div>
 
-  <!-- ── Metrics selection ──────────────────────────────────────── -->
+  <!-- ── SECTION 4: Metrics selection ───────────────────────── -->
   <div style="border-top:1px solid var(--border-sub);width:100%">
     <table class="cmv4-table">
       <thead class="cmv4-thead">

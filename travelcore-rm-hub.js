@@ -13624,7 +13624,6 @@ window.calHideCapTip = function() {
       cb.classList.add('checked');
       if (cmMetrics.indexOf(key) < 0) cmMetrics.push(key);
     }
-    _syncAllCb();
     updateHint();
     // Don't call renderCalendar() here — wait for Apply
   };
@@ -13636,37 +13635,6 @@ window.calHideCapTip = function() {
     if (dd) dd.style.display = 'none';
     renderCalendar();
   };
-
-  // ── Select All / Deselect All ───────────────────────────────────
-  window.cmSelectAll = function() {
-    var allCb = document.getElementById('cmAllCb');
-    var nowChecked = allCb && allCb.classList.contains('checked');
-    if (nowChecked) {
-      // Deselect all
-      cmMetrics = [];
-      document.querySelectorAll('#calMetricsDropdown .cal-md-cb[data-cm-key]').forEach(function(cb) { cb.classList.remove('checked'); });
-      if (allCb) allCb.classList.remove('checked');
-    } else {
-      // Select all
-      cmMetrics = [];
-      document.querySelectorAll('#calMetricsDropdown .cal-md-cb[data-cm-key]').forEach(function(cb) {
-        cb.classList.add('checked');
-        var k = cb.getAttribute('data-cm-key');
-        if (k && cmMetrics.indexOf(k) < 0) cmMetrics.push(k);
-      });
-      if (allCb) allCb.classList.add('checked');
-    }
-    updateHint();
-  };
-
-  function _syncAllCb() {
-    var allCb = document.getElementById('cmAllCb');
-    if (!allCb) return;
-    var allKeys = [];
-    document.querySelectorAll('#calMetricsDropdown .cal-md-cb[data-cm-key]').forEach(function(cb) { allKeys.push(cb.getAttribute('data-cm-key')); });
-    var allChecked = allKeys.length > 0 && allKeys.every(function(k) { return cmMetrics.indexOf(k) >= 0; });
-    allCb.classList.toggle('checked', allChecked);
-  }
 
   // ── Reset: uncheck all metrics ──────────────────────────────────
   window.cmResetMetrics = function() {
