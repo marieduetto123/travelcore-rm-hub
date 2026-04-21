@@ -13512,8 +13512,8 @@ window.calHideCapTip = function() {
 (function() {
 
   // ── State ──────────────────────────────────────────────────────
-  var cmMode      = 'combined';   // 'combined' | 'individual'
-  var cmSegs      = [];           // selected segment keys: 'fit'|'dynamic'|'series'
+  var cmMode      = 'individual'; // always individual (segments always shown)
+  var cmSegs      = ['fit','dynamic','series']; // all selected by default
   var cmMetrics   = ['hocc','tocc'];  // selected metric keys (Hotel Occ + T Occ by default)
   var cmHotel     = true;         // include Hotel row
 
@@ -13585,20 +13585,12 @@ window.calHideCapTip = function() {
   }
 
   // ── Mode toggle ────────────────────────────────────────────────
-  window.cmSetMode = function(mode) {
-    cmMode = mode;
-    document.getElementById('cmModeCombined').style.background   = mode === 'combined'   ? '#006461' : 'transparent';
-    document.getElementById('cmModeCombined').style.color        = mode === 'combined'   ? '#fff'    : 'var(--text-muted)';
-    document.getElementById('cmModeIndividual').style.background = mode === 'individual' ? '#006461' : 'transparent';
-    document.getElementById('cmModeIndividual').style.color      = mode === 'individual' ? '#fff'    : 'var(--text-muted)';
-    var seg = document.getElementById('cmSegSection');
-    if (seg) seg.style.display = mode === 'individual' ? '' : 'none';
-    updateHint();
-    renderCalendar();
-  };
+  window.cmSetMode = function() {}; // toggle removed — mode is always individual
 
-  // ── Segment toggle ─────────────────────────────────────────────
+  // ── Segment toggle (min 1 must always stay selected) ───────────
   window.cmToggleSeg = function(key, cb) {
+    var willUncheck = cb.classList.contains('checked');
+    if (willUncheck && cmSegs.length <= 1) return; // block deselecting last one
     cb.classList.toggle('checked');
     var idx = cmSegs.indexOf(key);
     if (cb.classList.contains('checked')) {
@@ -13606,9 +13598,28 @@ window.calHideCapTip = function() {
     } else {
       if (idx >= 0) cmSegs.splice(idx, 1);
     }
+    _syncSegAllCb();
     updateHint();
     renderCalendar();
   };
+
+  // ── Toggle all segments (clicking All selects all; if all selected, no-op since min 1) ──
+  window.cmToggleAllSegs = function(cb) {
+    var allSelected = cmSegs.length === 3;
+    if (allSelected) return; // already all selected — nothing to do
+    cmSegs = ['fit','dynamic','series'];
+    document.querySelectorAll('#cmSegSection .cal-md-cb[data-seg-key]').forEach(function(el) {
+      el.classList.add('checked');
+    });
+    cb.classList.add('checked');
+    updateHint();
+    renderCalendar();
+  };
+
+  function _syncSegAllCb() {
+    var allCb = document.getElementById('cmSegAllCb');
+    if (allCb) allCb.classList.toggle('checked', cmSegs.length === 3);
+  }
 
   // ── Metric toggle (updates pending state only — Apply to commit) ─
   // Keys starting with 't' = Combined column; 'h' = Individual (Hotel) column.
