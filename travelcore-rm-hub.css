@@ -2144,17 +2144,16 @@ body.dark .wv-topbar-title { color: var(--text-primary); }
   border-radius: 4px; transition: background 0.12s;
 }
 .wv-topbar-back:hover { background: rgba(0,100,97,0.08); color: #006461; }
-/* Secondary "Back to month" button */
+/* "Back to month" button — matches wv-outline-btn */
 .wv-back-btn {
-  display: inline-flex; align-items: center; gap: 4px;
-  height: 34px; padding: 0 14px 0 10px;
-  border: 1px solid #006461; border-radius: 8px;
-  background: #fff; color: #006461;
-  font-family: 'Lato', sans-serif; font-size: 13px; font-weight: 600;
-  cursor: pointer; flex-shrink: 0;
-  transition: background .12s, color .12s;
+  display: inline-flex; align-items: center; gap: 6px;
+  height: 36px; padding: 0 14px;
+  background: #fff; border: 1px solid #006461; border-radius: 4px;
+  color: #006461; font-size: 14px; font-weight: 400;
+  font-family: 'Lato', sans-serif; cursor: pointer; white-space: nowrap;
+  transition: background .15s; flex-shrink: 0;
 }
-.wv-back-btn:hover { background: #006461; color: #fff; }
+.wv-back-btn:hover { background: rgba(0,100,97,0.06); }
 
 /* Centred compare select */
 .wv-topbar-cmp-select {
@@ -2170,13 +2169,6 @@ body.dark .wv-topbar-title { color: var(--text-primary); }
   transition: border-color 0.12s;
 }
 .wv-topbar-cmp-select:focus { border-color: #006461; box-shadow: 0 0 0 2px rgba(0,100,97,0.15); }
-.wv-back-btn {
-  display: inline-flex; align-items: center; gap: 5px;
-  background: none; border: none; padding: 4px 6px;
-  font-size: 16px; font-weight: 400; color: #006461; cursor: pointer;
-  font-family: 'Lato', sans-serif; white-space: nowrap; flex-shrink: 0;
-}
-.wv-back-btn:hover { color: #004d4a; }
 /* Close All / Open All buttons in date nav */
 .wv-date-acc-controls {
   display: flex; align-items: center; gap: 10px; flex-shrink: 0; padding-bottom: 4px;
