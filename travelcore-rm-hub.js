@@ -7114,8 +7114,8 @@ function buildWeekGrid(month, weekStart, activeDay) {
     const wvEventKey = `${dm}-${dd}`;
     const wvEvents = (typeof CAL_EVENTS !== 'undefined' && CAL_EVENTS[wvEventKey]) ? CAL_EVENTS[wvEventKey] : null;
     const wvEventIconHtml = wvEvents
-      ? `<span class="wv-event-cal-icon has-events" data-event-key="${wvEventKey}" onmouseenter="calShowEventTip(event,'${wvEventKey}')" onmouseleave="calHideEventTip()"><span class="material-icons" style="font-size:14px;color:#fff;display:block">today</span></span>`
-      : `<span class="wv-event-cal-icon"><span class="material-icons" style="font-size:14px;color:rgba(255,255,255,0.35);display:block">today</span></span>`;
+      ? `<span class="wv-event-cal-icon has-events" data-event-key="${wvEventKey}" onmouseenter="calShowEventTip(event,'${wvEventKey}')" onmouseleave="calHideEventTip()"><span class="material-icons" style="font-size:14px;color:#c4ff45;display:block">today</span></span>`
+      : `<span class="wv-event-cal-icon"><span class="material-icons" style="font-size:14px;color:rgba(255,255,255,0.7);display:block">today</span></span>`;
     const isActionNeeded = hotel >= 65 && to < 40 && !isLocked;
     let wvMetricVal = hotel;
     if (wvActiveTab === 'pickup') wvMetricVal = getPickupPct(dm, dd);
