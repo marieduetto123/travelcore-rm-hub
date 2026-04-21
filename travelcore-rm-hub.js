@@ -3170,7 +3170,7 @@ function openWeekView(month, day) { renderWeekView(month, day); _updateAccBtnSta
 const wvMetricState = {
   capacity: true, adr: true, revenue: true, onlineOffline: true, roomTypes: true,
   avail: true, availAlloc: true, toRates: true,
-  dm_rnSold: true, dm_pickup: true,
+  dm_rnSold: true, dm_pickup: true, dm_pickup_0: true, dm_pickup_1: true, dm_pickup_2: true,
   dm_avgAdults: true, dm_avgChildren: true, dm_totalAdults: true, dm_totalChildren: true, dm_trevpar: true,
   dm_availRooms: true, dm_availGuar: true,
   dm_avgLos: true, dm_avgLeadTime: true, dm_totalGuests: true,
@@ -7200,7 +7200,7 @@ function buildWeekGrid(month, weekStart, activeDay) {
           })() : ''}
         </div>`;
       })()) : '' : ''}
-      ${wvGroupBy === 'combined' ? ['dm_rnSold','dm_pickup','dm_avgAdults','dm_avgChildren','dm_totalAdults','dm_totalChildren','dm_trevpar','dm_availRooms','dm_availGuar'].some(function(k){return wvMetricState[k];}) ? wvAcc('More Metrics', 'detailed', (function(){
+      ${wvGroupBy === 'combined' ? ['dm_rnSold','dm_pickup_0','dm_pickup_1','dm_pickup_2','dm_avgAdults','dm_avgChildren','dm_totalAdults','dm_totalChildren','dm_trevpar','dm_availRooms','dm_availGuar'].some(function(k){return wvMetricState[k];}) ? wvAcc('More Metrics', 'detailed', (function(){
           const showS = wvMetricState.cmp_sdly, showL = wvMetricState.cmp_final_ly, showF = wvMetricState.cmp_forecast, showH = wvMetricState.cmp_hotel;
           const availRooms = Math.max(0, 102 - Math.floor(hotel * 1.02));
           // All three reference sets
@@ -7247,7 +7247,13 @@ function buildWeekGrid(month, weekStart, activeDay) {
           const hotelTotalGuests = Math.round(dmHotelRn * (parseFloat(hotelAvgAdults) + parseFloat(hotelAvgChildren)));
           return [
             ['RN Sold',        dmToRn,         S.rn,  L.rn,  F.rn,  '#2e65e8', Math.min(92, 55+(v%37)),             'dm_rnSold',       dmHotelRn,         Math.min(92, 55+(v%37)+10)],
-            ['Pickup',         '+'+dmToPickup, null,  null,  null,  '#006461', Math.min(92, 30+v%50),               'dm_pickup',       '+'+dmHotelPickup, Math.min(92, 30+v%50+10)],
+            ...pickupDayValues.map(function(d,i){
+              var scale = d <= 1 ? 0.3 : d <= 3 ? 0.6 : d <= 7 ? 1 : Math.min(2, d/7);
+              var toP   = Math.max(0, Math.round(dmToPickup    * scale));
+              var htlP  = Math.max(0, Math.round(dmHotelPickup * scale));
+              var lbl   = d === 1 ? '1d Pickup' : d + 'd Pickup';
+              return [lbl, '+'+toP, null, null, null, '#006461', Math.min(92,30+v%50), 'dm_pickup_'+i, '+'+htlP, Math.min(92,30+v%50+10)];
+            }),
             ['Avg Adults',     dmAvgAdults,    null,  null,  null,  '#2e65e8', Math.min(92, 55+v%30),               'dm_avgAdults',    hotelAvgAdults,    Math.min(92, 55+v%30+8)],
             ['Avg Children',   dmAvgChildren,  null,  null,  null,  '#d33030', Math.min(92, 20+v%40),               'dm_avgChildren',  hotelAvgChildren,  Math.min(92, 20+v%40+8)],
             ['Total Adults',   dmTotalAdults,  null,  null,  null,  '#2e65e8', Math.min(92, 60+v%28),               'dm_totalAdults',  hotelTotalAdults,  Math.min(92, 60+v%28+8)],
@@ -8202,13 +8208,17 @@ document.addEventListener('click', function(e) {
     const dd = document.getElementById('wvMetricsDropdown');
     const isOpen = dd.style.display !== 'none';
     dd.style.display = isOpen ? 'none' : 'block';
-    if (!isOpen) updateMetricCheckboxes();
+    if (!isOpen) { renderPickupMetricItems(); updateMetricCheckboxes(); }
     e.stopPropagation(); return;
   }
   const cb = e.target.closest('.wv-ms-cb[data-key]');
   if (cb) {
     const key = cb.dataset.key;
     wvMetricState[key] = !wvMetricState[key];
+    // Keep dm_pickup master in sync with individual window toggles
+    if (key.startsWith('dm_pickup_')) {
+      wvMetricState.dm_pickup = [0,1,2].some(function(i){ return !!wvMetricState['dm_pickup_'+i]; });
+    }
     updateMetricCheckboxes();
     buildWeekGrid(wvMonth, wvWeekStart, wvWeekStart);
     return;
@@ -8219,7 +8229,7 @@ document.addEventListener('click', function(e) {
     buildWeekGrid(wvMonth, wvWeekStart, wvWeekStart); return;
   }
   if (e.target.id === 'wvMsClearDetail') {
-    ['dm_rnSold','dm_pickup','dm_avgAdults','dm_avgChildren','dm_totalAdults','dm_totalChildren','dm_trevpar','dm_availRooms','dm_availGuar'].forEach(function(k){ wvMetricState[k] = false; });
+    ['dm_rnSold','dm_pickup','dm_pickup_0','dm_pickup_1','dm_pickup_2','dm_avgAdults','dm_avgChildren','dm_totalAdults','dm_totalChildren','dm_trevpar','dm_availRooms','dm_availGuar'].forEach(function(k){ wvMetricState[k] = false; });
     updateMetricCheckboxes();
     buildWeekGrid(wvMonth, wvWeekStart, wvWeekStart); return;
   }
@@ -9468,6 +9478,7 @@ window.pickupInputChange = function(input, panel) {
   if (!val || val < 1) return;
   if (val > 365) { input.value = 365; val = 365; }
   _pickupSetFilter(panel, val);
+  if (typeof renderPickupMetricItems === 'function') renderPickupMetricItems();
 };
 window.pickupBtnClick = function(btn, panel) {
   var wrap = btn.closest('.pickup-btns-wrap');
@@ -9489,6 +9500,35 @@ function pickupBtnReset(panel) {
   var lbl = document.getElementById(panel === 'cal' ? 'calPickupLabel' : 'wvPickupLabel');
   if (lbl) lbl.textContent = 'All time';
 }
+
+// ── Pickup metric items (dynamic labels based on input values) ───────────
+var pickupDayValues = [1, 3, 7];
+function getPickupInputValues() {
+  // Try wv inputs first, then cal inputs
+  var wrap = document.getElementById('wvPickupBtns') || document.getElementById('calPickupBtns');
+  if (!wrap) return [1, 3, 7];
+  var vals = [];
+  wrap.querySelectorAll('.pickup-day-input').forEach(function(inp) {
+    var v = parseInt(inp.value);
+    if (v && v > 0) vals.push(v);
+  });
+  return vals.length === 3 ? vals : [1, 3, 7];
+}
+window.renderPickupMetricItems = function() {
+  pickupDayValues = getPickupInputValues();
+  var container = document.getElementById('wvPickupMetricItems');
+  if (!container) return;
+  container.innerHTML = pickupDayValues.map(function(d, i) {
+    var key   = 'dm_pickup_' + i;
+    var label = d === 1 ? 'Pickup · 1 Day' : 'Pickup · ' + d + ' Days';
+    if (!(key in wvMetricState)) wvMetricState[key] = true;
+    var checked = wvMetricState[key] !== false;
+    return '<label class="wv-ms-item"><span class="wv-ms-cb' + (checked ? ' checked' : '') + '" data-key="' + key + '"></span><span class="wv-ms-label">' + label + '</span></label>';
+  }).join('');
+  // Keep dm_pickup master in sync
+  wvMetricState.dm_pickup = [0,1,2].some(function(i){ return !!wvMetricState['dm_pickup_'+i]; });
+};
+setTimeout(function() { window.renderPickupMetricItems(); }, 600);
 
 /* ─── TOUR OPERATORS & CONTRACTS PAGE ─── */
 (function() {

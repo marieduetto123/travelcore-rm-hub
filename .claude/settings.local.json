@@ -140,7 +140,8 @@
       "Bash(./deploy.sh \"pickup window: 1/3/7 as editable number inputs, All as button\")",
       "mcp__Claude_in_Chrome__tabs_context_mcp",
       "Bash(./deploy.sh \"sync filters between monthly/weekly incl pickup button state; fix badge count\")",
-      "Bash(./deploy.sh \"match pickup inputs to Storybook InputComponent style\")"
+      "Bash(./deploy.sh \"match pickup inputs to Storybook InputComponent style\")",
+      "Bash(./deploy.sh \"dynamic pickup metric items in More Metrics based on input values\")"
     ]
   }
 }
