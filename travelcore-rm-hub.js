@@ -1919,6 +1919,23 @@ function renderCalMonthlySummary() {
     var sdlyRevpar=Math.max(40,avgRevpar-8), lyRevpar=Math.max(40,avgRevpar-4);
     var sdlyRn=Math.round(avgRn*0.88), lyRn=Math.round(avgRn*0.93), fcstRn=Math.round(avgRn*1.06);
     var isEbb=(new Date(2026,nm-1,1)).getDay()<3;
+    // ── Close-out counts for this month ──
+    var fullCoCount=0, partCoCount=0;
+    var _coRtSet=new Set(), _coBdSet=new Set(), _coToSet=new Set();
+    for (var _cd=1; _cd<=nd; _cd++) {
+      var _cKey=nm+'-'+_cd;
+      if (LOCKED_DAYS.has(_cKey)) fullCoCount++;
+      var _pRules=PARTIAL_CLOSURES[_cKey];
+      if (_pRules && _pRules.length>0) {
+        partCoCount++;
+        _pRules.forEach(function(r){
+          (r.roomTypes||[]).forEach(function(rt){ _coRtSet.add(rt); });
+          (r.boards||[]).forEach(function(b){ _coBdSet.add(b.toUpperCase()); });
+          (r.tos||[]).forEach(function(t){ _coToSet.add(t); });
+        });
+      }
+    }
+    var coRoomTypes=Array.from(_coRtSet), coBoards=Array.from(_coBdSet), coTOs=Array.from(_coToSet);
     return {name:m.name,avgH,avgT,avgAdr,avgToAdr:avgToAdr2,avgRev,avgHRev,totalRev,totalHRev,
       avgRevpar,avgHRevpar,avgPickup,avgHPickup,avgRn,avgHRn,
       avgLos,avgHLos,avgLead,avgHLead,totA,totC,hTotA,hTotC,avgA,avgC,hAvgA,hAvgC,totG,hTotG,
@@ -1928,7 +1945,8 @@ function renderCalMonthlySummary() {
       avgFit,avgDyn,avgSer,avgOtherSeg,avgFree,fitRm,dynRm,serRm,othRm,freeRm,avgOnline,
       tcRates,baseRate,isEbb,
       sdlyT,lyT,fcstT,sdlyAdr,lyAdr,fcstAdr,sdlyRev,lyRev,fcstRev,
-      sdlyRevpar,lyRevpar,sdlyRn,lyRn,fcstRn};
+      sdlyRevpar,lyRevpar,sdlyRn,lyRn,fcstRn,
+      fullCoCount,partCoCount,nd,coRoomTypes,coBoards,coTOs};
   });
 
   var tcOps=[['Sunshine Tours','#3b82f6'],['Global Adv.','#967EF3'],['Beach Hols','#0ea5e9'],['City Breaks','#10b981'],['Adventure','#f59e0b']];
@@ -1973,6 +1991,7 @@ function renderCalMonthlySummary() {
     _calAccState.mo_biz = false;
     _calAccState.mo_tc = false;
     _calAccState.mo_seg = false;
+    _calAccState.mo_closeouts = false;
   }
 
   // Row definitions (same pattern as Daily B)
@@ -2034,6 +2053,14 @@ function renderCalMonthlySummary() {
   moRows.push({type:'sub', id:'mos_biz_dir', label:'Direct', dot:'#0284c7', parent:'mos_bizbar', gp:'mo_biz'});
   moRows.push({type:'sub', id:'mos_biz_ota', label:'OTA', dot:'#D97706', parent:'mos_bizbar', gp:'mo_biz'});
   moRows.push({type:'sub', id:'mos_biz_oth', label:'Other', dot:'#9ca3af', parent:'mos_bizbar', gp:'mo_biz'});
+
+  // ── Close Outs group
+  moRows.push({type:'top', id:'mo_closeouts', label:'Close Outs'});
+  moRows.push({type:'sect', id:'mos_co_full', label:'Full Close Out', parent:'mo_closeouts'});
+  moRows.push({type:'sect', id:'mos_co_part', label:'Partial Lock', parent:'mo_closeouts'});
+  moRows.push({type:'sub', id:'mos_co_rooms', label:'Room Types', dot:'#fca5a5', parent:'mos_co_part', gp:'mo_closeouts'});
+  moRows.push({type:'sub', id:'mos_co_boards', label:'Board Types', dot:'#fde68a', parent:'mos_co_part', gp:'mo_closeouts'});
+  moRows.push({type:'sub', id:'mos_co_tos', label:'Tour Operators', dot:'#d8b4fe', parent:'mos_co_part', gp:'mo_closeouts'});
 
   // ── Travel Co. Rates group
   moRows.push({type:'top', id:'mo_tc', label:'Travel Co. Rates'});
@@ -2189,6 +2216,30 @@ function renderCalMonthlySummary() {
               + '<span style="font-size:12px;font-family:Lato,sans-serif;color:#D97706">OTA '+mo.avgOtaMix+'%</span>'
               + '</div>';
             break;
+          case 'mos_co_full':
+            if (mo.fullCoCount > 0) {
+              cc = '<div class="wb-sect-val">'
+                + '<span class="material-icons" style="font-size:13px;color:#fca5a5;vertical-align:middle;margin-right:3px">lock</span>'
+                + '<span class="wv-occ-total" style="color:#ef4444">' + mo.fullCoCount + ' day' + (mo.fullCoCount!==1?'s':'') + '</span>'
+                + '<span style="font-size:10px;color:#9ca3af;margin-left:6px">/ ' + mo.nd + '</span>'
+                + '</div>'
+                + moBar(Math.min(90, Math.round(mo.fullCoCount/mo.nd*100)), '#ef4444');
+            } else {
+              cc = '<div class="wb-sect-val" style="color:#9ca3af;font-size:12px">None</div>';
+            }
+            break;
+          case 'mos_co_part':
+            if (mo.partCoCount > 0) {
+              cc = '<div class="wb-sect-val">'
+                + '<span class="material-icons" style="font-size:13px;color:#fde68a;vertical-align:middle;margin-right:3px">lock_open</span>'
+                + '<span class="wv-occ-total" style="color:#d97706">' + mo.partCoCount + ' day' + (mo.partCoCount!==1?'s':'') + '</span>'
+                + '<span style="font-size:10px;color:#9ca3af;margin-left:6px">/ ' + mo.nd + '</span>'
+                + '</div>'
+                + moBar(Math.min(90, Math.round(mo.partCoCount/mo.nd*100)), '#f59e0b');
+            } else {
+              cc = '<div class="wb-sect-val" style="color:#9ca3af;font-size:12px">None</div>';
+            }
+            break;
           case 'mos_tcbase': {
             cc = '<div class="wb-sect-val"><span class="wv-occ-total" style="font-weight:700;color:#1C1C1C">$'+mo.baseRate+'</span></div>'
               + moBar(Math.min(90,Math.round(mo.baseRate/280*100)), '#004948');
@@ -2237,6 +2288,9 @@ function renderCalMonthlySummary() {
           case 'mos_biz_dir':   v1 = mo.avgDirMix+'%'; break;
           case 'mos_biz_ota':   v1 = mo.avgOtaMix+'%'; break;
           case 'mos_biz_oth':   v1 = mo.avgOtherMix+'%'; break;
+          case 'mos_co_rooms':  v1 = mo.coRoomTypes.length>0 ? mo.coRoomTypes.join(', ') : '—'; break;
+          case 'mos_co_boards': v1 = mo.coBoards.length>0    ? mo.coBoards.join(', ')    : '—'; break;
+          case 'mos_co_tos':    v1 = mo.coTOs.length>0       ? mo.coTOs.join(', ')       : '—'; break;
         }
         cc = '<span class="wb-sub-val">' + v1 + '</span>';
       }
