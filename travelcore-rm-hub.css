@@ -444,6 +444,8 @@ body.dark .dp-btn-cancel:hover { border-color: var(--text-primary); }
 }
 /* Demand calendar: use overflow:clip so .cal-header can be position:sticky */
 #demand-calendar { overflow: clip; }
+/* Week view: same fix for .wv-topbar sticky */
+#weekView { overflow: clip; }
 body.dark .section-card { background: var(--surface-2); border-color: var(--border); }
 
 .section-header {
@@ -2129,6 +2131,10 @@ body.dark .cal-day.cal-sel-mid { background: rgba(0, 100, 97, 0.20) !important; 
   padding: 10px 20px 11px; border-bottom: 1px solid #e0e3e5;
   background: #fff;
   gap: 12px;
+  position: sticky;
+  top: 72px; /* 40px topbar + 32px breadcrumb */
+  z-index: 98;
+  box-shadow: 0 2px 6px rgba(0,0,0,.07);
 }
 body.dark .wv-topbar { background: var(--surface-2); border-bottom-color: var(--border); }
 
@@ -2262,10 +2268,12 @@ body.dark .wv-outline-select { background: var(--surface-2); border-color: var(-
   min-height: 48px;
   box-sizing: border-box;
   position: sticky;
-  top: 135px; /* 72px (topbar+breadcrumb) + 63px (cal-header) */
+  top: 135px; /* 72px (topbar+breadcrumb) + 63px (cal-header) — calendar default */
   z-index: 97;
 }
 body.dark .wv-groupby-bar { background: var(--surface-2); border-bottom-color: var(--border); }
+/* Weekly view: .wv-topbar is ~57px → groupby-bar sticks just below it */
+#weekView .wv-groupby-bar { top: 129px; } /* 72px + 57px wv-topbar */
 
 /* ── Group-by toggle (tab style matching Figma) ── */
 .wv-groupby-row {
