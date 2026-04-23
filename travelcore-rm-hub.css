@@ -223,7 +223,7 @@ body.dark .theme-toggle .icon-moon { display: none; }
 .nav-item.active svg { color: var(--accent); }
 
 /* ═══ MAIN ═══ */
-.main { flex: 1; margin-left: 220px; overflow: auto; }
+.main { flex: 1; margin-left: 220px; overflow: visible; } /* must not be auto/hidden — that creates a scroll container that breaks sticky children */
 
 .page-content { padding: 20px 24px 40px; display: flex; flex-direction: column; gap: 16px; }
 
@@ -605,7 +605,7 @@ body.dark #revChart .line-to-act     { stroke: #C4FF45; }
   background: #fff;
   gap: 12px;
   position: sticky;
-  top: 0; /* <main> scroll container starts below topbar+breadcrumb */
+  top: 72px; /* 40px topbar + 32px breadcrumb — both sticky, window scrolls */
   z-index: 98;
   box-shadow: 0 2px 6px rgba(0,0,0,.07);
 }
