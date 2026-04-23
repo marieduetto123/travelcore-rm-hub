@@ -1099,6 +1099,34 @@ function updateChart() {
 
 }
 
+// ── Close all dropdowns (call before opening any one dropdown) ────────────────
+function _closeAllDropdowns(exceptId) {
+  var _allDdIds = [
+    'revBoardDropdown','revSegmentDropdown','revRoomDropdown',
+    'revTODropdown','revOriginDropdown','revSourceDropdown',
+    'revCmpDropdown','revDRPanel',
+    'calFiltersDropdown','wvFiltersDropdown'
+  ];
+  _allDdIds.forEach(function(id) {
+    if (id === exceptId) return;
+    var el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+  // Monthly filter panels
+  ['calFiltTOPanel','calFiltRTPanel','calFiltMPPanel','calFiltOriginPanel'].forEach(function(pid) {
+    if (pid === exceptId) return;
+    var p = document.getElementById(pid);
+    if (p) p.style.display = 'none';
+  });
+  // Remove active states from all filter / dropdown buttons
+  ['calFiltersBtn','wvFiltersBtn','revCmpBtn',
+   'revBoardBtn','revSegmentBtn','revRoomBtn','revTOBtn','revOriginBtn','revSourceBtn',
+   'calFiltTOBtn','calFiltRTBtn','calFiltMPBtn','calFiltOriginBtn'].forEach(function(bid) {
+    var b = document.getElementById(bid);
+    if (b) b.classList.remove('active');
+  });
+}
+
 // Generic multi-select dropdown builder
 function makeRevMultiSelect(wrapId, btnId, ddId, allLabel) {
   const wrap = document.getElementById(wrapId);
@@ -1107,7 +1135,9 @@ function makeRevMultiSelect(wrapId, btnId, ddId, allLabel) {
   if (!btn || !dd) return;
   btn.addEventListener('click', function(e) {
     e.stopPropagation();
-    dd.style.display = dd.style.display === 'none' ? '' : 'none';
+    const isOpen = dd.style.display !== 'none';
+    if (!isOpen) _closeAllDropdowns(ddId);
+    dd.style.display = isOpen ? 'none' : '';
   });
   document.addEventListener('click', function(e) {
     if (wrap && !wrap.contains(e.target)) dd.style.display = 'none';
@@ -1176,7 +1206,9 @@ makeRevMultiSelect('revSourceWrap',  'revSourceBtn',  'revSourceDropdown',  'All
 
   btn.addEventListener('click', function(e) {
     e.stopPropagation();
-    dd.style.display = dd.style.display === 'none' ? '' : 'none';
+    const isOpen = dd.style.display !== 'none';
+    if (!isOpen) _closeAllDropdowns('revCmpDropdown');
+    dd.style.display = isOpen ? 'none' : '';
   });
   document.addEventListener('click', function(e) {
     if (wrap && !wrap.contains(e.target)) dd.style.display = 'none';
@@ -1721,11 +1753,17 @@ function renderCalendar() {
     const avSte  = Math.round(mAvailR * 0.18);
     const avFam  = mAvailR - avStd - avDel - avSte;
 
+    // Compute locked day counts from live data
+    const _mPrefix = m.month + '-';
+    const _actualFullLocked = Array.from(LOCKED_DAYS).filter(k => k.startsWith(_mPrefix)).length;
+    const _actualPartLocked = Object.keys(PARTIAL_CLOSURES).filter(k => k.startsWith(_mPrefix) && !LOCKED_DAYS.has(k)).length;
+    const _totalLocked = _actualFullLocked + _actualPartLocked;
+
     return `
       <div class="cal-month">
         <div class="cal-month-hdr">
           <span class="cal-month-name">${m.name}</span>
-          ${!(typeof window.hmIsStopSales === 'function' && window.hmIsStopSales()) ? `<span class="cal-lock-badge"><span class="material-icons" style="font-size:12px">lock</span>${m.lockedCount}</span>` : ''}
+          ${!(typeof window.hmIsStopSales === 'function' && window.hmIsStopSales()) && _totalLocked > 0 ? `<span class="cal-lock-badge"><span class="material-icons" style="font-size:12px">lock</span>${_totalLocked}</span>` : ''}
         </div>
         <div class="cal-dow">${DOW.map(d => `<span>${d}</span>`).join('')}</div>
         <div class="cal-days">${cells}</div>
@@ -2421,14 +2459,17 @@ window.calSetDisplayView = function(n) {
 window.calToggleMFilt = function(panelId, btn) {
   const panels = ['calFiltTOPanel','calFiltRTPanel','calFiltMPPanel','calFiltOriginPanel'];
   const btns   = ['calFiltTOBtn','calFiltRTBtn','calFiltMPBtn','calFiltOriginBtn'];
+  const targetPanel = document.getElementById(panelId);
+  const isCurrentlyOpen = targetPanel && targetPanel.style.display !== 'none';
+  // Close all other dropdowns (including rev chart, cal/wv filters) before opening
+  if (!isCurrentlyOpen) _closeAllDropdowns(panelId);
   panels.forEach(function(pid, i) {
     const p = document.getElementById(pid);
     if (!p) return;
     if (pid === panelId) {
-      const isOpen = p.style.display !== 'none';
-      p.style.display = isOpen ? 'none' : 'block';
+      p.style.display = isCurrentlyOpen ? 'none' : 'block';
       const b = document.getElementById(btns[i]);
-      if (b) b.classList.toggle('active', !isOpen);
+      if (b) b.classList.toggle('active', !isCurrentlyOpen);
     } else {
       p.style.display = 'none';
       const b = document.getElementById(btns[i]);
@@ -9265,6 +9306,7 @@ updateContractsStats({ y:2025, m:7, d:17 }, { y:2025, m:7, d:25 });
   filtersBtn.addEventListener('click', function(e) {
     e.stopPropagation();
     const isOpen = filtersDd.style.display !== 'none';
+    if (!isOpen) _closeAllDropdowns('calFiltersDropdown');
     filtersDd.style.display = isOpen ? 'none' : '';
     filtersBtn.classList.toggle('active', !isOpen);
   });
@@ -11484,6 +11526,7 @@ document.querySelectorAll('.ds-search-field').forEach(function(wrap) {
   filtersBtn.addEventListener('click', function(e) {
     e.stopPropagation();
     const isOpen = filtersDd.style.display !== 'none';
+    if (!isOpen) _closeAllDropdowns('wvFiltersDropdown');
     filtersDd.style.display = isOpen ? 'none' : '';
     filtersBtn.classList.toggle('active', !isOpen);
   });
