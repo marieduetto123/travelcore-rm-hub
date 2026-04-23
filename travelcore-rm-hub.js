@@ -2921,7 +2921,7 @@ function clearCalSelection() {
         +'<span class="wv-to-name">'+name+'</span>'
         +'<div class="wv-to-bar-wrap"><div class="wv-to-bar '+barCls+'" style="width:'+barPct+'%"></div></div>'
         +'<span class="wv-to-rate">$'+toRate+'</span>'
-        +'<span class="wv-to-allot">'+(toAllot-toUsed)+'r</span>'
+        +'<span class="wv-to-allot">'+(toAllot-toUsed)+' rooms</span>'
         +'</div>';
     }).join('');
 
