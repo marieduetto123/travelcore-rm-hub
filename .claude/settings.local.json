@@ -171,7 +171,8 @@
       "Bash(./deploy.sh \"Make column header event icons visible: non-event days 70% white, event days lime highlight\")",
       "Bash(./deploy.sh \"Add event calendar icon to Daily B column headers\")",
       "Bash(./deploy.sh \"Weekly calendar icon: hover tooltip on all days \\(No events for empty days, events list for event days\\)\")",
-      "Bash(./deploy.sh \"v85: fix tooltip cache, bump version for onmouseenter handlers\")"
+      "Bash(./deploy.sh \"v85: fix tooltip cache, bump version for onmouseenter handlers\")",
+      "Bash(./deploy.sh \"v86: sticky cal-header, availRooms default metric, fix cell metrics warning on remove\")"
     ]
   }
 }

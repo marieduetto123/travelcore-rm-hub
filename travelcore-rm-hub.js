@@ -13552,7 +13552,7 @@ window.calHideCapTip = function() {
   // ── State ──────────────────────────────────────────────────────
   var cmMode      = 'individual'; // always individual (segments always shown)
   var cmSegs      = ['fit','dynamic','series']; // all selected by default
-  var cmMetrics   = ['hocc','tocc'];  // selected metric keys (Hotel Occ + T Occ by default)
+  var cmMetrics   = ['hocc','tocc','availRooms'];  // selected metric keys (Hotel Occ + T Occ + Avail Rooms by default)
   var cmHotel     = true;         // include Hotel row
 
   var SEG_COLORS = { fit: '#0891b2', dynamic: '#7c3aed', series: '#f59e0b' };
@@ -13594,28 +13594,22 @@ window.calHideCapTip = function() {
     return cmMetrics.length;
   }
 
-  function updateHint() {
+  // isAdding: true when user just checked a metric — show over-limit warning
+  //           false when user just unchecked — only disable Apply, no warning text
+  function updateHint(isAdding) {
     var rows = countRows();
     var hint = document.getElementById('calCmHint');
     if (hint) {
       hint.textContent = rows + ' / 4 rows';
       hint.style.color = rows > 4 ? '#dc2626' : rows === 4 ? '#f59e0b' : '#6b7280';
     }
-    var warn = document.getElementById('cmSegWarning');
-    if (warn) {
-      if (rows > 4) {
-        warn.style.display = '';
-        warn.textContent = 'Exceeds 4 rows — deselect some metrics or segments';
-      } else {
-        warn.style.display = 'none';
-      }
-    }
-    // Disable Apply + show "Select up to 4" when over limit
     var applyBtn = document.getElementById('cmApplyBtn');
     var limitHint = document.getElementById('cmSelectUpTo4');
     if (rows > 4) {
+      // Disable Apply in all over-limit cases
       if (applyBtn) { applyBtn.disabled = true; applyBtn.style.background = '#9ca3af'; applyBtn.style.cursor = 'not-allowed'; applyBtn.style.opacity = '0.7'; }
-      if (limitHint) limitHint.style.display = '';
+      // Show "Select up to 4" warning only when actively adding beyond limit
+      if (limitHint) limitHint.style.display = (isAdding !== false) ? '' : 'none';
     } else {
       if (applyBtn) { applyBtn.disabled = false; applyBtn.style.background = '#006461'; applyBtn.style.cursor = 'pointer'; applyBtn.style.opacity = '1'; }
       if (limitHint) limitHint.style.display = 'none';
@@ -13666,14 +13660,17 @@ window.calHideCapTip = function() {
   // Only rule: max 4 total (enforced by updateHint / Apply button disable).
   window.cmToggleMetric = function(key, cb) {
     if (cb.classList.contains('checked')) {
+      // Removing — don't show over-limit warning
       cb.classList.remove('checked');
       var idx = cmMetrics.indexOf(key);
       if (idx >= 0) cmMetrics.splice(idx, 1);
+      updateHint(false);
     } else {
+      // Adding — show warning if over limit
       cb.classList.add('checked');
       if (cmMetrics.indexOf(key) < 0) cmMetrics.push(key);
+      updateHint(true);
     }
-    updateHint();
     // Don't call renderCalendar() here — wait for Apply
   };
 

@@ -442,6 +442,8 @@ body.dark .dp-btn-cancel:hover { border-color: var(--text-primary); }
   overflow: hidden;
   transition: background .25s, border-color .25s;
 }
+/* Demand calendar: use overflow:clip so .cal-header can be position:sticky */
+#demand-calendar { overflow: clip; }
 body.dark .section-card { background: var(--surface-2); border-color: var(--border); }
 
 .section-header {
@@ -602,6 +604,10 @@ body.dark #revChart .line-to-act     { stroke: #C4FF45; }
   border-bottom: 1px solid #e0e3e5;
   background: #fff;
   gap: 12px;
+  position: sticky;
+  top: 72px; /* 40px topbar + 32px breadcrumb */
+  z-index: 98;
+  box-shadow: 0 2px 6px rgba(0,0,0,.07);
 }
 body.dark .cal-header { background: var(--surface-2); border-bottom-color: var(--border); }
 .cal-header-left  { flex: 1; display: flex; align-items: center; }
