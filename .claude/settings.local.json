@@ -186,7 +186,8 @@
       "Bash(./deploy.sh \"dropdowns close each other; lock badge counts from live data\")",
       "Bash(./deploy.sh \"heatmap conditions only shown for Stop Sales type\")",
       "Bash(./deploy.sh \"collapsible sections in eye icon popup\")",
-      "Bash(./deploy.sh \"show 'rooms' instead of 'r' in TO rates in eye popup\")"
+      "Bash(./deploy.sh \"show 'rooms' instead of 'r' in TO rates in eye popup\")",
+      "Bash(./deploy.sh \"rename View Week to View More Details in eye popup\")"
     ]
   }
 }
