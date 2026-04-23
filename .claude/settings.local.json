@@ -179,7 +179,8 @@
       "Bash(./deploy.sh \"css70: sticky tabs bar below cal-header\")",
       "Bash(./deploy.sh \"v88: add Close Outs group to monthly overview\")",
       "Bash(./deploy.sh \"v89: move Close Outs to top of monthly overview\")",
-      "Bash(./deploy.sh \"v90/css71: move Close Outs top, hide CO tabs, sticky weekly topbar+tabs\")"
+      "Bash(./deploy.sh \"v90/css71: move Close Outs top, hide CO tabs, sticky weekly topbar+tabs\")",
+      "Bash(./deploy.sh \"v91: rename Daily tab to Weekly\")"
     ]
   }
 }
