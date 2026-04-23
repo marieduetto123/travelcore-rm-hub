@@ -173,7 +173,8 @@
       "Bash(./deploy.sh \"Weekly calendar icon: hover tooltip on all days \\(No events for empty days, events list for event days\\)\")",
       "Bash(./deploy.sh \"v85: fix tooltip cache, bump version for onmouseenter handlers\")",
       "Bash(./deploy.sh \"v86: sticky cal-header, availRooms default metric, fix cell metrics warning on remove\")",
-      "Bash(./deploy.sh \"v87/css67: bust CSS cache for sticky cal-header\")"
+      "Bash(./deploy.sh \"v87/css67: bust CSS cache for sticky cal-header\")",
+      "Bash(./deploy.sh \"css68: fix sticky cal-header top:0 \\(main is scroll container\\)\")"
     ]
   }
 }
