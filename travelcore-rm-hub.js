@@ -1996,6 +1996,14 @@ function renderCalMonthlySummary() {
 
   // Row definitions (same pattern as Daily B)
   var moRows = [];
+  // ── Close Outs group (top)
+  moRows.push({type:'top', id:'mo_closeouts', label:'Close Outs'});
+  moRows.push({type:'sect', id:'mos_co_full', label:'Full Close Out', parent:'mo_closeouts'});
+  moRows.push({type:'sect', id:'mos_co_part', label:'Partial Lock', parent:'mo_closeouts'});
+  moRows.push({type:'sub', id:'mos_co_rooms', label:'Room Types', dot:'#fca5a5', parent:'mos_co_part', gp:'mo_closeouts'});
+  moRows.push({type:'sub', id:'mos_co_boards', label:'Board Types', dot:'#fde68a', parent:'mos_co_part', gp:'mo_closeouts'});
+  moRows.push({type:'sub', id:'mos_co_tos', label:'Tour Operators', dot:'#d8b4fe', parent:'mos_co_part', gp:'mo_closeouts'});
+
   // ── Daily Metrics group
   moRows.push({type:'top', id:'mo_daily', label:'Daily Metrics'});
   moRows.push({type:'sect', id:'mos_occ', label:'Occupancy', parent:'mo_daily'});
@@ -2053,14 +2061,6 @@ function renderCalMonthlySummary() {
   moRows.push({type:'sub', id:'mos_biz_dir', label:'Direct', dot:'#0284c7', parent:'mos_bizbar', gp:'mo_biz'});
   moRows.push({type:'sub', id:'mos_biz_ota', label:'OTA', dot:'#D97706', parent:'mos_bizbar', gp:'mo_biz'});
   moRows.push({type:'sub', id:'mos_biz_oth', label:'Other', dot:'#9ca3af', parent:'mos_bizbar', gp:'mo_biz'});
-
-  // ── Close Outs group
-  moRows.push({type:'top', id:'mo_closeouts', label:'Close Outs'});
-  moRows.push({type:'sect', id:'mos_co_full', label:'Full Close Out', parent:'mo_closeouts'});
-  moRows.push({type:'sect', id:'mos_co_part', label:'Partial Lock', parent:'mo_closeouts'});
-  moRows.push({type:'sub', id:'mos_co_rooms', label:'Room Types', dot:'#fca5a5', parent:'mos_co_part', gp:'mo_closeouts'});
-  moRows.push({type:'sub', id:'mos_co_boards', label:'Board Types', dot:'#fde68a', parent:'mos_co_part', gp:'mo_closeouts'});
-  moRows.push({type:'sub', id:'mos_co_tos', label:'Tour Operators', dot:'#d8b4fe', parent:'mos_co_part', gp:'mo_closeouts'});
 
   // ── Travel Co. Rates group
   moRows.push({type:'top', id:'mo_tc', label:'Travel Co. Rates'});

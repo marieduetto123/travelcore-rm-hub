@@ -177,7 +177,8 @@
       "Bash(./deploy.sh \"css68: fix sticky cal-header top:0 \\(main is scroll container\\)\")",
       "Bash(./deploy.sh \"css69: fix sticky - remove overflow:auto from .main, restore top:72px on cal-header\")",
       "Bash(./deploy.sh \"css70: sticky tabs bar below cal-header\")",
-      "Bash(./deploy.sh \"v88: add Close Outs group to monthly overview\")"
+      "Bash(./deploy.sh \"v88: add Close Outs group to monthly overview\")",
+      "Bash(./deploy.sh \"v89: move Close Outs to top of monthly overview\")"
     ]
   }
 }
