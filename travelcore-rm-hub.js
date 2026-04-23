@@ -14169,19 +14169,21 @@ window.calHideCapTip = function() {
     if (!section || !rows) return;
     section.style.display = '';
 
-    // Show condition section and restore its state
+    // Show condition section only for Stop Sales
     var condSection = document.getElementById('hmConditionSection');
-    if (condSection) condSection.style.display = 'block';
-    var condCb = document.getElementById('hmCondEnabled');
-    if (condCb) condCb.checked = hmState.condition.enabled;
-    var condCtrls = document.getElementById('hmCondControls');
-    if (condCtrls) condCtrls.style.display = hmState.condition.enabled ? 'block' : 'none';
-    var condMetric = document.getElementById('hmCondMetric');
-    if (condMetric) condMetric.value = hmState.condition.metric;
-    var condOp = document.getElementById('hmCondOp');
-    if (condOp) condOp.value = hmState.condition.op;
-    var condVal = document.getElementById('hmCondValue');
-    if (condVal) condVal.value = hmState.condition.value;
+    if (condSection) condSection.style.display = type === 'stopsales' ? 'block' : 'none';
+    if (type === 'stopsales') {
+      var condCb = document.getElementById('hmCondEnabled');
+      if (condCb) condCb.checked = hmState.condition.enabled;
+      var condCtrls = document.getElementById('hmCondControls');
+      if (condCtrls) condCtrls.style.display = hmState.condition.enabled ? 'block' : 'none';
+      var condMetric = document.getElementById('hmCondMetric');
+      if (condMetric) condMetric.value = hmState.condition.metric;
+      var condOp = document.getElementById('hmCondOp');
+      if (condOp) condOp.value = hmState.condition.op;
+      var condVal = document.getElementById('hmCondValue');
+      if (condVal) condVal.value = hmState.condition.value;
+    }
 
     // Figma 2026 swatches
     var isStopSales  = type === 'stopsales';

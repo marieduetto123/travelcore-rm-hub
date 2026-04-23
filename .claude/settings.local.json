@@ -183,7 +183,8 @@
       "Bash(./deploy.sh \"v91: rename Daily tab to Weekly\")",
       "Bash(./deploy.sh \"v92: rename Daily to Weekly in weekly view tabs\")",
       "Bash(./deploy.sh \"default weekly compare to None on first open\")",
-      "Bash(./deploy.sh \"dropdowns close each other; lock badge counts from live data\")"
+      "Bash(./deploy.sh \"dropdowns close each other; lock badge counts from live data\")",
+      "Bash(./deploy.sh \"heatmap conditions only shown for Stop Sales type\")"
     ]
   }
 }
