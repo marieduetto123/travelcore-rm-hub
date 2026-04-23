@@ -7503,8 +7503,9 @@ body.dark .cal-mfilt-btn.active { background: #1a3535; }
 /* Weekly calendar event icon — inline next to date text */
 .wv-event-cal-icon {
   display: inline-flex; align-items: center; flex-shrink: 0;
-  transition: opacity .12s;
+  cursor: pointer; transition: opacity .12s, filter .12s;
 }
+.wv-event-cal-icon:hover { filter: brightness(1.5); opacity: 1; }
 .wv-event-cal-icon.has-events { cursor: pointer; }
 .wv-event-cal-icon.has-events:hover { filter: brightness(1.4); }
 .cell-event-icon svg { flex-shrink: 0; }

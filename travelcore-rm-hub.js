@@ -3991,7 +3991,7 @@ function buildDailyBView(days, month, activeDay) {
     var _wbHasEvt = (typeof CAL_EVENTS !== 'undefined' && CAL_EVENTS[_wbEvtKey]);
     var _evtIcon = _wbHasEvt
           ? '<span class="wv-event-cal-icon has-events" data-event-key="' + _wbEvtKey + '" onmouseenter="calShowEventTip(event,\'' + _wbEvtKey + '\')" onmouseleave="calHideEventTip()" style="display:inline-flex;align-items:center"><span class="material-icons" style="font-size:14px;color:#c4ff45">today</span></span>'
-          : '<span class="wv-event-cal-icon" style="display:inline-flex;align-items:center"><span class="material-icons" style="font-size:14px;color:rgba(255,255,255,0.7)">today</span></span>';
+          : '<span class="wv-event-cal-icon" onmouseenter="calShowEventTip(event,\'\')" onmouseleave="calHideEventTip()" style="display:inline-flex;align-items:center"><span class="material-icons" style="font-size:14px;color:rgba(255,255,255,0.7)">today</span></span>';
     html += '<div class="wb-data-cell wb-hdr-cell'
           + (isAct ? ' wb-hdr-active' : '')
           + (isSel ? ' wb-hdr-selected' : '')
@@ -7120,8 +7120,8 @@ function buildWeekGrid(month, weekStart, activeDay) {
     const wvEventKey = `${dm}-${dd}`;
     const wvEvents = (typeof CAL_EVENTS !== 'undefined' && CAL_EVENTS[wvEventKey]) ? CAL_EVENTS[wvEventKey] : null;
     const wvEventIconHtml = wvEvents
-      ? `<span class="wv-event-cal-icon has-events" data-event-key="${wvEventKey}" onmouseenter="calShowEventTip(event,'${wvEventKey}')" onmouseleave="calHideEventTip()"><span class="material-icons" style="font-size:14px;color:#c4ff45;display:block">today</span></span>`
-      : `<span class="wv-event-cal-icon"><span class="material-icons" style="font-size:14px;color:rgba(255,255,255,0.7);display:block">today</span></span>`;
+      ? `<span class="wv-event-cal-icon has-events" data-event-key="${wvEventKey}" onmouseenter="calShowEventTip(event,'${wvEventKey}')" onmouseleave="calHideEventTip()"><span class="material-icons" style="font-size:14px;color:#c4ff45">today</span></span>`
+      : `<span class="wv-event-cal-icon" onmouseenter="calShowEventTip(event,'')" onmouseleave="calHideEventTip()"><span class="material-icons" style="font-size:14px;color:rgba(255,255,255,0.7)">today</span></span>`;
     const isActionNeeded = hotel >= 65 && to < 40 && !isLocked;
     let wvMetricVal = hotel;
     if (wvActiveTab === 'pickup') wvMetricVal = getPickupPct(dm, dd);
@@ -13278,11 +13278,10 @@ setTimeout(function() {
   }
 
   window.calShowEventTip = function(e, key) {
-    var events = (typeof CAL_EVENTS !== 'undefined') ? CAL_EVENTS[key] : null;
-    var closures = (typeof PARTIAL_CLOSURES !== 'undefined') ? PARTIAL_CLOSURES[key] : null;
+    var events = (typeof CAL_EVENTS !== 'undefined' && key) ? CAL_EVENTS[key] : null;
+    var closures = (typeof PARTIAL_CLOSURES !== 'undefined' && key) ? PARTIAL_CLOSURES[key] : null;
     var hasEvents = events && events.length > 0;
     var hasClosures = closures && Array.isArray(closures) && closures.length > 0;
-    if (!hasEvents && !hasClosures) return;
 
     // Hide rooms/capacity tooltip first
     window.calHideCapTip();
@@ -13291,33 +13290,40 @@ setTimeout(function() {
     var calSvg = '<span class="material-icons" style="font-size:18px;color:#006461;vertical-align:middle;margin-right:2px">today</span>';
     var html = '';
 
-    if (hasEvents) {
-      html += '<div class="cal-event-tooltip-title">' + calSvg + ' Events</div>'
-        + events.map(function(ev) {
-            return '<div style="margin-bottom:' + (events.length > 1 ? '6px' : '0') + '">'
-              + '<div class="cal-event-tooltip-name">• ' + ev.name + '</div>'
-              + '<div class="cal-event-tooltip-meta">| ' + ev.type + '<br>' + ev.date + '</div>'
-              + '</div>';
-          }).join('');
-    }
-
-    if (hasClosures) {
-      if (hasEvents) html += '<div style="border-top:1px solid #e5e7eb;margin:8px 0 6px"></div>';
-      html += '<div class="cal-event-tooltip-title"><span class="material-icons" style="font-size:18px;color:#fbbf24;vertical-align:middle;margin-right:2px">lock_open</span> Closures</div>'
-        + closures.map(function(cl) {
-            var parts = [];
-            if (cl.tos && cl.tos.length) parts.push(cl.tos.join(', '));
-            if (cl.roomTypes && cl.roomTypes.length) parts.push(cl.roomTypes.join(', '));
-            if (cl.boards && cl.boards.length) parts.push(cl.boards.map(function(b){return b.toUpperCase();}).join(', '));
-            return '<div style="margin-bottom:4px"><div class="cal-event-tooltip-name">• ' + (parts.join(' · ') || 'All') + '</div>'
-              + '<div class="cal-event-tooltip-meta">| ' + (cl.appliedBy || '') + '</div></div>';
-          }).join('');
+    if (!hasEvents && !hasClosures) {
+      // No events — show "No events" placeholder
+      html = '<div style="color:#6b7280;font-size:12px;padding:2px 0;display:flex;align-items:center;gap:6px">'
+           + calSvg + '<span>No events</span></div>';
+    } else {
+      if (hasEvents) {
+        html += '<div class="cal-event-tooltip-title">' + calSvg + ' Events</div>'
+          + events.map(function(ev) {
+              return '<div style="margin-bottom:' + (events.length > 1 ? '6px' : '0') + '">'
+                + '<div class="cal-event-tooltip-name">• ' + ev.name + '</div>'
+                + '<div class="cal-event-tooltip-meta">| ' + ev.type + '<br>' + ev.date + '</div>'
+                + '</div>';
+            }).join('');
+      }
+      if (hasClosures) {
+        if (hasEvents) html += '<div style="border-top:1px solid #e5e7eb;margin:8px 0 6px"></div>';
+        html += '<div class="cal-event-tooltip-title"><span class="material-icons" style="font-size:18px;color:#fbbf24;vertical-align:middle;margin-right:2px">lock_open</span> Closures</div>'
+          + closures.map(function(cl) {
+              var parts = [];
+              if (cl.tos && cl.tos.length) parts.push(cl.tos.join(', '));
+              if (cl.roomTypes && cl.roomTypes.length) parts.push(cl.roomTypes.join(', '));
+              if (cl.boards && cl.boards.length) parts.push(cl.boards.map(function(b){return b.toUpperCase();}).join(', '));
+              return '<div style="margin-bottom:4px"><div class="cal-event-tooltip-name">• ' + (parts.join(' · ') || 'All') + '</div>'
+                + '<div class="cal-event-tooltip-meta">| ' + (cl.appliedBy || '') + '</div></div>';
+            }).join('');
+      }
     }
 
     t.innerHTML = html;
 
-    // Position below the icon
-    var _evEl = e.target.closest('.cell-event-icon') || e.target.closest('.cell-event-ico');
+    // Position below the icon — support all icon class types
+    var _evEl = e.target.closest('.wv-event-cal-icon')
+             || e.target.closest('.cell-event-icon')
+             || e.target.closest('.cell-event-ico');
     if (!_evEl) return;
     var rect = _evEl.getBoundingClientRect();
     t.style.display = 'block';
