@@ -184,7 +184,8 @@
       "Bash(./deploy.sh \"v92: rename Daily to Weekly in weekly view tabs\")",
       "Bash(./deploy.sh \"default weekly compare to None on first open\")",
       "Bash(./deploy.sh \"dropdowns close each other; lock badge counts from live data\")",
-      "Bash(./deploy.sh \"heatmap conditions only shown for Stop Sales type\")"
+      "Bash(./deploy.sh \"heatmap conditions only shown for Stop Sales type\")",
+      "Bash(./deploy.sh \"collapsible sections in eye icon popup\")"
     ]
   }
 }

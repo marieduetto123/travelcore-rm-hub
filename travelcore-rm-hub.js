@@ -2953,6 +2953,8 @@ function clearCalSelection() {
     function _pBar(pct,c){return'<div class="wv-occ-bar-track" style="margin:2px 0 0;height:6px;border-radius:2px"><div style="width:'+pct+'%;background:'+_pGrad(c)+';height:6px"></div></div>';}
     function _pSbar(segs){return'<div class="wv-occ-bar-track" style="margin:2px 0 0;height:6px;border-radius:2px">'+segs.map(function(s){return'<div style="width:'+s.p+'%;background:'+_pGrad(s.c)+';height:6px"></div>';}).join('')+'</div>';}
     function _pGrp(label,clr){return'<div class="pb-grp" style="background:'+clr+';color:#fff;font-size:12px;font-weight:700;padding:4px 8px;margin:0 -10px;letter-spacing:.5px">'+label+'</div>';}
+    function _pGrpStart(label,clr,uid){return'<div class="pb-grp pb-grp-toggle" data-grpid="'+uid+'" style="background:'+clr+';color:#fff;font-size:12px;font-weight:700;padding:4px 8px;margin:0 -10px;letter-spacing:.5px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none">'+label+'<span class="pb-grp-chevron" style="font-size:11px;opacity:.85;transition:transform .18s">▾</span></div><div class="pb-grp-body" data-grpid="'+uid+'">';}
+    function _pGrpEnd(){return'</div>';}
     function _pSect(label,val,barHtml,dot){return'<div class="pb-sect" style="padding:5px 0 3px;border-bottom:1px solid #f0f0f0"><div style="display:flex;align-items:center;gap:4px;margin-bottom:2px">'+(dot?'<span style="width:6px;height:6px;border-radius:50%;background:'+dot+';flex-shrink:0"></span>':'')+'<span style="font-size:12px;font-weight:600;color:#111827;flex:1">'+label+'</span><span style="font-size:12px;font-weight:700;color:#111827">'+val+'</span></div>'+barHtml+'</div>';}
     function _pSub(label,val,dot,isRem){var c=isRem?'#388c3f':'#6b7280';return'<div style="display:flex;align-items:center;gap:4px;padding:2px 0 2px 10px">'+(dot?'<span style="width:5px;height:5px;border-radius:50%;background:'+dot+';flex-shrink:0"></span>':'')+'<span style="font-size:12px;color:'+c+';flex:1">'+label+'</span><span style="font-size:12px;font-weight:600;color:'+(isRem?'#388c3f':'#111827')+'">'+val+'</span></div>';}
     function _pRef(stlyVal,delta){return'<div style="display:flex;gap:6px;padding:1px 0 0 10px"><span class="wv-ref-tag wv-ref-sdly" style="font-size:10px">STLY '+stlyVal+'</span><span class="wv-ref-tag '+(String(delta).startsWith('+')?'wv-ref-fcst':'wv-ref-sdly')+'" style="font-size:10px">'+delta+'</span></div>';}
@@ -2961,53 +2963,74 @@ function clearCalSelection() {
     _pb += _filtLabel;
 
     // ── Close Outs ──
-    _pb += popupClHtml;
+    if (hasPopupCl || LOCKED_DAYS.has(dm+'-'+dd)) {
+      _pb += _pGrpStart('Close Outs', '#dc2626', 'co');
+      _pb += popupClHtml;
+      _pb += _pGrpEnd();
+    }
 
     // ── Daily Metrics ──
-    _pb += _pGrp('Daily Metrics', _C1);
+    _pb += _pGrpStart('Daily Metrics', _C1, 'dm');
     _pb += _pSect('Occupancy', hotel+'%', _pSbar([{p:to,c:_C1},{p:otherPct,c:_C2}]));
     _pb += _pSub('Travel Distribution Hubs', toRms+' rms / '+to+'%', _C1);
     _pb += _pSub('Other Segments', otherRms+' rms / '+otherPct+'%', _C2);
     _pb += _pSub('STLY', hotelSDLY+'%', _CSTLY);
     _pb += _pSub('Remaining', freeRms+' rms / '+freePct+'%', _CREM, true);
-
     _pb += _pSect('Online / Offline', onlinePct+'%', _pSbar([{p:onlinePct,c:_C1},{p:offlinePct,c:_C2}]));
     _pb += _pSub('Online', onlinePct+'%', _C1);
     _pb += _pSub('Offline', offlinePct+'%', _C2);
-
     _pb += _pSect('ADR', '$'+adr, _pBar(adrBar, _C1));
     _pb += _pSub('Hotel ADR', '$'+adr, _C2);
     _pb += _pRef('$'+adrSDLY, '+'+(adr-adrSDLY));
-
     _pb += _pSect('Revenue', '$'+Math.floor(rev/1000)+'k', _pBar(revBar, _C1));
     _pb += _pSub('Hotel Revenue', '$'+Math.floor(rev/1000)+'k', _C2);
     _pb += _pRef('$'+Math.floor(sdlyR/1000)+'k', '+'+Math.round((rev-sdlyR)/sdlyR*100)+'%');
+    _pb += _pGrpEnd();
 
     // ── More Metrics ──
-    _pb += _pGrp('More Metrics', _C1);
+    _pb += _pGrpStart('More Metrics', _C1, 'mm');
     detRows.forEach(function(r, ri) {
       var bp = Math.min(92, 30 + Math.abs((dm*(ri+3)+dd*7)%55));
       _pb += _pSect(r[0], String(r[1]), _pBar(bp, _C1));
       _pb += _pRef(String(r[2]), String(r[3]));
     });
+    _pb += _pGrpEnd();
 
     // ── Meal Plans ──
-    _pb += _pGrp('Meal Plans', _C1);
+    _pb += _pGrpStart('Meal Plans', _C1, 'mp');
     _pb += '<div style="padding:4px 0">'+mealBarHtml+'</div>';
     mealPlans.forEach(function(mp){
       var rn = Math.round(rnSold * mp.pct / 100);
       _pb += _pSect(mp.short, mp.pct+'% · '+rn+' rms', _pBar(mp.pct, _C1), mp.color);
     });
+    _pb += _pGrpEnd();
 
     // ── Room Availability ──
-    _pb += _pGrp('Room Availability' + (_hasAnyFilter ? ' (Filtered)' : ''), _C1);
+    _pb += _pGrpStart('Room Availability' + (_hasAnyFilter ? ' (Filtered)' : ''), _C1, 'ra');
     _pb += rtHTML;
+    _pb += _pGrpEnd();
 
     // ── TO Rates ──
-    _pb += _pGrp('Tour Operator Rates', _C1);
+    _pb += _pGrpStart('Tour Operator Rates', _C1, 'to');
     _pb += toRatesHTML;
+    _pb += _pGrpEnd();
 
-    document.getElementById('popupBody').innerHTML = _pb;
+    var _popupBodyEl = document.getElementById('popupBody');
+    _popupBodyEl.innerHTML = _pb;
+
+    // Wire up collapsible group headers
+    _popupBodyEl.querySelectorAll('.pb-grp-toggle').forEach(function(hdr) {
+      hdr.addEventListener('click', function(e) {
+        e.stopPropagation();
+        var uid  = this.dataset.grpid;
+        var body = _popupBodyEl.querySelector('.pb-grp-body[data-grpid="'+uid+'"]');
+        if (!body) return;
+        var collapsed = body.style.display === 'none';
+        body.style.display = collapsed ? '' : 'none';
+        var chev = this.querySelector('.pb-grp-chevron');
+        if (chev) chev.style.transform = collapsed ? '' : 'rotate(-90deg)';
+      });
+    });
 
     // ── Position popup ──
     const rect = cell.getBoundingClientRect();
