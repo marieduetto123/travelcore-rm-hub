@@ -194,7 +194,8 @@
       "Bash(./deploy.sh \"configuration layout matches contacts and contracts\")",
       "Bash(./deploy.sh \"config operator sections: remove outlines, use divider lines\")",
       "mcp__Figma__get_screenshot",
-      "Bash(./deploy.sh \"DS button, chip, selector components in configuration page\")"
+      "Bash(./deploy.sh \"DS button, chip, selector components in configuration page\")",
+      "Bash(./deploy.sh \"Fix DS selector: border #dde1e2, focus teal #006461, disabled state\")"
     ]
   }
 }
