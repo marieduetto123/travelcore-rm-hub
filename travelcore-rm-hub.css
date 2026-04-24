@@ -4501,24 +4501,27 @@ body.dark .st-demo-label { color: var(--lime); }
 body.dark .st-role-btn { background: #1a2f31; color: #006461; }
 body.dark .st-role-btn.active { background: #5CEADE; color: #053C3C; }
 
-/* Settings main tabs — underline style */
+/* Settings main tabs — match Contacts & Contracts to-tab style */
 .st-tabs {
-  display: flex; align-items: center; padding: 16px 28px 12px;
+  display: flex; align-items: flex-end;
+  padding: 0 24px;
+  margin: 0 -24px;               /* bleed to card edges */
+  border-bottom: 1px solid #e0e3e5;
 }
 .st-tabs-inner {
-  display: inline-flex; border: 1px solid #006461; border-radius: 4px; overflow: hidden;
+  display: inline-flex; gap: 0;
 }
 .st-tab {
-  height: 36px; padding: 0 20px; font-size: 12px; font-weight: 700;
-  font-family: 'Lato', sans-serif; background: white; color: #006461;
-  border: none; border-right: 1px solid #006461; cursor: pointer;
+  height: 32px; padding: 4px 16px; font-size: 14px; font-weight: 400;
+  font-family: 'Lato', sans-serif; background: transparent; color: #006461;
+  border: none; cursor: pointer;
   transition: background .12s, color .12s;
+  white-space: nowrap;
 }
-.st-tab:last-child { border-right: none; }
-.st-tab:hover:not(.active) { background: #f0fffe; }
-.st-tab.active { background: #5CEADE; color: #053C3C; }
-body.dark .st-tab { background: #1a2f31; color: #4dd8d4; border-right-color: var(--border); }
-body.dark .st-tab.active { background: #5CEADE; color: #053C3C; }
+.st-tab:hover:not(.active) { background: rgba(0,100,97,0.06); }
+.st-tab.active { background: #354549; color: #fff; font-weight: 700; }
+body.dark .st-tab { color: #4dd8d4; }
+body.dark .st-tab.active { background: #1a2f31; color: #5ceade; }
 
 /* Panel */
 .st-panel { padding: 24px 28px; }
