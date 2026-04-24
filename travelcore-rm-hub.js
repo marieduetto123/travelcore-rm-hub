@@ -14705,11 +14705,16 @@ window.dsSnackbarHide = function() {
 var _configDirty = false;
 
 window._markConfigDirty = function() {
+  if (_configDirty) return;
   _configDirty = true;
+  var footer = document.getElementById('configSaveFooter');
+  if (footer) footer.classList.add('show');
 };
 
 window._configSetClean = function() {
   _configDirty = false;
+  var footer = document.getElementById('configSaveFooter');
+  if (footer) footer.classList.remove('show');
 };
 
 window._configDiscard = function() {
