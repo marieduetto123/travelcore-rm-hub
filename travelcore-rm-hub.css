@@ -1521,6 +1521,7 @@ body.dark .cal-day.today .day-num {
 .cal-compact .cell-eye {
   display: inline-flex !important;
   opacity: 0;
+  width: 16px; height: 16px; padding: 1px;
   transition: opacity .15s;
 }
 .cal-compact .cal-day:hover .cell-eye { opacity: 1; }
@@ -1986,25 +1987,27 @@ body.dark .figma-fab { border-color: rgba(255,255,255,.08); }
 /* ─── CELL EYE ICON ─── */
 .cell-eye {
   opacity: 0; pointer-events: none;
-  background: none; border: none; cursor: pointer;
-  padding: 0; display: flex; align-items: center; justify-content: center;
-  width: 14px; height: 14px; color: rgba(0,0,0,0.35);
-  transition: opacity .12s, color .12s; flex-shrink: 0;
+  background: rgba(0,100,97,0.08); border: none; cursor: pointer;
+  padding: 2px; border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  width: 20px; height: 20px; color: #006461;
+  transition: opacity .12s, background .12s, color .12s; flex-shrink: 0;
 }
 .cal-day:hover .cell-eye {
   opacity: 1; pointer-events: auto;
 }
-.cell-eye:hover { color: #006461; }
-.cell-eye svg { width: 14px; height: 14px; }
+.cell-eye:hover { background: rgba(0,100,97,0.18); color: #004947; }
+.cell-eye .material-icons { font-size: 16px !important; }
+.cell-eye svg { width: 16px; height: 16px; }
 /* On dark bg cells use white eye */
 .cal-day.occ-4:hover .cell-eye,
 .cal-day.occ-5:hover .cell-eye,
 .cal-day.anom-2:hover .cell-eye,
-.cal-day.anom-3:hover .cell-eye { color: rgba(255,255,255,0.75); }
+.cal-day.anom-3:hover .cell-eye { color: #fff; background: rgba(255,255,255,0.2); }
 .cal-day.occ-4 .cell-eye:hover,
 .cal-day.occ-5 .cell-eye:hover,
 .cal-day.anom-2 .cell-eye:hover,
-.cal-day.anom-3 .cell-eye:hover { color: #fff; }
+.cal-day.anom-3 .cell-eye:hover { color: #fff; background: rgba(255,255,255,0.35); }
 
 /* ─── CALENDAR DATE RANGE SELECTION ─── */
 
