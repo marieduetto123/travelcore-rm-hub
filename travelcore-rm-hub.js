@@ -13078,44 +13078,129 @@ document.querySelectorAll('.ds-search-field').forEach(function(wrap) {
   setTimeout(renderStrategies, 300);
 })();
 
-/* ═══ BOARD TYPES EDITOR ═══ */
-window.btAddRow = function() {
-  var tbody = document.getElementById('boardTypesBody');
-  if (!tbody) return;
-  var rows = tbody.querySelectorAll('.bt-row');
-  if (rows.length >= 10) {
-    document.getElementById('btMaxNote').style.display = 'inline';
-    return;
-  }
-  var tr = document.createElement('tr');
-  tr.className = 'bt-row';
-  tr.innerHTML = '<td style="padding:6px 12px;border-bottom:1px solid var(--border-sub)"><input type="text" placeholder="Meal Plan Name" style="width:100%;border:1px solid var(--border);border-radius:5px;padding:5px 8px;font-size:13px;background:var(--surface-1);color:var(--text-primary)"></td>'
-    + '<td style="padding:6px 12px;border-bottom:1px solid var(--border-sub)"><input type="text" placeholder="e.g. AI, AI1" style="width:100%;border:1px solid var(--border);border-radius:5px;padding:5px 8px;font-size:13px;background:var(--surface-1);color:var(--text-primary)"></td>'
-    + '<td style="padding:6px 12px;border-bottom:1px solid var(--border-sub);text-align:center"><button onclick="btDeleteRow(this)" style="border:none;background:none;color:#dc2626;cursor:pointer;font-size:14px">✕</button></td>';
-  tbody.appendChild(tr);
-  if (tbody.querySelectorAll('.bt-row').length >= 10) {
-    document.getElementById('btMaxNote').style.display = 'inline';
-    document.getElementById('btAddBtn').style.display = 'none';
-  }
-};
+/* ═══ BOARD TYPES EDITOR — AG Grid ═══ */
+(function() {
+  var _btGridApi = null;
 
-window.btDeleteRow = function(btn) {
-  var row = btn.closest('tr');
-  var tbody = document.getElementById('boardTypesBody');
-  if (tbody && tbody.querySelectorAll('.bt-row').length > 1) {
-    row.remove();
-    document.getElementById('btMaxNote').style.display = 'none';
-    document.getElementById('btAddBtn').style.display = '';
-  }
-};
+  var _btRowData = [
+    { name: 'Room Only',       codes: 'RO' },
+    { name: 'Bed & Breakfast', codes: 'BB' },
+    { name: 'Half Board',      codes: 'HB' },
+    { name: 'Full Board',      codes: 'FB' },
+    { name: 'All Inclusive',   codes: 'AI' },
+  ];
 
-window.btSave = function() {
-  var msg = document.getElementById('btSaveMsg');
-  if (msg) {
-    msg.style.display = 'inline';
-    setTimeout(function(){ msg.style.display = 'none'; }, 2500);
+  function _btUpdateLimitUI() {
+    var count = 0;
+    if (_btGridApi) {
+      _btGridApi.forEachNode(function() { count++; });
+    }
+    var noteEl = document.getElementById('btMaxNote');
+    var addBtn = document.getElementById('btAddBtn');
+    if (noteEl) noteEl.style.display = count >= 10 ? 'inline' : 'none';
+    if (addBtn) addBtn.style.display = count >= 10 ? 'none' : '';
   }
-};
+
+  function _btDeleteRow(rowId) {
+    if (!_btGridApi) return;
+    var count = 0;
+    _btGridApi.forEachNode(function() { count++; });
+    if (count <= 1) return; // keep at least one row
+    var node = _btGridApi.getRowNode(rowId);
+    if (node) _btGridApi.applyTransaction({ remove: [node.data] });
+    _btUpdateLimitUI();
+  }
+  window._btDeleteRow = _btDeleteRow;
+
+  function _btInit() {
+    var el = document.getElementById('boardTypesGrid');
+    if (!el || _btGridApi) return;
+
+    var colDefs = [
+      {
+        field: 'name',
+        headerName: 'Meal Plan Name',
+        flex: 2,
+        editable: true,
+        cellStyle: { fontSize: '13px' },
+      },
+      {
+        field: 'codes',
+        headerName: 'Code(s)',
+        headerTooltip: 'Comma-separated codes (e.g. AI, AI1)',
+        flex: 1,
+        editable: true,
+        cellStyle: { fontSize: '13px', color: '#6b7280' },
+        cellRenderer: function(p) {
+          if (!p.value) return '<span style="color:#d1d5db;font-style:italic">e.g. AI, AI1</span>';
+          return p.value.split(',').map(function(c) {
+            return '<span style="background:#f0fffe;color:#006461;border:1px solid #b2f0ec;border-radius:4px;padding:1px 7px;font-size:12px;font-weight:600;margin-right:3px">' + c.trim() + '</span>';
+          }).join('');
+        },
+      },
+      {
+        headerName: '',
+        width: 56,
+        suppressSizeToFit: true,
+        sortable: false,
+        resizable: false,
+        cellRenderer: function(p) {
+          var btn = document.createElement('button');
+          btn.innerHTML = '<span class="material-icons" style="font-size:16px;line-height:1">delete_outline</span>';
+          btn.title = 'Remove';
+          btn.style.cssText = 'border:none;background:none;color:#dc2626;cursor:pointer;display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:4px;';
+          btn.addEventListener('mouseenter', function() { btn.style.background = '#fff1f2'; });
+          btn.addEventListener('mouseleave', function() { btn.style.background = 'none'; });
+          btn.addEventListener('click', function() { _btDeleteRow(String(p.node.id)); });
+          return btn;
+        },
+        cellStyle: { display: 'flex', alignItems: 'center', justifyContent: 'center' },
+      },
+    ];
+
+    _btGridApi = agGrid.createGrid(el, {
+      theme: sharedTheme,
+      columnDefs: colDefs,
+      rowData: _btRowData,
+      rowHeight: 44,
+      headerHeight: 40,
+      domLayout: 'autoHeight',
+      singleClickEdit: true,
+      stopEditingWhenCellsLoseFocus: true,
+      suppressMovableColumns: true,
+      suppressCellFocus: false,
+      defaultColDef: { resizable: false, sortable: false },
+    });
+  }
+
+  window.btAddRow = function() {
+    if (!_btGridApi) return;
+    var count = 0;
+    _btGridApi.forEachNode(function() { count++; });
+    if (count >= 10) { _btUpdateLimitUI(); return; }
+    _btGridApi.applyTransaction({ add: [{ name: '', codes: '' }] });
+    _btUpdateLimitUI();
+    // Start editing the new row's name cell
+    setTimeout(function() {
+      _btGridApi.startEditingCell({ rowIndex: count, colKey: 'name' });
+    }, 80);
+  };
+
+  window.btSave = function() {
+    if (_btGridApi) _btGridApi.stopEditing();
+    var msg = document.getElementById('btSaveMsg');
+    if (msg) {
+      msg.style.display = 'inline';
+      setTimeout(function() { msg.style.display = 'none'; }, 2500);
+    }
+  };
+
+  // Init when DOM is ready
+  document.addEventListener('DOMContentLoaded', function() {
+    // May need a tick if settingsPage is initially hidden
+    setTimeout(_btInit, 100);
+  });
+})();
 
 
 

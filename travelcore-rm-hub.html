@@ -2148,23 +2148,8 @@
     <!-- Section 4: Meal Plans & Codes -->
     <div style="border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin-bottom:16px">
       <div style="font-size:13px;font-weight:700;color:var(--text-primary);margin-bottom:4px">Meal Plans &amp; Codes</div>
-      <div style="font-size:12px;color:var(--text-muted);margin-bottom:14px">Manage board type names and their corresponding codes used in contracts</div>
-      <table style="width:100%;border-collapse:collapse;font-size:13px" id="boardTypesTable">
-        <thead>
-          <tr>
-            <th style="text-align:left;padding:8px 12px;background:var(--surface-2);border-bottom:2px solid var(--border);font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px">Meal Plan Name</th>
-            <th style="text-align:left;padding:8px 12px;background:var(--surface-2);border-bottom:2px solid var(--border);font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px">Code(s) <span style="font-weight:400;text-transform:none;letter-spacing:0">(comma-separated)</span></th>
-            <th style="padding:8px 12px;background:var(--surface-2);border-bottom:2px solid var(--border);width:80px"></th>
-          </tr>
-        </thead>
-        <tbody id="boardTypesBody">
-          <tr class="bt-row"><td style="padding:6px 12px;border-bottom:1px solid var(--border-sub)"><input type="text" value="Room Only" style="width:100%;border:1px solid var(--border);border-radius:5px;padding:5px 8px;font-size:13px;background:var(--surface-1);color:var(--text-primary)"></td><td style="padding:6px 12px;border-bottom:1px solid var(--border-sub)"><input type="text" value="RO" style="width:100%;border:1px solid var(--border);border-radius:5px;padding:5px 8px;font-size:13px;background:var(--surface-1);color:var(--text-primary)"></td><td style="padding:6px 12px;border-bottom:1px solid var(--border-sub);text-align:center"><button onclick="btDeleteRow(this)" style="border:none;background:none;color:#dc2626;cursor:pointer;font-size:14px">✕</button></td></tr>
-          <tr class="bt-row"><td style="padding:6px 12px;border-bottom:1px solid var(--border-sub)"><input type="text" value="Bed &amp; Breakfast" style="width:100%;border:1px solid var(--border);border-radius:5px;padding:5px 8px;font-size:13px;background:var(--surface-1);color:var(--text-primary)"></td><td style="padding:6px 12px;border-bottom:1px solid var(--border-sub)"><input type="text" value="BB" style="width:100%;border:1px solid var(--border);border-radius:5px;padding:5px 8px;font-size:13px;background:var(--surface-1);color:var(--text-primary)"></td><td style="padding:6px 12px;border-bottom:1px solid var(--border-sub);text-align:center"><button onclick="btDeleteRow(this)" style="border:none;background:none;color:#dc2626;cursor:pointer;font-size:14px">✕</button></td></tr>
-          <tr class="bt-row"><td style="padding:6px 12px;border-bottom:1px solid var(--border-sub)"><input type="text" value="Half Board" style="width:100%;border:1px solid var(--border);border-radius:5px;padding:5px 8px;font-size:13px;background:var(--surface-1);color:var(--text-primary)"></td><td style="padding:6px 12px;border-bottom:1px solid var(--border-sub)"><input type="text" value="HB" style="width:100%;border:1px solid var(--border);border-radius:5px;padding:5px 8px;font-size:13px;background:var(--surface-1);color:var(--text-primary)"></td><td style="padding:6px 12px;border-bottom:1px solid var(--border-sub);text-align:center"><button onclick="btDeleteRow(this)" style="border:none;background:none;color:#dc2626;cursor:pointer;font-size:14px">✕</button></td></tr>
-          <tr class="bt-row"><td style="padding:6px 12px;border-bottom:1px solid var(--border-sub)"><input type="text" value="Full Board" style="width:100%;border:1px solid var(--border);border-radius:5px;padding:5px 8px;font-size:13px;background:var(--surface-1);color:var(--text-primary)"></td><td style="padding:6px 12px;border-bottom:1px solid var(--border-sub)"><input type="text" value="FB" style="width:100%;border:1px solid var(--border);border-radius:5px;padding:5px 8px;font-size:13px;background:var(--surface-1);color:var(--text-primary)"></td><td style="padding:6px 12px;border-bottom:1px solid var(--border-sub);text-align:center"><button onclick="btDeleteRow(this)" style="border:none;background:none;color:#dc2626;cursor:pointer;font-size:14px">✕</button></td></tr>
-          <tr class="bt-row"><td style="padding:6px 12px;border-bottom:1px solid var(--border-sub)"><input type="text" value="All Inclusive" style="width:100%;border:1px solid var(--border);border-radius:5px;padding:5px 8px;font-size:13px;background:var(--surface-1);color:var(--text-primary)"></td><td style="padding:6px 12px;border-bottom:1px solid var(--border-sub)"><input type="text" value="AI" style="width:100%;border:1px solid var(--border);border-radius:5px;padding:5px 8px;font-size:13px;background:var(--surface-1);color:var(--text-primary)"></td><td style="padding:6px 12px;border-bottom:1px solid var(--border-sub);text-align:center"><button onclick="btDeleteRow(this)" style="border:none;background:none;color:#dc2626;cursor:pointer;font-size:14px">✕</button></td></tr>
-        </tbody>
-      </table>
+      <div style="font-size:12px;color:var(--text-muted);margin-bottom:14px">Manage board type names and their corresponding codes used in contracts. Click any cell to edit.</div>
+      <div id="boardTypesGrid" style="width:100%"></div>
       <div style="margin-top:10px;display:flex;gap:10px;align-items:center">
         <button onclick="btAddRow()" id="btAddBtn" style="display:flex;align-items:center;gap:5px;padding:6px 12px;border:1px dashed var(--teal-700);color:var(--teal-700);background:transparent;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer">
           <span class="material-icons" style="font-size:12px">add</span>
@@ -3431,6 +3416,6 @@
 
 
 
-  <script src="travelcore-rm-hub.js?v=96"></script>
+  <script src="travelcore-rm-hub.js?v=97"></script>
 <div id="calCapTip" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #e0e0e0;border-radius:4px;box-shadow:0 1px 3px rgba(0,0,0,.2),0 2px 1px -1px rgba(0,0,0,.12),0 1px 1px rgba(0,0,0,.14);padding:10px;pointer-events:none;width:245px"></div>
 </body>
