@@ -207,7 +207,8 @@
       "Bash(./deploy.sh \"Sticky footer only shows when config has unsaved changes\")",
       "Bash(./deploy.sh \"Add Meal Plan modal with name + code inputs, Enter to advance/submit\")",
       "Bash(./deploy.sh \"Footer always visible; Save Changes disabled until a change is made\")",
-      "Bash(./deploy.sh \"Footer always visible; Save Changes disabled until change made, snackbar on save\")"
+      "Bash(./deploy.sh \"Footer always visible; Save Changes disabled until change made, snackbar on save\")",
+      "Bash(./deploy.sh \"Page-level configPageSave, broad dirty tracking across all config tabs\")"
     ]
   }
 }

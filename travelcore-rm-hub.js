@@ -13205,11 +13205,7 @@ document.querySelectorAll('.ds-search-field').forEach(function(wrap) {
     _markConfigDirty();
   };
 
-  window.btSave = function() {
-    if (_btGridApi) _btGridApi.stopEditing();
-    dsSnackbarShow('Saved successfully');
-    _configSetClean();
-  };
+  window.btSave = function() { configPageSave(); };
 
   // Init when DOM is ready
   document.addEventListener('DOMContentLoaded', function() {
@@ -14739,23 +14735,23 @@ window._configDiscard = function() {
   _configSetClean();
 };
 
-// Wire up dirty listeners once DOM is ready
+/* ── Page-level save ── */
+window.configPageSave = function() {
+  // Stop any active AG Grid cell edit across all grids
+  if (typeof _btGridApi !== 'undefined' && _btGridApi) _btGridApi.stopEditing();
+  dsSnackbarShow('Saved successfully');
+  _configSetClean();
+};
+
+// Wire up dirty listeners — covers every input/select/checkbox/radio
+// across ALL config panels in one sweep
 setTimeout(function() {
-  // Radios in operators panel
-  document.querySelectorAll('#stPanel-operators input[type="radio"]').forEach(function(r) {
-    r.addEventListener('change', _markConfigDirty);
-  });
-  // Segment checkboxes
-  document.querySelectorAll('#segOptionsList .seg-opt input').forEach(function(cb) {
-    cb.addEventListener('change', _markConfigDirty);
-  });
-  // Selects in stop sales & autopilot panels
-  document.querySelectorAll('#stPanel-stopsales select, #stPanel-autopilot select').forEach(function(s) {
-    s.addEventListener('change', _markConfigDirty);
-  });
-  // Checkboxes in stop sales panel
-  document.querySelectorAll('#stPanel-stopsales input[type="checkbox"]').forEach(function(c) {
-    c.addEventListener('change', _markConfigDirty);
+  document.querySelectorAll(
+    '#settingsPage input[type="radio"], ' +
+    '#settingsPage input[type="checkbox"], ' +
+    '#settingsPage select'
+  ).forEach(function(el) {
+    el.addEventListener('change', _markConfigDirty);
   });
 }, 600);
 
