@@ -3412,8 +3412,35 @@
 
 
 
-  <script src="travelcore-rm-hub.js?v=103"></script>
+  <script src="travelcore-rm-hub.js?v=104"></script>
 <div id="calCapTip" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #e0e0e0;border-radius:4px;box-shadow:0 1px 3px rgba(0,0,0,.2),0 2px 1px -1px rgba(0,0,0,.12),0 1px 1px rgba(0,0,0,.14);padding:10px;pointer-events:none;width:245px"></div>
+
+<!-- Add Meal Plan Modal -->
+<div id="addMealPlanOverlay" class="modal-overlay" onclick="if(event.target===this)btModalClose()">
+  <div class="modal" style="max-width:420px" role="dialog" aria-modal="true" aria-labelledby="addMealPlanTitle">
+    <div class="modal-header">
+      <span class="modal-title" id="addMealPlanTitle">Add Meal Plan</span>
+      <button class="modal-close" onclick="btModalClose()" aria-label="Close">
+        <span class="material-icons" style="font-size:20px">close</span>
+      </button>
+    </div>
+    <div class="modal-body" style="gap:20px">
+      <div class="modal-field">
+        <label class="modal-label" for="mpNameInput">Meal Plan Name</label>
+        <input id="mpNameInput" class="modal-input" type="text" placeholder="e.g. Half Board" style="padding:0 10px" autocomplete="off" onkeydown="if(event.key==='Enter')document.getElementById('mpCodeInput').focus()">
+      </div>
+      <div class="modal-field">
+        <label class="modal-label" for="mpCodeInput">Code</label>
+        <input id="mpCodeInput" class="modal-input" type="text" placeholder="e.g. HB" style="padding:0 10px;max-width:120px" autocomplete="off" maxlength="8" onkeydown="if(event.key==='Enter')btModalSave()">
+        <span style="font-size:12px;color:var(--text-muted)">Short code used in contracts (e.g. RO, BB, HB)</span>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="ds-btn ds-btn-ghost" onclick="btModalClose()">Cancel</button>
+      <button class="ds-btn" onclick="btModalSave()">Save Changes</button>
+    </div>
+  </div>
+</div>
 
 <!-- DS Snackbar -->
 <div id="dsSnackbar" class="ds-snackbar" role="status" aria-live="polite">

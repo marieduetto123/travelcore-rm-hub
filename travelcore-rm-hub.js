@@ -13179,12 +13179,30 @@ document.querySelectorAll('.ds-search-field').forEach(function(wrap) {
     var count = 0;
     _btGridApi.forEachNode(function() { count++; });
     if (count >= 10) { _btUpdateLimitUI(); return; }
-    _btGridApi.applyTransaction({ add: [{ name: '', codes: '' }] });
+    // Open modal instead of adding inline
+    var overlay = document.getElementById('addMealPlanOverlay');
+    if (overlay) {
+      document.getElementById('mpNameInput').value = '';
+      document.getElementById('mpCodeInput').value = '';
+      overlay.classList.add('open');
+      setTimeout(function() { document.getElementById('mpNameInput').focus(); }, 80);
+    }
+  };
+
+  window.btModalClose = function() {
+    var overlay = document.getElementById('addMealPlanOverlay');
+    if (overlay) overlay.classList.remove('open');
+  };
+
+  window.btModalSave = function() {
+    var name = (document.getElementById('mpNameInput').value || '').trim();
+    var codes = (document.getElementById('mpCodeInput').value || '').trim().toUpperCase();
+    if (!name) { document.getElementById('mpNameInput').focus(); return; }
+    if (!_btGridApi) return;
+    _btGridApi.applyTransaction({ add: [{ name: name, codes: codes }] });
     _btUpdateLimitUI();
-    // Start editing the new row's name cell
-    setTimeout(function() {
-      _btGridApi.startEditingCell({ rowIndex: count, colKey: 'name' });
-    }, 80);
+    btModalClose();
+    _markConfigDirty();
   };
 
   window.btSave = function() {
