@@ -196,7 +196,8 @@
       "mcp__Figma__get_screenshot",
       "Bash(./deploy.sh \"DS button, chip, selector components in configuration page\")",
       "Bash(./deploy.sh \"Fix DS selector: border #dde1e2, focus teal #006461, disabled state\")",
-      "Bash(./deploy.sh \"Force Lato on all form elements \\(input, select, textarea, button\\)\")"
+      "Bash(./deploy.sh \"Force Lato on all form elements \\(input, select, textarea, button\\)\")",
+      "Bash(./deploy.sh \"DS radio buttons, fix headings 16px/14px, heading renamed to Configuration\")"
     ]
   }
 }

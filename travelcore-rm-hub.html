@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@33.3.0/styles/ag-grid.css"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@33.3.0/styles/ag-theme-quartz.css"/>
   <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@33.3.0/dist/ag-grid-community.min.js"></script>
-  <link rel="stylesheet" href="travelcore-rm-hub.css?v=76">
+  <link rel="stylesheet" href="travelcore-rm-hub.css?v=77">
 </head>
 <body>
 
@@ -2027,42 +2027,42 @@
     <!-- TOUR OPERATORS settings -->
     <div class="st-panel" id="stPanel-operators">
     <div style="margin-bottom:24px">
-      <h3 style="font-size:16px;font-weight:700;color:var(--text-primary);margin:0 0 4px">Travel Distribution Hub Settings</h3>
-      <p style="font-size:12px;color:var(--text-muted);margin:0">Configure how Operator data is identified and displayed across the platform</p>
+      <h3 style="font-size:16px;font-weight:700;color:var(--text-primary);margin:0 0 4px">Configuration</h3>
+      <p style="font-size:14px;color:var(--text-muted);margin:0">Configure how Operator data is identified and displayed across the platform</p>
     </div>
 
     <!-- Section 1: Operator Name Field -->
     <div style="padding:16px 0;border-bottom:1px solid var(--border)">
-      <div style="font-size:13px;font-weight:700;color:var(--text-primary);margin-bottom:4px">Operator Name Field</div>
-      <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px">Select which field identifies the Operator name in your data</div>
+      <div style="font-size:16px;font-weight:700;color:var(--text-primary);margin-bottom:4px">Operator Name Field</div>
+      <div style="font-size:14px;color:var(--text-muted);margin-bottom:12px">Select which field identifies the Operator name in your data</div>
       <div style="display:flex;gap:16px">
-        <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
-          <input type="radio" name="toNameField" value="travel_agent" checked style="accent-color:#006461"> Travel Agent
+        <label class="ds-radio-label">
+          <input type="radio" name="toNameField" value="travel_agent" checked> Travel Agent
         </label>
-        <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
-          <input type="radio" name="toNameField" value="company" style="accent-color:#006461"> Company
+        <label class="ds-radio-label">
+          <input type="radio" name="toNameField" value="company"> Company
         </label>
       </div>
     </div>
 
     <!-- Section 2: Source Geo -->
     <div style="padding:16px 0;border-bottom:1px solid var(--border)">
-      <div style="font-size:13px;font-weight:700;color:var(--text-primary);margin-bottom:4px">Source Geo</div>
-      <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px">Select which field represents the source geographic market</div>
+      <div style="font-size:16px;font-weight:700;color:var(--text-primary);margin-bottom:4px">Source Geo</div>
+      <div style="font-size:14px;color:var(--text-muted);margin-bottom:12px">Select which field represents the source geographic market</div>
       <div style="display:flex;gap:16px">
-        <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
-          <input type="radio" name="sourceGeoField" value="source_geo" checked style="accent-color:#006461"> Source Geo
+        <label class="ds-radio-label">
+          <input type="radio" name="sourceGeoField" value="source_geo" checked> Source Geo
         </label>
-        <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
-          <input type="radio" name="sourceGeoField" value="origin" style="accent-color:#006461"> Source Geo
+        <label class="ds-radio-label">
+          <input type="radio" name="sourceGeoField" value="origin"> Source Geo
         </label>
       </div>
     </div>
 
     <!-- Section 3: Operator Segments -->
     <div style="padding:16px 0;border-bottom:1px solid var(--border)">
-      <div style="font-size:13px;font-weight:700;color:var(--text-primary);margin-bottom:4px">Operator Segments</div>
-      <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px">Select which segments are considered Operator segments. These selections will determine which segments appear as Operator data across the prototype.</div>
+      <div style="font-size:16px;font-weight:700;color:var(--text-primary);margin-bottom:4px">Operator Segments</div>
+      <div style="font-size:14px;color:var(--text-muted);margin-bottom:12px">Select which segments are considered Operator segments. These selections will determine which segments appear as Operator data across the prototype.</div>
 
       <!-- Multi-select dropdown trigger -->
       <div style="position:relative;display:inline-block" id="segDropWrap">
@@ -2143,8 +2143,8 @@
 
     <!-- Section 4: Meal Plans & Codes -->
     <div style="padding:16px 0">
-      <div style="font-size:13px;font-weight:700;color:var(--text-primary);margin-bottom:4px">Meal Plans &amp; Codes</div>
-      <div style="font-size:12px;color:var(--text-muted);margin-bottom:14px">Manage board type names and their corresponding codes used in contracts. Click any cell to edit.</div>
+      <div style="font-size:16px;font-weight:700;color:var(--text-primary);margin-bottom:4px">Meal Plans &amp; Codes</div>
+      <div style="font-size:14px;color:var(--text-muted);margin-bottom:14px">Manage board type names and their corresponding codes used in contracts. Click any cell to edit.</div>
       <div id="boardTypesGrid" style="width:100%"></div>
       <div style="margin-top:10px;display:flex;gap:10px;align-items:center">
         <button onclick="btAddRow()" id="btAddBtn" class="ds-btn ds-btn-dashed">
