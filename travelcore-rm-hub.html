@@ -1908,37 +1908,34 @@
 
     <!-- SETTINGS PAGE -->
 <div class="page-content" id="settingsPage" style="display:none">
-  <div class="section-card">
 
-    <!-- Page header -->
-    <div class="st-page-hdr">
-      <div class="st-page-hdr-left">
-        <div class="st-page-title-row">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="22" height="22"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-          <h2 class="st-page-title">Configuration</h2>
-        </div>
-        <p class="st-page-sub">Configure system settings, manage targets, and control user access</p>
-      </div>
-      <!-- Role simulator as dropdown in page header -->
-      
+  <!-- Page header — matches Contacts & Contracts layout -->
+  <div class="to-page-header">
+    <h1 class="to-page-h1">Configuration</h1>
+    <div class="to-page-header-actions">
+      <button class="an-action-icon-btn" title="Download">
+        <span class="material-icons" style="font-size:16px">download</span>
+      </button>
     </div>
+  </div>
+
+  <!-- Tabs — outside section-card, matching Contacts & Contracts -->
+  <div class="to-tabs to-page-tabs">
+    <div class="st-tabs-inner">
+      <button class="st-tab active" data-stab="operators">Travel Distribution Hubs</button>
+      <button class="st-tab" data-stab="stopsales">Stop Sales &amp; Alerts</button>
+      <button class="st-tab" data-stab="autopilot">Autopilot</button>
+    </div>
+  </div>
+
+  <!-- Panels — section-card wraps only content panels -->
+  <div class="section-card">
 
     <!-- Hidden role group (kept for JS compatibility) -->
     <div class="st-role-group" id="stRoleGroup" style="display:none">
       <button class="st-role-btn active" data-role="admin">Admin</button>
       <button class="st-role-btn" data-role="manager">Manager</button>
       <button class="st-role-btn" data-role="viewer">Viewer</button>
-    </div>
-
-    <!-- Settings tabs -->
-    <div class="st-tabs" style="margin-top:16px">
-      <div class="st-tabs-inner">
-        
-        
-        <button class="st-tab active" data-stab="operators">Travel Distribution Hubs</button>
-        <button class="st-tab" data-stab="stopsales">Stop Sales &amp; Alerts</button>
-        <button class="st-tab" data-stab="autopilot">Autopilot</button>
-      </div>
     </div>
 
     <!-- TARGETS MANAGEMENT -->
@@ -2028,8 +2025,7 @@
     </div>
 
     <!-- TOUR OPERATORS settings -->
-    <div class="st-panel" <div id="stPanel-operators">
-  <div style="padding:24px">
+    <div class="st-panel" id="stPanel-operators">
     <div style="margin-bottom:24px">
       <h3 style="font-size:16px;font-weight:700;color:var(--text-primary);margin:0 0 4px">Travel Distribution Hub Settings</h3>
       <p style="font-size:12px;color:var(--text-muted);margin:0">Configure how Operator data is identified and displayed across the platform</p>
@@ -2163,14 +2159,10 @@
       </div>
     </div>
 
-  </div>
-</div>
-    </div>
+    </div><!-- /stPanel-operators -->
 
-    <!-- AUTOPILOT -->
     <!-- ═══ STOP SALES & ALERTS PANEL ═══ -->
     <div class="st-panel" id="stPanel-stopsales" style="display:none">
-      <div style="padding:24px">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
           <div>
             <div style="display:flex;align-items:center;gap:10px">
@@ -2308,11 +2300,9 @@
             </div>
           </div>
         </div>
-      </div>
-    </div>
+    </div><!-- /stPanel-stopsales -->
 
-    <div class="st-panel" <div id="stPanel-autopilot" style="display:none">
-  <div style="padding:24px">
+    <div class="st-panel" id="stPanel-autopilot" style="display:none">
 
     <!-- Header -->
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
@@ -2449,9 +2439,7 @@
       </div>
     </div>
 
-  </div>
-</div>
-    </div>
+    </div><!-- /stPanel-autopilot -->
 
   </div><!-- /section-card -->
 </div><!-- /settingsPage -->
@@ -3416,6 +3404,6 @@
 
 
 
-  <script src="travelcore-rm-hub.js?v=97"></script>
+  <script src="travelcore-rm-hub.js?v=98"></script>
 <div id="calCapTip" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #e0e0e0;border-radius:4px;box-shadow:0 1px 3px rgba(0,0,0,.2),0 2px 1px -1px rgba(0,0,0,.12),0 1px 1px rgba(0,0,0,.14);padding:10px;pointer-events:none;width:245px"></div>
 </body>

@@ -190,7 +190,8 @@
       "Bash(./deploy.sh \"rename View Week to View More Details in eye popup\")",
       "Bash(./deploy.sh \"clearer eye icon - larger, teal colour, pill background\")",
       "Bash(./deploy.sh \"configuration tabs restyled to match contacts and contracts\")",
-      "Bash(./deploy.sh \"meal plans and codes replaced with AG Grid table\")"
+      "Bash(./deploy.sh \"meal plans and codes replaced with AG Grid table\")",
+      "Bash(./deploy.sh \"configuration layout matches contacts and contracts\")"
     ]
   }
 }
