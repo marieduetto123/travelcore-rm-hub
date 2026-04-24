@@ -9879,6 +9879,8 @@ setTimeout(function() { window.renderPickupMetricItems(); }, 600);
       settingsPage.querySelectorAll('.st-panel').forEach(p => p.style.display = 'none');
       const panel = settingsPage.querySelector(`#stPanel-${tab.dataset.stab}`);
       if (panel) panel.style.display = '';
+      // Initialise board-types grid when operators tab is revealed
+      if (tab.dataset.stab === 'operators') setTimeout(_btInit, 50);
     }
 
     // Role simulator
@@ -13175,18 +13177,19 @@ document.querySelectorAll('.ds-search-field').forEach(function(wrap) {
   }
 
   window.btAddRow = function() {
-    if (!_btGridApi) return;
-    var count = 0;
-    _btGridApi.forEachNode(function() { count++; });
-    if (count >= 10) { _btUpdateLimitUI(); return; }
-    // Open modal instead of adding inline
-    var overlay = document.getElementById('addMealPlanOverlay');
-    if (overlay) {
-      document.getElementById('mpNameInput').value = '';
-      document.getElementById('mpCodeInput').value = '';
-      overlay.classList.add('open');
-      setTimeout(function() { document.getElementById('mpNameInput').focus(); }, 80);
+    // Check row limit only if grid is ready
+    if (_btGridApi) {
+      var count = 0;
+      _btGridApi.forEachNode(function() { count++; });
+      if (count >= 10) { _btUpdateLimitUI(); return; }
     }
+    // Always open the modal
+    var overlay = document.getElementById('addMealPlanOverlay');
+    if (!overlay) return;
+    document.getElementById('mpNameInput').value = '';
+    document.getElementById('mpCodeInput').value = '';
+    overlay.classList.add('open');
+    setTimeout(function() { document.getElementById('mpNameInput').focus(); }, 80);
   };
 
   window.btModalClose = function() {
