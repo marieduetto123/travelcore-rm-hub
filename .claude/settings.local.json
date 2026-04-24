@@ -192,7 +192,9 @@
       "Bash(./deploy.sh \"configuration tabs restyled to match contacts and contracts\")",
       "Bash(./deploy.sh \"meal plans and codes replaced with AG Grid table\")",
       "Bash(./deploy.sh \"configuration layout matches contacts and contracts\")",
-      "Bash(./deploy.sh \"config operator sections: remove outlines, use divider lines\")"
+      "Bash(./deploy.sh \"config operator sections: remove outlines, use divider lines\")",
+      "mcp__Figma__get_screenshot",
+      "Bash(./deploy.sh \"DS button, chip, selector components in configuration page\")"
     ]
   }
 }

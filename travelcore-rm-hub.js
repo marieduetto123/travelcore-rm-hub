@@ -13210,6 +13210,8 @@ window.segToggleDD = function() {
   if (!panel) return;
   var isOpen = panel.style.display !== 'none';
   panel.style.display = isOpen ? 'none' : 'block';
+  var btn = document.getElementById('segDropBtn');
+  if (btn) btn.classList.toggle('open', !isOpen);
   if (!isOpen) { var s = document.getElementById('segSearch'); if(s) s.focus(); }
 };
 
@@ -13229,11 +13231,9 @@ window.segUpdateLabel = function() {
 
   if (chips) {
     chips.innerHTML = names.map(function(n) {
-      return '<span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;'
-        + 'background:#ccfbf1;color:#0f766e;border-radius:20px;font-size:11px;font-weight:600">'
+      return '<span class="ds-chip">'
         + n
-        + '<button data-seg-name="' + n + '" onclick="segRemoveChip(this)"'
-        + ' style="border:none;background:none;color:#0f766e;cursor:pointer;padding:0 0 0 3px;font-size:13px;line-height:1">&times;</button>'
+        + '<button class="ds-chip-close" data-seg-name="' + n + '" onclick="segRemoveChip(this)" title="Remove">&times;</button>'
         + '</span>';
     }).join('');
   }

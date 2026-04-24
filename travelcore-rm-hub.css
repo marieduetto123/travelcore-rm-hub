@@ -4636,6 +4636,81 @@ body.dark .st-edit-btn { background: var(--lime); color: #0E2124; }
 }
 .sidebar-overlay.visible { display: block; }
 
+/* ═══════════════════════════════════════════
+   DESIGN SYSTEM COMPONENTS — Config Page
+   ═══════════════════════════════════════════ */
+
+/* DS Button — Primary (teal, 4px radius, 36px, 14px Lato) */
+.ds-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 8px; height: 36px; padding: 8px 16px;
+  background: #006461; color: #fff;
+  border: none; border-radius: 4px;
+  font-size: 14px; font-family: 'Lato', sans-serif; font-weight: 400;
+  cursor: pointer; white-space: nowrap; flex-shrink: 0;
+  transition: background .12s;
+}
+.ds-btn:hover { background: #004947; }
+
+/* DS Button — dashed outline (Add row) */
+.ds-btn-dashed {
+  background: transparent; color: #006461;
+  border: 1px dashed #006461;
+}
+.ds-btn-dashed:hover { background: rgba(0,100,97,.06); }
+
+/* DS Button — ghost outline (Cancel) */
+.ds-btn-ghost {
+  background: transparent; color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+.ds-btn-ghost:hover { border-color: #006461; color: #006461; }
+
+/* DS Chip — Blue / Filled / Enabled */
+.ds-chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  height: 24px; padding: 4px 8px;
+  background: #d7f7ed; color: #053c3c;
+  border-radius: 12px;
+  font-size: 14px; font-family: 'Lato', sans-serif; font-weight: 400;
+  white-space: nowrap;
+}
+.ds-chip-close {
+  display: flex; align-items: center; justify-content: center;
+  width: 17px; height: 17px; flex-shrink: 0;
+  border: none; background: none;
+  color: #053c3c; cursor: pointer; padding: 0;
+  font-size: 15px; line-height: 1; border-radius: 50%;
+  transition: background .1s;
+}
+.ds-chip-close:hover { background: rgba(5,60,60,.12); }
+
+/* DS Selector — custom dropdown trigger */
+.ds-selector {
+  display: inline-flex; align-items: center; justify-content: space-between;
+  gap: 4px; padding: 6px 4px 6px 8px;
+  border: 1px solid #e0e0e0; border-radius: 4px; background: #fff;
+  font-size: 14px; font-family: 'Lato', sans-serif; color: #1c1c1c;
+  cursor: pointer; min-width: 260px; transition: border-color .12s;
+}
+.ds-selector:hover { border-color: #b0b0b0; }
+.ds-selector.open, .ds-selector:focus { border-color: #1b4dc0; outline: none; }
+.ds-sel-arrow { font-size: 24px !important; color: #585858; flex-shrink: 0; transition: transform .15s; }
+.ds-selector.open .ds-sel-arrow { transform: rotate(180deg); }
+
+/* Native <select> styled as DS selector */
+select.ds-select {
+  -webkit-appearance: none; appearance: none;
+  border: 1px solid #e0e0e0; border-radius: 4px; background: #fff;
+  padding: 5px 28px 5px 8px; font-size: 13px; font-family: 'Lato', sans-serif;
+  color: #1c1c1c; cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='%23585858' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 2px center;
+  background-size: 20px; transition: border-color .12s;
+}
+select.ds-select:hover { border-color: #b0b0b0; }
+select.ds-select:focus { border-color: #1b4dc0; outline: none; }
+
 /* ── Mobile (≤ 768px) ── */
 @media (max-width: 768px) {
   /* Topbar: hide nav tabs, show hamburger */
