@@ -195,7 +195,8 @@
       "Bash(./deploy.sh \"config operator sections: remove outlines, use divider lines\")",
       "mcp__Figma__get_screenshot",
       "Bash(./deploy.sh \"DS button, chip, selector components in configuration page\")",
-      "Bash(./deploy.sh \"Fix DS selector: border #dde1e2, focus teal #006461, disabled state\")"
+      "Bash(./deploy.sh \"Fix DS selector: border #dde1e2, focus teal #006461, disabled state\")",
+      "Bash(./deploy.sh \"Force Lato on all form elements \\(input, select, textarea, button\\)\")"
     ]
   }
 }
