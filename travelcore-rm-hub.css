@@ -4653,6 +4653,13 @@ body.dark .st-edit-btn { background: var(--lime); color: #0E2124; }
 }
 .ds-btn:hover { background: #004947; }
 
+/* DS Button — Text (no border, no background) */
+.ds-btn-text {
+  background: transparent; color: #006461;
+  border: none;
+}
+.ds-btn-text:hover { background: rgba(0,100,97,.08); }
+
 /* DS Button — dashed outline (Add row) */
 .ds-btn-dashed {
   background: transparent; color: #006461;
