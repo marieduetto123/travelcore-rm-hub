@@ -14723,16 +14723,18 @@ window._markConfigDirty = function() {
   _configDirty = true;
   var footer = document.getElementById('configSaveFooter');
   if (footer) footer.classList.add('show');
-  var btn = document.getElementById('footerSaveBtn');
-  if (btn) btn.disabled = false;
+  ['footerSaveBtn','btSaveBtn'].forEach(function(id) {
+    var b = document.getElementById(id); if (b) b.disabled = false;
+  });
 };
 
 window._configSetClean = function() {
   _configDirty = false;
   var footer = document.getElementById('configSaveFooter');
   if (footer) footer.classList.remove('show');
-  var btn = document.getElementById('footerSaveBtn');
-  if (btn) btn.disabled = true;
+  ['footerSaveBtn','btSaveBtn'].forEach(function(id) {
+    var b = document.getElementById(id); if (b) b.disabled = true;
+  });
 };
 
 window._configDiscard = function() {
