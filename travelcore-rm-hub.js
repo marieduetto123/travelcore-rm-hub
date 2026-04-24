@@ -13166,6 +13166,7 @@ document.querySelectorAll('.ds-search-field').forEach(function(wrap) {
       headerHeight: 40,
       domLayout: 'autoHeight',
       singleClickEdit: true,
+      onCellValueChanged: function() { _markConfigDirty(); },
       stopEditingWhenCellsLoseFocus: true,
       suppressMovableColumns: true,
       suppressCellFocus: false,
@@ -13188,11 +13189,8 @@ document.querySelectorAll('.ds-search-field').forEach(function(wrap) {
 
   window.btSave = function() {
     if (_btGridApi) _btGridApi.stopEditing();
-    var msg = document.getElementById('btSaveMsg');
-    if (msg) {
-      msg.style.display = 'inline';
-      setTimeout(function() { msg.style.display = 'none'; }, 2500);
-    }
+    dsSnackbarShow('Saved successfully');
+    _configSetClean();
   };
 
   // Init when DOM is ready
@@ -14681,4 +14679,61 @@ window.calHideCapTip = function() {
   };
 
 })();
+
+/* ═══════════════════════════════════════════
+   DS SNACKBAR
+   ═══════════════════════════════════════════ */
+var _snackbarTimer = null;
+window.dsSnackbarShow = function(msg) {
+  var el = document.getElementById('dsSnackbar');
+  if (!el) return;
+  var msgEl = el.querySelector('.ds-snackbar-msg');
+  if (msgEl) msgEl.textContent = msg || 'Saved successfully';
+  el.classList.add('show');
+  clearTimeout(_snackbarTimer);
+  _snackbarTimer = setTimeout(function() { el.classList.remove('show'); }, 3500);
+};
+window.dsSnackbarHide = function() {
+  var el = document.getElementById('dsSnackbar');
+  if (el) el.classList.remove('show');
+  clearTimeout(_snackbarTimer);
+};
+
+/* ═══════════════════════════════════════════
+   CONFIG DIRTY TRACKING
+   ═══════════════════════════════════════════ */
+var _configDirty = false;
+
+window._markConfigDirty = function() {
+  if (_configDirty) return;
+  _configDirty = true;
+  var btn = document.getElementById('btSaveBtn');
+  if (btn) btn.disabled = false;
+};
+
+window._configSetClean = function() {
+  _configDirty = false;
+  var btn = document.getElementById('btSaveBtn');
+  if (btn) btn.disabled = true;
+};
+
+// Wire up dirty listeners once DOM is ready
+setTimeout(function() {
+  // Radios in operators panel
+  document.querySelectorAll('#stPanel-operators input[type="radio"]').forEach(function(r) {
+    r.addEventListener('change', _markConfigDirty);
+  });
+  // Segment checkboxes
+  document.querySelectorAll('#segOptionsList .seg-opt input').forEach(function(cb) {
+    cb.addEventListener('change', _markConfigDirty);
+  });
+  // Selects in stop sales & autopilot panels
+  document.querySelectorAll('#stPanel-stopsales select, #stPanel-autopilot select').forEach(function(s) {
+    s.addEventListener('change', _markConfigDirty);
+  });
+  // Checkboxes in stop sales panel
+  document.querySelectorAll('#stPanel-stopsales input[type="checkbox"]').forEach(function(c) {
+    c.addEventListener('change', _markConfigDirty);
+  });
+}, 600);
 

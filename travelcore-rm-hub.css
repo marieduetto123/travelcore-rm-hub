@@ -4652,6 +4652,7 @@ body.dark .st-edit-btn { background: var(--lime); color: #0E2124; }
   transition: background .12s;
 }
 .ds-btn:hover { background: #004947; }
+.ds-btn:disabled { background: #dde1e2; color: #aeb4ba; cursor: not-allowed; pointer-events: none; }
 
 /* DS Button — Text (no border, no background) */
 .ds-btn-text {
@@ -4721,6 +4722,29 @@ select.ds-select {
 select.ds-select:hover { border-color: #aeb4ba; }
 select.ds-select:focus { border-color: #006461; outline: none; }
 select.ds-select:disabled { background: #f5f5f5; border-color: #dde1e2; color: #aeb4ba; cursor: not-allowed; }
+
+/* DS Snackbar — floating top-center */
+.ds-snackbar {
+  position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
+  z-index: 9999;
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 8px 12px 12px;
+  background: #cef2d1; border-radius: 4px;
+  box-shadow: 0 1px 1px rgba(0,0,0,.14), 0 2px 1px rgba(0,0,0,.12), 0 1px 3px rgba(0,0,0,.2);
+  min-width: 320px; max-width: 470px;
+  font-size: 14px; font-family: 'Lato', sans-serif; color: #28592c;
+  transition: top .3s cubic-bezier(.4,0,.2,1);
+}
+.ds-snackbar.show { top: 20px; }
+.ds-snackbar-msg { flex: 1; min-width: 0; }
+.ds-snackbar-close {
+  background: none; border: none; cursor: pointer;
+  color: #28592c; padding: 0; flex-shrink: 0;
+  display: flex; align-items: center; border-radius: 50%;
+  width: 24px; height: 24px; justify-content: center;
+  transition: background .12s;
+}
+.ds-snackbar-close:hover { background: rgba(40,89,44,.12); }
 
 /* DS Radio Button — scoped to config panels (node 12461-17898) */
 #settingsPage input[type="radio"] {

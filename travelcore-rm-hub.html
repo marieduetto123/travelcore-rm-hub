@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@33.3.0/styles/ag-grid.css"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@33.3.0/styles/ag-theme-quartz.css"/>
   <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@33.3.0/dist/ag-grid-community.min.js"></script>
-  <link rel="stylesheet" href="travelcore-rm-hub.css?v=79">
+  <link rel="stylesheet" href="travelcore-rm-hub.css?v=80">
 </head>
 <body>
 
@@ -2154,8 +2154,7 @@
         <span id="btMaxNote" style="font-size:11px;color:var(--text-muted);display:none">Maximum 10 board types</span>
       </div>
       <div style="margin-top:12px">
-        <button onclick="btSave()" class="ds-btn">Save Changes</button>
-        <span id="btSaveMsg" style="margin-left:10px;font-size:12px;color:#15803d;display:none">✓ Saved</span>
+        <button onclick="btSave()" id="btSaveBtn" class="ds-btn" disabled>Save Changes</button>
       </div>
     </div>
 
@@ -3404,6 +3403,15 @@
 
 
 
-  <script src="travelcore-rm-hub.js?v=99"></script>
+  <script src="travelcore-rm-hub.js?v=100"></script>
 <div id="calCapTip" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #e0e0e0;border-radius:4px;box-shadow:0 1px 3px rgba(0,0,0,.2),0 2px 1px -1px rgba(0,0,0,.12),0 1px 1px rgba(0,0,0,.14);padding:10px;pointer-events:none;width:245px"></div>
+
+<!-- DS Snackbar -->
+<div id="dsSnackbar" class="ds-snackbar" role="status" aria-live="polite">
+  <span class="material-icons" style="font-size:24px;color:#28592c;flex-shrink:0">check_circle</span>
+  <span class="ds-snackbar-msg">Saved successfully</span>
+  <button class="ds-snackbar-close" onclick="dsSnackbarHide()" aria-label="Dismiss">
+    <span class="material-icons" style="font-size:20px">close</span>
+  </button>
+</div>
 </body>

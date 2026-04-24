@@ -200,7 +200,8 @@
       "Bash(./deploy.sh \"DS radio buttons, fix headings 16px/14px, heading renamed to Configuration\")",
       "Bash(./deploy.sh \"DS text button for Add Meal Plan\")",
       "Bash(./deploy.sh \"Revert panel heading to Travel Distribution Hub Settings\")",
-      "Bash(./deploy.sh \"DS text button hover: bg #d7f7ed, text #053c3c\")"
+      "Bash(./deploy.sh \"DS text button hover: bg #d7f7ed, text #053c3c\")",
+      "Bash(./deploy.sh \"Disabled Save button, dirty tracking, DS snackbar on save\")"
     ]
   }
 }
