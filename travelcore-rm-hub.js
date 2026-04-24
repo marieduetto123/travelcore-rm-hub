@@ -13160,7 +13160,8 @@ document.querySelectorAll('.ds-search-field').forEach(function(wrap) {
       },
     ];
 
-    _btGridApi = agGrid.createGrid(el, {
+    var AG = _realAgGrid || agGrid;
+    _btGridApi = AG.createGrid(el, {
       theme: sharedTheme,
       columnDefs: colDefs,
       rowData: _btRowData,
