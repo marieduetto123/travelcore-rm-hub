@@ -4652,6 +4652,7 @@ body.dark .st-edit-btn { background: var(--lime); color: #0E2124; }
   transition: background .12s;
 }
 .ds-btn:hover { background: #004947; }
+.ds-btn:disabled { background: #dde1e2; color: #aeb4ba; cursor: not-allowed; pointer-events: none; }
 
 /* DS Button — Text (no border, no background) */
 .ds-btn-text {

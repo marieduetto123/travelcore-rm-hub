@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@33.3.0/styles/ag-grid.css"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@33.3.0/styles/ag-theme-quartz.css"/>
   <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@33.3.0/dist/ag-grid-community.min.js"></script>
-  <link rel="stylesheet" href="travelcore-rm-hub.css?v=82">
+  <link rel="stylesheet" href="travelcore-rm-hub.css?v=83">
 </head>
 <body>
 
@@ -2444,11 +2444,11 @@
 </div><!-- /settingsPage -->
 
 <!-- Config sticky save footer -->
-<div id="configSaveFooter" class="config-save-footer">
+<div id="configSaveFooter" class="config-save-footer show">
   <span style="font-size:14px;color:var(--text-muted)">You have unsaved changes</span>
   <div style="display:flex;gap:10px;align-items:center">
     <button class="ds-btn ds-btn-ghost" onclick="_configDiscard()">Discard</button>
-    <button class="ds-btn" onclick="btSave()">Save Changes</button>
+    <button class="ds-btn" id="footerSaveBtn" onclick="btSave()" disabled>Save Changes</button>
   </div>
 </div>
 
@@ -3412,7 +3412,7 @@
 
 
 
-  <script src="travelcore-rm-hub.js?v=104"></script>
+  <script src="travelcore-rm-hub.js?v=105"></script>
 <div id="calCapTip" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #e0e0e0;border-radius:4px;box-shadow:0 1px 3px rgba(0,0,0,.2),0 2px 1px -1px rgba(0,0,0,.12),0 1px 1px rgba(0,0,0,.14);padding:10px;pointer-events:none;width:245px"></div>
 
 <!-- Add Meal Plan Modal -->
