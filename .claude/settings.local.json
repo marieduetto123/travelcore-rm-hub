@@ -199,7 +199,8 @@
       "Bash(./deploy.sh \"Force Lato on all form elements \\(input, select, textarea, button\\)\")",
       "Bash(./deploy.sh \"DS radio buttons, fix headings 16px/14px, heading renamed to Configuration\")",
       "Bash(./deploy.sh \"DS text button for Add Meal Plan\")",
-      "Bash(./deploy.sh \"Revert panel heading to Travel Distribution Hub Settings\")"
+      "Bash(./deploy.sh \"Revert panel heading to Travel Distribution Hub Settings\")",
+      "Bash(./deploy.sh \"DS text button hover: bg #d7f7ed, text #053c3c\")"
     ]
   }
 }
