@@ -14705,20 +14705,11 @@ window.dsSnackbarHide = function() {
 var _configDirty = false;
 
 window._markConfigDirty = function() {
-  if (_configDirty) return;
   _configDirty = true;
-  var btn = document.getElementById('btSaveBtn');
-  if (btn) btn.disabled = false;
-  var footer = document.getElementById('configSaveFooter');
-  if (footer) footer.classList.add('show');
 };
 
 window._configSetClean = function() {
   _configDirty = false;
-  var btn = document.getElementById('btSaveBtn');
-  if (btn) btn.disabled = true;
-  var footer = document.getElementById('configSaveFooter');
-  if (footer) footer.classList.remove('show');
 };
 
 window._configDiscard = function() {

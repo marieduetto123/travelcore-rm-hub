@@ -202,7 +202,8 @@
       "Bash(./deploy.sh \"Revert panel heading to Travel Distribution Hub Settings\")",
       "Bash(./deploy.sh \"DS text button hover: bg #d7f7ed, text #053c3c\")",
       "Bash(./deploy.sh \"Disabled Save button, dirty tracking, DS snackbar on save\")",
-      "Bash(./deploy.sh \"Sticky save footer: slides up when unsaved changes, hides on save/discard\")"
+      "Bash(./deploy.sh \"Sticky save footer: slides up when unsaved changes, hides on save/discard\")",
+      "Bash(./deploy.sh \"Save button always enabled, footer always visible, snackbar on save\")"
     ]
   }
 }
