@@ -4723,6 +4723,19 @@ select.ds-select:hover { border-color: #aeb4ba; }
 select.ds-select:focus { border-color: #006461; outline: none; }
 select.ds-select:disabled { background: #f5f5f5; border-color: #dde1e2; color: #aeb4ba; cursor: not-allowed; }
 
+/* Config sticky save footer */
+.config-save-footer {
+  position: fixed; bottom: -80px; left: 0; right: 0;
+  z-index: 800;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 32px;
+  background: var(--surface-1);
+  border-top: 1px solid var(--border);
+  box-shadow: 0 -2px 12px rgba(0,0,0,.08);
+  transition: bottom .25s cubic-bezier(.4,0,.2,1);
+}
+.config-save-footer.show { bottom: 0; }
+
 /* DS Snackbar — floating top-center */
 .ds-snackbar {
   position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
