@@ -2162,281 +2162,246 @@
 
     <!-- ═══ STOP SALES & ALERTS PANEL ═══ -->
     <div class="st-panel" id="stPanel-stopsales" style="display:none">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+
+      <div style="margin-bottom:24px">
+        <h3 style="font-size:16px;font-weight:700;color:var(--text-primary);margin:0 0 4px">Stop Sales &amp; Alerts</h3>
+        <p style="font-size:14px;color:var(--text-muted);margin:0">Configure stop sale rules, alert thresholds, and room-type visibility</p>
+      </div>
+
+      <!-- Section 1: Stop Rules -->
+      <div style="padding:16px 0;border-bottom:1px solid var(--border)">
+        <div style="font-size:16px;font-weight:700;color:var(--text-primary);margin-bottom:4px">Stop Rules</div>
+        <div style="font-size:14px;color:var(--text-muted);margin-bottom:14px">Define conditions that trigger stop sale alerts or actions per room type</div>
+        <table style="width:100%;border-collapse:collapse;font-size:13px">
+          <thead>
+            <tr style="border-bottom:2px solid var(--border)">
+              <th style="text-align:left;padding:8px 12px;font-weight:600;color:var(--text-muted)">Room Type</th>
+              <th style="text-align:left;padding:8px 12px;font-weight:600;color:var(--text-muted)">Alert Threshold</th>
+              <th style="text-align:left;padding:8px 12px;font-weight:600;color:var(--text-muted)">Action</th>
+              <th style="text-align:left;padding:8px 12px;font-weight:600;color:var(--text-muted)">Alert Frequency</th>
+              <th style="text-align:center;padding:8px 12px;font-weight:600;color:var(--text-muted)">Enabled</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border)">
+              <td style="padding:10px 12px;font-weight:600">Standard Room</td>
+              <td style="padding:10px 12px"><select class="ds-select"><option>70% sold</option><option>80% sold</option><option selected>85% sold</option><option>90% sold</option></select></td>
+              <td style="padding:10px 12px"><select class="ds-select"><option selected>Alert only</option><option>Auto stop sale</option></select></td>
+              <td style="padding:10px 12px"><select class="ds-select"><option selected>Daily</option><option>Weekly</option><option>Monthly</option><option>None</option></select></td>
+              <td style="padding:10px 12px;text-align:center"><input type="checkbox" checked></td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border)">
+              <td style="padding:10px 12px;font-weight:600">Superior Room</td>
+              <td style="padding:10px 12px"><select class="ds-select"><option selected>70% sold</option><option>80% sold</option><option>85% sold</option><option>90% sold</option></select></td>
+              <td style="padding:10px 12px"><select class="ds-select"><option selected>Alert only</option><option>Auto stop sale</option></select></td>
+              <td style="padding:10px 12px"><select class="ds-select"><option selected>Daily</option><option>Weekly</option><option>Monthly</option><option>None</option></select></td>
+              <td style="padding:10px 12px;text-align:center"><input type="checkbox" checked></td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border)">
+              <td style="padding:10px 12px;font-weight:600">Deluxe Room</td>
+              <td style="padding:10px 12px"><select class="ds-select"><option>70% sold</option><option selected>80% sold</option><option>85% sold</option><option>90% sold</option></select></td>
+              <td style="padding:10px 12px"><select class="ds-select"><option selected>Alert only</option><option>Auto stop sale</option></select></td>
+              <td style="padding:10px 12px"><select class="ds-select"><option>Daily</option><option selected>Weekly</option><option>Monthly</option><option>None</option></select></td>
+              <td style="padding:10px 12px;text-align:center"><input type="checkbox" checked></td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border)">
+              <td style="padding:10px 12px;font-weight:600">Suite</td>
+              <td style="padding:10px 12px"><select class="ds-select"><option selected>70% sold</option><option>80% sold</option><option>85% sold</option><option>90% sold</option></select></td>
+              <td style="padding:10px 12px"><select class="ds-select"><option selected>Alert only</option><option>Auto stop sale</option></select></td>
+              <td style="padding:10px 12px"><select class="ds-select"><option>Daily</option><option>Weekly</option><option>Monthly</option><option>None</option></select></td>
+              <td style="padding:10px 12px;text-align:center"><input type="checkbox"></td>
+            </tr>
+            <tr>
+              <td style="padding:10px 12px;font-weight:600">Family Room</td>
+              <td style="padding:10px 12px"><select class="ds-select"><option>70% sold</option><option>80% sold</option><option>85% sold</option><option selected>90% sold</option></select></td>
+              <td style="padding:10px 12px"><select class="ds-select"><option selected>Alert only</option><option>Auto stop sale</option></select></td>
+              <td style="padding:10px 12px"><select class="ds-select"><option>Daily</option><option selected>Weekly</option><option>Monthly</option><option>None</option></select></td>
+              <td style="padding:10px 12px;text-align:center"><input type="checkbox" checked></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Section 2: Room-Type Stop Sale Visibility -->
+      <div style="padding:16px 0;border-bottom:1px solid var(--border)">
+        <div style="font-size:16px;font-weight:700;color:var(--text-primary);margin-bottom:4px">Room-Type Stop Sale Visibility</div>
+        <div style="font-size:14px;color:var(--text-muted);margin-bottom:14px">Choose which room types show stop sale indicators on the calendar</div>
+        <div style="display:flex;flex-wrap:wrap;gap:10px">
+          <label class="ds-radio-label"><input type="checkbox" checked> Standard</label>
+          <label class="ds-radio-label"><input type="checkbox" checked> Superior</label>
+          <label class="ds-radio-label"><input type="checkbox" checked> Deluxe</label>
+          <label class="ds-radio-label"><input type="checkbox"> Suite</label>
+          <label class="ds-radio-label"><input type="checkbox" checked> Family</label>
+        </div>
+      </div>
+
+      <!-- Section 3: Global Alert Settings -->
+      <div style="padding:16px 0">
+        <div style="font-size:16px;font-weight:700;color:var(--text-primary);margin-bottom:4px">Global Alert Settings</div>
+        <div style="font-size:14px;color:var(--text-muted);margin-bottom:14px">Set default alert frequency and notification channel for all stop sale rules</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:600px">
           <div>
-            <div style="display:flex;align-items:center;gap:10px">
-              <h3 style="font-size:16px;font-weight:700;color:var(--text-primary);margin:0">Stop Sales &amp; Alerts</h3>
-              <span style="font-size:11px;background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:10px;font-weight:600">RULES ENGINE</span>
-            </div>
-            <p style="font-size:13px;color:var(--text-secondary);margin:4px 0 0">Configure stop sale rules, alert thresholds, and room-type visibility</p>
+            <div style="font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:6px">Default Alert Frequency</div>
+            <select class="ds-select" style="width:100%">
+              <option selected>Daily digest</option>
+              <option>Weekly digest</option>
+              <option>Monthly summary</option>
+              <option>Disabled</option>
+            </select>
           </div>
-        </div>
-
-        <!-- Stop Rules -->
-        <div style="background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:20px;margin-bottom:16px">
-          <h4 style="font-size:14px;font-weight:700;color:var(--text-primary);margin:0 0 12px;display:flex;align-items:center;gap:8px">
-            <span class="material-icons" style="font-size:18px;color:#dc2626">schedule</span>
-            Stop Rules
-          </h4>
-          <p style="font-size:12px;color:var(--text-secondary);margin:0 0 14px">Define conditions that trigger stop sale alerts or actions per room type</p>
-
-          <table style="width:100%;border-collapse:collapse;font-size:13px">
-            <thead>
-              <tr style="border-bottom:2px solid #e5e7eb">
-                <th style="text-align:left;padding:8px 12px;font-weight:600;color:var(--text-secondary)">Room Type</th>
-                <th style="text-align:left;padding:8px 12px;font-weight:600;color:var(--text-secondary)">Alert Threshold</th>
-                <th style="text-align:left;padding:8px 12px;font-weight:600;color:var(--text-secondary)">Action</th>
-                <th style="text-align:left;padding:8px 12px;font-weight:600;color:var(--text-secondary)">Alert Frequency</th>
-                <th style="text-align:center;padding:8px 12px;font-weight:600;color:var(--text-secondary)">Enabled</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr style="border-bottom:1px solid #f3f4f6">
-                <td style="padding:10px 12px;font-weight:600">Standard Room</td>
-                <td style="padding:10px 12px"><select class="ds-select"><option>70% sold</option><option>80% sold</option><option selected>85% sold</option><option>90% sold</option></select></td>
-                <td style="padding:10px 12px"><select class="ds-select"><option selected>Alert only</option><option>Auto stop sale</option></select></td>
-                <td style="padding:10px 12px"><select class="ds-select"><option selected>Daily</option><option>Weekly</option><option>Monthly</option><option>None</option></select></td>
-                <td style="padding:10px 12px;text-align:center"><input type="checkbox" checked></td>
-              </tr>
-              <tr style="border-bottom:1px solid #f3f4f6">
-                <td style="padding:10px 12px;font-weight:600">Superior Room</td>
-                <td style="padding:10px 12px"><select class="ds-select"><option selected>70% sold</option><option>80% sold</option><option>85% sold</option><option>90% sold</option></select></td>
-                <td style="padding:10px 12px"><select class="ds-select"><option selected>Alert only</option><option>Auto stop sale</option></select></td>
-                <td style="padding:10px 12px"><select class="ds-select"><option selected>Daily</option><option>Weekly</option><option>Monthly</option><option>None</option></select></td>
-                <td style="padding:10px 12px;text-align:center"><input type="checkbox" checked></td>
-              </tr>
-              <tr style="border-bottom:1px solid #f3f4f6">
-                <td style="padding:10px 12px;font-weight:600">Deluxe Room</td>
-                <td style="padding:10px 12px"><select class="ds-select"><option>70% sold</option><option selected>80% sold</option><option>85% sold</option><option>90% sold</option></select></td>
-                <td style="padding:10px 12px"><select class="ds-select"><option selected>Alert only</option><option>Auto stop sale</option></select></td>
-                <td style="padding:10px 12px"><select class="ds-select"><option>Daily</option><option selected>Weekly</option><option>Monthly</option><option>None</option></select></td>
-                <td style="padding:10px 12px;text-align:center"><input type="checkbox" checked></td>
-              </tr>
-              <tr style="border-bottom:1px solid #f3f4f6">
-                <td style="padding:10px 12px;font-weight:600">Suite</td>
-                <td style="padding:10px 12px"><select class="ds-select"><option selected>70% sold</option><option>80% sold</option><option>85% sold</option><option>90% sold</option></select></td>
-                <td style="padding:10px 12px"><select class="ds-select"><option selected>Alert only</option><option>Auto stop sale</option></select></td>
-                <td style="padding:10px 12px"><select class="ds-select"><option>Daily</option><option>Weekly</option><option>Monthly</option><option>None</option></select></td>
-                <td style="padding:10px 12px;text-align:center"><input type="checkbox"></td>
-              </tr>
-              <tr>
-                <td style="padding:10px 12px;font-weight:600">Family Room</td>
-                <td style="padding:10px 12px"><select class="ds-select"><option>70% sold</option><option>80% sold</option><option>85% sold</option><option selected>90% sold</option></select></td>
-                <td style="padding:10px 12px"><select class="ds-select"><option selected>Alert only</option><option>Auto stop sale</option></select></td>
-                <td style="padding:10px 12px"><select class="ds-select"><option>Daily</option><option selected>Weekly</option><option>Monthly</option><option>None</option></select></td>
-                <td style="padding:10px 12px;text-align:center"><input type="checkbox" checked></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Room-Type Stop Sale Visibility -->
-        <div style="background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:20px;margin-bottom:16px">
-          <h4 style="font-size:14px;font-weight:700;color:var(--text-primary);margin:0 0 12px;display:flex;align-items:center;gap:8px">
-            <span class="material-icons" style="font-size:18px;color:#6366f1">schedule</span>
-            Room-Type Stop Sale Visibility
-          </h4>
-          <p style="font-size:12px;color:var(--text-secondary);margin:0 0 14px">Choose which room types show stop sale indicators on the calendar</p>
-
-          <div style="display:flex;flex-wrap:wrap;gap:12px">
-            <label style="display:flex;align-items:center;gap:6px;padding:8px 14px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;font-size:13px;cursor:pointer">
-              <input type="checkbox" checked> <span style="font-weight:600">Standard</span>
-            </label>
-            <label style="display:flex;align-items:center;gap:6px;padding:8px 14px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;font-size:13px;cursor:pointer">
-              <input type="checkbox" checked> <span style="font-weight:600">Superior</span>
-            </label>
-            <label style="display:flex;align-items:center;gap:6px;padding:8px 14px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;font-size:13px;cursor:pointer">
-              <input type="checkbox" checked> <span style="font-weight:600">Deluxe</span>
-            </label>
-            <label style="display:flex;align-items:center;gap:6px;padding:8px 14px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;font-size:13px;cursor:pointer">
-              <input type="checkbox"> <span style="font-weight:600">Suite</span>
-            </label>
-            <label style="display:flex;align-items:center;gap:6px;padding:8px 14px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;font-size:13px;cursor:pointer">
-              <input type="checkbox" checked> <span style="font-weight:600">Family</span>
-            </label>
+          <div>
+            <div style="font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:6px">Alert Channel</div>
+            <select class="ds-select" style="width:100%">
+              <option selected>Email + In-app</option>
+              <option>Email only</option>
+              <option>In-app only</option>
+            </select>
           </div>
-        </div>
-
-        <!-- Global Alert Settings -->
-        <div style="background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:20px">
-          <h4 style="font-size:14px;font-weight:700;color:var(--text-primary);margin:0 0 12px;display:flex;align-items:center;gap:8px">
-            <span class="material-icons" style="font-size:18px;color:#f59e0b">warning</span>
-            Global Alert Settings
-          </h4>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-            <div>
-              <label style="font-size:12px;font-weight:600;color:var(--text-secondary);margin-bottom:4px;display:block">Default Alert Frequency</label>
-              <select class="ds-select" style="width:100%">
-                <option selected>Daily digest</option>
-                <option>Weekly digest</option>
-                <option>Monthly summary</option>
-                <option>Disabled</option>
-              </select>
-            </div>
-            <div>
-              <label style="font-size:12px;font-weight:600;color:var(--text-secondary);margin-bottom:4px;display:block">Alert Channel</label>
-              <select class="ds-select" style="width:100%">
-                <option selected>Email + In-app</option>
-                <option>Email only</option>
-                <option>In-app only</option>
-              </select>
-            </div>
-            <div>
-              <label style="font-size:12px;font-weight:600;color:var(--text-secondary);margin-bottom:4px;display:block">Auto Stop Sale (Future Phase)</label>
-              <div style="display:flex;align-items:center;gap:8px;padding:8px 0">
-                <span style="font-size:13px;color:#6b7280">Disabled</span>
-                <span style="font-size:10px;background:#e5e7eb;color:#6b7280;padding:2px 6px;border-radius:4px;font-weight:600">COMING SOON</span>
-              </div>
-            </div>
-            <div>
-              <label style="font-size:12px;font-weight:600;color:var(--text-secondary);margin-bottom:4px;display:block">Hotel-Wide Stop Threshold</label>
-              <select class="ds-select" style="width:100%">
-                <option>85% total occupancy</option>
-                <option selected>90% total occupancy</option>
-                <option>95% total occupancy</option>
-                <option>Disabled</option>
-              </select>
+          <div>
+            <div style="font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:6px">Hotel-Wide Stop Threshold</div>
+            <select class="ds-select" style="width:100%">
+              <option>85% total occupancy</option>
+              <option selected>90% total occupancy</option>
+              <option>95% total occupancy</option>
+              <option>Disabled</option>
+            </select>
+          </div>
+          <div>
+            <div style="font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:6px">Auto Stop Sale</div>
+            <div style="display:flex;align-items:center;gap:8px;padding:8px 0">
+              <span style="font-size:13px;color:var(--text-muted)">Disabled</span>
+              <span style="font-size:10px;background:#e5e7eb;color:#6b7280;padding:2px 6px;border-radius:4px;font-weight:600">COMING SOON</span>
             </div>
           </div>
         </div>
+      </div>
+
     </div><!-- /stPanel-stopsales -->
 
     <div class="st-panel" id="stPanel-autopilot" style="display:none">
 
-    <!-- Header -->
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
-      <div>
-        <div style="display:flex;align-items:center;gap:10px">
-          <h3 style="font-size:16px;font-weight:700;color:var(--text-primary);margin:0">Autopilot — Close Out Strategies</h3>
-          <span style="font-size:11px;background:#d1fae5;color:#065f46;padding:2px 8px;border-radius:10px;font-weight:600">STOP SALE AUTOMATION</span>
-        </div>
-        <p style="font-size:12px;color:var(--text-muted);margin:4px 0 0">Automatically close inventory when criteria are met</p>
-      </div>
-      <button onclick="apNewStrategy()" class="ds-btn">
-        <span class="material-icons" style="font-size:18px">add</span>
-        New Strategy
-      </button>
-    </div>
-
-    <!-- Strategy list -->
-    <div id="apStrategyList"></div>
-
-    <!-- New/Edit Strategy Form -->
-    <div id="apStrategyForm" style="display:none;border:1px solid var(--border);border-radius:10px;padding:20px;margin-top:16px;background:var(--surface-2)">
-      <h4 id="apFormTitle" style="font-size:14px;font-weight:700;color:var(--text-primary);margin:0 0 16px">New Close Out Strategy</h4>
-
-      <!-- Strategy Name -->
-      <div style="margin-bottom:14px">
-        <label style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:5px">Strategy Name</label>
-        <input id="apStrategyName" type="text" placeholder="e.g. High Occupancy Close Out" style="width:100%;max-width:400px;padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;background:var(--surface-1);color:var(--text-primary);box-sizing:border-box">
-      </div>
-
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:14px">
-        <!-- Stay Date -->
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px">
         <div>
-          <label style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:8px">Stay Date</label>
-          <div style="display:flex;gap:8px;margin-bottom:8px;align-items:center">
-            <span style="font-size:11px;background:#ccfbf1;color:#0f766e;padding:3px 8px;border-radius:4px;font-weight:600;min-width:90px">Date Range</span>
-            <input id="apStayFrom" type="date" style="padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;background:var(--surface-1);color:var(--text-primary)">
-            <span style="font-size:11px;color:var(--text-muted)">–</span>
-            <input id="apStayTo" type="date" style="padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;background:var(--surface-1);color:var(--text-primary)">
-          </div>
-          <div style="margin-top:6px">
-            <label style="font-size:11px;font-weight:600;color:var(--text-muted);display:block;margin-bottom:5px">Day of Week</label>
+          <h3 style="font-size:16px;font-weight:700;color:var(--text-primary);margin:0 0 4px">Autopilot — Close Out Strategies</h3>
+          <p style="font-size:14px;color:var(--text-muted);margin:0">Automatically close inventory when criteria are met</p>
+        </div>
+        <button onclick="apNewStrategy()" class="ds-btn">
+          <span class="material-icons" style="font-size:18px">add</span>
+          New Strategy
+        </button>
+      </div>
+
+      <!-- Strategy list -->
+      <div id="apStrategyList"></div>
+
+      <!-- New/Edit Strategy Form -->
+      <div id="apStrategyForm" style="display:none;border:1px solid var(--border);border-radius:10px;padding:20px;margin-top:16px;background:var(--surface-2)">
+        <div id="apFormTitle" style="font-size:16px;font-weight:700;color:var(--text-primary);margin:0 0 20px">New Close Out Strategy</div>
+
+        <!-- Strategy Name -->
+        <div style="padding:16px 0;border-bottom:1px solid var(--border)">
+          <div style="font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:8px">Strategy Name</div>
+          <input id="apStrategyName" type="text" placeholder="e.g. High Occupancy Close Out" style="width:100%;max-width:400px;padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;background:var(--surface-1);color:var(--text-primary);box-sizing:border-box">
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;padding:16px 0;border-bottom:1px solid var(--border)">
+          <!-- Stay Date -->
+          <div>
+            <div style="font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:10px">Stay Date</div>
+            <div style="display:flex;gap:8px;margin-bottom:10px;align-items:center">
+              <span style="font-size:11px;background:#ccfbf1;color:#0f766e;padding:3px 8px;border-radius:4px;font-weight:600;min-width:90px">Date Range</span>
+              <input id="apStayFrom" type="date" style="padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;background:var(--surface-1);color:var(--text-primary)">
+              <span style="font-size:11px;color:var(--text-muted)">–</span>
+              <input id="apStayTo" type="date" style="padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;background:var(--surface-1);color:var(--text-primary)">
+            </div>
+            <div style="font-size:13px;color:var(--text-muted);margin-bottom:6px">Day of Week</div>
             <div style="display:flex;gap:6px" id="apDowStay">
-              <label style="display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:var(--text-secondary);cursor:pointer"><input type="checkbox" checked style="accent-color:#006461">Sun</label>
-              <label style="display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:var(--text-secondary);cursor:pointer"><input type="checkbox" checked style="accent-color:#006461">Mon</label>
-              <label style="display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:var(--text-secondary);cursor:pointer"><input type="checkbox" checked style="accent-color:#006461">Tue</label>
-              <label style="display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:var(--text-secondary);cursor:pointer"><input type="checkbox" checked style="accent-color:#006461">Wed</label>
-              <label style="display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:var(--text-secondary);cursor:pointer"><input type="checkbox" checked style="accent-color:#006461">Thu</label>
-              <label style="display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:var(--text-secondary);cursor:pointer"><input type="checkbox" checked style="accent-color:#006461">Fri</label>
-              <label style="display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:var(--text-secondary);cursor:pointer"><input type="checkbox" checked style="accent-color:#006461">Sat</label>
+              <label class="ds-radio-label" style="flex-direction:column;gap:3px;font-size:11px"><input type="checkbox" checked>Sun</label>
+              <label class="ds-radio-label" style="flex-direction:column;gap:3px;font-size:11px"><input type="checkbox" checked>Mon</label>
+              <label class="ds-radio-label" style="flex-direction:column;gap:3px;font-size:11px"><input type="checkbox" checked>Tue</label>
+              <label class="ds-radio-label" style="flex-direction:column;gap:3px;font-size:11px"><input type="checkbox" checked>Wed</label>
+              <label class="ds-radio-label" style="flex-direction:column;gap:3px;font-size:11px"><input type="checkbox" checked>Thu</label>
+              <label class="ds-radio-label" style="flex-direction:column;gap:3px;font-size:11px"><input type="checkbox" checked>Fri</label>
+              <label class="ds-radio-label" style="flex-direction:column;gap:3px;font-size:11px"><input type="checkbox" checked>Sat</label>
+            </div>
+          </div>
+
+          <!-- Criteria -->
+          <div>
+            <div style="font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:10px">Criteria</div>
+            <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+              <span style="font-size:11px;background:#ccfbf1;color:#0f766e;padding:3px 8px;border-radius:4px;font-weight:600;min-width:130px">Days Before Arrival</span>
+              <select id="apDbaOp" class="ds-select"><option>less than</option><option>more than</option><option>equal to</option></select>
+              <input id="apDbaVal" type="number" value="50" min="0" max="999" style="width:60px;padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;background:var(--surface-1);color:var(--text-primary)">
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+              <span style="font-size:11px;background:#ccfbf1;color:#0f766e;padding:3px 8px;border-radius:4px;font-weight:600;min-width:130px">Demand Occupancy</span>
+              <select id="apDemOp" class="ds-select"><option>more than</option><option>less than</option><option>equal to</option></select>
+              <input id="apDemVal" type="number" value="55" min="0" max="100" style="width:60px;padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;background:var(--surface-1);color:var(--text-primary)">
+              <span style="font-size:12px;color:var(--text-muted)">%</span>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <span style="font-size:11px;background:#ccfbf1;color:#0f766e;padding:3px 8px;border-radius:4px;font-weight:600;min-width:130px">Committed Occupancy</span>
+              <select id="apComOp" class="ds-select"><option>more than</option><option>less than</option><option>equal to</option></select>
+              <input id="apComVal" type="number" value="55" min="0" max="100" style="width:60px;padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;background:var(--surface-1);color:var(--text-primary)">
+              <span style="font-size:12px;color:var(--text-muted)">%</span>
             </div>
           </div>
         </div>
 
-        <!-- Criteria -->
-        <div>
-          <label style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:8px">Criteria</label>
-          <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
-            <span style="font-size:11px;background:#ccfbf1;color:#0f766e;padding:3px 8px;border-radius:4px;font-weight:600;min-width:130px">Days Before Arrival</span>
-            <select id="apDbaOp" class="ds-select">
-              <option>less than</option><option>more than</option><option>equal to</option>
-            </select>
-            <input id="apDbaVal" type="number" value="50" min="0" max="999" style="width:60px;padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;background:var(--surface-1);color:var(--text-primary)">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;padding:16px 0;border-bottom:1px solid var(--border)">
+          <!-- Room Type -->
+          <div>
+            <div style="font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:10px">Room Type</div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px">
+              <label class="ds-radio-label"><input type="checkbox" checked> All Rooms</label>
+              <label class="ds-radio-label"><input type="checkbox"> Standard</label>
+              <label class="ds-radio-label"><input type="checkbox"> Deluxe</label>
+              <label class="ds-radio-label"><input type="checkbox"> Suite</label>
+              <label class="ds-radio-label"><input type="checkbox"> Junior Suite</label>
+              <label class="ds-radio-label"><input type="checkbox"> Family</label>
+            </div>
           </div>
-          <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
-            <span style="font-size:11px;background:#ccfbf1;color:#0f766e;padding:3px 8px;border-radius:4px;font-weight:600;min-width:130px">Demand Occupancy</span>
-            <select id="apDemOp" class="ds-select">
-              <option>more than</option><option>less than</option><option>equal to</option>
-            </select>
-            <input id="apDemVal" type="number" value="55" min="0" max="100" style="width:60px;padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;background:var(--surface-1);color:var(--text-primary)">
-            <span style="font-size:12px;color:var(--text-muted)">%</span>
-          </div>
-          <div style="display:flex;gap:8px;align-items:center">
-            <span style="font-size:11px;background:#ccfbf1;color:#0f766e;padding:3px 8px;border-radius:4px;font-weight:600;min-width:130px">Committed Occupancy</span>
-            <select id="apComOp" class="ds-select">
-              <option>more than</option><option>less than</option><option>equal to</option>
-            </select>
-            <input id="apComVal" type="number" value="55" min="0" max="100" style="width:60px;padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;background:var(--surface-1);color:var(--text-primary)">
-            <span style="font-size:12px;color:var(--text-muted)">%</span>
+          <!-- Meal Plan -->
+          <div>
+            <div style="font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:10px">Meal Plan</div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px">
+              <label class="ds-radio-label"><input type="checkbox" checked> All Plans</label>
+              <label class="ds-radio-label"><input type="checkbox"> Room Only</label>
+              <label class="ds-radio-label"><input type="checkbox"> B&amp;B</label>
+              <label class="ds-radio-label"><input type="checkbox"> Half Board</label>
+              <label class="ds-radio-label"><input type="checkbox"> Full Board</label>
+              <label class="ds-radio-label"><input type="checkbox"> All Inclusive</label>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:14px">
-        <!-- Room Type -->
-        <div>
-          <label style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:8px">Room Type</label>
-          <div style="display:flex;flex-wrap:wrap;gap:6px">
-            <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer"><input type="checkbox" checked style="accent-color:#006461"> All Rooms</label>
-            <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer"><input type="checkbox" style="accent-color:#006461"> Standard</label>
-            <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer"><input type="checkbox" style="accent-color:#006461"> Deluxe</label>
-            <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer"><input type="checkbox" style="accent-color:#006461"> Suite</label>
-            <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer"><input type="checkbox" style="accent-color:#006461"> Junior Suite</label>
-            <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer"><input type="checkbox" style="accent-color:#006461"> Family</label>
+        <!-- Active Date Range -->
+        <div style="padding:16px 0">
+          <div style="font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:10px">Active (When Strategy Runs)</div>
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px">
+            <span style="font-size:11px;background:#ccfbf1;color:#0f766e;padding:3px 8px;border-radius:4px;font-weight:600;min-width:90px">Date Range</span>
+            <input id="apActiveFrom" type="date" style="padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;background:var(--surface-1);color:var(--text-primary)">
+            <span style="font-size:11px;color:var(--text-muted)">–</span>
+            <input id="apActiveTo" type="date" style="padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;background:var(--surface-1);color:var(--text-primary)">
+          </div>
+          <div style="display:flex;gap:6px" id="apDowActive">
+            <label class="ds-radio-label" style="flex-direction:column;gap:3px;font-size:11px"><input type="checkbox" checked>Sun</label>
+            <label class="ds-radio-label" style="flex-direction:column;gap:3px;font-size:11px"><input type="checkbox" checked>Mon</label>
+            <label class="ds-radio-label" style="flex-direction:column;gap:3px;font-size:11px"><input type="checkbox" checked>Tue</label>
+            <label class="ds-radio-label" style="flex-direction:column;gap:3px;font-size:11px"><input type="checkbox" checked>Wed</label>
+            <label class="ds-radio-label" style="flex-direction:column;gap:3px;font-size:11px"><input type="checkbox" checked>Thu</label>
+            <label class="ds-radio-label" style="flex-direction:column;gap:3px;font-size:11px"><input type="checkbox" checked>Fri</label>
+            <label class="ds-radio-label" style="flex-direction:column;gap:3px;font-size:11px"><input type="checkbox" checked>Sat</label>
           </div>
         </div>
-        <!-- Meal Plan -->
-        <div>
-          <label style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:8px">Meal Plan</label>
-          <div style="display:flex;flex-wrap:wrap;gap:6px">
-            <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer"><input type="checkbox" checked style="accent-color:#006461"> All Plans</label>
-            <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer"><input type="checkbox" style="accent-color:#006461"> Room Only</label>
-            <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer"><input type="checkbox" style="accent-color:#006461"> B&amp;B</label>
-            <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer"><input type="checkbox" style="accent-color:#006461"> Half Board</label>
-            <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer"><input type="checkbox" style="accent-color:#006461"> Full Board</label>
-            <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer"><input type="checkbox" style="accent-color:#006461"> All Inclusive</label>
-          </div>
-        </div>
-      </div>
 
-      <!-- Active Date Range -->
-      <div style="margin-bottom:18px">
-        <label style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:8px">Active (When Strategy Runs)</label>
-        <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
-          <span style="font-size:11px;background:#ccfbf1;color:#0f766e;padding:3px 8px;border-radius:4px;font-weight:600;min-width:90px">Date Range</span>
-          <input id="apActiveFrom" type="date" style="padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;background:var(--surface-1);color:var(--text-primary)">
-          <span style="font-size:11px;color:var(--text-muted)">–</span>
-          <input id="apActiveTo" type="date" style="padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;background:var(--surface-1);color:var(--text-primary)">
-        </div>
-        <div style="display:flex;gap:6px" id="apDowActive">
-          <label style="display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:var(--text-secondary);cursor:pointer"><input type="checkbox" checked style="accent-color:#006461">Sun</label>
-          <label style="display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:var(--text-secondary);cursor:pointer"><input type="checkbox" checked style="accent-color:#006461">Mon</label>
-          <label style="display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:var(--text-secondary);cursor:pointer"><input type="checkbox" checked style="accent-color:#006461">Tue</label>
-          <label style="display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:var(--text-secondary);cursor:pointer"><input type="checkbox" checked style="accent-color:#006461">Wed</label>
-          <label style="display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:var(--text-secondary);cursor:pointer"><input type="checkbox" checked style="accent-color:#006461">Thu</label>
-          <label style="display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:var(--text-secondary);cursor:pointer"><input type="checkbox" checked style="accent-color:#006461">Fri</label>
-          <label style="display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:var(--text-secondary);cursor:pointer"><input type="checkbox" checked style="accent-color:#006461">Sat</label>
+        <!-- Form buttons -->
+        <div style="display:flex;gap:10px;padding-top:4px">
+          <button onclick="apSaveStrategy()" class="ds-btn">Save Strategy</button>
+          <button onclick="apCancelForm()" class="ds-btn ds-btn-ghost">Cancel</button>
         </div>
       </div>
-
-      <!-- Form buttons -->
-      <div style="display:flex;gap:10px">
-        <button onclick="apSaveStrategy()" class="ds-btn">Save Strategy</button>
-        <button onclick="apCancelForm()" class="ds-btn ds-btn-ghost">Cancel</button>
-      </div>
-    </div>
 
     </div><!-- /stPanel-autopilot -->
 

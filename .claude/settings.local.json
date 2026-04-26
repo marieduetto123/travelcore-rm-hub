@@ -213,7 +213,8 @@
       "Bash(./deploy.sh \"Inline Save Changes button syncs disabled/enabled state with footer\")",
       "Bash(./deploy.sh \"Fix Add Meal Plan modal: opens regardless of grid init state\")",
       "Bash(./deploy.sh \"fix board types grid: use _realAgGrid so forEachNode and applyTransaction work, modal now opens\")",
-      "Bash(./deploy.sh \"modal labels: sentence case \\(remove text-transform uppercase from modal-label\\)\")"
+      "Bash(./deploy.sh \"modal labels: sentence case \\(remove text-transform uppercase from modal-label\\)\")",
+      "Bash(./deploy.sh \"restyle stop sales & alerts and autopilot tabs to match travel distribution hubs layout\")"
     ]
   }
 }
