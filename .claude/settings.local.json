@@ -218,7 +218,8 @@
       "Bash(./deploy.sh \"monthly: lock icon hover shows stop sales; event icon only when events exist; weekly: hide calendar icon when no events\")",
       "Bash(./deploy.sh \"stop rules: replace HTML table with AG Grid \\(select cell editors, checkbox enabled column\\)\")",
       "Bash(./deploy.sh \"bump JS version to v112 so stop rules AG Grid loads correctly\")",
-      "Bash(./deploy.sh \"DS checkboxes: custom 18px teal/charcoal style with checkmark SVG, applied across all config panels\")"
+      "Bash(./deploy.sh \"DS checkboxes: custom 18px teal/charcoal style with checkmark SVG, applied across all config panels\")",
+      "Bash(./deploy.sh \"autopilot: strategy cards use divider layout + DS buttons + ds-radio-label for active toggle, 13px details\")"
     ]
   }
 }

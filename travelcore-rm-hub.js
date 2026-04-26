@@ -13048,25 +13048,25 @@ document.querySelectorAll('.ds-search-field').forEach(function(wrap) {
       var criteriaStr = 'DBA ' + s.dbaOp + ' ' + s.dbaVal +
         ' &amp; Demand Occ ' + s.demOp + ' ' + s.demVal + '%' +
         ' &amp; Committed Occ ' + s.comOp + ' ' + s.comVal + '%';
-      return '<div style="border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin-bottom:12px;background:var(--surface-1)">'
+      return '<div style="padding:16px 0;border-bottom:1px solid var(--border)">'
         + '<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px">'
         +   '<div style="display:flex;align-items:center;gap:10px">'
-        +     '<span style="font-size:14px;font-weight:700;color:var(--text-primary)">' + s.name + '</span>'
-        +     '<span style="font-size:10px;background:'+(s.active?'#d1fae5':'#f3f4f6')+';color:'+(s.active?'#065f46':'#6b7280')+';padding:2px 8px;border-radius:10px;font-weight:600">'+(s.active?'ACTIVE':'INACTIVE')+'</span>'
+        +     '<span style="font-size:16px;font-weight:700;color:var(--text-primary)">' + s.name + '</span>'
+        +     '<span style="font-size:11px;background:'+(s.active?'#d1fae5':'#f3f4f6')+';color:'+(s.active?'#065f46':'#6b7280')+';padding:2px 8px;border-radius:10px;font-weight:600">'+(s.active?'ACTIVE':'INACTIVE')+'</span>'
         +   '</div>'
         +   '<div style="display:flex;align-items:center;gap:8px">'
-        +     '<label style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-muted);cursor:pointer">'
+        +     '<label class="ds-radio-label" style="font-size:13px">'
         +       '<input type="checkbox" class="ds-checkbox" '+(s.active?'checked':'')+' onchange="apToggleStrategy('+s.id+',this)"> Active'
         +     '</label>'
-        +     '<button onclick="apEditStrategy('+s.id+')" style="padding:4px 10px;border:1px solid var(--border);background:var(--surface-2);color:var(--text-secondary);border-radius:5px;font-size:11px;cursor:pointer">Edit</button>'
-        +     '<button onclick="apDeleteStrategy('+s.id+')" style="padding:4px 10px;border:1px solid #fca5a5;background:#fef2f2;color:#dc2626;border-radius:5px;font-size:11px;cursor:pointer">Delete</button>'
+        +     '<button onclick="apEditStrategy('+s.id+')" class="ds-btn ds-btn-ghost" style="padding:4px 14px;height:auto;font-size:12px">Edit</button>'
+        +     '<button onclick="apDeleteStrategy('+s.id+')" class="ds-btn" style="padding:4px 14px;height:auto;font-size:12px;background:#fef2f2;border-color:#fca5a5;color:#dc2626">Delete</button>'
         +   '</div>'
         + '</div>'
-        + '<div style="display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:12px">'
-        +   '<span style="color:var(--text-muted);font-weight:600">Stay Date:</span><span>' + s.stayFrom + (s.stayTo && s.stayTo!==s.stayFrom ? ' – '+s.stayTo : '') + ' &nbsp;·&nbsp; ' + dowStr(s.dowStay) + '</span>'
-        +   '<span style="color:var(--text-muted);font-weight:600">Criteria:</span><span>' + criteriaStr + '</span>'
-        +   '<span style="color:var(--text-muted);font-weight:600">Active:</span><span>' + s.activeFrom + (s.activeTo && s.activeTo!==s.activeFrom ? ' – '+s.activeTo : '') + '</span>'
-        +   (s.updatedBy ? '<span style="color:var(--text-muted);font-weight:600">Updated:</span><span>' + s.updatedAt + ' by ' + s.updatedBy + '</span>' : '')
+        + '<div style="display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:13px">'
+        +   '<span style="color:var(--text-muted);font-weight:600">Stay Date:</span><span style="color:var(--text-primary)">' + s.stayFrom + (s.stayTo && s.stayTo!==s.stayFrom ? ' – '+s.stayTo : '') + ' &nbsp;·&nbsp; ' + dowStr(s.dowStay) + '</span>'
+        +   '<span style="color:var(--text-muted);font-weight:600">Criteria:</span><span style="color:var(--text-primary)">' + criteriaStr + '</span>'
+        +   '<span style="color:var(--text-muted);font-weight:600">Active:</span><span style="color:var(--text-primary)">' + s.activeFrom + (s.activeTo && s.activeTo!==s.activeFrom ? ' – '+s.activeTo : '') + '</span>'
+        +   (s.updatedBy ? '<span style="color:var(--text-muted);font-weight:600">Updated:</span><span style="color:var(--text-primary)">' + s.updatedAt + ' by ' + s.updatedBy + '</span>' : '')
         + '</div>'
         + '</div>';
     }).join('');
