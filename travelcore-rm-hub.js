@@ -1712,12 +1712,12 @@ function renderCalendar() {
       cells += `<div class="${classes}" data-month="${m.month}" data-day="${d}"${capTipAttr}>
         <div class="cell-day-hdr">
           <input type="checkbox" class="wv-day-chk mo-day-chk"${moChk} onclick="event.stopPropagation();moDayCheck('${moIso}',this)" title="Select for close-out">
-          ${isLocked ? '<span class="mo-lock-ico">' + lockIcoRed + '</span>' : hasCalCl ? '<span class="mo-lock-ico">' + lockIcoOrange + '</span>' : ''}
+          ${(isLocked || hasCalCl) ? '<span class="mo-lock-ico" style="cursor:pointer" onmouseenter="calShowEventTip(event,\'' + m.month + '-' + d + '\')" onmouseleave="calHideEventTip()">' + (isLocked ? lockIcoRed : lockIcoOrange) + '</span>' : ''}
           <span class="cell-hdr-left"><span class="day-num">${d}</span></span>
           ${_showEye ? eyeSvg : ''}
         </div>
         ${!isCompact ? `<div class="cell-content">${metricRows}</div>` : ''}
-        ${!isCompact && (hasCalCl || hasCalEvents) && !_isStopSalesActive ? '<span class="cell-event-ico" onmouseenter="calShowEventTip(event,\''+m.month+'-'+d+'\')" onmouseleave="calHideEventTip()"><span class="material-icons" style="font-size:16px;color:#006461">today</span></span>' : ''}
+        ${!isCompact && hasCalEvents ? '<span class="cell-event-ico" onmouseenter="calShowEventTip(event,\''+m.month+'-'+d+'\')" onmouseleave="calHideEventTip()"><span class="material-icons" style="font-size:16px;color:#006461">today</span></span>' : ''}
       </div>`;
     }
 
@@ -4109,7 +4109,7 @@ function buildDailyBView(days, month, activeDay) {
     var _wbHasEvt = (typeof CAL_EVENTS !== 'undefined' && CAL_EVENTS[_wbEvtKey]);
     var _evtIcon = _wbHasEvt
           ? '<span class="wv-event-cal-icon has-events" data-event-key="' + _wbEvtKey + '" onmouseenter="calShowEventTip(event,\'' + _wbEvtKey + '\')" onmouseleave="calHideEventTip()" style="display:inline-flex;align-items:center"><span class="material-icons" style="font-size:14px;color:#c4ff45">today</span></span>'
-          : '<span class="wv-event-cal-icon" onmouseenter="calShowEventTip(event,\'\')" onmouseleave="calHideEventTip()" style="display:inline-flex;align-items:center"><span class="material-icons" style="font-size:14px;color:rgba(255,255,255,0.7)">today</span></span>';
+          : '';
     html += '<div class="wb-data-cell wb-hdr-cell'
           + (isAct ? ' wb-hdr-active' : '')
           + (isSel ? ' wb-hdr-selected' : '')
@@ -7239,7 +7239,7 @@ function buildWeekGrid(month, weekStart, activeDay) {
     const wvEvents = (typeof CAL_EVENTS !== 'undefined' && CAL_EVENTS[wvEventKey]) ? CAL_EVENTS[wvEventKey] : null;
     const wvEventIconHtml = wvEvents
       ? `<span class="wv-event-cal-icon has-events" data-event-key="${wvEventKey}" onmouseenter="calShowEventTip(event,'${wvEventKey}')" onmouseleave="calHideEventTip()"><span class="material-icons" style="font-size:14px;color:#c4ff45">today</span></span>`
-      : `<span class="wv-event-cal-icon" onmouseenter="calShowEventTip(event,'')" onmouseleave="calHideEventTip()"><span class="material-icons" style="font-size:14px;color:rgba(255,255,255,0.7)">today</span></span>`;
+      : '';
     const isActionNeeded = hotel >= 65 && to < 40 && !isLocked;
     let wvMetricVal = hotel;
     if (wvActiveTab === 'pickup') wvMetricVal = getPickupPct(dm, dd);
