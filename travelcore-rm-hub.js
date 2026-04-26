@@ -1400,6 +1400,21 @@ const SPECIAL_DOTS = { '3-8': '#2563EB', '4-3': '#2563EB', '2-14': '#2563EB' };
 
 // ── Calendar Events data
 const CAL_EVENTS = {
+  "1-1":  [{ name: "New Year Rate Launch",     type: "One-time",  date: "1/1/2026"  }],
+  "1-3":  [{ name: "Weekend Opener",           type: "Recurring", date: "1/3/2026"  }],
+  "1-5":  [{ name: "January Flash Sale",       type: "One-time",  date: "1/5/2026"  }],
+  "1-7":  [{ name: "Midweek Special",          type: "Recurring", date: "1/7/2026"  }],
+  "1-10": [{ name: "Weekend Rate Boost",       type: "Recurring", date: "1/10/2026" }],
+  "1-12": [{ name: "Winter Warmup Package",    type: "One-time",  date: "1/12/2026" }],
+  "1-15": [{ name: "Mid-Month Review",         type: "One-time",  date: "1/15/2026" },
+            { name: "Weekend Flash Sale",      type: "Recurring", date: "1/15/2026" }],
+  "1-17": [{ name: "Midweek Offer",            type: "Recurring", date: "1/17/2026" }],
+  "1-19": [{ name: "Martin Luther King Rate",  type: "One-time",  date: "1/19/2026" }],
+  "1-21": [{ name: "Winter Rate Push",         type: "Recurring", date: "1/21/2026" }],
+  "1-24": [{ name: "Weekend Package",          type: "Recurring", date: "1/24/2026" }],
+  "1-26": [{ name: "Late Jan Flash Sale",      type: "One-time",  date: "1/26/2026" }],
+  "1-28": [{ name: "Midweek Promo",            type: "Recurring", date: "1/28/2026" }],
+  "1-31": [{ name: "Month-End Rate Review",    type: "One-time",  date: "1/31/2026" }],
   "2-14": [{ name: "Valentine Day Promo",      type: "One-time",  date: "2/14/2026" }],
   "2-28": [{ name: "Q1 Rate Review",           type: "One-time",  date: "2/28/2026" }],
   "3-1":  [{ name: "Spring Season Launch",     type: "One-time",  date: "3/1/2026"  }],
