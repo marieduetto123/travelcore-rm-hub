@@ -4793,6 +4793,52 @@ select.ds-select:disabled { background: #f5f5f5; border-color: #dde1e2; color: #
 }
 #settingsPage .ds-radio-label:has(input:disabled) { color: #aeb4ba; cursor: not-allowed; }
 
+/* DS Checkbox — scoped to config panels (node 12467-1772) */
+#settingsPage input[type="checkbox"],
+.ds-checkbox {
+  -webkit-appearance: none; appearance: none;
+  width: 18px; height: 18px; min-width: 18px; flex-shrink: 0;
+  border-radius: 2px;
+  border: 2px solid #4f5b60;
+  background: #fff;
+  cursor: pointer;
+  position: relative;
+  transition: background .12s, border-color .12s, box-shadow .12s;
+  vertical-align: middle;
+}
+#settingsPage input[type="checkbox"]:checked,
+.ds-checkbox:checked {
+  background: #006461
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 9'%3E%3Cpath d='M1 4.5L4.5 8 11 1' stroke='white' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+    center / 11px 8px no-repeat;
+  border-color: #006461;
+}
+#settingsPage input[type="checkbox"]:hover:not(:disabled):not(:checked),
+.ds-checkbox:hover:not(:disabled):not(:checked) {
+  box-shadow: 0 0 0 5px #f5f5f5;
+}
+#settingsPage input[type="checkbox"]:hover:not(:disabled):checked,
+.ds-checkbox:hover:not(:disabled):checked {
+  box-shadow: 0 0 0 5px #d7f7ed;
+}
+#settingsPage input[type="checkbox"]:disabled,
+.ds-checkbox:disabled {
+  background: #eaeeef; border-color: #aeb4ba; cursor: not-allowed;
+}
+#settingsPage input[type="checkbox"]:disabled:checked,
+.ds-checkbox:disabled:checked {
+  background: #aeb4ba
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 9'%3E%3Cpath d='M1 4.5L4.5 8 11 1' stroke='%23eaeeef' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+    center / 11px 8px no-repeat;
+  border-color: #aeb4ba;
+}
+#settingsPage input[type="checkbox"]:focus-visible,
+.ds-checkbox:focus-visible {
+  outline: 2px solid #006461; outline-offset: 2px;
+}
+/* Label wrapper for DS checkbox (reuses ds-radio-label) */
+#settingsPage .ds-radio-label:has(input[type="checkbox"]) { cursor: pointer; }
+
 /* ── Mobile (≤ 768px) ── */
 @media (max-width: 768px) {
   /* Topbar: hide nav tabs, show hamburger */

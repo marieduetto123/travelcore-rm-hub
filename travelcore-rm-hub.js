@@ -13056,7 +13056,7 @@ document.querySelectorAll('.ds-search-field').forEach(function(wrap) {
         +   '</div>'
         +   '<div style="display:flex;align-items:center;gap:8px">'
         +     '<label style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-muted);cursor:pointer">'
-        +       '<input type="checkbox" '+(s.active?'checked':'')+' onchange="apToggleStrategy('+s.id+',this)" style="accent-color:#006461;width:14px;height:14px"> Active'
+        +       '<input type="checkbox" class="ds-checkbox" '+(s.active?'checked':'')+' onchange="apToggleStrategy('+s.id+',this)"> Active'
         +     '</label>'
         +     '<button onclick="apEditStrategy('+s.id+')" style="padding:4px 10px;border:1px solid var(--border);background:var(--surface-2);color:var(--text-secondary);border-radius:5px;font-size:11px;cursor:pointer">Edit</button>'
         +     '<button onclick="apDeleteStrategy('+s.id+')" style="padding:4px 10px;border:1px solid #fca5a5;background:#fef2f2;color:#dc2626;border-radius:5px;font-size:11px;cursor:pointer">Delete</button>'
@@ -13282,7 +13282,7 @@ document.querySelectorAll('.ds-search-field').forEach(function(wrap) {
           var cb = document.createElement('input');
           cb.type = 'checkbox';
           cb.checked = !!p.value;
-          cb.style.cssText = 'accent-color:#006461;width:15px;height:15px;cursor:pointer';
+          cb.className = 'ds-checkbox';
           cb.addEventListener('change', function() {
             p.node.setDataValue('enabled', cb.checked);
             _markConfigDirty();
