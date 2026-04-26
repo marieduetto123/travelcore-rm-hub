@@ -2172,54 +2172,7 @@
       <div style="padding:16px 0;border-bottom:1px solid var(--border)">
         <div style="font-size:16px;font-weight:700;color:var(--text-primary);margin-bottom:4px">Stop Rules</div>
         <div style="font-size:14px;color:var(--text-muted);margin-bottom:14px">Define conditions that trigger stop sale alerts or actions per room type</div>
-        <table style="width:100%;border-collapse:collapse;font-size:13px">
-          <thead>
-            <tr style="border-bottom:2px solid var(--border)">
-              <th style="text-align:left;padding:8px 12px;font-weight:600;color:var(--text-muted)">Room Type</th>
-              <th style="text-align:left;padding:8px 12px;font-weight:600;color:var(--text-muted)">Alert Threshold</th>
-              <th style="text-align:left;padding:8px 12px;font-weight:600;color:var(--text-muted)">Action</th>
-              <th style="text-align:left;padding:8px 12px;font-weight:600;color:var(--text-muted)">Alert Frequency</th>
-              <th style="text-align:center;padding:8px 12px;font-weight:600;color:var(--text-muted)">Enabled</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr style="border-bottom:1px solid var(--border)">
-              <td style="padding:10px 12px;font-weight:600">Standard Room</td>
-              <td style="padding:10px 12px"><select class="ds-select"><option>70% sold</option><option>80% sold</option><option selected>85% sold</option><option>90% sold</option></select></td>
-              <td style="padding:10px 12px"><select class="ds-select"><option selected>Alert only</option><option>Auto stop sale</option></select></td>
-              <td style="padding:10px 12px"><select class="ds-select"><option selected>Daily</option><option>Weekly</option><option>Monthly</option><option>None</option></select></td>
-              <td style="padding:10px 12px;text-align:center"><input type="checkbox" checked></td>
-            </tr>
-            <tr style="border-bottom:1px solid var(--border)">
-              <td style="padding:10px 12px;font-weight:600">Superior Room</td>
-              <td style="padding:10px 12px"><select class="ds-select"><option selected>70% sold</option><option>80% sold</option><option>85% sold</option><option>90% sold</option></select></td>
-              <td style="padding:10px 12px"><select class="ds-select"><option selected>Alert only</option><option>Auto stop sale</option></select></td>
-              <td style="padding:10px 12px"><select class="ds-select"><option selected>Daily</option><option>Weekly</option><option>Monthly</option><option>None</option></select></td>
-              <td style="padding:10px 12px;text-align:center"><input type="checkbox" checked></td>
-            </tr>
-            <tr style="border-bottom:1px solid var(--border)">
-              <td style="padding:10px 12px;font-weight:600">Deluxe Room</td>
-              <td style="padding:10px 12px"><select class="ds-select"><option>70% sold</option><option selected>80% sold</option><option>85% sold</option><option>90% sold</option></select></td>
-              <td style="padding:10px 12px"><select class="ds-select"><option selected>Alert only</option><option>Auto stop sale</option></select></td>
-              <td style="padding:10px 12px"><select class="ds-select"><option>Daily</option><option selected>Weekly</option><option>Monthly</option><option>None</option></select></td>
-              <td style="padding:10px 12px;text-align:center"><input type="checkbox" checked></td>
-            </tr>
-            <tr style="border-bottom:1px solid var(--border)">
-              <td style="padding:10px 12px;font-weight:600">Suite</td>
-              <td style="padding:10px 12px"><select class="ds-select"><option selected>70% sold</option><option>80% sold</option><option>85% sold</option><option>90% sold</option></select></td>
-              <td style="padding:10px 12px"><select class="ds-select"><option selected>Alert only</option><option>Auto stop sale</option></select></td>
-              <td style="padding:10px 12px"><select class="ds-select"><option>Daily</option><option>Weekly</option><option>Monthly</option><option>None</option></select></td>
-              <td style="padding:10px 12px;text-align:center"><input type="checkbox"></td>
-            </tr>
-            <tr>
-              <td style="padding:10px 12px;font-weight:600">Family Room</td>
-              <td style="padding:10px 12px"><select class="ds-select"><option>70% sold</option><option>80% sold</option><option>85% sold</option><option selected>90% sold</option></select></td>
-              <td style="padding:10px 12px"><select class="ds-select"><option selected>Alert only</option><option>Auto stop sale</option></select></td>
-              <td style="padding:10px 12px"><select class="ds-select"><option>Daily</option><option selected>Weekly</option><option>Monthly</option><option>None</option></select></td>
-              <td style="padding:10px 12px;text-align:center"><input type="checkbox" checked></td>
-            </tr>
-          </tbody>
-        </table>
+        <div id="stopRulesGrid" style="width:100%"></div>
       </div>
 
       <!-- Section 2: Room-Type Stop Sale Visibility -->

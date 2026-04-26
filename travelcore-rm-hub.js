@@ -13218,6 +13218,107 @@ document.querySelectorAll('.ds-search-field').forEach(function(wrap) {
   });
 })();
 
+/* ═══ STOP RULES AG Grid ═══ */
+(function() {
+  var _srGridApi = null;
+
+  var _srRowData = [
+    { roomType: 'Standard Room', threshold: '85% sold', action: 'Alert only', frequency: 'Daily',   enabled: true  },
+    { roomType: 'Superior Room', threshold: '70% sold', action: 'Alert only', frequency: 'Daily',   enabled: true  },
+    { roomType: 'Deluxe Room',   threshold: '80% sold', action: 'Alert only', frequency: 'Weekly',  enabled: true  },
+    { roomType: 'Suite',         threshold: '70% sold', action: 'Alert only', frequency: 'None',    enabled: false },
+    { roomType: 'Family Room',   threshold: '90% sold', action: 'Alert only', frequency: 'Weekly',  enabled: true  },
+  ];
+
+  function _srInit() {
+    var el = document.getElementById('stopRulesGrid');
+    if (!el || _srGridApi) return;
+
+    var AG = _realAgGrid || agGrid;
+
+    var colDefs = [
+      {
+        field: 'roomType',
+        headerName: 'Room Type',
+        flex: 2,
+        editable: false,
+        cellStyle: { fontSize: '13px', fontWeight: '600' },
+      },
+      {
+        field: 'threshold',
+        headerName: 'Alert Threshold',
+        flex: 1,
+        editable: true,
+        cellEditor: 'agSelectCellEditor',
+        cellEditorParams: { values: ['70% sold', '80% sold', '85% sold', '90% sold'] },
+        cellStyle: { fontSize: '13px' },
+      },
+      {
+        field: 'action',
+        headerName: 'Action',
+        flex: 1,
+        editable: true,
+        cellEditor: 'agSelectCellEditor',
+        cellEditorParams: { values: ['Alert only', 'Auto stop sale'] },
+        cellStyle: { fontSize: '13px' },
+      },
+      {
+        field: 'frequency',
+        headerName: 'Alert Frequency',
+        flex: 1,
+        editable: true,
+        cellEditor: 'agSelectCellEditor',
+        cellEditorParams: { values: ['Daily', 'Weekly', 'Monthly', 'None'] },
+        cellStyle: { fontSize: '13px' },
+      },
+      {
+        field: 'enabled',
+        headerName: 'Enabled',
+        width: 96,
+        editable: false,
+        cellRenderer: function(p) {
+          var wrap = document.createElement('div');
+          wrap.style.cssText = 'display:flex;align-items:center;justify-content:center;height:100%';
+          var cb = document.createElement('input');
+          cb.type = 'checkbox';
+          cb.checked = !!p.value;
+          cb.style.cssText = 'accent-color:#006461;width:15px;height:15px;cursor:pointer';
+          cb.addEventListener('change', function() {
+            p.node.setDataValue('enabled', cb.checked);
+            _markConfigDirty();
+          });
+          wrap.appendChild(cb);
+          return wrap;
+        },
+        cellStyle: { display: 'flex', alignItems: 'center', justifyContent: 'center' },
+      },
+    ];
+
+    _srGridApi = AG.createGrid(el, {
+      theme: sharedTheme,
+      columnDefs: colDefs,
+      rowData: _srRowData,
+      rowHeight: 44,
+      headerHeight: 40,
+      domLayout: 'autoHeight',
+      singleClickEdit: true,
+      onCellValueChanged: function() { _markConfigDirty(); },
+      stopEditingWhenCellsLoseFocus: true,
+      suppressMovableColumns: true,
+      defaultColDef: { resizable: false, sortable: false },
+    });
+  }
+
+  // Expose so configPageSave can stop editing
+  window._srGridApi = function() { return _srGridApi; };
+
+  // Init when stopsales tab is clicked
+  document.addEventListener('click', function(e) {
+    var btn = e.target.closest('[data-stab]');
+    if (btn && btn.dataset.stab === 'stopsales') setTimeout(_srInit, 50);
+  });
+})();
+
 
 
 /* ═══ SEGMENTS MULTI-SELECT DROPDOWN ═══ */
@@ -14749,6 +14850,7 @@ window._configDiscard = function() {
 window.configPageSave = function() {
   // Stop any active AG Grid cell edit across all grids
   if (typeof _btGridApi !== 'undefined' && _btGridApi) _btGridApi.stopEditing();
+  if (typeof window._srGridApi === 'function' && window._srGridApi()) window._srGridApi().stopEditing();
   dsSnackbarShow('Saved successfully');
   _configSetClean();
 };

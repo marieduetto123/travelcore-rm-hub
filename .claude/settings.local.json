@@ -215,7 +215,8 @@
       "Bash(./deploy.sh \"fix board types grid: use _realAgGrid so forEachNode and applyTransaction work, modal now opens\")",
       "Bash(./deploy.sh \"modal labels: sentence case \\(remove text-transform uppercase from modal-label\\)\")",
       "Bash(./deploy.sh \"restyle stop sales & alerts and autopilot tabs to match travel distribution hubs layout\")",
-      "Bash(./deploy.sh \"monthly: lock icon hover shows stop sales; event icon only when events exist; weekly: hide calendar icon when no events\")"
+      "Bash(./deploy.sh \"monthly: lock icon hover shows stop sales; event icon only when events exist; weekly: hide calendar icon when no events\")",
+      "Bash(./deploy.sh \"stop rules: replace HTML table with AG Grid \\(select cell editors, checkbox enabled column\\)\")"
     ]
   }
 }
