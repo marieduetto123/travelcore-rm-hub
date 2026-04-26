@@ -4109,7 +4109,7 @@ function buildDailyBView(days, month, activeDay) {
     var _wbHasEvt = (typeof CAL_EVENTS !== 'undefined' && CAL_EVENTS[_wbEvtKey]);
     var _evtIcon = _wbHasEvt
           ? '<span class="wv-event-cal-icon has-events" data-event-key="' + _wbEvtKey + '" onmouseenter="calShowEventTip(event,\'' + _wbEvtKey + '\')" onmouseleave="calHideEventTip()" style="display:inline-flex;align-items:center"><span class="material-icons" style="font-size:14px;color:#c4ff45">today</span></span>'
-          : '';
+          : '<span class="wv-event-cal-icon" style="display:inline-flex;align-items:center"><span class="material-icons" style="font-size:14px;color:rgba(255,255,255,0.4)">today</span></span>';
     html += '<div class="wb-data-cell wb-hdr-cell'
           + (isAct ? ' wb-hdr-active' : '')
           + (isSel ? ' wb-hdr-selected' : '')
@@ -7239,7 +7239,7 @@ function buildWeekGrid(month, weekStart, activeDay) {
     const wvEvents = (typeof CAL_EVENTS !== 'undefined' && CAL_EVENTS[wvEventKey]) ? CAL_EVENTS[wvEventKey] : null;
     const wvEventIconHtml = wvEvents
       ? `<span class="wv-event-cal-icon has-events" data-event-key="${wvEventKey}" onmouseenter="calShowEventTip(event,'${wvEventKey}')" onmouseleave="calHideEventTip()"><span class="material-icons" style="font-size:14px;color:#c4ff45">today</span></span>`
-      : '';
+      : `<span class="wv-event-cal-icon"><span class="material-icons" style="font-size:14px;color:rgba(255,255,255,0.4)">today</span></span>`;
     const isActionNeeded = hotel >= 65 && to < 40 && !isLocked;
     let wvMetricVal = hotel;
     if (wvActiveTab === 'pickup') wvMetricVal = getPickupPct(dm, dd);
