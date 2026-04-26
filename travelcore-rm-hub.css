@@ -4675,6 +4675,13 @@ body.dark .st-edit-btn { background: var(--lime); color: #0E2124; }
 }
 .ds-btn-ghost:hover { border-color: #006461; color: #006461; }
 
+/* DS Button — danger / destructive */
+.ds-btn-danger {
+  background: transparent; color: #dc2626;
+  border: 1px solid #fca5a5;
+}
+.ds-btn-danger:hover { background: #fef2f2; border-color: #dc2626; }
+
 /* DS Chip — Blue / Filled / Enabled */
 .ds-chip {
   display: inline-flex; align-items: center; gap: 4px;
