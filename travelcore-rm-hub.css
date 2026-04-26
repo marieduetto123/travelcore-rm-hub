@@ -3257,7 +3257,7 @@ body.dark .wv-acc-title { color: #fff; }
 .modal-label {
   font-size: 13px; font-weight: 600;
   color: var(--text-secondary, #6B7280);
-  text-transform: uppercase; letter-spacing: .04em;
+  text-transform: none; letter-spacing: normal;
 }
 
 .modal-select-wrap { position: relative; }
