@@ -224,7 +224,8 @@
       "Bash(./deploy.sh \"restore weekly calendar icon: faint when no events, bright green when events exist\")",
       "Bash(./deploy.sh \"weekly: only show calendar icon when there is an event\")",
       "Bash(./deploy.sh \"add sample events across March-May so calendar icon is visible in weekly view\")",
-      "Bash(./deploy.sh \"add January events so calendar icon shows in weekly view for Jan weeks\")"
+      "Bash(./deploy.sh \"add January events so calendar icon shows in weekly view for Jan weeks\")",
+      "Bash(./deploy.sh \"hide metrics in 3-month+ calendar views, keep in 1 and 2 month only\")"
     ]
   }
 }

@@ -1654,7 +1654,7 @@ function renderCalendar() {
       const eyeSvg  = `<button class="cell-eye" aria-label="Quick view" data-month="${m.month}" data-day="${d}"><span class="material-icons" style="font-size:14px">visibility</span></button>`;
 
       // ── Build metric rows from Cell Metrics selection ──
-      const isCompact = (calDisplayView === 6 || calDisplayView === 12);
+      const isCompact = (calDisplayView >= 3);
       const metricRows = (function() {
         if (isCompact) return '';
         // Use cmBuildRows to get what user selected in Cell Metrics panel
@@ -2444,7 +2444,7 @@ window.calSetDisplayView = function(n) {
   var metricsWrap = document.getElementById('calMetricsWrap');
   var metricsBtn  = document.getElementById('calMetricsBtn');
   if (metricsWrap && metricsBtn) {
-    var isCompact = (n === 6 || n === 12);
+    var isCompact = (n >= 3);
     metricsBtn.disabled = isCompact;
     metricsWrap.classList.toggle('cal-metrics-disabled', isCompact);
     // Close dropdown if open
