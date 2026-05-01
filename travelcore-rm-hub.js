@@ -4537,13 +4537,14 @@ function buildDailyBView(days, month, activeDay) {
           case 'biz_other':  v1 = d.otherMix+'%';                                           break;
         }
         } // end rtSub else
-        // Forecast comparison for sub-rows
+        // Compare chip for sub-rows (Fcst / LY / STLY — mirrors Forecast behaviour)
         var fcstChip = '';
-        if (wvCompare === 'fcst' && v1 && row.id.indexOf('_stly') < 0) {
-          // Generate forecast value from actual using a day/row-seeded multiplier
+        if (wvCompare !== 'none' && v1 && row.id.indexOf('_stly') < 0) {
           var _fSeed = Math.abs((d.dm * 7 + d.dd * 13 + (row.rtIdx||0) * 5 + row.id.charCodeAt(row.id.length-1)) % 20);
-          var _fMul = 0.92 + _fSeed * 0.008; // 0.92–1.08 range
-          // Extract numeric from v1
+          var _fMul, _fLbl;
+          if (wvCompare === 'fcst')     { _fMul = 0.92 + _fSeed * 0.008; _fLbl = 'Fc'; }
+          else if (wvCompare === 'ly')  { _fMul = 0.89 + _fSeed * 0.004; _fLbl = 'LY'; }
+          else                          { _fMul = 0.84 + _fSeed * 0.004; _fLbl = 'STLY'; }
           var _fNum = parseFloat(String(v1).replace(/[^0-9.\-]/g, ''));
           if (!isNaN(_fNum) && _fNum !== 0) {
             var _fVal = Math.round(_fNum * _fMul);
@@ -4552,7 +4553,7 @@ function buildDailyBView(days, month, activeDay) {
             var _fIco = _fDiff > 0 ? 'trending_up' : _fDiff < 0 ? 'trending_down' : 'remove';
             fcstChip = '<span style="font-size:10px;color:'+_fClr+';margin-left:4px;display:inline-flex;align-items:center;gap:1px;opacity:0.85">'
               + '<span class="material-icons" style="font-size:11px">'+_fIco+'</span>'
-              + 'Fc:'+_fVal+'</span>';
+              + _fLbl+':'+_fVal+'</span>';
           }
         }
         cellContent = '<div class="wb-sub-vals' + remCls + '">'
@@ -4693,6 +4694,22 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
       +(v2?'<span style="font-size:14px;color:'+c2+'">'+v2+'</span>':'')
       +'</div>';
   }
+  // Compare chip for TO sub-rows in board view (LY / STLY / Fcst)
+  function _wbCmpChip(numStr, seedN, d) {
+    if (wvCompare === 'none') return '';
+    var _s = Math.abs((d.dm * 7 + d.dd * 13 + seedN) % 20);
+    var _m, _l;
+    if (wvCompare === 'fcst')    { _m = 0.92 + _s * 0.008; _l = 'Fc'; }
+    else if (wvCompare === 'ly') { _m = 0.89 + _s * 0.004; _l = 'LY'; }
+    else                         { _m = 0.84 + _s * 0.004; _l = 'STLY'; }
+    var _n = parseFloat(String(numStr).replace(/[^0-9.\-]/g, ''));
+    if (isNaN(_n) || _n === 0) return '';
+    var _v = Math.round(_n * _m), _d = _n - _v;
+    var _c = _d > 0 ? '#059669' : _d < 0 ? '#dc2626' : '#6b7280';
+    var _i = _d > 0 ? 'trending_up' : _d < 0 ? 'trending_down' : 'remove';
+    return '<span style="font-size:10px;color:'+_c+';margin-left:3px;display:inline-flex;align-items:center;gap:1px;opacity:0.85">'
+      +'<span class="material-icons" style="font-size:11px">'+_i+'</span>'+_l+':'+_v+'</span>';
+  }
 
   // ── Row builder ───────────────────────────────────────────────────────────
   _dbAllRows = []; _dbGrpRenderrs = [];
@@ -4733,7 +4750,7 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
   grp('Daily Metrics', C1);
   if (wvMetricState.capacity) {
     sect('Occupancy', C1, C1, function(d){ var cv=wvCompare==='stly'?d.sdlyH:wvCompare==='ly'?d.lyH:wvCompare==='fcst'?d.fcstH:null; var cs=cmpSfx(cv!=null?cv+'%':'',d.hotel,cv); return sCell(d.hotel+'%'+cs, sBar([{p:d.to,c:C1},{p:d.otherPct,c:C2}])); });
-    sub('Travel Distribution Hubs', C1, false, function(d){ return rCell(d.toRn+' rms',d.to+'%'); });
+    sub('Travel Distribution Hubs', C1, false, function(d){ return rCell(d.toRn+' rms', d.to+'%'+_wbCmpChip(d.to, 1, d)); });
     sub('Other Segments', C2, false, function(d){ return rCell(d.otherRms+' rms',d.otherPct+'%'); });
     sub('STLY', CSTLY, false, function(d){ return rCell(d.sdlyRn+' rms',d.sdlyH+'%'); });
     sub('Total Hotel Remaining', CREM, true, function(d){ return rCell(d.freeRms+' rms',Math.max(0,100-d.hotel)+'%',true); });
@@ -4745,13 +4762,13 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
   }
   if (wvMetricState.adr) {
     sect('ADR', C1, C1, function(d){ var cv=wvCompare==='stly'?d.sdlyA:wvCompare==='ly'?d.lyA:wvCompare==='fcst'?d.fcstA:null; var cs=cmpSfx(cv!=null?'$'+cv:'',d.toAdr,cv); return sCell('$'+d.toAdr+cs, bar(d.adrBar,C1)); });
-    sub('TO ADR',    C1,    false, function(d){ return rCell('$'+d.toAdr); });
+    sub('TO ADR',    C1,    false, function(d){ return rCell('$'+d.toAdr + _wbCmpChip(d.toAdr, 2, d)); });
     sub('Hotel ADR', C2,   false, function(d){ return rCell('$'+d.adr); });
     sub('STLY',     CSTLY, false, function(d){ return rCell('$'+d.sdlyA); });
   }
   if (wvMetricState.revenue) {
     sect('Revenue', C1, C1, function(d){ var cv=wvCompare==='stly'?d.sdlyR:wvCompare==='ly'?d.lyR:wvCompare==='fcst'?d.fcstR:null; var cs=cmpSfx(cv!=null?d.fR(cv):'',d.toRev,cv); return sCell(d.fR(d.toRev)+cs, bar(d.revBar,C1)); });
-    sub('TO Revenue',     C1,    false, function(d){ return rCell(d.fR(d.toRev)); });
+    sub('TO Revenue',     C1,    false, function(d){ return rCell(d.fR(d.toRev) + _wbCmpChip(d.toRev, 3, d)); });
     sub('Hotel Revenue', C2,    false, function(d){ return rCell(d.fR(d.hnRev)); });
     sub('STLY',          CSTLY, false, function(d){ return rCell(d.fR(d.sdlyR)); });
   }
@@ -4765,7 +4782,7 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
     grp('More Metrics', C1);
     if (wvMetricState.dm_rnSold) {
       sect('RN Sold', C1, C1, function(d){ var cv=wvCompare==='stly'?d.sdlyRn:wvCompare==='ly'?d.lyRn:wvCompare==='fcst'?d.fcstRn:null; var cs=cmpSfx(cv!=null?String(cv):'',d.toRn,cv); return sCell(d.toRn+cs, bar(Math.round(d.toRn/WV_CAP*100),C1)+'<div style="margin-top:2px">'+bar(Math.round(d.hnRn/WV_CAP*100),C2)+'</div>'); });
-      sub('TO RN',     C1,    false, function(d){ return sCell(d.toRn+' rms', bar(Math.round(d.toRn/WV_CAP*100),C1)); });
+      sub('TO RN',     C1,    false, function(d){ return sCell(d.toRn+' rms'+_wbCmpChip(d.toRn, 4, d), bar(Math.round(d.toRn/WV_CAP*100),C1)); });
       sub('Hotel RN', C2,    false, function(d){ return sCell(d.hnRn+' rms', bar(Math.round(d.hnRn/WV_CAP*100),C2)); });
       sub('STLY',     CSTLY, false, function(d){ return sCell(d.sdlyRn+' rms', bar(Math.round(d.sdlyRn/WV_CAP*100),CSTLY)); });
     }

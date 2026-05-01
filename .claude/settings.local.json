@@ -225,7 +225,8 @@
       "Bash(./deploy.sh \"weekly: only show calendar icon when there is an event\")",
       "Bash(./deploy.sh \"add sample events across March-May so calendar icon is visible in weekly view\")",
       "Bash(./deploy.sh \"add January events so calendar icon shows in weekly view for Jan weeks\")",
-      "Bash(./deploy.sh \"hide metrics in 3-month+ calendar views, keep in 1 and 2 month only\")"
+      "Bash(./deploy.sh \"hide metrics in 3-month+ calendar views, keep in 1 and 2 month only\")",
+      "Bash(./deploy.sh \"apply LY/STLY compare chip to Operator segment sub-rows in both weekly views\")"
     ]
   }
 }
