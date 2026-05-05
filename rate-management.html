@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rate Management — Duetto</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@33.3.0/styles/ag-grid.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@33.3.0/styles/ag-theme-quartz.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@33.3.0/dist/ag-grid-community.min.js"></script>
+  <link rel="stylesheet" href="travelcore-rm-hub.css?v=83">
+
+  <style>
+    /* ── Rate Management page-specific overrides ── */
+    .rm-page { display: flex; flex-direction: column; height: calc(100vh - 96px); overflow: hidden; }
+    .rm-inner { display: flex; flex-direction: column; flex: 1; overflow: hidden; padding: 24px 28px 0; gap: 16px; }
+
+    /* KPI row */
+    .rm-kpi-row { display: flex; gap: 14px; flex-shrink: 0; }
+    .rm-kpi-card {
+      flex: 1; background: var(--surface-1); border: 1px solid var(--border);
+      border-radius: 10px; padding: 16px 20px; display: flex; flex-direction: column; gap: 4px;
+    }
+    .rm-kpi-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: .6px; }
+    .rm-kpi-value { font-size: 26px; font-weight: 700; color: var(--text-primary); line-height: 1.1; }
+    .rm-kpi-delta { font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 3px; }
+    .rm-kpi-delta.up   { color: #0d8a56; }
+    .rm-kpi-delta.down { color: #c0392b; }
+    .rm-kpi-delta .material-icons { font-size: 14px; }
+    .rm-kpi-sub { font-size: 11px; color: var(--text-muted); }
+
+    /* Controls bar */
+    .rm-controls {
+      display: flex; align-items: center; gap: 10px; flex-shrink: 0;
+      background: var(--surface-1); border: 1px solid var(--border);
+      border-radius: 10px; padding: 10px 16px;
+    }
+    .rm-ctrl-label { font-size: 12px; font-weight: 700; color: var(--text-muted); margin-right: 4px; }
+    .rm-date-input {
+      display: flex; align-items: center; gap: 6px;
+      background: var(--bg); border: 1px solid var(--border); border-radius: 6px;
+      padding: 6px 12px; font-size: 13px; color: var(--text-primary); cursor: pointer;
+    }
+    .rm-date-input .material-icons { font-size: 16px; color: var(--text-muted); }
+    .rm-filter-btn {
+      display: flex; align-items: center; gap: 4px;
+      background: var(--bg); border: 1px solid var(--border); border-radius: 6px;
+      padding: 6px 12px; font-size: 13px; color: var(--text-primary); cursor: pointer;
+      white-space: nowrap;
+    }
+    .rm-filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .rm-filter-btn .material-icons { font-size: 15px; }
+    .rm-ctrl-sep { width: 1px; height: 24px; background: var(--border); margin: 0 4px; }
+    .rm-view-toggle { display: flex; gap: 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; margin-left: auto; }
+    .rm-view-btn {
+      display: flex; align-items: center; gap: 4px;
+      padding: 6px 14px; font-size: 12px; font-weight: 700; cursor: pointer;
+      background: var(--bg); color: var(--text-muted); border: none; border-right: 1px solid var(--border);
+    }
+    .rm-view-btn:last-child { border-right: none; }
+    .rm-view-btn.active { background: var(--accent); color: #fff; }
+    .rm-view-btn .material-icons { font-size: 15px; }
+
+    /* Content area */
+    .rm-content { display: flex; gap: 16px; flex: 1; overflow: hidden; padding-bottom: 24px; }
+    .rm-grid-wrap { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: var(--surface-1); border: 1px solid var(--border); border-radius: 10px; }
+    .rm-grid-header { padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 13px; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; justify-content: space-between; }
+    .rm-grid-header-right { display: flex; align-items: center; gap: 8px; }
+    .rm-legend { display: flex; align-items: center; gap: 12px; }
+    .rm-legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text-muted); }
+    .rm-legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+    #rateGrid { flex: 1; width: 100%; }
+
+    /* AG Grid cell overrides */
+    .rm-cell-type { font-weight: 700; font-size: 12px; color: var(--text-primary); }
+    .rm-rate-cell { text-align: center; padding: 0 !important; }
+    .rm-rate-inner {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      height: 100%; padding: 6px 4px; gap: 1px;
+    }
+    .rm-rate-price { font-size: 14px; font-weight: 700; color: var(--text-primary); }
+    .rm-rate-occ { font-size: 10px; color: var(--text-muted); }
+    .rm-rate-bar { width: 80%; height: 3px; border-radius: 2px; margin-top: 2px; }
+    .cell-high .rm-rate-bar   { background: #0d8a56; }
+    .cell-med  .rm-rate-bar   { background: #f5a623; }
+    .cell-low  .rm-rate-bar   { background: #c0392b; }
+    .cell-high .rm-rate-price { color: #0d8a56; }
+    .cell-low  .rm-rate-price { color: #c0392b; }
+    .rm-cell-action { display: flex; justify-content: center; }
+    .rm-edit-btn { padding: 3px 8px; font-size: 11px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg); color: var(--text-muted); cursor: pointer; }
+    .rm-edit-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* Strategy panel */
+    .rm-strategy { width: 300px; flex-shrink: 0; display: flex; flex-direction: column; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); }
+    .rm-strategy-header { background: #0E2124; color: #fff; padding: 14px 16px; }
+    .rm-strategy-title { font-size: 14px; font-weight: 700; }
+    .rm-strategy-sub   { font-size: 11px; color: rgba(255,255,255,.55); margin-top: 2px; }
+    .rm-strategy-body  { flex: 1; overflow-y: auto; background: var(--surface-1); padding: 16px; display: flex; flex-direction: column; gap: 20px; }
+
+    /* Recommendations */
+    .rm-rec-section h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; color: var(--text-muted); margin-bottom: 10px; }
+    .rm-rec-item { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; }
+    .rm-rec-name { font-size: 12px; font-weight: 700; color: var(--text-primary); }
+    .rm-rec-row { display: flex; align-items: center; gap: 6px; margin-top: 4px; }
+    .rm-rec-from { font-size: 12px; color: var(--text-muted); text-decoration: line-through; }
+    .rm-rec-arrow { font-size: 14px; }
+    .rm-rec-to   { font-size: 14px; font-weight: 700; }
+    .rm-rec-badge { margin-left: auto; font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 20px; }
+    .rm-rec-badge.up   { background: #e8f8f0; color: #0d8a56; }
+    .rm-rec-badge.down { background: #fde8e8; color: #c0392b; }
+    .rm-rec-to.up   { color: #0d8a56; }
+    .rm-rec-to.down { color: #c0392b; }
+
+    /* Strategy selector */
+    .rm-strat-section h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; color: var(--text-muted); margin-bottom: 10px; }
+    .rm-radio-list { display: flex; flex-direction: column; gap: 8px; }
+    .rm-radio-item { display: flex; align-items: flex-start; gap: 10px; cursor: pointer; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); }
+    .rm-radio-item.selected { border-color: var(--accent); background: #f0f8f7; }
+    .rm-radio-item input { margin-top: 2px; accent-color: var(--accent); }
+    .rm-radio-label { font-size: 12px; font-weight: 700; color: var(--text-primary); }
+    .rm-radio-desc  { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+
+    /* Strategy panel actions */
+    .rm-strat-actions { display: flex; flex-direction: column; gap: 8px; padding: 12px 16px; background: var(--surface-1); border-top: 1px solid var(--border); }
+    .rm-btn-primary {
+      width: 100%; padding: 10px; background: #0E2124; color: #fff;
+      border: none; border-radius: 7px; font-size: 13px; font-weight: 700; cursor: pointer;
+    }
+    .rm-btn-primary:hover { background: var(--accent); }
+    .rm-btn-secondary {
+      width: 100%; padding: 9px; background: var(--bg); color: var(--text-primary);
+      border: 1px solid var(--border); border-radius: 7px; font-size: 13px; font-weight: 700; cursor: pointer;
+    }
+    .rm-btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* Page header row (reuse but override for this page) */
+    .rm-page-header { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .rm-page-header h1 { font-size: 22px; font-weight: 900; color: var(--text-primary); margin: 0; flex: 1; }
+    .rm-export-btn {
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 16px; border: 1.5px solid var(--accent); color: var(--accent);
+      background: transparent; border-radius: 7px; font-size: 13px; font-weight: 700; cursor: pointer;
+    }
+    .rm-export-btn:hover { background: #f0f8f7; }
+    .rm-update-btn {
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 16px; background: #0E2124; color: #fff;
+      border: none; border-radius: 7px; font-size: 13px; font-weight: 700; cursor: pointer;
+    }
+    .rm-update-btn:hover { background: var(--accent); }
+
+    /* Dark mode adjustments */
+    body.dark .rm-kpi-card,
+    body.dark .rm-controls,
+    body.dark .rm-grid-wrap,
+    body.dark .rm-strategy-body,
+    body.dark .rm-strat-actions { background: #1a2832; border-color: #2d3f4a; }
+    body.dark .rm-rate-inner { background: transparent; }
+    body.dark .rm-radio-item { background: #152028; border-color: #2d3f4a; }
+    body.dark .rm-radio-item.selected { background: #0d2825; border-color: var(--accent); }
+    body.dark .rm-rec-item { background: #152028; border-color: #2d3f4a; }
+    body.dark .rm-date-input,
+    body.dark .rm-filter-btn,
+    body.dark .rm-view-btn { background: #152028; border-color: #2d3f4a; }
+    body.dark .rm-view-btn.active { background: var(--accent); border-color: var(--accent); }
+    body.dark .rm-edit-btn { background: #152028; border-color: #2d3f4a; }
+    body.dark .cell-high .rm-rate-price { color: #2ecc71; }
+    body.dark .cell-low  .rm-rate-price { color: #e74c3c; }
+    body.dark .rm-rec-badge.up   { background: #0d2825; }
+    body.dark .rm-rec-badge.down { background: #2d1515; }
+    body.dark .ag-theme-quartz { --ag-background-color: #1a2832; --ag-header-background-color: #152028; --ag-odd-row-background-color: #1a2832; --ag-row-hover-color: #1e303c; --ag-border-color: #2d3f4a; --ag-header-foreground-color: #c9d4db; --ag-foreground-color: #c9d4db; }
+  </style>
+</head>
+<body>
+
+<!-- ═══ TOP APP BAR ═══ -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<header class="topbar">
+  <div class="topbar-left">
+    <button class="topbar-hamburger" id="hamburger" aria-label="Open menu">
+      <span class="material-icons" style="font-size:24px">menu</span>
+    </button>
+    <div class="topbar-logo">
+      <img src="data:image/png;base64,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" alt="Duetto" class="logo-img" style="height:28px;width:auto;display:block" />
+    </div>
+    <nav class="topbar-tabs">
+      <a class="tab" href="/">Home</a>
+      <a class="tab" href="#">Advance</a>
+      <a class="tab active" href="#">Pricing &amp; Strategy
+        <span class="material-icons" style="font-size:16px">expand_more</span>
+      </a>
+      <a class="tab" href="#">Forecasts &amp; Budgets
+        <span class="material-icons" style="font-size:16px">expand_more</span>
+      </a>
+      <a class="tab" href="#">Reports
+        <span class="material-icons" style="font-size:16px">expand_more</span>
+      </a>
+      <a class="tab" href="#">Groups
+        <span class="material-icons" style="font-size:16px">expand_more</span>
+      </a>
+      <a class="tab" href="#">Travel Distribution Hub
+        <span class="material-icons" style="font-size:16px">expand_more</span>
+      </a>
+    </nav>
+  </div>
+  <div class="topbar-icons">
+    <button class="top-icon-btn theme-toggle" id="themeToggle" title="Toggle theme">
+      <span class="material-icons icon-moon" style="font-size:20px">dark_mode</span>
+      <span class="material-icons icon-sun" style="font-size:20px">light_mode</span>
+    </button>
+    <div class="notif-wrap">
+      <button class="top-icon-btn" title="Notifications">
+        <span class="material-icons" style="font-size:20px">notifications</span>
+      </button>
+      <span class="notif-badge">3</span>
+    </div>
+    <button class="top-icon-btn" title="Help">
+      <span class="material-icons" style="font-size:20px">help</span>
+    </button>
+    <button class="top-icon-btn" title="Settings">
+      <span class="material-icons" style="font-size:20px">settings</span>
+    </button>
+    <div class="topbar-avatar">M</div>
+  </div>
+</header>
+
+<!-- ═══ BREADCRUMB BAR ═══ -->
+<div class="breadcrumb-bar">
+  <div class="breadcrumb">
+    <span class="bc-home">Home</span>
+    <span class="bc-sep"><span class="material-icons" style="font-size:12px;color:#585858">chevron_right</span></span>
+    <span class="bc-item">Pricing &amp; Strategy</span>
+    <span class="bc-sep"><span class="material-icons" style="font-size:12px;color:#585858">chevron_right</span></span>
+    <span class="bc-current">Rate Management</span>
+  </div>
+  <div class="property-picker">
+    <span class="material-icons" style="font-size:20px;color:#19393E">home</span>
+    <span class="pp-label">Hotel Sevilla</span>
+    <span class="material-icons pp-arrow" style="font-size:16px;color:#19393E">expand_more</span>
+  </div>
+</div>
+
+<!-- ═══ RATE MANAGEMENT PAGE ═══ -->
+<div class="rm-page">
+  <div class="rm-inner">
+
+    <!-- Page header -->
+    <div class="rm-page-header">
+      <h1>Rate Management</h1>
+      <button class="rm-export-btn">
+        <span class="material-icons" style="font-size:16px">file_download</span>
+        Export Rates
+      </button>
+      <button class="rm-update-btn">
+        <span class="material-icons" style="font-size:16px">sync</span>
+        Update Rates
+      </button>
+    </div>
+
+    <!-- KPI Cards -->
+    <div class="rm-kpi-row">
+      <div class="rm-kpi-card">
+        <div class="rm-kpi-label">Occupancy</div>
+        <div class="rm-kpi-value">78.4%</div>
+        <div class="rm-kpi-delta up"><span class="material-icons">arrow_upward</span>+3.2% vs LY</div>
+        <div class="rm-kpi-sub">Hotel-wide MTD</div>
+      </div>
+      <div class="rm-kpi-card">
+        <div class="rm-kpi-label">ADR</div>
+        <div class="rm-kpi-value">$214.50</div>
+        <div class="rm-kpi-delta up"><span class="material-icons">arrow_upward</span>+5.8% vs LY</div>
+        <div class="rm-kpi-sub">Average Daily Rate</div>
+      </div>
+      <div class="rm-kpi-card">
+        <div class="rm-kpi-label">RevPAR</div>
+        <div class="rm-kpi-value">$168.27</div>
+        <div class="rm-kpi-delta up"><span class="material-icons">arrow_upward</span>+9.4% vs LY</div>
+        <div class="rm-kpi-sub">Revenue Per Available Room</div>
+      </div>
+      <div class="rm-kpi-card">
+        <div class="rm-kpi-label">Total Revenue</div>
+        <div class="rm-kpi-value">$1.24M</div>
+        <div class="rm-kpi-delta down"><span class="material-icons">arrow_downward</span>-1.1% vs LY</div>
+        <div class="rm-kpi-sub">All segments MTD</div>
+      </div>
+    </div>
+
+    <!-- Controls bar -->
+    <div class="rm-controls">
+      <span class="rm-ctrl-label">Date Range</span>
+      <div class="rm-date-input" id="rmDateDisplay">
+        <span class="material-icons">calendar_today</span>
+        <span id="rmDateLabel">May 1 – May 31, 2026</span>
+      </div>
+
+      <div class="rm-ctrl-sep"></div>
+
+      <button class="rm-filter-btn" id="roomTypeFilter">
+        Room Type <span class="material-icons">expand_more</span>
+      </button>
+      <button class="rm-filter-btn" id="mktSegFilter">
+        Market Segment <span class="material-icons">expand_more</span>
+      </button>
+      <button class="rm-filter-btn" id="compSetFilter">
+        Competitor Set <span class="material-icons">expand_more</span>
+      </button>
+
+      <div class="rm-view-toggle">
+        <button class="rm-view-btn active" data-view="calendar">
+          <span class="material-icons">calendar_view_week</span> Calendar
+        </button>
+        <button class="rm-view-btn" data-view="list">
+          <span class="material-icons">view_list</span> List
+        </button>
+        <button class="rm-view-btn" data-view="strategy">
+          <span class="material-icons">insights</span> Strategy
+        </button>
+      </div>
+    </div>
+
+    <!-- Content area: Grid + Strategy Panel -->
+    <div class="rm-content">
+
+      <!-- Rate Grid -->
+      <div class="rm-grid-wrap">
+        <div class="rm-grid-header">
+          <span>Rate Calendar — Week of May 5–11, 2026</span>
+          <div class="rm-grid-header-right">
+            <div class="rm-legend">
+              <div class="rm-legend-item"><div class="rm-legend-dot" style="background:#0d8a56"></div>High Demand</div>
+              <div class="rm-legend-item"><div class="rm-legend-dot" style="background:#f5a623"></div>Moderate</div>
+              <div class="rm-legend-item"><div class="rm-legend-dot" style="background:#c0392b"></div>Low Demand</div>
+            </div>
+          </div>
+        </div>
+        <div id="rateGrid" class="ag-theme-quartz"></div>
+      </div>
+
+      <!-- Strategy Panel -->
+      <div class="rm-strategy">
+        <div class="rm-strategy-header">
+          <div class="rm-strategy-title">Strategy Advisor</div>
+          <div class="rm-strategy-sub">AI-powered recommendations for Hotel Sevilla</div>
+        </div>
+        <div class="rm-strategy-body">
+
+          <!-- Recommendations -->
+          <div class="rm-rec-section">
+            <h4>Rate Recommendations</h4>
+            <div class="rm-rec-item">
+              <div class="rm-rec-name">Standard King</div>
+              <div class="rm-rec-row">
+                <span class="rm-rec-from">$149</span>
+                <span class="rm-rec-arrow">→</span>
+                <span class="rm-rec-to up">$162</span>
+                <span class="rm-rec-badge up">+8.7%</span>
+              </div>
+            </div>
+            <div class="rm-rec-item">
+              <div class="rm-rec-name">Deluxe Ocean View</div>
+              <div class="rm-rec-row">
+                <span class="rm-rec-from">$199</span>
+                <span class="rm-rec-arrow">→</span>
+                <span class="rm-rec-to down">$185</span>
+                <span class="rm-rec-badge down">-7.0%</span>
+              </div>
+            </div>
+            <div class="rm-rec-item">
+              <div class="rm-rec-name">Junior Suite</div>
+              <div class="rm-rec-row">
+                <span class="rm-rec-from">$289</span>
+                <span class="rm-rec-arrow">→</span>
+                <span class="rm-rec-to up">$310</span>
+                <span class="rm-rec-badge up">+7.3%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pricing Strategy -->
+          <div class="rm-strat-section">
+            <h4>Pricing Strategy</h4>
+            <div class="rm-radio-list" id="strategyList">
+              <label class="rm-radio-item selected" data-strategy="yield">
+                <input type="radio" name="strategy" value="yield" checked>
+                <div>
+                  <div class="rm-radio-label">Yield Maximization</div>
+                  <div class="rm-radio-desc">Optimize revenue by adjusting rates to demand signals in real-time.</div>
+                </div>
+              </label>
+              <label class="rm-radio-item" data-strategy="occ">
+                <input type="radio" name="strategy" value="occ">
+                <div>
+                  <div class="rm-radio-label">Occupancy Drive</div>
+                  <div class="rm-radio-desc">Prioritize high occupancy to fill rooms during low-demand periods.</div>
+                </div>
+              </label>
+              <label class="rm-radio-item" data-strategy="bar">
+                <input type="radio" name="strategy" value="bar">
+                <div>
+                  <div class="rm-radio-label">BAR-Based</div>
+                  <div class="rm-radio-desc">Keep rates anchored to Best Available Rate with dynamic modifiers.</div>
+                </div>
+              </label>
+              <label class="rm-radio-item" data-strategy="custom">
+                <input type="radio" name="strategy" value="custom">
+                <div>
+                  <div class="rm-radio-label">Custom Rules</div>
+                  <div class="rm-radio-desc">Apply your own rule set for rate derivation and overrides.</div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+        </div>
+        <div class="rm-strat-actions">
+          <button class="rm-btn-primary" id="applyStrategy">Apply Strategy</button>
+          <button class="rm-btn-secondary" id="resetDefault">Reset to Default</button>
+        </div>
+      </div>
+
+    </div><!-- /.rm-content -->
+  </div><!-- /.rm-inner -->
+</div><!-- /.rm-page -->
+
+<!-- Toast notification -->
+<div id="rmToast" style="display:none;position:fixed;bottom:24px;right:24px;background:#0E2124;color:#fff;padding:12px 20px;border-radius:8px;font-size:13px;font-weight:700;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,.25);display:flex;align-items:center;gap:8px;">
+  <span class="material-icons" style="font-size:18px;color:#C4FF45">check_circle</span>
+  <span id="rmToastMsg">Strategy applied successfully.</span>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ── Dark mode ── */
+  const themeBtn = document.getElementById('themeToggle');
+  const stored = localStorage.getItem('rmTheme');
+  if (stored === 'dark') document.body.classList.add('dark');
+  themeBtn && themeBtn.addEventListener('click', () => {
+    document.body.classList.toggle('dark');
+    localStorage.setItem('rmTheme', document.body.classList.contains('dark') ? 'dark' : 'light');
+  });
+
+  /* ── Rate data ── */
+  const days = [
+    { field: 'tue_55',  header: 'Tue 5/5',  occ: 92, tier: 'high'  },
+    { field: 'wed_56',  header: 'Wed 5/6',  occ: 68, tier: 'med'   },
+    { field: 'thu_57',  header: 'Thu 5/7',  occ: 45, tier: 'low'   },
+    { field: 'fri_58',  header: 'Fri 5/8',  occ: 88, tier: 'high'  },
+    { field: 'sat_59',  header: 'Sat 5/9',  occ: 95, tier: 'high'  },
+    { field: 'sun_510', header: 'Sun 5/10', occ: 57, tier: 'low'   },
+  ];
+
+  const roomTypes = [
+    { roomType: 'Standard King',      base: 149 },
+    { roomType: 'Standard Double',    base: 139 },
+    { roomType: 'Deluxe Ocean View',  base: 199 },
+    { roomType: 'Junior Suite',       base: 289 },
+    { roomType: 'Executive Suite',    base: 379 },
+    { roomType: 'Presidential Suite', base: 649 },
+  ];
+
+  const multipliers = { high: 1.15, med: 1.0, low: 0.87 };
+
+  const rowData = roomTypes.map(rt => {
+    const row = { roomType: rt.roomType };
+    days.forEach(d => {
+      row[d.field] = Math.round(rt.base * multipliers[d.tier]);
+    });
+    return row;
+  });
+
+  /* ── Renderers ── */
+  function rateCellRenderer(params, tier) {
+    const price = params.value != null ? '$' + params.value : '—';
+    const occ   = params.colDef._occ || 0;
+    return `<div class="rm-rate-inner cell-${tier}">
+      <div class="rm-rate-price">${price}</div>
+      <div class="rm-rate-occ">${occ}% occ</div>
+      <div class="rm-rate-bar"></div>
+    </div>`;
+  }
+
+  /* ── Column defs ── */
+  const colDefs = [
+    {
+      field: 'roomType',
+      headerName: 'Room Type',
+      pinned: 'left',
+      width: 180,
+      cellClass: 'rm-cell-type',
+      suppressMovable: true,
+    },
+    ...days.map(d => ({
+      field: d.field,
+      headerName: d.header,
+      flex: 1,
+      minWidth: 110,
+      cellClass: `rm-rate-cell cell-${d.tier}`,
+      cellRenderer: p => rateCellRenderer(p, d.tier),
+      _occ: d.occ,
+      headerComponentParams: {
+        template: `<div style="display:flex;flex-direction:column;align-items:center;padding:4px 0;line-height:1.2">
+          <span style="font-size:12px;font-weight:700">${d.header}</span>
+          <span style="font-size:10px;color:var(--text-muted)">${d.occ}% occ</span>
+        </div>`,
+      },
+    })),
+    {
+      headerName: '',
+      field: '_action',
+      width: 72,
+      pinned: 'right',
+      sortable: false,
+      filter: false,
+      cellRenderer: () => `<div class="rm-cell-action"><button class="rm-edit-btn">Edit</button></div>`,
+      suppressMovable: true,
+    },
+  ];
+
+  /* ── Grid ── */
+  const gridDiv = document.getElementById('rateGrid');
+  const gridApi = agGrid.createGrid(gridDiv, {
+    columnDefs: colDefs,
+    rowData: rowData,
+    defaultColDef: {
+      sortable: true,
+      resizable: true,
+    },
+    rowHeight: 64,
+    headerHeight: 52,
+    suppressCellFocus: true,
+    onGridReady: p => p.api.sizeColumnsToFit(),
+    onGridSizeChanged: p => p.api.sizeColumnsToFit(),
+  });
+
+  /* ── View toggle ── */
+  document.querySelectorAll('.rm-view-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.rm-view-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+
+  /* ── Strategy radio ── */
+  document.querySelectorAll('.rm-radio-item input').forEach(radio => {
+    radio.addEventListener('change', () => {
+      document.querySelectorAll('.rm-radio-item').forEach(el => el.classList.remove('selected'));
+      radio.closest('.rm-radio-item').classList.add('selected');
+    });
+  });
+
+  /* ── Toast helper ── */
+  function showToast(msg) {
+    const t = document.getElementById('rmToast');
+    document.getElementById('rmToastMsg').textContent = msg;
+    t.style.display = 'flex';
+    setTimeout(() => { t.style.display = 'none'; }, 3000);
+  }
+
+  /* ── Apply / Reset buttons ── */
+  document.getElementById('applyStrategy').addEventListener('click', () => {
+    const sel = document.querySelector('.rm-radio-item.selected .rm-radio-label');
+    showToast((sel ? sel.textContent : 'Strategy') + ' applied successfully.');
+  });
+
+  document.getElementById('resetDefault').addEventListener('click', () => {
+    document.querySelectorAll('.rm-radio-item').forEach(el => el.classList.remove('selected'));
+    const first = document.querySelector('.rm-radio-item');
+    if (first) {
+      first.classList.add('selected');
+      first.querySelector('input').checked = true;
+    }
+    showToast('Reset to default strategy.');
+  });
+
+  /* ── Filter buttons (stub) ── */
+  ['roomTypeFilter','mktSegFilter','compSetFilter'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('click', () => {
+      el.style.borderColor = 'var(--accent)';
+      el.style.color = 'var(--accent)';
+      setTimeout(() => { el.style.borderColor = ''; el.style.color = ''; }, 1200);
+    });
+  });
+
+  /* ── Export / Update buttons (stub) ── */
+  document.querySelector('.rm-export-btn').addEventListener('click', () => showToast('Rates exported to CSV.'));
+  document.querySelector('.rm-update-btn').addEventListener('click', () => {
+    showToast('Rate update submitted — changes live in ~30 seconds.');
+  });
+
+})();
+</script>
+</body>
+</html>
