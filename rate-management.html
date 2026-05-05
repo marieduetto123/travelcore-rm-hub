@@ -16,7 +16,7 @@
 
   <style>
     /* ── Rate Management page-specific overrides ── */
-    .rm-page { display: flex; flex-direction: column; height: calc(100vh - 96px); overflow: hidden; }
+    .rm-page { display: flex; flex-direction: column; height: calc(100vh - 72px); overflow: hidden; }
     .rm-inner { display: flex; flex-direction: column; flex: 1; overflow: hidden; padding: 24px 28px 0; gap: 16px; }
 
     /* KPI row */
@@ -137,9 +137,16 @@
     }
     .rm-btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
 
-    /* Page header row (reuse but override for this page) */
-    .rm-page-header { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-    .rm-page-header h1 { font-size: 22px; font-weight: 900; color: var(--text-primary); margin: 0; flex: 1; }
+    /* Page header row — white "top of page" treatment matching .page-header-row */
+    .rm-page-header {
+      display: flex; align-items: center; gap: 10px; flex-shrink: 0;
+      background: var(--surface-1);
+      border-bottom: 1px solid var(--border);
+      padding: 0 28px;
+      min-height: 52px;
+    }
+    .rm-page-header h1 { font-size: 20px; font-weight: 900; color: var(--text-primary); margin: 0; flex: 1; }
+    body.dark .rm-page-header { background: #1a2832; border-color: #2d3f4a; }
     .rm-export-btn {
       display: flex; align-items: center; gap: 6px;
       padding: 8px 16px; border: 1.5px solid var(--accent); color: var(--accent);
@@ -246,20 +253,21 @@
 
 <!-- ═══ RATE MANAGEMENT PAGE ═══ -->
 <div class="rm-page">
-  <div class="rm-inner">
 
-    <!-- Page header -->
-    <div class="rm-page-header">
-      <h1>Rate Management</h1>
-      <button class="rm-export-btn">
-        <span class="material-icons" style="font-size:16px">file_download</span>
-        Export Rates
-      </button>
-      <button class="rm-update-btn">
-        <span class="material-icons" style="font-size:16px">sync</span>
-        Update Rates
-      </button>
-    </div>
+  <!-- Page header — full-width top-of-page bar -->
+  <div class="rm-page-header">
+    <h1>Rate Management</h1>
+    <button class="rm-export-btn">
+      <span class="material-icons" style="font-size:16px">file_download</span>
+      Export Rates
+    </button>
+    <button class="rm-update-btn">
+      <span class="material-icons" style="font-size:16px">sync</span>
+      Update Rates
+    </button>
+  </div>
+
+  <div class="rm-inner">
 
     <!-- KPI Cards -->
     <div class="rm-kpi-row">
