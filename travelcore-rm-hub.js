@@ -9239,7 +9239,7 @@ updateContractsStats({ y:2025, m:7, d:17 }, { y:2025, m:7, d:25 });
     if (emailRadio) emailRadio.checked = true;
   }
 
-  function openModal(fromDate, toDate) {
+  function openModal(fromDate, toDate, ctx) {
     overlay.classList.add('open');
     resetModalState();
 
@@ -9259,7 +9259,7 @@ updateContractsStats({ y:2025, m:7, d:17 }, { y:2025, m:7, d:25 });
     }
     coAddDateRange(from || '', to || '');
 
-    // Reset rules — pre-populate from current filter selections
+    // Reset rules — pre-populate from active filter selections (monthly or weekly view)
     ruleIdSeq = 0; rules = [];
     var _id = ++ruleIdSeq;
     var _opsSet   = new Set(['all']);
@@ -9269,17 +9269,15 @@ updateContractsStats({ y:2025, m:7, d:17 }, { y:2025, m:7, d:25 });
     var _TO_MAP    = { sunwing: 'Sunwing', tui: 'TUI Group', 'thomas-cook': 'Thomas Cook', 'club-med': 'Club Med' };
     var _ROOM_MAP  = { standard: 'Standard Double', superior: 'Superior Double', deluxe: 'Deluxe Ocean View', suite: 'Suite' };
     var _BOARD_MAP = { ai: 'All Inclusive', bb: 'Bed & Breakfast', ro: 'Room Only', hb: 'Half Board', fb: 'Full Board' };
-    var _fs = (typeof filterState !== 'undefined') ? filterState.wv : null;
-    if (_fs) {
-      if (_fs.wvFiltTO && _fs.wvFiltTO !== 'all' && _TO_MAP[_fs.wvFiltTO]) {
-        _opsSet = new Set([_TO_MAP[_fs.wvFiltTO]]);
-      }
-      if (_fs.wvFiltRoom && _fs.wvFiltRoom !== 'all' && _ROOM_MAP[_fs.wvFiltRoom]) {
-        _roomsSet = new Set([_ROOM_MAP[_fs.wvFiltRoom]]);
-      }
-      if (_fs.wvFiltBoard && _fs.wvFiltBoard !== 'all' && _BOARD_MAP[_fs.wvFiltBoard]) {
-        _boardsSet = new Set([_BOARD_MAP[_fs.wvFiltBoard]]);
-      }
+    if (typeof filterState !== 'undefined') {
+      // Use cal filter state when triggered from monthly view; wv state otherwise
+      var _isCal = (ctx === 'cal');
+      var _filtTO    = _isCal ? filterState.cal.calFiltTO    : filterState.wv.wvFiltTO;
+      var _filtRoom  = _isCal ? filterState.cal.calFiltRoom  : filterState.wv.wvFiltRoom;
+      var _filtBoard = _isCal ? filterState.cal.calFiltBoard : filterState.wv.wvFiltBoard;
+      if (_filtTO    && _filtTO    !== 'all' && _TO_MAP[_filtTO])    _opsSet   = new Set([_TO_MAP[_filtTO]]);
+      if (_filtRoom  && _filtRoom  !== 'all' && _ROOM_MAP[_filtRoom])  _roomsSet = new Set([_ROOM_MAP[_filtRoom]]);
+      if (_filtBoard && _filtBoard !== 'all' && _BOARD_MAP[_filtBoard]) _boardsSet = new Set([_BOARD_MAP[_filtBoard]]);
     }
     rules.push({ id: _id, ops: _opsSet, rooms: _roomsSet, boards: _boardsSet });
     renderRules();
@@ -9289,7 +9287,12 @@ updateContractsStats({ y:2025, m:7, d:17 }, { y:2025, m:7, d:25 });
 
   // ── Event wiring ───────────────────────────────────────────────
   document.addEventListener('click', e => {
-    if (e.target.closest('.popup-btn-closeout, .wv-lock-btn')) openModal();
+    const _coTrigger = e.target.closest('.popup-btn-closeout, .wv-lock-btn');
+    if (_coTrigger) {
+      // Detect which view triggered the modal: cal = monthly calendar, wv = weekly/daily view
+      var _coCtx = _coTrigger.classList.contains('popup-btn-closeout') ? 'cal' : 'wv';
+      openModal(undefined, undefined, _coCtx);
+    }
   });
 
   closeBtn && closeBtn.addEventListener('click', closeModal);
