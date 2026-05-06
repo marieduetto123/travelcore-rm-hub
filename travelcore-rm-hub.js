@@ -7019,7 +7019,7 @@ function buildWeekGrid(month, weekStart, activeDay) {
     return;
   }
   if (wvGroupBy === 'dailyB') {
-    grid.style.cssText = 'display:flex;flex-direction:column;overflow-x:auto;';
+    grid.style.cssText = 'display:flex;flex-direction:column;flex:1;min-width:0;';
     grid.innerHTML = buildDailyBView(days, month, activeDay);
     return;
   }
