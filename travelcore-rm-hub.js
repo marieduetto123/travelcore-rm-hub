@@ -9259,9 +9259,30 @@ updateContractsStats({ y:2025, m:7, d:17 }, { y:2025, m:7, d:25 });
     }
     coAddDateRange(from || '', to || '');
 
-    // Reset rules — start with one default rule (all operators/rooms/boards)
+    // Reset rules — pre-populate from current filter selections
     ruleIdSeq = 0; rules = [];
-    coAddRule();
+    var _id = ++ruleIdSeq;
+    var _opsSet   = new Set(['all']);
+    var _roomsSet = new Set(['all']);
+    var _boardsSet = new Set(['all']);
+    // Map filter-panel shorthand values → modal display values
+    var _TO_MAP    = { sunwing: 'Sunwing', tui: 'TUI Group', 'thomas-cook': 'Thomas Cook', 'club-med': 'Club Med' };
+    var _ROOM_MAP  = { standard: 'Standard Double', superior: 'Superior Double', deluxe: 'Deluxe Ocean View', suite: 'Suite' };
+    var _BOARD_MAP = { ai: 'All Inclusive', bb: 'Bed & Breakfast', ro: 'Room Only', hb: 'Half Board', fb: 'Full Board' };
+    var _fs = (typeof filterState !== 'undefined') ? filterState.wv : null;
+    if (_fs) {
+      if (_fs.wvFiltTO && _fs.wvFiltTO !== 'all' && _TO_MAP[_fs.wvFiltTO]) {
+        _opsSet = new Set([_TO_MAP[_fs.wvFiltTO]]);
+      }
+      if (_fs.wvFiltRoom && _fs.wvFiltRoom !== 'all' && _ROOM_MAP[_fs.wvFiltRoom]) {
+        _roomsSet = new Set([_ROOM_MAP[_fs.wvFiltRoom]]);
+      }
+      if (_fs.wvFiltBoard && _fs.wvFiltBoard !== 'all' && _BOARD_MAP[_fs.wvFiltBoard]) {
+        _boardsSet = new Set([_BOARD_MAP[_fs.wvFiltBoard]]);
+      }
+    }
+    rules.push({ id: _id, ops: _opsSet, rooms: _roomsSet, boards: _boardsSet });
+    renderRules();
   }
 
   function closeModal() { overlay.classList.remove('open'); }
