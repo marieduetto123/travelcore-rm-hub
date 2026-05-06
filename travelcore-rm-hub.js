@@ -3238,6 +3238,45 @@ let wvGroupBy = 'dailyB';
 let wvSegMode = 'combined'; // 'combined' | 'individual'
 let wvCompare = new Set();  // multi-select Set of active compares: 'stly' | 'ly' | 'fcst'
 
+function wvCmpDdToggle(e) {
+  if (e) e.stopPropagation();
+  var menu = document.getElementById('wvCmpDdMenu');
+  var btn  = document.getElementById('wvCmpDdBtn');
+  if (!menu || !btn) return;
+  var opening = !menu.classList.contains('open');
+  menu.classList.toggle('open', opening);
+  btn.classList.toggle('open', opening);
+}
+// Close dropdown when clicking outside
+document.addEventListener('click', function(e) {
+  var dd = document.getElementById('wvCmpDd');
+  if (dd && !dd.contains(e.target)) {
+    var m = document.getElementById('wvCmpDdMenu'), b = document.getElementById('wvCmpDdBtn');
+    if (m) m.classList.remove('open');
+    if (b) b.classList.remove('open');
+  }
+});
+function wvSyncCmpDd() {
+  var _names = {stly:'STLY', ly:'LY', fcst:'Fcst'};
+  // Update each item's checkmark + active class
+  var items = document.querySelectorAll('#wvCmpDdMenu .wv-cmp-dd-item');
+  items.forEach(function(item) {
+    var k = item.dataset.cmp;
+    var active = (k === 'none') ? wvCompare.size === 0 : wvCompare.has(k);
+    item.classList.toggle('active', active);
+    var chk = item.querySelector('.wv-cmp-dd-chk');
+    if (chk) chk.textContent = active ? '\u2713' : '';
+  });
+  // Update button label
+  var lbl = document.getElementById('wvCmpDdLabel');
+  if (lbl) {
+    if (wvCompare.size === 0) {
+      lbl.textContent = 'Compare';
+    } else {
+      lbl.textContent = ['stly','ly','fcst'].filter(function(k){ return wvCompare.has(k); }).map(function(k){ return _names[k]; }).join(', ');
+    }
+  }
+}
 function wvSetCompare(val) {
   if (val === 'none') {
     wvCompare.clear();
@@ -3245,12 +3284,7 @@ function wvSetCompare(val) {
     if (wvCompare.has(val)) wvCompare.delete(val);
     else wvCompare.add(val);
   }
-  // Sync pill active state — None pill active only when set is empty
-  var pills = document.querySelectorAll('#wvCmpPills .wv-cmp-pill');
-  pills.forEach(function(p) {
-    if (p.dataset.cmp === 'none') p.classList.toggle('active', wvCompare.size === 0);
-    else p.classList.toggle('active', wvCompare.has(p.dataset.cmp));
-  });
+  wvSyncCmpDd();
   buildWeekGrid(wvMonth, wvWeekStart, wvWeekStart);
 }
 

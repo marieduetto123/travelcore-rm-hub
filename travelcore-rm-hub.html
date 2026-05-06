@@ -443,11 +443,17 @@
           <!-- Compare select — centered in header, only visible in week view -->
           <div class="cal-header-center">
             <div id="wvCmpWrap" class="wv-cmp-wrap" style="display:none;margin:0">
-              <div class="wv-cmp-pills" id="wvCmpPills">
-                <button class="wv-cmp-pill active" data-cmp="none"   onclick="wvSetCompare('none')">None</button>
-                <button class="wv-cmp-pill"         data-cmp="stly"   onclick="wvSetCompare('stly')">STLY</button>
-                <button class="wv-cmp-pill"         data-cmp="ly"     onclick="wvSetCompare('ly')">LY</button>
-                <button class="wv-cmp-pill"         data-cmp="fcst"   onclick="wvSetCompare('fcst')">Forecast</button>
+              <div class="wv-cmp-dd" id="wvCmpDd">
+                <button class="wv-cmp-dd-btn" id="wvCmpDdBtn" onclick="wvCmpDdToggle(event)">
+                  <span id="wvCmpDdLabel">Compare</span>
+                  <span class="material-icons" style="font-size:15px;margin-left:2px;opacity:.65">expand_more</span>
+                </button>
+                <div class="wv-cmp-dd-menu" id="wvCmpDdMenu">
+                  <div class="wv-cmp-dd-item active" data-cmp="none" onclick="wvSetCompare('none')"><span class="wv-cmp-dd-chk">&#10003;</span>None</div>
+                  <div class="wv-cmp-dd-item" data-cmp="stly" onclick="wvSetCompare('stly')"><span class="wv-cmp-dd-chk"></span>STLY</div>
+                  <div class="wv-cmp-dd-item" data-cmp="ly"   onclick="wvSetCompare('ly')">  <span class="wv-cmp-dd-chk"></span>LY</div>
+                  <div class="wv-cmp-dd-item" data-cmp="fcst" onclick="wvSetCompare('fcst')"><span class="wv-cmp-dd-chk"></span>Forecast</div>
+                </div>
               </div>
             </div>
           </div>
@@ -3330,7 +3336,7 @@
 
 
 
-  <script src="travelcore-rm-hub.js?v=124"></script>
+  <script src="travelcore-rm-hub.js?v=125"></script>
 <div id="calCapTip" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #e0e0e0;border-radius:4px;box-shadow:0 1px 3px rgba(0,0,0,.2),0 2px 1px -1px rgba(0,0,0,.12),0 1px 1px rgba(0,0,0,.14);padding:10px;pointer-events:none;width:245px"></div>
 
 <!-- Add Meal Plan Modal -->

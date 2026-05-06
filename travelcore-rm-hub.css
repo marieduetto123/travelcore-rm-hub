@@ -2300,21 +2300,41 @@ body.dark .wv-groupby-bar { background: var(--surface-2); border-bottom-color: v
 body.dark .wv-groupby-btn { color: #4dd8d4; }
 body.dark .wv-groupby-btn.active { background: #1a2f31; color: #5ceade; }
 
-/* Compare-against dropdown */
+/* Compare-against multi-select dropdown */
 .wv-cmp-wrap {
   display: flex; align-items: center;
 }
-.wv-cmp-pills { display: flex; gap: 0; border: 1px solid #d1d5db; border-radius: 8px; overflow: hidden; }
-.wv-cmp-pill {
-  padding: 6px 14px; border: none; background: #fff;
-  font-family: 'Lato', sans-serif; font-size: 13px; font-weight: 500; color: #374151;
-  cursor: pointer; white-space: nowrap; transition: background .12s, color .12s;
-  border-right: 1px solid #d1d5db;
+/* dropdown trigger button */
+.wv-cmp-dd { position: relative; }
+.wv-cmp-dd-btn {
+  display: flex; align-items: center; gap: 2px;
+  padding: 5px 10px 5px 12px; border: 1px solid #d1d5db; border-radius: 6px;
+  background: #fff; font-family: 'Lato', sans-serif; font-size: 13px;
+  font-weight: 500; color: #374151; cursor: pointer; white-space: nowrap;
+  min-width: 90px; transition: border-color .12s, background .12s;
 }
-.wv-cmp-pill:last-child { border-right: none; }
-.wv-cmp-pill:hover:not(.active) { background: #f3f4f6; }
-.wv-cmp-pill.active { background: #006461; color: #fff; font-weight: 700; }
-.wv-cmp-label { display: none; } /* hidden — select speaks for itself in header */
+.wv-cmp-dd-btn:hover { background: #f9fafb; border-color: #9ca3af; }
+.wv-cmp-dd-btn.open { border-color: #006461; color: #006461; }
+/* dropdown panel */
+.wv-cmp-dd-menu {
+  display: none; position: absolute; top: calc(100% + 4px); left: 0;
+  background: #fff; border: 1px solid #e5e7eb; border-radius: 8px;
+  box-shadow: 0 4px 14px rgba(0,0,0,.13); min-width: 130px; z-index: 300;
+  overflow: hidden;
+}
+.wv-cmp-dd-menu.open { display: block; }
+/* each option row */
+.wv-cmp-dd-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 14px; font-family: 'Lato', sans-serif; font-size: 13px;
+  color: #374151; cursor: pointer; transition: background .1s;
+  user-select: none;
+}
+.wv-cmp-dd-item:hover { background: #f3f4f6; }
+.wv-cmp-dd-item.active { color: #006461; font-weight: 600; }
+/* checkmark column — fixed width keeps text aligned */
+.wv-cmp-dd-chk { width: 14px; flex-shrink: 0; font-size: 13px; color: #006461; font-weight: 700; }
+.wv-cmp-label { display: none; }
 .wv-cmp-select {
   font-family: 'Lato', sans-serif; font-size: 15px; font-weight: 500;
   color: #111827; background: #fff; border: 1px solid #d1d5db;
