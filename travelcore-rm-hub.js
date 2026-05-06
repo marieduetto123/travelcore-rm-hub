@@ -3258,23 +3258,17 @@ document.addEventListener('click', function(e) {
 });
 function wvSyncCmpDd() {
   var _names = {stly:'STLY', ly:'LY', fcst:'Fcst'};
-  // Drive real checkbox checked state + active class on each row
-  var items = document.querySelectorAll('#wvCmpDdMenu .wv-cmp-dd-item');
-  items.forEach(function(item) {
+  // Toggle active class — CSS handles the checkbox visual from that alone
+  document.querySelectorAll('#wvCmpDdMenu .wv-cmp-dd-item').forEach(function(item) {
     var k = item.dataset.cmp;
-    var active = (k === 'none') ? wvCompare.size === 0 : wvCompare.has(k);
-    item.classList.toggle('active', active);
-    var chk = item.querySelector('.wv-cmp-chk');
-    if (chk) chk.checked = active;
+    item.classList.toggle('active', k === 'none' ? wvCompare.size === 0 : wvCompare.has(k));
   });
   // Update button label
   var lbl = document.getElementById('wvCmpDdLabel');
   if (lbl) {
-    if (wvCompare.size === 0) {
-      lbl.textContent = 'Compare';
-    } else {
-      lbl.textContent = ['stly','ly','fcst'].filter(function(k){ return wvCompare.has(k); }).map(function(k){ return _names[k]; }).join(', ');
-    }
+    lbl.textContent = wvCompare.size === 0
+      ? 'Compare'
+      : ['stly','ly','fcst'].filter(function(k){ return wvCompare.has(k); }).map(function(k){ return _names[k]; }).join(', ');
   }
 }
 function wvSetCompare(val) {

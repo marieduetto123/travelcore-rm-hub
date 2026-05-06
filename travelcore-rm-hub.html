@@ -449,10 +449,10 @@
                   <span class="material-icons" style="font-size:15px;margin-left:2px;opacity:.65">expand_more</span>
                 </button>
                 <div class="wv-cmp-dd-menu" id="wvCmpDdMenu">
-                  <label class="wv-cmp-dd-item" data-cmp="none" onclick="event.stopPropagation();wvSetCompare('none')"><input type="checkbox" id="wvChkNone"  class="wv-cmp-chk" checked readonly>None</label>
-                  <label class="wv-cmp-dd-item" data-cmp="stly" onclick="event.stopPropagation();wvSetCompare('stly')"><input type="checkbox" id="wvChkStly"  class="wv-cmp-chk"         readonly>STLY</label>
-                  <label class="wv-cmp-dd-item" data-cmp="ly"   onclick="event.stopPropagation();wvSetCompare('ly')"  ><input type="checkbox" id="wvChkLy"    class="wv-cmp-chk"         readonly>LY</label>
-                  <label class="wv-cmp-dd-item" data-cmp="fcst" onclick="event.stopPropagation();wvSetCompare('fcst')"><input type="checkbox" id="wvChkFcst"  class="wv-cmp-chk"         readonly>Forecast</label>
+                  <div class="wv-cmp-dd-item active" data-cmp="none" onclick="event.stopPropagation();wvSetCompare('none')"><span class="wv-cmp-chkbox"></span>None</div>
+                  <div class="wv-cmp-dd-item"         data-cmp="stly" onclick="event.stopPropagation();wvSetCompare('stly')"><span class="wv-cmp-chkbox"></span>STLY</div>
+                  <div class="wv-cmp-dd-item"         data-cmp="ly"   onclick="event.stopPropagation();wvSetCompare('ly')"  ><span class="wv-cmp-chkbox"></span>LY</div>
+                  <div class="wv-cmp-dd-item"         data-cmp="fcst" onclick="event.stopPropagation();wvSetCompare('fcst')"><span class="wv-cmp-chkbox"></span>Forecast</div>
                 </div>
               </div>
             </div>
@@ -3336,7 +3336,7 @@
 
 
 
-  <script src="travelcore-rm-hub.js?v=126"></script>
+  <script src="travelcore-rm-hub.js?v=127"></script>
 <div id="calCapTip" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #e0e0e0;border-radius:4px;box-shadow:0 1px 3px rgba(0,0,0,.2),0 2px 1px -1px rgba(0,0,0,.12),0 1px 1px rgba(0,0,0,.14);padding:10px;pointer-events:none;width:245px"></div>
 
 <!-- Add Meal Plan Modal -->

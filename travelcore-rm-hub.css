@@ -2332,10 +2332,24 @@ body.dark .wv-groupby-btn.active { background: #1a2f31; color: #5ceade; }
 }
 .wv-cmp-dd-item:hover { background: #f3f4f6; }
 .wv-cmp-dd-item.active { color: #006461; font-weight: 600; }
-/* real checkbox — sized and tinted to match brand */
-.wv-cmp-chk {
-  width: 15px; height: 15px; flex-shrink: 0; cursor: pointer;
-  accent-color: #006461; pointer-events: none;
+/* CSS-drawn checkbox box */
+.wv-cmp-chkbox {
+  display: inline-block; flex-shrink: 0;
+  width: 15px; height: 15px;
+  border: 2px solid #d1d5db; border-radius: 3px;
+  background: #fff; position: relative;
+  transition: border-color .12s, background .12s;
+}
+/* checked state — filled teal with white tick */
+.wv-cmp-dd-item.active .wv-cmp-chkbox {
+  background: #006461; border-color: #006461;
+}
+.wv-cmp-dd-item.active .wv-cmp-chkbox::after {
+  content: '';
+  position: absolute; left: 3px; top: 0px;
+  width: 5px; height: 9px;
+  border: 2px solid #fff; border-top: none; border-left: none;
+  transform: rotate(45deg);
 }
 .wv-cmp-label { display: none; }
 .wv-cmp-select {
