@@ -2672,12 +2672,12 @@ function clearCalSelection() {
   window.calCloseCustom = function() {
     var dd = document.getElementById('calCloseDropdown');
     if (dd) dd.style.display = 'none';
-    if (typeof window._coOpenModal === 'function') window._coOpenModal('', '');
+    if (typeof window._coOpenModal === 'function') window._coOpenModal('', '', 'cal');
   };
 
   // Monthly Close Out button (opens modal directly)
   window.moOpenCloseOut = function() {
-    if (typeof window._coOpenModal === 'function') window._coOpenModal('', '');
+    if (typeof window._coOpenModal === 'function') window._coOpenModal('', '', 'cal');
   };
 
   // Close dropdown on outside click
@@ -3115,7 +3115,7 @@ function clearCalSelection() {
             var pad = function(n){ return String(n).padStart(2,'0'); };
             var fromStr = '2026-' + pad(lo.month) + '-' + pad(lo.day);
             var toStr   = '2026-' + pad(hi.month) + '-' + pad(hi.day);
-            if (typeof window._coOpenModal === 'function') window._coOpenModal(fromStr, toStr);
+            if (typeof window._coOpenModal === 'function') window._coOpenModal(fromStr, toStr, 'cal');
           })();
         }
         applyCalSelection();
@@ -3675,9 +3675,9 @@ window.moOpenCloseOut = function() {
   var dates = Array.from(_moSelectedDays).sort();
   if (!dates.length) return;
   if (typeof window._coOpenModalDays === 'function') {
-    window._coOpenModalDays(dates);
+    window._coOpenModalDays(dates, 'cal');
   } else if (typeof window._coOpenModal === 'function') {
-    window._coOpenModal(dates[0], dates[dates.length - 1]);
+    window._coOpenModal(dates[0], dates[dates.length - 1], 'cal');
   }
 };
 
@@ -3685,10 +3685,10 @@ window.moOpenCloseOut = function() {
 window.moSmartClose = function() {
   var dates = Array.from(_moSelectedDays).sort();
   if (dates.length) {
-    if (typeof window._coOpenModalDays === 'function') window._coOpenModalDays(dates);
-    else if (typeof window._coOpenModal === 'function') window._coOpenModal(dates[0], dates[dates.length - 1]);
+    if (typeof window._coOpenModalDays === 'function') window._coOpenModalDays(dates, 'cal');
+    else if (typeof window._coOpenModal === 'function') window._coOpenModal(dates[0], dates[dates.length - 1], 'cal');
   } else {
-    if (typeof window._coOpenModal === 'function') window._coOpenModal('', '');
+    if (typeof window._coOpenModal === 'function') window._coOpenModal('', '', 'cal');
   }
 };
 
@@ -3697,10 +3697,10 @@ window.wvSmartClose = function() {
   var wbDates = Array.from(_wbSelectedDays).sort();
   var dates = wvDates.concat(wbDates).filter(function(v,i,a){ return a.indexOf(v)===i; }).sort();
   if (dates.length) {
-    if (typeof window._coOpenModalDays === 'function') window._coOpenModalDays(dates);
-    else if (typeof window._coOpenModal === 'function') window._coOpenModal(dates[0], dates[dates.length - 1]);
+    if (typeof window._coOpenModalDays === 'function') window._coOpenModalDays(dates, 'wv');
+    else if (typeof window._coOpenModal === 'function') window._coOpenModal(dates[0], dates[dates.length - 1], 'wv');
   } else {
-    if (typeof window._coOpenModal === 'function') window._coOpenModal('', '');
+    if (typeof window._coOpenModal === 'function') window._coOpenModal('', '', 'wv');
   }
 };
 
@@ -3717,9 +3717,9 @@ window.wvOpenCloseOut = function() {
   var dates = Array.from(_wvSelectedDays).sort();
   if (!dates.length) return;
   if (typeof window._coOpenModalDays === 'function') {
-    window._coOpenModalDays(dates);
+    window._coOpenModalDays(dates, 'wv');
   } else if (typeof window._coOpenModal === 'function') {
-    window._coOpenModal(dates[0], dates[dates.length - 1]);
+    window._coOpenModal(dates[0], dates[dates.length - 1], 'wv');
   }
 };
 
@@ -3799,9 +3799,9 @@ window.wbOpenCloseOut = function() {
   var dates = Array.from(_wbSelectedDays).sort();
   if (!dates.length) return;
   if (typeof window._coOpenModalDays === 'function') {
-    window._coOpenModalDays(dates);
+    window._coOpenModalDays(dates, 'wv');
   } else if (typeof window._coOpenModal === 'function') {
-    window._coOpenModal(dates[0], dates[dates.length - 1]);
+    window._coOpenModal(dates[0], dates[dates.length - 1], 'wv');
   }
 };
 
@@ -8416,7 +8416,7 @@ document.getElementById('weekGrid')?.addEventListener('click', function(e) {
         var pad = function(n){ return String(n).padStart(2,'0'); };
         var fromStr = '2026-' + pad(lo.month) + '-' + pad(lo.day);
         var toStr   = '2026-' + pad(hi.month) + '-' + pad(hi.day);
-        if (typeof window._coOpenModal === 'function') window._coOpenModal(fromStr, toStr);
+        if (typeof window._coOpenModal === 'function') window._coOpenModal(fromStr, toStr, 'wv');
       })();
     }
     buildWeekGrid(wvMonth, wvWeekStart, wvWeekStart);
@@ -8450,7 +8450,7 @@ document.getElementById('weekGrid')?.addEventListener('click', function(e) {
   window.wvCloseCustom = function() {
     var dd = document.getElementById('wvCloseDropdown');
     if (dd) dd.style.display = 'none';
-    if (typeof window._coOpenModal === 'function') window._coOpenModal('', '');
+    if (typeof window._coOpenModal === 'function') window._coOpenModal('', '', 'wv');
   };
 
   // Close dropdown on outside click
@@ -9259,28 +9259,9 @@ updateContractsStats({ y:2025, m:7, d:17 }, { y:2025, m:7, d:25 });
     }
     coAddDateRange(from || '', to || '');
 
-    // Reset rules — pre-populate from active filter selections (monthly or weekly view)
+    // Pre-populate rules from active filter state
     ruleIdSeq = 0; rules = [];
-    var _id = ++ruleIdSeq;
-    var _opsSet   = new Set(['all']);
-    var _roomsSet = new Set(['all']);
-    var _boardsSet = new Set(['all']);
-    // Map filter-panel shorthand values → modal display values
-    var _TO_MAP    = { sunwing: 'Sunwing', tui: 'TUI Group', 'thomas-cook': 'Thomas Cook', 'club-med': 'Club Med' };
-    var _ROOM_MAP  = { standard: 'Standard Double', superior: 'Superior Double', deluxe: 'Deluxe Ocean View', suite: 'Suite' };
-    var _BOARD_MAP = { ai: 'All Inclusive', bb: 'Bed & Breakfast', ro: 'Room Only', hb: 'Half Board', fb: 'Full Board' };
-    if (typeof filterState !== 'undefined') {
-      // Use cal filter state when triggered from monthly view; wv state otherwise
-      var _isCal = (ctx === 'cal');
-      var _filtTO    = _isCal ? filterState.cal.calFiltTO    : filterState.wv.wvFiltTO;
-      var _filtRoom  = _isCal ? filterState.cal.calFiltRoom  : filterState.wv.wvFiltRoom;
-      var _filtBoard = _isCal ? filterState.cal.calFiltBoard : filterState.wv.wvFiltBoard;
-      if (_filtTO    && _filtTO    !== 'all' && _TO_MAP[_filtTO])    _opsSet   = new Set([_TO_MAP[_filtTO]]);
-      if (_filtRoom  && _filtRoom  !== 'all' && _ROOM_MAP[_filtRoom])  _roomsSet = new Set([_ROOM_MAP[_filtRoom]]);
-      if (_filtBoard && _filtBoard !== 'all' && _BOARD_MAP[_filtBoard]) _boardsSet = new Set([_BOARD_MAP[_filtBoard]]);
-    }
-    rules.push({ id: _id, ops: _opsSet, rooms: _roomsSet, boards: _boardsSet });
-    renderRules();
+    _coPrePopulateRule(ctx || 'wv');
   }
 
   function closeModal() { overlay.classList.remove('open'); }
@@ -9376,8 +9357,34 @@ updateContractsStats({ y:2025, m:7, d:17 }, { y:2025, m:7, d:25 });
     closeModal();
   });
 
+  // ── Shared: build a pre-populated rule from the active view's filter state ──
+  function _coPrePopulateRule(ctx) {
+    var _TO_MAP    = { sunwing: 'Sunwing', tui: 'TUI Group', 'thomas-cook': 'Thomas Cook', 'club-med': 'Club Med' };
+    var _ROOM_MAP  = { standard: 'Standard Double', superior: 'Superior Double', deluxe: 'Deluxe Ocean View', suite: 'Suite' };
+    var _BOARD_MAP = { ai: 'All Inclusive', bb: 'Bed & Breakfast', ro: 'Room Only', hb: 'Half Board', fb: 'Full Board' };
+    var _opsSet = new Set(['all']), _roomsSet = new Set(['all']), _boardsSet = new Set(['all']);
+    if (typeof filterState !== 'undefined') {
+      // 'cal' = monthly calendar view, 'wv' = weekly/daily view
+      var _isCal = (ctx === 'cal');
+      var _filtTO    = _isCal ? filterState.cal.calFiltTO    : filterState.wv.wvFiltTO;
+      var _filtRoom  = _isCal ? filterState.cal.calFiltRoom  : filterState.wv.wvFiltRoom;
+      var _filtBoard = _isCal ? filterState.cal.calFiltBoard : filterState.wv.wvFiltBoard;
+      // Handle comma-separated multi-select values
+      function _mapMulti(raw, map) {
+        if (!raw || raw === 'all') return new Set(['all']);
+        var mapped = raw.split(',').map(function(v){ return map[v.trim()]; }).filter(Boolean);
+        return mapped.length ? new Set(mapped) : new Set(['all']);
+      }
+      _opsSet   = _mapMulti(_filtTO,    _TO_MAP);
+      _roomsSet = _mapMulti(_filtRoom,  _ROOM_MAP);
+      _boardsSet = _mapMulti(_filtBoard, _BOARD_MAP);
+    }
+    rules.push({ id: ++ruleIdSeq, ops: _opsSet, rooms: _roomsSet, boards: _boardsSet });
+    renderRules();
+  }
+
   // Open modal with specific individual days (not a range)
-  function openModalDays(daysArr) {
+  function openModalDays(daysArr, ctx) {
     overlay.classList.add('open');
     resetModalState();
 
@@ -9387,9 +9394,9 @@ updateContractsStats({ y:2025, m:7, d:17 }, { y:2025, m:7, d:25 });
       coAddDateRange(d, d);
     });
 
-    // Reset rules
+    // Pre-populate rules from active filter state
     ruleIdSeq = 0; rules = [];
-    coAddRule();
+    _coPrePopulateRule(ctx || 'wv');
   }
 
   // Expose openModal globally so inline calls work
