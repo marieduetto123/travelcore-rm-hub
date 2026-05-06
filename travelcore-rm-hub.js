@@ -3400,8 +3400,8 @@ function renderWeekView(month, day) {
   if (wvSection)  wvSection.classList.add('visible');
   var backArrow = document.getElementById('wvBack');
   if (backArrow) backArrow.style.display = 'inline-flex';
-  var cmpWrap = document.getElementById('wvCmpWrap');
-  if (cmpWrap) cmpWrap.style.display = 'flex';
+  var hdrCtr = document.getElementById('wvHeaderCenter');
+  if (hdrCtr) hdrCtr.style.display = 'flex';
   var moBar = document.getElementById('moGroupbyBar');
   if (moBar) moBar.style.display = 'none';
 
@@ -8399,8 +8399,8 @@ window.goToMonthView = function() {
   document.getElementById('weekView').classList.remove('visible');
   var backArrow = document.getElementById('wvBack');
   if (backArrow) backArrow.style.display = 'none';
-  var cmpWrap = document.getElementById('wvCmpWrap');
-  if (cmpWrap) cmpWrap.style.display = 'none';
+  var hdrCtr = document.getElementById('wvHeaderCenter');
+  if (hdrCtr) hdrCtr.style.display = 'none';
   // Show monthly tab bar and reset "Monthly" as active tab
   var moBar = document.getElementById('moGroupbyBar');
   if (moBar) moBar.style.display = (calDisplayView <= 3) ? '' : 'none';

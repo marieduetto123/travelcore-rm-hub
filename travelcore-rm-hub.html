@@ -440,9 +440,10 @@
             </button>
             <h2 class="cal-title">Calendar</h2>
           </div>
-          <!-- Compare select — centered in header, only visible in week view -->
-          <div class="cal-header-center">
-            <div id="wvCmpWrap" class="wv-cmp-wrap" style="display:none;margin:0">
+          <!-- Header centre — compare + date picker, only visible in week view -->
+          <div class="cal-header-center" id="wvHeaderCenter" style="display:none;gap:8px">
+            <!-- Compare multi-select -->
+            <div id="wvCmpWrap" class="wv-cmp-wrap" style="margin:0">
               <div class="wv-cmp-dd" id="wvCmpDd">
                 <button class="wv-cmp-dd-btn" id="wvCmpDdBtn" onclick="wvCmpDdToggle(event)">
                   <span id="wvCmpDdLabel">Compare</span>
@@ -454,6 +455,21 @@
                   <div class="wv-cmp-dd-item"         data-cmp="ly"   onclick="event.stopPropagation();wvSetCompare('ly')"  ><input type="checkbox" class="wv-cmp-chk"         onclick="event.preventDefault();event.stopPropagation()"><span>LY</span></div>
                   <div class="wv-cmp-dd-item"         data-cmp="fcst" onclick="event.stopPropagation();wvSetCompare('fcst')"><input type="checkbox" class="wv-cmp-chk"         onclick="event.preventDefault();event.stopPropagation()"><span>Forecast</span></div>
                 </div>
+              </div>
+            </div>
+            <!-- Date picker -->
+            <div class="wv-week-pick-wrap" id="wvWeekPickWrap">
+              <button class="wv-week-pick-btn" id="wvWeekPickBtn" onclick="wvWeekPickToggle()">
+                <span id="wvRange">March 1 – 7, 2026</span>
+                <span class="material-icons" style="font-size:16px">calendar_today</span>
+              </button>
+              <div id="wvWeekPickPanel">
+                <div class="wvwp-hdr">
+                  <button class="caldr-nav-btn" onclick="wvwpNav(-1)">&#8249;</button>
+                  <span class="caldr-yr" id="wvwpTitle"></span>
+                  <button class="caldr-nav-btn" onclick="wvwpNav(1)">&#8250;</button>
+                </div>
+                <div id="wvwpGrid" class="wvwp-grid"></div>
               </div>
             </div>
           </div>
@@ -1033,23 +1049,9 @@
                 Open All
               </button>
             </div>
-            <!-- Date shuffler -->
+            <!-- Week prev / next -->
             <div class="wv-date-shuffler">
               <button class="wv-nav-btn" id="wvPrev" title="Previous week"><span class="material-icons" style="font-size:18px">chevron_left</span></button>
-              <div class="wv-week-pick-wrap" id="wvWeekPickWrap">
-                <button class="wv-week-pick-btn" id="wvWeekPickBtn" onclick="wvWeekPickToggle()">
-                  <span id="wvRange">March 1 – 7, 2026</span>
-                  <span class="material-icons" style="font-size:16px">calendar_today</span>
-                </button>
-                <div id="wvWeekPickPanel">
-                  <div class="wvwp-hdr">
-                    <button class="caldr-nav-btn" onclick="wvwpNav(-1)">&#8249;</button>
-                    <span class="caldr-yr" id="wvwpTitle"></span>
-                    <button class="caldr-nav-btn" onclick="wvwpNav(1)">&#8250;</button>
-                  </div>
-                  <div id="wvwpGrid" class="wvwp-grid"></div>
-                </div>
-              </div>
               <button class="wv-nav-btn" id="wvNext" title="Next week"><span class="material-icons" style="font-size:18px">chevron_right</span></button>
             </div>
           </div>
@@ -3354,7 +3356,7 @@
 
 
 
-  <script src="travelcore-rm-hub.js?v=132"></script>
+  <script src="travelcore-rm-hub.js?v=133"></script>
 <div id="calCapTip" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #e0e0e0;border-radius:4px;box-shadow:0 1px 3px rgba(0,0,0,.2),0 2px 1px -1px rgba(0,0,0,.12),0 1px 1px rgba(0,0,0,.14);padding:10px;pointer-events:none;width:245px"></div>
 
 <!-- Add Meal Plan Modal -->
