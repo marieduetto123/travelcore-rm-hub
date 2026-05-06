@@ -449,10 +449,10 @@
                   <span class="material-icons" style="font-size:15px;margin-left:2px;opacity:.65">expand_more</span>
                 </button>
                 <div class="wv-cmp-dd-menu" id="wvCmpDdMenu">
-                  <div class="wv-cmp-dd-item active" data-cmp="none" onclick="event.stopPropagation();wvSetCompare('none')"><span class="wv-cmp-chkbox"></span>None</div>
-                  <div class="wv-cmp-dd-item"         data-cmp="stly" onclick="event.stopPropagation();wvSetCompare('stly')"><span class="wv-cmp-chkbox"></span>STLY</div>
-                  <div class="wv-cmp-dd-item"         data-cmp="ly"   onclick="event.stopPropagation();wvSetCompare('ly')"  ><span class="wv-cmp-chkbox"></span>LY</div>
-                  <div class="wv-cmp-dd-item"         data-cmp="fcst" onclick="event.stopPropagation();wvSetCompare('fcst')"><span class="wv-cmp-chkbox"></span>Forecast</div>
+                  <div class="wv-cmp-dd-item active" data-cmp="none" onclick="event.stopPropagation();wvSetCompare('none')"><input type="checkbox" class="wv-cmp-chk" checked onclick="event.preventDefault();event.stopPropagation()"><span>None</span></div>
+                  <div class="wv-cmp-dd-item"         data-cmp="stly" onclick="event.stopPropagation();wvSetCompare('stly')"><input type="checkbox" class="wv-cmp-chk"         onclick="event.preventDefault();event.stopPropagation()"><span>STLY</span></div>
+                  <div class="wv-cmp-dd-item"         data-cmp="ly"   onclick="event.stopPropagation();wvSetCompare('ly')"  ><input type="checkbox" class="wv-cmp-chk"         onclick="event.preventDefault();event.stopPropagation()"><span>LY</span></div>
+                  <div class="wv-cmp-dd-item"         data-cmp="fcst" onclick="event.stopPropagation();wvSetCompare('fcst')"><input type="checkbox" class="wv-cmp-chk"         onclick="event.preventDefault();event.stopPropagation()"><span>Forecast</span></div>
                 </div>
               </div>
             </div>
@@ -3336,7 +3336,7 @@
 
 
 
-  <script src="travelcore-rm-hub.js?v=127"></script>
+  <script src="travelcore-rm-hub.js?v=128"></script>
 <div id="calCapTip" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #e0e0e0;border-radius:4px;box-shadow:0 1px 3px rgba(0,0,0,.2),0 2px 1px -1px rgba(0,0,0,.12),0 1px 1px rgba(0,0,0,.14);padding:10px;pointer-events:none;width:245px"></div>
 
 <!-- Add Meal Plan Modal -->

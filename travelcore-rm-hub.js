@@ -3258,12 +3258,13 @@ document.addEventListener('click', function(e) {
 });
 function wvSyncCmpDd() {
   var _names = {stly:'STLY', ly:'LY', fcst:'Fcst'};
-  // Toggle active class — CSS handles the checkbox visual from that alone
   document.querySelectorAll('#wvCmpDdMenu .wv-cmp-dd-item').forEach(function(item) {
     var k = item.dataset.cmp;
-    item.classList.toggle('active', k === 'none' ? wvCompare.size === 0 : wvCompare.has(k));
+    var active = (k === 'none') ? wvCompare.size === 0 : wvCompare.has(k);
+    item.classList.toggle('active', active);
+    var chk = item.querySelector('.wv-cmp-chk');
+    if (chk) chk.checked = active;
   });
-  // Update button label
   var lbl = document.getElementById('wvCmpDdLabel');
   if (lbl) {
     lbl.textContent = wvCompare.size === 0
