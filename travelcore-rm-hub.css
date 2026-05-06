@@ -2555,6 +2555,9 @@ body.dark .wv-range { color: var(--text-primary); }
   display: flex;
   align-items: stretch;
   margin-bottom: 4px;
+  width: 100%;          /* never push page wider */
+  overflow-x: auto;     /* horizontal scroll lives here, not on .wv-grid */
+  -webkit-overflow-scrolling: touch;
 }
 
 
@@ -2607,7 +2610,7 @@ body.dark .wv-range { color: var(--text-primary); }
 /* 7-column week grid */
 .wv-grid {
   display: grid; grid-template-columns: repeat(7, 344px);
-  padding: 0; overflow-x: auto;
+  padding: 0;            /* overflow-x handled by .wv-week-layout */
   flex: 1; min-width: 0;
 }
 .wv-col {
