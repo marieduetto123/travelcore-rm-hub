@@ -7381,10 +7381,27 @@ function buildWeekGrid(month, weekStart, activeDay) {
       ${wvGroupBy === 'roomType' ? buildRoomTypeBoardView(dm, dd, hotel, to, adr, rev, v) : ''}
       ${wvGroupBy === 'combined' ? (wvMetricState.capacity||wvMetricState.onlineOffline||wvMetricState.adr||wvMetricState.revenue) ? wvAcc('Daily Metrics', 'daily', (function(){
         const showS = wvMetricState.cmp_sdly, showL = wvMetricState.cmp_final_ly, showF = wvMetricState.cmp_forecast, showH = wvMetricState.cmp_hotel;
-        // Reference values — STLY / Final LY / Forecast
+        // Reference values — Hotel STLY / Final LY / Forecast
         const sdlyH = Math.max(5, hotel-9),   lyH = Math.max(5, hotel-6),   fcstH = Math.min(100, hotel+4);
         const sdlyA = adr-8,                   lyA = adr-4,                  fcstA = adr+6;
         const sdlyR = Math.floor(rev*0.9),     lyR = Math.floor(rev*0.95),   fcstR = Math.floor(rev*1.06);
+        // Operator (TO) compare values — used by the Compare dropdown (wvCompare)
+        const toAdrV0 = Math.max(80, adr - 20 - Math.abs((dm*3+dd*7)%15));
+        const toRns0  = Math.round(250 * to / 100);
+        const toRevV0 = Math.floor(toRns0 * toAdrV0);
+        const sdlyTo = Math.max(5, to-9),      lyTo = Math.max(5, to-6),     fcstTo = Math.min(100, to+4);
+        const sdlyToAdr = toAdrV0-5,           lyToAdr = toAdrV0-3,          fcstToAdr = toAdrV0+4;
+        const sdlyToRev = Math.floor(toRevV0*0.9), lyToRev = Math.floor(toRevV0*0.95), fcstToRev = Math.floor(toRevV0*1.06);
+        // Helper: compact compare chips for an operator metric (respects wvCompare dropdown)
+        function _opCmp(curr, sdly, ly, fcst, fmt) {
+          if (wvCompare.size === 0) return '';
+          var defs = [{k:'stly',l:'STLY',v:sdly},{k:'ly',l:'LY',v:ly},{k:'fcst',l:'Fcst',v:fcst}];
+          var chips = defs.filter(function(x){return wvCompare.has(x.k)&&x.v!=null;}).map(function(x){
+            var n=parseFloat(curr),p=parseFloat(x.v),clr=!isNaN(n)&&!isNaN(p)?(n>p?'#059669':n<p?'#dc2626':'#8A9096'):'#8A9096';
+            return '<span style="font-size:8.5px;padding:1px 4px;border-radius:3px;background:'+clr+'18;color:'+clr+';font-weight:700;white-space:nowrap">'+x.l+' '+fmt(x.v)+'</span>';
+          }).join('');
+          return chips ? '<div style="display:flex;gap:3px;margin-top:2px;flex-wrap:wrap;padding-left:14px">'+chips+'</div>' : '';
+        }
         const adrBarRef = Math.max(3, adrBar-15), revBarRef = Math.max(3, revBar-15);
         // Build multi-colored tick marks
         function occTicks() {
@@ -7432,12 +7449,19 @@ function buildWeekGrid(month, weekStart, activeDay) {
             if (wvSegMode === 'individual') {
               const fitPct = Math.round(to * 0.45), dynPct = Math.round(to * 0.35), serPct = to - fitPct - dynPct;
               const fitRms = Math.round(WV_CAP * fitPct / 100), dynRms = Math.round(WV_CAP * dynPct / 100), serRms = Math.round(WV_CAP * serPct / 100);
+              // Individual segment compare values (derived from TO compare)
+              const sdlyFit = Math.round(sdlyTo*0.45), lyFit = Math.round(lyTo*0.45), fcstFit = Math.round(fcstTo*0.45);
+              const sdlyDyn = Math.round(sdlyTo*0.35), lyDyn = Math.round(lyTo*0.35), fcstDyn = Math.round(fcstTo*0.35);
+              const sdlySer = Math.max(0,sdlyTo-sdlyFit-sdlyDyn), lySer = Math.max(0,lyTo-lyFit-lyDyn), fcstSer = Math.max(0,fcstTo-fcstFit-fcstDyn);
               function brRow(clr,lbl,rms,pct,extra,rmsCls){
                 return '<div class="wv-occ-br-row'+(extra?' '+extra:'')+'"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:'+clr+'"></span><span class="wv-occ-br-lbl">'+lbl+'</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms'+(rmsCls?' '+rmsCls:'')+'">'+rms+' rms</span><span class="wv-occ-br-pct">'+pct+'%</span></div></div>';
               }
               bdRows = brRow('#006461','Static FIT Rates',fitRms,fitPct)
+                +_opCmp(fitPct, sdlyFit, lyFit, fcstFit, function(v){return v+'%';})
                 +brRow('#0891b2','TO Dynamic',dynRms,dynPct)
+                +_opCmp(dynPct, sdlyDyn, lyDyn, fcstDyn, function(v){return v+'%';})
                 +brRow('#6366f1','Tour Series',serRms,serPct)
+                +_opCmp(serPct, sdlySer, lySer, fcstSer, function(v){return v+'%';})
                 +brRow('#47c5bc','Other Segments',otherRms,otherPct)
                 +brRow('#388C3F','Remaining',freeRms,freePct,'wv-occ-br-remain','wv-remain-count');
             } else {
@@ -7445,6 +7469,7 @@ function buildWeekGrid(month, weekStart, activeDay) {
                 return '<div class="wv-occ-br-row'+(extra?' '+extra:'')+'"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:'+clr+'"></span><span class="wv-occ-br-lbl">'+lbl+'</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms'+(rmsCls?' '+rmsCls:'')+'">'+rms+' rms</span><span class="wv-occ-br-pct">'+pct+'%</span></div></div>';
               }
               bdRows = brRow('#006461','Travel Distribution Hubs',toRms,to)
+                +_opCmp(to, sdlyTo, lyTo, fcstTo, function(v){return v+'%';})
                 +brRow('#47c5bc','Other Segments',otherRms,otherPct)
                 +brRow('#388C3F','Remaining',freeRms,freePct,'wv-occ-br-remain','wv-remain-count');
             }
@@ -7467,11 +7492,18 @@ function buildWeekGrid(month, weekStart, activeDay) {
             if (showH) {
               if (wvSegMode === 'individual') {
                 const fitAdr = Math.round(toAdrV * 0.97), dynAdr = Math.round(toAdrV * 1.04), serAdr = Math.round(toAdrV * 0.91);
+                const sdlyFitAdr = Math.round(sdlyToAdr * 0.97), lyFitAdr = Math.round(lyToAdr * 0.97), fcstFitAdr = Math.round(fcstToAdr * 0.97);
+                const sdlyDynAdr = Math.round(sdlyToAdr * 1.04), lyDynAdr = Math.round(lyToAdr * 1.04), fcstDynAdr = Math.round(fcstToAdr * 1.04);
+                const sdlySerAdr = Math.round(sdlyToAdr * 0.91), lySerAdr = Math.round(lyToAdr * 0.91), fcstSerAdr = Math.round(fcstToAdr * 0.91);
                 segRows = '<div class="wv-occ-br-row"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:#006461"></span><span class="wv-occ-br-lbl">Static FIT Rates</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms">$'+fitAdr+'</span></div></div>'
+                  +_opCmp(fitAdr, sdlyFitAdr, lyFitAdr, fcstFitAdr, function(v){return '$'+v;})
                   +'<div class="wv-occ-br-row"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:#0891b2"></span><span class="wv-occ-br-lbl">TO Dynamic</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms">$'+dynAdr+'</span></div></div>'
-                  +'<div class="wv-occ-br-row"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:#6366f1"></span><span class="wv-occ-br-lbl">Tour Series</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms">$'+serAdr+'</span></div></div>';
+                  +_opCmp(dynAdr, sdlyDynAdr, lyDynAdr, fcstDynAdr, function(v){return '$'+v;})
+                  +'<div class="wv-occ-br-row"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:#6366f1"></span><span class="wv-occ-br-lbl">Tour Series</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms">$'+serAdr+'</span></div></div>'
+                  +_opCmp(serAdr, sdlySerAdr, lySerAdr, fcstSerAdr, function(v){return '$'+v;});
               } else {
-                segRows = '<div class="wv-occ-br-row"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:#94b1f5"></span><span class="wv-occ-br-lbl">TO ADR</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms">$'+toAdrV+'</span></div></div>';
+                segRows = '<div class="wv-occ-br-row"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:#94b1f5"></span><span class="wv-occ-br-lbl">TO ADR</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms">$'+toAdrV+'</span></div></div>'
+                  +_opCmp(toAdrV, sdlyToAdr, lyToAdr, fcstToAdr, function(v){return '$'+v;});
               }
               segRows += '<div class="wv-occ-br-row"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:#e5e7eb"></span><span class="wv-occ-br-lbl">Difference</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms" style="color:'+diffColor+'">'+diffSign+'</span></div></div>';
             }
@@ -7499,11 +7531,19 @@ function buildWeekGrid(month, weekStart, activeDay) {
                 const fStr = fitRev>=1000 ? '$'+Math.round(fitRev/1000)+'k' : '$'+fitRev;
                 const dStr = dynRev>=1000 ? '$'+Math.round(dynRev/1000)+'k' : '$'+dynRev;
                 const sStr = serRev>=1000 ? '$'+Math.round(serRev/1000)+'k' : '$'+serRev;
+                const sdlyFitRev = Math.round(sdlyToRev * 0.45), lyFitRev = Math.round(lyToRev * 0.45), fcstFitRev = Math.round(fcstToRev * 0.45);
+                const sdlyDynRev = Math.round(sdlyToRev * 0.35), lyDynRev = Math.round(lyToRev * 0.35), fcstDynRev = Math.round(fcstToRev * 0.35);
+                const sdlySerRev = sdlyToRev - sdlyFitRev - sdlyDynRev, lySerRev = lyToRev - lyFitRev - lyDynRev, fcstSerRev = fcstToRev - fcstFitRev - fcstDynRev;
+                function fmtRev(v){return v>=1000?'$'+Math.round(v/1000)+'k':'$'+v;}
                 segRows = '<div class="wv-occ-br-row"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:#006461"></span><span class="wv-occ-br-lbl">Static FIT Rates</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms">'+fStr+'</span></div></div>'
+                  +_opCmp(fitRev, sdlyFitRev, lyFitRev, fcstFitRev, fmtRev)
                   +'<div class="wv-occ-br-row"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:#0891b2"></span><span class="wv-occ-br-lbl">TO Dynamic</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms">'+dStr+'</span></div></div>'
-                  +'<div class="wv-occ-br-row"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:#6366f1"></span><span class="wv-occ-br-lbl">Tour Series</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms">'+sStr+'</span></div></div>';
+                  +_opCmp(dynRev, sdlyDynRev, lyDynRev, fcstDynRev, fmtRev)
+                  +'<div class="wv-occ-br-row"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:#6366f1"></span><span class="wv-occ-br-lbl">Tour Series</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms">'+sStr+'</span></div></div>'
+                  +_opCmp(serRev, sdlySerRev, lySerRev, fcstSerRev, fmtRev);
               } else {
-                segRows = '<div class="wv-occ-br-row"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:#eba2a2"></span><span class="wv-occ-br-lbl">TO Revenue</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms">'+toRevStr+'</span></div></div>';
+                segRows = '<div class="wv-occ-br-row"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:#eba2a2"></span><span class="wv-occ-br-lbl">TO Revenue</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms">'+toRevStr+'</span></div></div>'
+                  +_opCmp(toRevV, sdlyToRev, lyToRev, fcstToRev, function(v){return '$'+Math.round(v/1000)+'k';});
               }
             }
             const hotRevRow = '<div class="wv-occ-br-row"><div class="wv-occ-br-left"><span class="wv-occ-br-dot" style="background:#ea580c"></span><span class="wv-occ-br-lbl">Hotel Revenue</span></div><div class="wv-occ-br-right"><span class="wv-occ-br-rms">'+hotRevStr+'</span></div></div>';
