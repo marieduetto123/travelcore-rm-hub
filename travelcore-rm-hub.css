@@ -2332,8 +2332,11 @@ body.dark .wv-groupby-btn.active { background: #1a2f31; color: #5ceade; }
 }
 .wv-cmp-dd-item:hover { background: #f3f4f6; }
 .wv-cmp-dd-item.active { color: #006461; font-weight: 600; }
-/* checkmark column — fixed width keeps text aligned */
-.wv-cmp-dd-chk { width: 14px; flex-shrink: 0; font-size: 13px; color: #006461; font-weight: 700; }
+/* real checkbox — sized and tinted to match brand */
+.wv-cmp-chk {
+  width: 15px; height: 15px; flex-shrink: 0; cursor: pointer;
+  accent-color: #006461; pointer-events: none;
+}
 .wv-cmp-label { display: none; }
 .wv-cmp-select {
   font-family: 'Lato', sans-serif; font-size: 15px; font-weight: 500;

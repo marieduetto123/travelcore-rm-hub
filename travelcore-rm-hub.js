@@ -3258,14 +3258,14 @@ document.addEventListener('click', function(e) {
 });
 function wvSyncCmpDd() {
   var _names = {stly:'STLY', ly:'LY', fcst:'Fcst'};
-  // Update each item's checkmark + active class
+  // Drive real checkbox checked state + active class on each row
   var items = document.querySelectorAll('#wvCmpDdMenu .wv-cmp-dd-item');
   items.forEach(function(item) {
     var k = item.dataset.cmp;
     var active = (k === 'none') ? wvCompare.size === 0 : wvCompare.has(k);
     item.classList.toggle('active', active);
-    var chk = item.querySelector('.wv-cmp-dd-chk');
-    if (chk) chk.textContent = active ? '\u2713' : '';
+    var chk = item.querySelector('.wv-cmp-chk');
+    if (chk) chk.checked = active;
   });
   // Update button label
   var lbl = document.getElementById('wvCmpDdLabel');
