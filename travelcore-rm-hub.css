@@ -2496,13 +2496,42 @@ body.dark .wv-nav-btn { color: #5ceade; }
 .wv-range { font-size: 14px; font-weight: 400; color: #4F5B60; white-space: nowrap; }
 .wv-range-cal-icon { color: #006461; }
 body.dark .wv-range { color: var(--text-primary); }
-/* Weekly range text — clickable to open date picker */
-.wv-range[onclick] { transition: color .15s; }
-.wv-range[onclick]:hover { color: #006461; }
-/* Hidden native date input — positioned over the trigger so showPicker() works */
-.wv-date-picker-input {
-  position: absolute; opacity: 0; pointer-events: none; width: 0; height: 0; border: none;
+/* Weekly week picker — trigger button matches calDRTrigger */
+.wv-week-pick-wrap { position: relative; }
+.wv-week-pick-btn {
+  display: flex; align-items: center; gap: 8px; padding: 6px 14px;
+  background: #fff; border: 1px solid #e0e0e0; border-radius: 4px;
+  font-size: 14px; color: #1c1c1c; cursor: pointer; white-space: nowrap;
+  font-family: inherit; height: 36px; transition: border-color .15s;
 }
+.wv-week-pick-btn:hover { border-color: #9ca3af; }
+.wv-week-pick-btn .material-icons { color: #6b7280; font-size: 16px; }
+/* Popup panel */
+#wvWeekPickPanel {
+  display: none; position: fixed; z-index: 9999;
+  background: #fff; border: 1px solid #e2e8f0; border-radius: 12px;
+  box-shadow: 0 12px 40px rgba(0,0,0,.2); user-select: none; width: 266px;
+}
+.wvwp-hdr { display: flex; align-items: center; justify-content: space-between; padding: 16px 14px 4px; }
+/* 7-column day grid */
+.wvwp-grid { display: grid; grid-template-columns: repeat(7, 1fr); padding: 4px 10px 14px; }
+.wvwp-day-hdr { text-align: center; font-size: 11px; font-weight: 700; color: #9ca3af; padding: 6px 0; }
+/* Day cell — mirrors caldr-cell */
+.wvwp-day { position: relative; height: 34px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.wvwp-day-bg { position: absolute; top: 2px; bottom: 2px; left: 0; right: 0; z-index: 0; }
+.wvwp-day-lbl { position: relative; z-index: 1; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 13px; font-weight: 500; color: #374151; }
+/* Range fill */
+.wvwp-in-week .wvwp-day-bg { background: #ccfbf1; }
+.wvwp-in-week .wvwp-day-lbl { color: #0f766e; }
+/* Week start — half transparent → teal, circle endpoint */
+.wvwp-week-start .wvwp-day-bg { background: linear-gradient(to right, transparent 50%, #ccfbf1 50%); }
+.wvwp-week-start .wvwp-day-lbl { background: #006461; color: #fff; font-weight: 700; }
+/* Week end */
+.wvwp-week-end .wvwp-day-bg { background: linear-gradient(to right, #ccfbf1 50%, transparent 50%); }
+.wvwp-week-end .wvwp-day-lbl { background: #006461; color: #fff; font-weight: 700; }
+/* Hover on un-selected days */
+.wvwp-day:not(.wvwp-empty):not(.wvwp-week-start):not(.wvwp-in-week):not(.wvwp-week-end):hover .wvwp-day-lbl { background: #e0f7f6; }
+.wvwp-empty { visibility: hidden; pointer-events: none; }
 /* Week layout: left section panel + 7-column grid */
 .wv-week-layout {
   display: flex;

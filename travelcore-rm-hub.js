@@ -6981,9 +6981,9 @@ function buildWeekGrid(month, weekStart, activeDay) {
   rangeEl.textContent = m0.month === m6.month
     ? `${MNAMES[m0.month]} ${m0.day} – ${m6.day}, 2026`
     : `${MNAMES[m0.month]} ${m0.day} – ${MNAMES[m6.month]} ${m6.day}, 2026`;
-  // Keep date picker in sync with current week start
-  var _picker = document.getElementById('wvDatePicker');
-  if (_picker) _picker.value = '2026-' + String(month).padStart(2,'0') + '-' + String(weekStart).padStart(2,'0');
+  // Re-render picker grid if panel is open (keeps highlight in sync with prev/next nav)
+  var _pp = document.getElementById('wvWeekPickPanel');
+  if (_pp && _pp.style.display !== 'none') { wvwpViewMonth = month; wvwpViewYear = wvYear; wvwpRender(); }
 
   const grid = document.getElementById('weekGrid');
 
@@ -8426,22 +8426,66 @@ document.getElementById('wvNext')?.addEventListener('click', () => {
 });
 
 // ── Week date picker ──────────────────────────────────────────────
-function wvOpenDatePicker() {
-  var picker = document.getElementById('wvDatePicker');
-  if (!picker) return;
-  // Sync current week start into the input before opening
-  var mm = String(wvMonth).padStart(2,'0'), dd = String(wvWeekStart).padStart(2,'0');
-  picker.value = wvYear + '-' + mm + '-' + dd;
-  try { picker.showPicker(); } catch(e) { picker.click(); }
+// ── Week date-picker popup ────────────────────────────────────────
+var wvwpViewMonth = 3, wvwpViewYear = 2026;
+
+function wvWeekPickToggle() {
+  var panel = document.getElementById('wvWeekPickPanel');
+  if (!panel) return;
+  if (panel.style.display !== 'none') { panel.style.display = 'none'; return; }
+  wvwpViewMonth = wvMonth; wvwpViewYear = wvYear;
+  wvwpRender();
+  var btn = document.getElementById('wvWeekPickBtn');
+  var rect = btn.getBoundingClientRect();
+  panel.style.left = rect.left + 'px';
+  panel.style.top  = (rect.bottom + 4) + 'px';
+  panel.style.display = 'block';
 }
-function wvPickDate(val) {
-  if (!val) return;
-  var parts = val.split('-');
-  wvYear = parseInt(parts[0], 10);
-  wvMonth = parseInt(parts[1], 10);
-  wvWeekStart = parseInt(parts[2], 10);
+function wvwpNav(dir) {
+  wvwpViewMonth += dir;
+  if (wvwpViewMonth < 1)  { wvwpViewMonth = 12; wvwpViewYear--; }
+  if (wvwpViewMonth > 12) { wvwpViewMonth = 1;  wvwpViewYear++; }
+  wvwpRender();
+}
+function wvwpDayIdx(m, d) {
+  var dim = [0,31,28,31,30,31,30,31,31,30,31,30,31];
+  var idx = d; for (var i = 1; i < m; i++) idx += dim[i]; return idx;
+}
+function wvwpRender() {
+  var MNAMES = ['','January','February','March','April','May','June','July','August','September','October','November','December'];
+  var DNAMES = ['Mo','Tu','We','Th','Fr','Sa','Su'];
+  var dim    = [0,31,28,31,30,31,30,31,31,30,31,30,31];
+  document.getElementById('wvwpTitle').textContent = MNAMES[wvwpViewMonth] + ' ' + wvwpViewYear;
+  var startIdx = wvwpDayIdx(wvMonth, wvWeekStart), endIdx = startIdx + 6;
+  var firstDow  = new Date(wvwpViewYear, wvwpViewMonth - 1, 1).getDay(); // 0=Sun
+  var startOff  = (firstDow + 6) % 7; // Mon-based offset
+  var html = '';
+  DNAMES.forEach(function(n){ html += '<div class="wvwp-day-hdr">'+n+'</div>'; });
+  for (var i = 0; i < startOff; i++) html += '<div class="wvwp-day wvwp-empty"><div class="wvwp-day-bg"></div><div class="wvwp-day-lbl"></div></div>';
+  for (var d = 1; d <= dim[wvwpViewMonth]; d++) {
+    var idx = wvwpDayIdx(wvwpViewMonth, d);
+    var cls = 'wvwp-day';
+    if (idx === startIdx) cls += ' wvwp-week-start';
+    if (idx === endIdx)   cls += ' wvwp-week-end';
+    if (idx > startIdx && idx < endIdx) cls += ' wvwp-in-week';
+    html += '<div class="'+cls+'" onclick="wvPickWeekDay('+wvwpViewMonth+','+d+')">'
+          + '<div class="wvwp-day-bg"></div><div class="wvwp-day-lbl">'+d+'</div></div>';
+  }
+  document.getElementById('wvwpGrid').innerHTML = html;
+}
+function wvPickWeekDay(m, d) {
+  wvMonth = m; wvWeekStart = d;
   buildWeekGrid(wvMonth, wvWeekStart, wvWeekStart);
+  document.getElementById('wvWeekPickPanel').style.display = 'none';
 }
+// Close picker on outside click
+document.addEventListener('click', function(e) {
+  var wrap = document.getElementById('wvWeekPickWrap');
+  if (wrap && !wrap.contains(e.target)) {
+    var p = document.getElementById('wvWeekPickPanel');
+    if (p) p.style.display = 'none';
+  }
+});
 
 // ── Partial closure padlock toggle ───────────────────────────────
 document.getElementById('weekGrid')?.addEventListener('click', function(e) {
