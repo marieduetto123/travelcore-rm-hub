@@ -3247,30 +3247,46 @@ function wvCmpDdToggle(e) {
   menu.classList.toggle('open', opening);
   btn.classList.toggle('open', opening);
 }
-// Close dropdown when clicking outside
+function wvCmpDdToggle2(e) {
+  if (e) e.stopPropagation();
+  var menu = document.getElementById('wvCmpDdMenu2');
+  var btn  = document.getElementById('wvCmpDdBtn2');
+  if (!menu || !btn) return;
+  var opening = !menu.classList.contains('open');
+  menu.classList.toggle('open', opening);
+  btn.classList.toggle('open', opening);
+}
+// Close both dropdowns when clicking outside
 document.addEventListener('click', function(e) {
-  var dd = document.getElementById('wvCmpDd');
-  if (dd && !dd.contains(e.target)) {
-    var m = document.getElementById('wvCmpDdMenu'), b = document.getElementById('wvCmpDdBtn');
-    if (m) m.classList.remove('open');
-    if (b) b.classList.remove('open');
-  }
+  ['wvCmpDd','wvCmpDd2'].forEach(function(id) {
+    var dd = document.getElementById(id);
+    if (dd && !dd.contains(e.target)) {
+      var sfx = id === 'wvCmpDd' ? '' : '2';
+      var m = document.getElementById('wvCmpDdMenu'+sfx), b = document.getElementById('wvCmpDdBtn'+sfx);
+      if (m) m.classList.remove('open');
+      if (b) b.classList.remove('open');
+    }
+  });
 });
 function wvSyncCmpDd() {
   var _names = {stly:'STLY', ly:'LY', fcst:'Fcst'};
-  document.querySelectorAll('#wvCmpDdMenu .wv-cmp-dd-item').forEach(function(item) {
-    var k = item.dataset.cmp;
-    var active = (k === 'none') ? wvCompare.size === 0 : wvCompare.has(k);
-    item.classList.toggle('active', active);
-    var chk = item.querySelector('.wv-cmp-chk');
-    if (chk) chk.checked = active;
+  var labelTxt = wvCompare.size === 0
+    ? 'Compare'
+    : ['stly','ly','fcst'].filter(function(k){ return wvCompare.has(k); }).map(function(k){ return _names[k]; }).join(', ');
+  // Sync both dropdown instances
+  ['wvCmpDdMenu', 'wvCmpDdMenu2'].forEach(function(menuId) {
+    document.querySelectorAll('#'+menuId+' .wv-cmp-dd-item').forEach(function(item) {
+      var k = item.dataset.cmp;
+      var active = (k === 'none') ? wvCompare.size === 0 : wvCompare.has(k);
+      item.classList.toggle('active', active);
+      var chk = item.querySelector('.wv-cmp-chk');
+      if (chk) chk.checked = active;
+    });
   });
-  var lbl = document.getElementById('wvCmpDdLabel');
-  if (lbl) {
-    lbl.textContent = wvCompare.size === 0
-      ? 'Compare'
-      : ['stly','ly','fcst'].filter(function(k){ return wvCompare.has(k); }).map(function(k){ return _names[k]; }).join(', ');
-  }
+  var lbl1 = document.getElementById('wvCmpDdLabel');
+  if (lbl1) lbl1.textContent = labelTxt;
+  var lbl2 = document.getElementById('wvCmpDdLabel2');
+  if (lbl2) lbl2.textContent = labelTxt;
 }
 function wvSetCompare(val) {
   if (val === 'none') {
