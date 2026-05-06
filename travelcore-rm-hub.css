@@ -2496,14 +2496,9 @@ body.dark .wv-nav-btn { color: #5ceade; }
 .wv-range { font-size: 14px; font-weight: 400; color: #4F5B60; white-space: nowrap; }
 .wv-range-cal-icon { color: #006461; }
 body.dark .wv-range { color: var(--text-primary); }
-/* Clickable date range trigger */
-.wv-range-picker {
-  display: inline-flex; align-items: center; gap: 5px;
-  cursor: pointer; padding: 4px 8px; border-radius: 6px;
-  transition: background .15s;
-}
-.wv-range-picker:hover { background: #D7F7ED; }
-.wv-range-picker:hover .wv-range { color: #006461; }
+/* Weekly range text — clickable to open date picker */
+.wv-range[onclick] { transition: color .15s; }
+.wv-range[onclick]:hover { color: #006461; }
 /* Hidden native date input — positioned over the trigger so showPicker() works */
 .wv-date-picker-input {
   position: absolute; opacity: 0; pointer-events: none; width: 0; height: 0; border: none;

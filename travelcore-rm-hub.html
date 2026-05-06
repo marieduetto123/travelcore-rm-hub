@@ -1036,10 +1036,7 @@
             <!-- Date shuffler (moved from date nav) -->
             <div class="wv-date-shuffler">
               <button class="wv-nav-btn" id="wvPrev" title="Previous week"><span class="material-icons" style="font-size:18px">chevron_left</span></button>
-              <span class="wv-range-picker" id="wvRangePicker" onclick="wvOpenDatePicker()" title="Jump to week">
-                <span class="material-icons wv-range-cal-icon" style="font-size:15px;vertical-align:middle">calendar_today</span>
-                <span class="wv-range" id="wvRange">March 1 – 7, 2026</span>
-              </span>
+              <span class="wv-range" id="wvRange" onclick="wvOpenDatePicker()" style="cursor:pointer" title="Pick a date">March 1 – 7, 2026</span>
               <input type="date" id="wvDatePicker" class="wv-date-picker-input" onchange="wvPickDate(this.value)">
               <button class="wv-nav-btn" id="wvNext" title="Next week"><span class="material-icons" style="font-size:18px">chevron_right</span></button>
             </div>
@@ -3345,7 +3342,7 @@
 
 
 
-  <script src="travelcore-rm-hub.js?v=130"></script>
+  <script src="travelcore-rm-hub.js?v=131"></script>
 <div id="calCapTip" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #e0e0e0;border-radius:4px;box-shadow:0 1px 3px rgba(0,0,0,.2),0 2px 1px -1px rgba(0,0,0,.12),0 1px 1px rgba(0,0,0,.14);padding:10px;pointer-events:none;width:245px"></div>
 
 <!-- Add Meal Plan Modal -->
