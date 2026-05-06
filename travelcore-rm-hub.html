@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@33.3.0/styles/ag-grid.css"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@33.3.0/styles/ag-theme-quartz.css"/>
   <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@33.3.0/dist/ag-grid-community.min.js"></script>
-  <link rel="stylesheet" href="travelcore-rm-hub.css?v=83">
+  <link rel="stylesheet" href="travelcore-rm-hub.css?v=134">
 </head>
 <body>
 
@@ -455,21 +455,6 @@
                   <div class="wv-cmp-dd-item"         data-cmp="ly"   onclick="event.stopPropagation();wvSetCompare('ly')"  ><input type="checkbox" class="wv-cmp-chk"         onclick="event.preventDefault();event.stopPropagation()"><span>LY</span></div>
                   <div class="wv-cmp-dd-item"         data-cmp="fcst" onclick="event.stopPropagation();wvSetCompare('fcst')"><input type="checkbox" class="wv-cmp-chk"         onclick="event.preventDefault();event.stopPropagation()"><span>Forecast</span></div>
                 </div>
-              </div>
-            </div>
-            <!-- Date picker -->
-            <div class="wv-week-pick-wrap" id="wvWeekPickWrap">
-              <button class="wv-week-pick-btn" id="wvWeekPickBtn" onclick="wvWeekPickToggle()">
-                <span id="wvRange">March 1 – 7, 2026</span>
-                <span class="material-icons" style="font-size:16px">calendar_today</span>
-              </button>
-              <div id="wvWeekPickPanel">
-                <div class="wvwp-hdr">
-                  <button class="caldr-nav-btn" onclick="wvwpNav(-1)">&#8249;</button>
-                  <span class="caldr-yr" id="wvwpTitle"></span>
-                  <button class="caldr-nav-btn" onclick="wvwpNav(1)">&#8250;</button>
-                </div>
-                <div id="wvwpGrid" class="wvwp-grid"></div>
               </div>
             </div>
           </div>
@@ -978,6 +963,21 @@
                 <label class="wv-ms-item"><span class="wv-ms-cb checked" data-key="cmp_final_ly"></span><span class="wv-ms-label"><span class="wv-ref-dot wv-ref-dot-ly"></span>Final LY</span></label>
                 <label class="wv-ms-item"><span class="wv-ms-cb checked" data-key="cmp_forecast"></span><span class="wv-ms-label"><span class="wv-ref-dot wv-ref-dot-fcst"></span>Forecast</span></label>
                 <label class="wv-ms-item"><span class="wv-ms-cb checked" data-key="cmp_hotel"></span><span class="wv-ms-label"><span class="wv-ref-dot" style="background:#7c3aed"></span>Hotel</span></label>
+              </div>
+            </div>
+            <!-- Week date picker -->
+            <div class="wv-week-pick-wrap" id="wvWeekPickWrap">
+              <button class="wv-week-pick-btn" id="wvWeekPickBtn" onclick="wvWeekPickToggle()">
+                <span id="wvRange">March 1 – 7, 2026</span>
+                <span class="material-icons" style="font-size:16px">calendar_today</span>
+              </button>
+              <div id="wvWeekPickPanel">
+                <div class="wvwp-hdr">
+                  <button class="caldr-nav-btn" onclick="wvwpNav(-1)">&#8249;</button>
+                  <span class="caldr-yr" id="wvwpTitle"></span>
+                  <button class="caldr-nav-btn" onclick="wvwpNav(1)">&#8250;</button>
+                </div>
+                <div id="wvwpGrid" class="wvwp-grid"></div>
               </div>
             </div>
             <!-- Compare multi-select dropdown (toolbar) -->
