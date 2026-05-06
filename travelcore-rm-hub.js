@@ -6981,6 +6981,9 @@ function buildWeekGrid(month, weekStart, activeDay) {
   rangeEl.textContent = m0.month === m6.month
     ? `${MNAMES[m0.month]} ${m0.day} – ${m6.day}, 2026`
     : `${MNAMES[m0.month]} ${m0.day} – ${MNAMES[m6.month]} ${m6.day}, 2026`;
+  // Keep date picker in sync with current week start
+  var _picker = document.getElementById('wvDatePicker');
+  if (_picker) _picker.value = '2026-' + String(month).padStart(2,'0') + '-' + String(weekStart).padStart(2,'0');
 
   const grid = document.getElementById('weekGrid');
 
@@ -8421,6 +8424,24 @@ document.getElementById('wvNext')?.addEventListener('click', () => {
   if (wvWeekStart > dim[wvMonth]) { wvMonth++; if (wvMonth > 12) wvMonth = 1; wvWeekStart = 1; }
   buildWeekGrid(wvMonth, wvWeekStart, wvWeekStart);
 });
+
+// ── Week date picker ──────────────────────────────────────────────
+function wvOpenDatePicker() {
+  var picker = document.getElementById('wvDatePicker');
+  if (!picker) return;
+  // Sync current week start into the input before opening
+  var mm = String(wvMonth).padStart(2,'0'), dd = String(wvWeekStart).padStart(2,'0');
+  picker.value = wvYear + '-' + mm + '-' + dd;
+  try { picker.showPicker(); } catch(e) { picker.click(); }
+}
+function wvPickDate(val) {
+  if (!val) return;
+  var parts = val.split('-');
+  wvYear = parseInt(parts[0], 10);
+  wvMonth = parseInt(parts[1], 10);
+  wvWeekStart = parseInt(parts[2], 10);
+  buildWeekGrid(wvMonth, wvWeekStart, wvWeekStart);
+}
 
 // ── Partial closure padlock toggle ───────────────────────────────
 document.getElementById('weekGrid')?.addEventListener('click', function(e) {
