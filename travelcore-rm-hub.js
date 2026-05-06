@@ -3236,27 +3236,58 @@ let wvActiveTab = 'occupancy';
 // Weekly group-by: 'combined' | 'roomType' | 'boardType'
 let wvGroupBy = 'dailyB';
 let wvSegMode = 'combined'; // 'combined' | 'individual'
-let wvCompare = 'none';    // 'none' | 'stly' | 'ly' | 'fcst'
+let wvCompare = new Set();  // multi-select Set of active compares: 'stly' | 'ly' | 'fcst'
 
 function wvSetCompare(val) {
-  wvCompare = val;
-  // Sync legacy selects (if any remain)
-  ['wvCmpSelect','wvCmpSelect2','wvCmpSelectOld'].forEach(function(id) {
-    var s = document.getElementById(id);
-    if (s) s.value = val;
-  });
-  // Sync pill active state
+  if (val === 'none') {
+    wvCompare.clear();
+  } else {
+    if (wvCompare.has(val)) wvCompare.delete(val);
+    else wvCompare.add(val);
+  }
+  // Sync pill active state — None pill active only when set is empty
   var pills = document.querySelectorAll('#wvCmpPills .wv-cmp-pill');
-  pills.forEach(function(p) { p.classList.toggle('active', p.dataset.cmp === val); });
+  pills.forEach(function(p) {
+    if (p.dataset.cmp === 'none') p.classList.toggle('active', wvCompare.size === 0);
+    else p.classList.toggle('active', wvCompare.has(p.dataset.cmp));
+  });
   buildWeekGrid(wvMonth, wvWeekStart, wvWeekStart);
 }
 
 // "/ compareVal" inline suffix appended to main value text
 function wvCmpValSuffix(stlyStr, lyStr, fcstStr) {
-  if (wvCompare === 'none') return '';
-  const s = wvCompare === 'stly' ? stlyStr : wvCompare === 'ly' ? lyStr : fcstStr;
-  if (s == null || s === '' || s === 'null') return '';
-  return '<span class="wv-cmp-sep"> / </span><span class="wv-cmp-val-txt">' + s + '</span>';
+  if (wvCompare.size === 0) return '';
+  var parts = [];
+  if (wvCompare.has('stly') && stlyStr && stlyStr !== 'null') parts.push(stlyStr);
+  if (wvCompare.has('ly')   && lyStr   && lyStr   !== 'null') parts.push(lyStr);
+  if (wvCompare.has('fcst') && fcstStr && fcstStr !== 'null') parts.push(fcstStr);
+  return parts.map(function(s){ return '<span class="wv-cmp-sep"> / </span><span class="wv-cmp-val-txt">' + s + '</span>'; }).join('');
+}
+
+// Multi-compare inline suffix — shows "/ STLY:val / LY:val" etc. for all active
+function _wvMultiCmpSfx(curr, stlyVal, lyVal, fcstVal, fmtFn) {
+  if (wvCompare.size === 0) return '';
+  var _ORDER = [['stly','STLY',stlyVal],['ly','LY',lyVal],['fcst','Fc',fcstVal]];
+  return _ORDER.filter(function(t){ return wvCompare.has(t[0]) && t[2] != null; }).map(function(t) {
+    var s = fmtFn(t[2]);
+    var clr = '#9ca3af';
+    var c = parseFloat(curr), p = parseFloat(t[2]);
+    if (!isNaN(c) && !isNaN(p)) { if (c > p) clr = '#16a34a'; else if (c < p) clr = '#dc2626'; }
+    return '<span class="wv-cmp-sep"> / </span><span class="wv-cmp-val-txt" style="color:'+clr+'">'+t[1]+':'+s+'</span>';
+  }).join('');
+}
+
+// Multi-compare trend badges
+function _wvMultiTrendBadge(curr, stlyVal, lyVal, fcstVal) {
+  if (wvCompare.size === 0) return '';
+  var _ORDER = [['stly','STLY',stlyVal],['ly','LY',lyVal],['fcst','Fc',fcstVal]];
+  var base = 'font-size:11px;font-weight:600;border-radius:4px;padding:2px 5px;flex-shrink:0;white-space:nowrap;margin-left:3px;display:inline-flex;align-items:center;gap:2px;line-height:1.2;';
+  return _ORDER.filter(function(t){ return wvCompare.has(t[0]) && t[2]!=null && !isNaN(curr) && !isNaN(t[2]) && t[2]!==0; }).map(function(t) {
+    var diff = curr - t[2], pct = Math.round(Math.abs(diff)/Math.abs(t[2])*100);
+    var clr = diff>0?'#15803d':diff<0?'#b91c1c':'#6b7280', bg = diff>0?'#dcfce7':diff<0?'#fee2e2':'#f3f4f6';
+    var arrow = diff>0?'▲':diff<0?'▼':'';
+    return '<span style="'+base+'color:'+clr+';background:'+bg+'">'+arrow+pct+'%<span style="opacity:.65;font-weight:500"> vs '+t[1]+'</span></span>';
+  }).join('');
 }
 
 // Right-side header block: "mainVal / cmpVal" (no chip)
@@ -3871,7 +3902,8 @@ function buildDailyBView(days, month, activeDay) {
   });
 
   // ── Row schema (built per group, then assembled in custom order) ──────────
-  var compLabel = wvCompare==='ly'?'LY':wvCompare==='fcst'?'Fcst':'STLY';
+  var _cmpOrder = ['stly','ly','fcst'], _cmpNames = {stly:'STLY',ly:'LY',fcst:'Fcst'};
+  var compLabel = _cmpOrder.filter(function(k){ return wvCompare.has(k); }).map(function(k){ return _cmpNames[k]; }).join('/') || 'STLY';
   var grp = { g_closeouts:[], g_daily:[], g_more:[], g_meals:[], g_biz:[], g_avail:[], g_torates:[] };
   window._wbGrpData = grp; // expose for Table Settings modal
 
@@ -4057,7 +4089,7 @@ function buildDailyBView(days, month, activeDay) {
   var TODAY_WV = new Date(2026, 2, 9);
 
   function cmpSfx(cmpStr, curr, comp) {
-    if (!cmpStr || wvCompare === 'none') return '';
+    if (!cmpStr || wvCompare.size === 0) return '';
     var clr = '#9ca3af';
     if (curr != null && comp != null && !isNaN(parseFloat(curr)) && !isNaN(parseFloat(comp))) {
       var c = parseFloat(curr), p = parseFloat(comp);
@@ -4067,27 +4099,9 @@ function buildDailyBView(days, month, activeDay) {
     return '<span class="wv-cmp-sep"> / </span><span class="wv-cmp-val-txt" style="color:' + clr + '">' + cmpStr + '</span>';
   }
 
-  function trendBadge(curr, comp) {
-    if (wvCompare === 'none' || comp == null || isNaN(curr) || isNaN(comp) || comp === 0) return '';
-    var diff = curr - comp;
-    var pct  = Math.round(Math.abs(diff) / Math.abs(comp) * 100);
-    var base = 'font-size:11px;font-weight:600;border-radius:4px;padding:2px 6px;flex-shrink:0;white-space:nowrap;margin-left:4px;display:inline-flex;align-items:center;gap:3px;line-height:1.2;';
-    if (diff === 0) {
-      // Neutral — gray dash
-      return '<span style="'+base+'color:#6b7280;background:#f3f4f6">'
-        +'<span class="material-icons" style="font-size:12px">remove</span>'
-        +' '+pct+'%</span>';
-    }
-    if (diff > 0) {
-      // Up — green
-      return '<span style="'+base+'color:#059669;background:#d7f7ed">'
-        +'<span class="material-icons" style="font-size:14px">trending_up</span>'
-        +' '+pct+'%</span>';
-    }
-    // Down — red
-    return '<span style="'+base+'color:#dc2626;background:#fee2e2">'
-      +'<span class="material-icons" style="font-size:14px">trending_down</span>'
-      +' '+pct+'%</span>';
+  // trendBadge delegates to multi-badge helper
+  function trendBadge(curr, stlyComp, lyComp, fcstComp) {
+    return _wvMultiTrendBadge(curr, stlyComp, lyComp, fcstComp);
   }
 
   function wbGrad(clr) {
@@ -4108,7 +4122,7 @@ function buildDailyBView(days, month, activeDay) {
 
   // Wrap a bar HTML string with a comparison marker line
   function wbBarMark(barHtml, compPct) {
-    if (wvCompare === 'none' || compPct == null || isNaN(compPct)) return barHtml;
+    if (wvCompare.size === 0 || compPct == null || isNaN(compPct)) return barHtml;
     var pct = Math.min(100, Math.max(0, compPct));
     return '<div style="position:relative">'
       + barHtml
@@ -4275,13 +4289,13 @@ function buildDailyBView(days, month, activeDay) {
         switch (row.id) {
           // ── Daily Metrics ──────────────────────────────────────────────────
           case 'occ': {
-            var cv = wvCompare==='stly'?d.sdlyH:wvCompare==='ly'?d.lyH:wvCompare==='fcst'?d.fcstH:null;
-            cs = cmpSfx(cv!=null?cv+'%':'', d.hotel, cv);
-            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.hotel+'%'+cs+'</span>'+trendBadge(d.hotel,cv)+'</div>'
+            cs = _wvMultiCmpSfx(d.hotel, d.sdlyH, d.lyH, d.fcstH, function(v){ return v+'%'; });
+            var _cv0 = wvCompare.has('stly')?d.sdlyH:wvCompare.has('ly')?d.lyH:wvCompare.has('fcst')?d.fcstH:null;
+            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.hotel+'%'+cs+'</span>'+trendBadge(d.hotel,d.sdlyH,d.lyH,d.fcstH)+'</div>'
               + wbBarMark('<div class="wv-occ-bar-track">'
                 + '<div style="width:'+d.to+'%;background:'+wbGrad('#004948')+';height:6px"></div>'
                 + '<div style="width:'+d.otherPct+'%;background:'+wbGrad('#52d9ce')+';height:6px"></div>'
-                + '</div>', cv);
+                + '</div>', _cv0);
             break;
           }
           case 'onoff':
@@ -4292,34 +4306,34 @@ function buildDailyBView(days, month, activeDay) {
               + '</div>';
             break;
           case 'adr': {
-            var cv = wvCompare==='stly'?d.sdlyA:wvCompare==='ly'?d.lyA:wvCompare==='fcst'?d.fcstA:null;
-            cs = cmpSfx(cv!=null?'$'+cv:'', d.toAdr, cv);
-            var cvPct = cv!=null?Math.min(90,Math.round(cv/280*100)):null;
-            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">$'+d.toAdr+cs+'</span>'+trendBadge(d.toAdr,cv)+'</div>'
+            cs = _wvMultiCmpSfx(d.toAdr, d.sdlyA, d.lyA, d.fcstA, function(v){ return '$'+v; });
+            var _cv0 = wvCompare.has('stly')?d.sdlyA:wvCompare.has('ly')?d.lyA:wvCompare.has('fcst')?d.fcstA:null;
+            var cvPct = _cv0!=null?Math.min(90,Math.round(_cv0/280*100)):null;
+            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">$'+d.toAdr+cs+'</span>'+trendBadge(d.toAdr,d.sdlyA,d.lyA,d.fcstA)+'</div>'
               + wbBarMark(wbBar(d.adrBar, '#004948'), cvPct);
             break;
           }
           case 'rev': {
-            var cv = wvCompare==='stly'?d.sdlyR:wvCompare==='ly'?d.lyR:wvCompare==='fcst'?d.fcstR:null;
-            cs = cmpSfx(cv!=null?d.fR(cv):'', d.toRev, cv);
-            var cvPct = cv!=null?Math.min(90,Math.round(cv/4500000*100)):null;
-            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.fR(d.toRev)+cs+'</span>'+trendBadge(d.toRev,cv)+'</div>'
+            cs = _wvMultiCmpSfx(d.toRev, d.sdlyR, d.lyR, d.fcstR, d.fR);
+            var _cv0 = wvCompare.has('stly')?d.sdlyR:wvCompare.has('ly')?d.lyR:wvCompare.has('fcst')?d.fcstR:null;
+            var cvPct = _cv0!=null?Math.min(90,Math.round(_cv0/4500000*100)):null;
+            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.fR(d.toRev)+cs+'</span>'+trendBadge(d.toRev,d.sdlyR,d.lyR,d.fcstR)+'</div>'
               + wbBarMark(wbBar(d.revBar, '#004948'), cvPct);
             break;
           }
           // ── More Metrics ───────────────────────────────────────────────────
           case 'rn': {
-            var cv = wvCompare==='stly'?d.sdlyRn:wvCompare==='ly'?d.lyRn:wvCompare==='fcst'?d.fcstRn:null;
-            cs = cmpSfx(cv!=null?String(cv):'', d.toRn, cv);
-            var cvPct = cv!=null?Math.round(cv/WV_CAP*100):null;
-            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.toRn+cs+'</span>'+trendBadge(d.toRn,cv)+'</div>'
+            cs = _wvMultiCmpSfx(d.toRn, d.sdlyRn, d.lyRn, d.fcstRn, String);
+            var _cv0 = wvCompare.has('stly')?d.sdlyRn:wvCompare.has('ly')?d.lyRn:wvCompare.has('fcst')?d.fcstRn:null;
+            var cvPct = _cv0!=null?Math.round(_cv0/WV_CAP*100):null;
+            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.toRn+cs+'</span>'+trendBadge(d.toRn,d.sdlyRn,d.lyRn,d.fcstRn)+'</div>'
               + wbBarMark(wbBar(Math.round(d.toRn/WV_CAP*100), '#004948'), cvPct) + wbBar(Math.round(d.hnRn/WV_CAP*100), '#52d9ce');
             break;
           }
           case 'revpar_s': {
-            var cv = wvCompare==='stly'?d.sdlyRevpar:wvCompare==='ly'?d.lyRevpar:null;
-            var cvPct = cv!=null?Math.min(90,Math.round(cv/4)):null;
-            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">$'+d.hRevpar+'</span>'+trendBadge(d.hRevpar,cv)+'</div>'
+            var _cv0 = wvCompare.has('stly')?d.sdlyRevpar:wvCompare.has('ly')?d.lyRevpar:null;
+            var cvPct = _cv0!=null?Math.min(90,Math.round(_cv0/4)):null;
+            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">$'+d.hRevpar+_wvMultiCmpSfx(d.hRevpar,d.sdlyRevpar,d.lyRevpar,null,function(v){return '$'+v;})+'</span>'+trendBadge(d.hRevpar,d.sdlyRevpar,d.lyRevpar,null)+'</div>'
               + wbBarMark(wbBar(Math.min(90,Math.round(d.hRevpar/4)), '#004948'), cvPct);
             break;
           }
@@ -4481,7 +4495,7 @@ function buildDailyBView(days, month, activeDay) {
           // occupancy
           case 'occ_tdh':    v1 = d.toRn+' rms';    v2 = d.to+'%';                         break;
           case 'occ_other':  v1 = d.otherRms+' rms'; v2 = d.otherPct+'%';                  break;
-          case 'occ_stly':   { var cRn=wvCompare==='ly'?d.lyRn:wvCompare==='fcst'?d.fcstRn:d.sdlyRn; var cH=wvCompare==='ly'?d.lyH:wvCompare==='fcst'?d.fcstH:d.sdlyH; v1=cRn+' rms'; v2=cH+'%'; } break;
+          case 'occ_stly':   { var cRn=wvCompare.has('stly')?d.sdlyRn:wvCompare.has('ly')?d.lyRn:wvCompare.has('fcst')?d.fcstRn:d.sdlyRn; var cH=wvCompare.has('stly')?d.sdlyH:wvCompare.has('ly')?d.lyH:wvCompare.has('fcst')?d.fcstH:d.sdlyH; v1=cRn+' rms'; v2=cH+'%'; } break;
           case 'occ_rem':    v1 = d.freeRms+' rms';  v2 = Math.max(0,100-d.hotel)+'%';     break;
           // online/offline
           case 'onoff_on':   v1 = d.onlinePct+'%';                                          break;
@@ -4489,18 +4503,18 @@ function buildDailyBView(days, month, activeDay) {
           // adr
           case 'adr_t':      v1 = '$'+d.toAdr;                                              break;
           case 'adr_hotel':  v1 = '$'+d.adr;                                                break;
-          case 'adr_stly':   v1 = '$'+(wvCompare==='ly'?d.lyA:wvCompare==='fcst'?d.fcstA:d.sdlyA); break;
+          case 'adr_stly':   v1 = '$'+(wvCompare.has('stly')?d.sdlyA:wvCompare.has('ly')?d.lyA:wvCompare.has('fcst')?d.fcstA:d.sdlyA); break;
           // revenue
           case 'rev_t':      v1 = d.fR(d.toRev);                                            break;
           case 'rev_hotel':  v1 = d.fR(d.hnRev);                                            break;
-          case 'rev_stly':   v1 = d.fR(wvCompare==='ly'?d.lyR:wvCompare==='fcst'?d.fcstR:d.sdlyR); break;
+          case 'rev_stly':   v1 = d.fR(wvCompare.has('stly')?d.sdlyR:wvCompare.has('ly')?d.lyR:wvCompare.has('fcst')?d.fcstR:d.sdlyR); break;
           // rn sold
           case 'rn_t':       v1 = d.toRn+' rms';                                            break;
           case 'rn_hotel':   v1 = d.hnRn+' rms';                                            break;
-          case 'rn_stly':    v1 = (wvCompare==='ly'?d.lyRn:wvCompare==='fcst'?d.fcstRn:d.sdlyRn)+' rms'; break;
+          case 'rn_stly':    v1 = (wvCompare.has('stly')?d.sdlyRn:wvCompare.has('ly')?d.lyRn:wvCompare.has('fcst')?d.fcstRn:d.sdlyRn)+' rms'; break;
           // revpar
           case 'revpar_h':   v1 = '$'+d.hRevpar;                                            break;
-          case 'revpar_stly':v1 = '$'+(wvCompare==='ly'?d.lyRevpar:d.sdlyRevpar);           break;
+          case 'revpar_stly':v1 = '$'+(wvCompare.has('stly')?d.sdlyRevpar:wvCompare.has('ly')?d.lyRevpar:d.sdlyRevpar); break;
           // pickup
           case 'pickup_t':   v1 = '+'+d.pickup;                                             break;
           case 'pickup_h':   v1 = '+'+d.hPickup;                                            break;
@@ -4539,21 +4553,19 @@ function buildDailyBView(days, month, activeDay) {
         } // end rtSub else
         // Compare chip for sub-rows (Fcst / LY / STLY — mirrors Forecast behaviour)
         var fcstChip = '';
-        if (wvCompare !== 'none' && v1 && row.id.indexOf('_stly') < 0) {
+        if (wvCompare.size > 0 && v1 && row.id.indexOf('_stly') < 0) {
           var _fSeed = Math.abs((d.dm * 7 + d.dd * 13 + (row.rtIdx||0) * 5 + row.id.charCodeAt(row.id.length-1)) % 20);
-          var _fMul, _fLbl;
-          if (wvCompare === 'fcst')     { _fMul = 0.92 + _fSeed * 0.008; _fLbl = 'Fc'; }
-          else if (wvCompare === 'ly')  { _fMul = 0.89 + _fSeed * 0.004; _fLbl = 'LY'; }
-          else                          { _fMul = 0.84 + _fSeed * 0.004; _fLbl = 'STLY'; }
           var _fNum = parseFloat(String(v1).replace(/[^0-9.\-]/g, ''));
           if (!isNaN(_fNum) && _fNum !== 0) {
-            var _fVal = Math.round(_fNum * _fMul);
-            var _fDiff = _fNum - _fVal;
-            var _fClr = _fDiff > 0 ? '#059669' : _fDiff < 0 ? '#dc2626' : '#6b7280';
-            var _fIco = _fDiff > 0 ? 'trending_up' : _fDiff < 0 ? 'trending_down' : 'remove';
-            fcstChip = '<span style="font-size:10px;color:'+_fClr+';margin-left:4px;display:inline-flex;align-items:center;gap:1px;opacity:0.85">'
-              + '<span class="material-icons" style="font-size:11px">'+_fIco+'</span>'
-              + _fLbl+':'+_fVal+'</span>';
+            var _fCmpDefs = [{k:'stly',m:0.84+_fSeed*0.004,l:'STLY'},{k:'ly',m:0.89+_fSeed*0.004,l:'LY'},{k:'fcst',m:0.92+_fSeed*0.008,l:'Fc'}];
+            _fCmpDefs.filter(function(x){ return wvCompare.has(x.k); }).forEach(function(x) {
+              var _fVal = Math.round(_fNum * x.m), _fDiff = _fNum - _fVal;
+              var _fClr = _fDiff > 0 ? '#059669' : _fDiff < 0 ? '#dc2626' : '#6b7280';
+              var _fIco = _fDiff > 0 ? 'trending_up' : _fDiff < 0 ? 'trending_down' : 'remove';
+              fcstChip += '<span style="font-size:10px;color:'+_fClr+';margin-left:4px;display:inline-flex;align-items:center;gap:1px;opacity:0.85">'
+                + '<span class="material-icons" style="font-size:11px">'+_fIco+'</span>'
+                + x.l+':'+_fVal+'</span>';
+            });
           }
         }
         cellContent = '<div class="wb-sub-vals' + remCls + '">'
@@ -4657,7 +4669,7 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
   // ── Render helpers ────────────────────────────────────────────────────────
   var C1='#004948', C2='#52d9ce', C3='#D97706', C4='#d7f7ed', CSTLY='#C4FF45', CREM='#445e0d';
   function cmpSfx(s, curr, comp) {
-    if (!s || wvCompare === 'none') return '';
+    if (!s || wvCompare.size === 0) return '';
     var clr = '#9ca3af';
     if (curr != null && comp != null && !isNaN(parseFloat(curr)) && !isNaN(parseFloat(comp))) {
       var c = parseFloat(curr), p = parseFloat(comp);
@@ -4694,21 +4706,20 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
       +(v2?'<span style="font-size:14px;color:'+c2+'">'+v2+'</span>':'')
       +'</div>';
   }
-  // Compare chip for TO sub-rows in board view (LY / STLY / Fcst)
+  // Compare chip for TO sub-rows in board view — loops over all active compares
   function _wbCmpChip(numStr, seedN, d) {
-    if (wvCompare === 'none') return '';
+    if (wvCompare.size === 0) return '';
     var _s = Math.abs((d.dm * 7 + d.dd * 13 + seedN) % 20);
-    var _m, _l;
-    if (wvCompare === 'fcst')    { _m = 0.92 + _s * 0.008; _l = 'Fc'; }
-    else if (wvCompare === 'ly') { _m = 0.89 + _s * 0.004; _l = 'LY'; }
-    else                         { _m = 0.84 + _s * 0.004; _l = 'STLY'; }
     var _n = parseFloat(String(numStr).replace(/[^0-9.\-]/g, ''));
     if (isNaN(_n) || _n === 0) return '';
-    var _v = Math.round(_n * _m), _d = _n - _v;
-    var _c = _d > 0 ? '#059669' : _d < 0 ? '#dc2626' : '#6b7280';
-    var _i = _d > 0 ? 'trending_up' : _d < 0 ? 'trending_down' : 'remove';
-    return '<span style="font-size:10px;color:'+_c+';margin-left:3px;display:inline-flex;align-items:center;gap:1px;opacity:0.85">'
-      +'<span class="material-icons" style="font-size:11px">'+_i+'</span>'+_l+':'+_v+'</span>';
+    var _defs = [{k:'stly',m:0.84+_s*0.004,l:'STLY'},{k:'ly',m:0.89+_s*0.004,l:'LY'},{k:'fcst',m:0.92+_s*0.008,l:'Fc'}];
+    return _defs.filter(function(x){ return wvCompare.has(x.k); }).map(function(x) {
+      var _v = Math.round(_n * x.m), _d2 = _n - _v;
+      var _c = _d2 > 0 ? '#059669' : _d2 < 0 ? '#dc2626' : '#6b7280';
+      var _i = _d2 > 0 ? 'trending_up' : _d2 < 0 ? 'trending_down' : 'remove';
+      return '<span style="font-size:10px;color:'+_c+';margin-left:3px;display:inline-flex;align-items:center;gap:1px;opacity:0.85">'
+        +'<span class="material-icons" style="font-size:11px">'+_i+'</span>'+x.l+':'+_v+'</span>';
+    }).join('');
   }
 
   // ── Row builder ───────────────────────────────────────────────────────────
@@ -4749,7 +4760,7 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
   // ── Daily Metrics ─────────────────────────────────────────────────────────
   grp('Daily Metrics', C1);
   if (wvMetricState.capacity) {
-    sect('Occupancy', C1, C1, function(d){ var cv=wvCompare==='stly'?d.sdlyH:wvCompare==='ly'?d.lyH:wvCompare==='fcst'?d.fcstH:null; var cs=cmpSfx(cv!=null?cv+'%':'',d.hotel,cv); return sCell(d.hotel+'%'+cs, sBar([{p:d.to,c:C1},{p:d.otherPct,c:C2}])); });
+    sect('Occupancy', C1, C1, function(d){ var cs=_wvMultiCmpSfx(d.hotel,d.sdlyH,d.lyH,d.fcstH,function(v){return v+'%';}); return sCell(d.hotel+'%'+cs, sBar([{p:d.to,c:C1},{p:d.otherPct,c:C2}])); });
     sub('Travel Distribution Hubs', C1, false, function(d){ return rCell(d.toRn+' rms', d.to+'%'+_wbCmpChip(d.to, 1, d)); });
     sub('Other Segments', C2, false, function(d){ return rCell(d.otherRms+' rms',d.otherPct+'%'); });
     sub('STLY', CSTLY, false, function(d){ return rCell(d.sdlyRn+' rms',d.sdlyH+'%'); });
@@ -4761,13 +4772,13 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
     sub('Offline', C2, false, function(d){ return rCell((100-d.onlinePct)+'%'); });
   }
   if (wvMetricState.adr) {
-    sect('ADR', C1, C1, function(d){ var cv=wvCompare==='stly'?d.sdlyA:wvCompare==='ly'?d.lyA:wvCompare==='fcst'?d.fcstA:null; var cs=cmpSfx(cv!=null?'$'+cv:'',d.toAdr,cv); return sCell('$'+d.toAdr+cs, bar(d.adrBar,C1)); });
+    sect('ADR', C1, C1, function(d){ var cs=_wvMultiCmpSfx(d.toAdr,d.sdlyA,d.lyA,d.fcstA,function(v){return '$'+v;}); return sCell('$'+d.toAdr+cs, bar(d.adrBar,C1)); });
     sub('TO ADR',    C1,    false, function(d){ return rCell('$'+d.toAdr + _wbCmpChip(d.toAdr, 2, d)); });
     sub('Hotel ADR', C2,   false, function(d){ return rCell('$'+d.adr); });
     sub('STLY',     CSTLY, false, function(d){ return rCell('$'+d.sdlyA); });
   }
   if (wvMetricState.revenue) {
-    sect('Revenue', C1, C1, function(d){ var cv=wvCompare==='stly'?d.sdlyR:wvCompare==='ly'?d.lyR:wvCompare==='fcst'?d.fcstR:null; var cs=cmpSfx(cv!=null?d.fR(cv):'',d.toRev,cv); return sCell(d.fR(d.toRev)+cs, bar(d.revBar,C1)); });
+    sect('Revenue', C1, C1, function(d){ var cs=_wvMultiCmpSfx(d.toRev,d.sdlyR,d.lyR,d.fcstR,d.fR); return sCell(d.fR(d.toRev)+cs, bar(d.revBar,C1)); });
     sub('TO Revenue',     C1,    false, function(d){ return rCell(d.fR(d.toRev) + _wbCmpChip(d.toRev, 3, d)); });
     sub('Hotel Revenue', C2,    false, function(d){ return rCell(d.fR(d.hnRev)); });
     sub('STLY',          CSTLY, false, function(d){ return rCell(d.fR(d.sdlyR)); });
@@ -4781,13 +4792,13 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
   if (hasMore) {
     grp('More Metrics', C1);
     if (wvMetricState.dm_rnSold) {
-      sect('RN Sold', C1, C1, function(d){ var cv=wvCompare==='stly'?d.sdlyRn:wvCompare==='ly'?d.lyRn:wvCompare==='fcst'?d.fcstRn:null; var cs=cmpSfx(cv!=null?String(cv):'',d.toRn,cv); return sCell(d.toRn+cs, bar(Math.round(d.toRn/WV_CAP*100),C1)+'<div style="margin-top:2px">'+bar(Math.round(d.hnRn/WV_CAP*100),C2)+'</div>'); });
+      sect('RN Sold', C1, C1, function(d){ var cs=_wvMultiCmpSfx(d.toRn,d.sdlyRn,d.lyRn,d.fcstRn,String); return sCell(d.toRn+cs, bar(Math.round(d.toRn/WV_CAP*100),C1)+'<div style="margin-top:2px">'+bar(Math.round(d.hnRn/WV_CAP*100),C2)+'</div>'); });
       sub('TO RN',     C1,    false, function(d){ return sCell(d.toRn+' rms'+_wbCmpChip(d.toRn, 4, d), bar(Math.round(d.toRn/WV_CAP*100),C1)); });
       sub('Hotel RN', C2,    false, function(d){ return sCell(d.hnRn+' rms', bar(Math.round(d.hnRn/WV_CAP*100),C2)); });
       sub('STLY',     CSTLY, false, function(d){ return sCell(d.sdlyRn+' rms', bar(Math.round(d.sdlyRn/WV_CAP*100),CSTLY)); });
     }
     if (wvMetricState.dm_trevpar) {
-      sect('REVPAR', C1, C1, function(d){ var cv=wvCompare==='stly'?d.sdlyRevpar:wvCompare==='ly'?d.lyRevpar:null; return sCell('$'+d.hRevpar, bar(Math.min(90,Math.round(d.hRevpar/4)),C1)); });
+      sect('REVPAR', C1, C1, function(d){ var cs=_wvMultiCmpSfx(d.hRevpar,d.sdlyRevpar,d.lyRevpar,null,function(v){return '$'+v;}); return sCell('$'+d.hRevpar+cs, bar(Math.min(90,Math.round(d.hRevpar/4)),C1)); });
       sub('Hotel',    C2,    false, function(d){ return sCell('$'+d.hRevpar, bar(Math.min(90,Math.round(d.hRevpar/4)),C2)); });
       sub('STLY',     CSTLY, false, function(d){ return sCell('$'+d.sdlyRevpar, bar(Math.min(90,Math.round(d.sdlyRevpar/4)),CSTLY)); });
     }
