@@ -5471,13 +5471,289 @@ window.calToggleMonthlySummary = function() {
   window._calMsSummaryOpen = open;
 };
 
-window.wvToggleSummary = function(btn) {
-  var detail = document.getElementById('wvSummaryDetail');
-  var chev   = document.getElementById('wvSummaryChev');
-  if (!detail) return;
-  var open = detail.style.display === 'none' || !detail.style.display;
-  detail.style.display = open ? 'block' : 'none';
-  if (chev) chev.style.transform = open ? 'rotate(180deg)' : '';
+var _wv7dAccState = {};
+var _wv7dSummaryData = null;
+
+window.wv7dToggle = function(id) {
+  _wv7dAccState[id] = !_wv7dAccState[id];
+  var c = document.getElementById('wvSummaryContainer');
+  if (c && _wv7dSummaryData) c.innerHTML = _buildWv7dSummaryHtml(_wv7dSummaryData);
+};
+
+window._buildWv7dSummaryHtml = function(d) {
+  var WV = 250;
+  var tcOps = [['Sunshine Tours','#3b82f6'],['Global Adv.','#967EF3'],['Beach Hols','#0ea5e9'],['City Breaks','#10b981'],['Adventure','#f59e0b']];
+  var chevUp   = '<span class="material-icons" style="font-size:16px">expand_less</span>';
+  var chevDown = '<span class="material-icons" style="font-size:16px">expand_more</span>';
+
+  function bar(pct, clr) {
+    return '<div class="wv-occ-bar-track"><div style="width:'+Math.min(92,pct)+'%;background:'+clr+';height:6px"></div></div>';
+  }
+  function stackBar(segs) {
+    return '<div class="wv-occ-bar-track">'
+      +segs.map(function(s){return '<div style="width:'+s.p+'%;background:'+s.c+';height:6px"></div>';}).join('')+'</div>';
+  }
+  function refChips(pairs) {
+    var CSS={stly:'background:#e0e7ff;color:#4338ca',ly:'background:#dcfce7;color:#15803d',fcst:'background:#fef9c3;color:#a16207'};
+    return '<div style="display:flex;gap:2px;flex-wrap:wrap;margin-top:2px">'
+      +pairs.map(function(p){return '<span style="font-size:7px;font-weight:700;padding:1px 4px;border-radius:3px;'+CSS[p.k]+'">'+p.l+' '+p.v+'</span>';}).join('')+'</div>';
+  }
+
+  // Row definitions (same groups as monthly)
+  var rows = [];
+  rows.push({type:'top', id:'wv7d_co', label:'Close Outs'});
+  rows.push({type:'sect', id:'mos_co_full', label:'Full Close Out', parent:'wv7d_co'});
+  rows.push({type:'sect', id:'mos_co_part', label:'Partial Lock', parent:'wv7d_co'});
+
+  rows.push({type:'top', id:'wv7d_daily', label:'Daily Metrics'});
+  rows.push({type:'sect', id:'mos_occ', label:'Occupancy', parent:'wv7d_daily'});
+  rows.push({type:'sub', id:'mos_occ_to',   label:'TO',    dot:'#004948', parent:'mos_occ', gp:'wv7d_daily'});
+  rows.push({type:'sub', id:'mos_occ_htl',  label:'Hotel', dot:'#52d9ce', parent:'mos_occ', gp:'wv7d_daily'});
+  rows.push({type:'sub', id:'mos_occ_stly', label:'STLY',  dot:'#818cf8', parent:'mos_occ', gp:'wv7d_daily'});
+  rows.push({type:'sect', id:'mos_adr', label:'ADR', parent:'wv7d_daily'});
+  rows.push({type:'sub', id:'mos_adr_to',  label:'TO ADR',    dot:'#004948', parent:'mos_adr', gp:'wv7d_daily'});
+  rows.push({type:'sub', id:'mos_adr_htl', label:'Hotel ADR', dot:'#52d9ce', parent:'mos_adr', gp:'wv7d_daily'});
+  rows.push({type:'sect', id:'mos_rev', label:'Revenue', parent:'wv7d_daily'});
+  rows.push({type:'sub', id:'mos_rev_to',  label:'TO Revenue',    dot:'#004948', parent:'mos_rev', gp:'wv7d_daily'});
+  rows.push({type:'sub', id:'mos_rev_htl', label:'Hotel Revenue', dot:'#52d9ce', parent:'mos_rev', gp:'wv7d_daily'});
+  rows.push({type:'sect', id:'mos_revpar', label:'REVPAR', parent:'wv7d_daily'});
+  rows.push({type:'sub', id:'mos_revpar_stly', label:'STLY', dot:'#818cf8', parent:'mos_revpar', gp:'wv7d_daily'});
+  rows.push({type:'sect', id:'mos_pickup', label:'Pickup', parent:'wv7d_daily'});
+  rows.push({type:'sect', id:'mos_onoff', label:'Online / Offline', parent:'wv7d_daily'});
+  rows.push({type:'sub', id:'mos_onoff_on',  label:'Online',  dot:'#3b82f6', parent:'mos_onoff', gp:'wv7d_daily'});
+  rows.push({type:'sub', id:'mos_onoff_off', label:'Offline', dot:'#f97316', parent:'mos_onoff', gp:'wv7d_daily'});
+
+  rows.push({type:'top', id:'wv7d_seg', label:'Segment Mix'});
+  rows.push({type:'sect', id:'mos_segbar', label:'Summary', parent:'wv7d_seg'});
+  rows.push({type:'sub', id:'mos_seg_fit', label:'Static FIT',  dot:'#006461', parent:'mos_segbar', gp:'wv7d_seg'});
+  rows.push({type:'sub', id:'mos_seg_dyn', label:'TO Dynamic',  dot:'#0891b2', parent:'mos_segbar', gp:'wv7d_seg'});
+  rows.push({type:'sub', id:'mos_seg_ser', label:'Tour Series', dot:'#6366f1', parent:'mos_segbar', gp:'wv7d_seg'});
+  rows.push({type:'sub', id:'mos_seg_oth', label:'Other Segs',  dot:'#5883ed', parent:'mos_segbar', gp:'wv7d_seg'});
+  rows.push({type:'sub', id:'mos_seg_rem', label:'Remaining',   dot:'#9ca3af', parent:'mos_segbar', gp:'wv7d_seg', isRem:true});
+
+  rows.push({type:'top', id:'wv7d_more', label:'More Metrics'});
+  rows.push({type:'sect', id:'mos_rn',    label:'RN Sold',       parent:'wv7d_more'});
+  rows.push({type:'sub',  id:'mos_rn_stly', label:'STLY', dot:'#818cf8', parent:'mos_rn', gp:'wv7d_more'});
+  rows.push({type:'sect', id:'mos_avga',  label:'Avg Adults',    parent:'wv7d_more'});
+  rows.push({type:'sect', id:'mos_avgc',  label:'Avg Children',  parent:'wv7d_more'});
+  rows.push({type:'sect', id:'mos_tota',  label:'Total Adults',  parent:'wv7d_more'});
+  rows.push({type:'sect', id:'mos_totc',  label:'Total Children',parent:'wv7d_more'});
+  rows.push({type:'sect', id:'mos_totg',  label:'Total Guests',  parent:'wv7d_more'});
+  rows.push({type:'sect', id:'mos_los',   label:'Avg LOS',       parent:'wv7d_more'});
+  rows.push({type:'sect', id:'mos_lead',  label:'Lead Time',     parent:'wv7d_more'});
+  rows.push({type:'sect', id:'mos_avail', label:'Avail Rooms',   parent:'wv7d_more'});
+  rows.push({type:'sect', id:'mos_availg',label:'Avail Guar.',   parent:'wv7d_more'});
+
+  rows.push({type:'top', id:'wv7d_meals', label:'Meal Plans'});
+  rows.push({type:'sect', id:'mos_mpsum', label:'Summary', parent:'wv7d_meals'});
+  rows.push({type:'sub', id:'mos_mp_ai', label:'All Inclusive',  dot:'#006461', parent:'mos_mpsum', gp:'wv7d_meals'});
+  rows.push({type:'sub', id:'mos_mp_bb', label:'Bed & Breakfast',dot:'#3b82f6', parent:'mos_mpsum', gp:'wv7d_meals'});
+  rows.push({type:'sub', id:'mos_mp_hb', label:'Half Board',     dot:'#967EF3', parent:'mos_mpsum', gp:'wv7d_meals'});
+  rows.push({type:'sub', id:'mos_mp_ro', label:'Room Only',      dot:'#f59e0b', parent:'mos_mpsum', gp:'wv7d_meals'});
+
+  rows.push({type:'top', id:'wv7d_biz', label:'Business Mix'});
+  rows.push({type:'sect', id:'mos_bizbar', label:'Summary', parent:'wv7d_biz'});
+  rows.push({type:'sub', id:'mos_biz_to',  label:'TO',     dot:'#006461', parent:'mos_bizbar', gp:'wv7d_biz'});
+  rows.push({type:'sub', id:'mos_biz_dir', label:'Direct', dot:'#0284c7', parent:'mos_bizbar', gp:'wv7d_biz'});
+  rows.push({type:'sub', id:'mos_biz_ota', label:'OTA',    dot:'#D97706', parent:'mos_bizbar', gp:'wv7d_biz'});
+  rows.push({type:'sub', id:'mos_biz_oth', label:'Other',  dot:'#9ca3af', parent:'mos_bizbar', gp:'wv7d_biz'});
+
+  rows.push({type:'top', id:'wv7d_tc', label:'Travel Co. Rates'});
+  tcOps.forEach(function(op,i){ rows.push({type:'sect', id:'mos_tc'+i, label:op[0], parent:'wv7d_tc', toIdx:i, toClr:op[1]}); });
+  rows.push({type:'sect', id:'mos_tcbase', label:'Base Seg. Rate', parent:'wv7d_tc', toBase:true});
+
+  function isHidden(row) {
+    if(row.type==='top') return false;
+    if(row.type==='sect' && _wv7dAccState[row.parent]) return true;
+    if(row.type==='sub'){ if(_wv7dAccState[row.gp]) return true; if(_wv7dAccState[row.parent]) return true; }
+    return false;
+  }
+
+  var promoLabel = d.isEbbWeek ? 'EBB 10%' : 'Contract';
+  var promoClr   = d.isEbbWeek ? '#16a34a' : '#2563eb';
+
+  var html = '<div class="wb-layout">';
+  rows.forEach(function(row) {
+    var collapsed = !!_wv7dAccState[row.id];
+    var hidden = isHidden(row);
+    html += '<div class="wb-row wb-row-'+row.type+(hidden?' wb-row-hidden':'')+'">';
+
+    // Label cell
+    if(row.type==='top'){
+      html += '<div class="wb-label-cell wb-grp-hdr" onclick="wv7dToggle(\''+row.id+'\')">'
+             +'<span class="wb-chev">'+(collapsed?chevDown:chevUp)+'</span>'
+             +'<span class="wb-grp-label">'+row.label+'</span></div>';
+    } else if(row.type==='sect'){
+      html += '<div class="wb-label-cell wb-sect-lbl" onclick="wv7dToggle(\''+row.id+'\')">'
+             +'<span class="wb-chev">'+(collapsed?chevDown:chevUp)+'</span>'
+             +'<span class="wb-sect-label">'+row.label+'</span></div>';
+    } else {
+      html += '<div class="wb-label-cell wb-sub-lbl-cell">'
+             +(row.dot?'<span class="wb-sub-dot" style="background:'+row.dot+'"></span>':'')
+             +'<span class="wb-sub-label'+(row.isRem?' wb-sub-lbl-rem':'')+'">'+(row.label)+'</span></div>';
+    }
+
+    // Data cell
+    var cc = '';
+    if(row.type==='top'){
+      cc = '';
+    } else if(row.type==='sect'){
+      switch(row.id){
+        case 'mos_co_full':
+          cc = d.fullCoCount7>0
+            ? '<div class="wb-sect-val"><span class="material-icons" style="font-size:13px;color:#fca5a5;vertical-align:middle;margin-right:3px">lock</span><span class="wv-occ-total" style="color:#ef4444">'+d.fullCoCount7+' day'+(d.fullCoCount7!==1?'s':'')+'</span><span style="font-size:10px;color:#9ca3af;margin-left:6px">/ '+d.n7+'</span></div>'+bar(Math.min(90,Math.round(d.fullCoCount7/d.n7*100)),'#ef4444')
+            : '<div class="wb-sect-val" style="color:#9ca3af;font-size:12px">None</div>';
+          break;
+        case 'mos_co_part':
+          cc = d.partCoCount7>0
+            ? '<div class="wb-sect-val"><span class="material-icons" style="font-size:13px;color:#fde68a;vertical-align:middle;margin-right:3px">lock_open</span><span class="wv-occ-total" style="color:#d97706">'+d.partCoCount7+' day'+(d.partCoCount7!==1?'s':'')+'</span><span style="font-size:10px;color:#9ca3af;margin-left:6px">/ '+d.n7+'</span></div>'+bar(Math.min(90,Math.round(d.partCoCount7/d.n7*100)),'#f59e0b')
+            : '<div class="wb-sect-val" style="color:#9ca3af;font-size:12px">None</div>';
+          break;
+        case 'mos_occ':
+          cc = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.avgHotel+'%</span></div>'
+             +'<div class="wv-occ-bar-track"><div style="width:'+d.avgTo+'%;background:#004948;height:6px"></div><div style="width:'+Math.max(0,d.avgHotel-d.avgTo)+'%;background:#52d9ce;height:6px"></div></div>'
+             +refChips([{k:'stly',l:'STLY',v:d.sdlyTo+'%'},{k:'ly',l:'LY',v:d.lyTo+'%'},{k:'fcst',l:'Fcst',v:d.fcstTo+'%'}]);
+          break;
+        case 'mos_adr':
+          cc = '<div class="wb-sect-val"><span class="wv-occ-total">$'+d.avgToAdr+'</span></div>'
+             +'<div class="wv-occ-bar-track"><div style="width:'+Math.round(d.avgToAdr/3.5)+'%;background:#004948;height:6px"></div></div>'
+             +refChips([{k:'stly',l:'STLY',v:'$'+d.sdlyAdr},{k:'ly',l:'LY',v:'$'+d.lyAdr},{k:'fcst',l:'Fcst',v:'$'+d.fcstAdr}]);
+          break;
+        case 'mos_rev':
+          cc = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.totalRevStr+'</span></div>'
+             +refChips([{k:'stly',l:'STLY',v:d.sdlyRev},{k:'ly',l:'LY',v:d.lyRev},{k:'fcst',l:'Fcst',v:d.fcstRev}]);
+          break;
+        case 'mos_revpar':
+          cc = '<div class="wb-sect-val"><span class="wv-occ-total">$'+d.avgRevpar+'</span></div>'
+             +'<div class="wv-occ-bar-track"><div style="width:'+Math.round(d.avgRevpar/4)+'%;background:#004948;height:6px"></div></div>'
+             +refChips([{k:'stly',l:'STLY',v:'$'+d.sdlyRevpar},{k:'ly',l:'LY',v:'$'+d.lyRevpar}]);
+          break;
+        case 'mos_pickup':
+          cc = '<div class="wb-sect-val"><span class="wv-occ-total">+'+d.sumPickup+'</span><span style="font-size:11px;color:#9ca3af;margin-left:6px">H: +'+d.sumHotelPickup+'</span></div>'
+             +'<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,d.sumPickup/10)+'%;background:#004948;height:6px"></div></div>';
+          break;
+        case 'mos_onoff':
+          cc = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.avgOnline+'% online</span></div>'
+             +'<div class="wv-occ-bar-track"><div style="width:'+d.avgOnline+'%;background:#004948;height:6px"></div><div style="width:'+(100-d.avgOnline)+'%;background:#52d9ce;height:6px"></div></div>';
+          break;
+        case 'mos_segbar':
+          cc = stackBar([{p:d.avgFitPct,c:'#006461'},{p:d.avgDynPct,c:'#0891b2'},{p:d.avgSerPct,c:'#6366f1'},{p:d.avgOtherPct,c:'#5883ed'},{p:d.avgFreePct,c:'#e5e7eb'}])
+             +'<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:3px">'
+             +'<span style="font-size:12px;font-family:Lato,sans-serif;color:#006461">FIT '+d.avgFitPct+'%</span>'
+             +'<span style="font-size:12px;font-family:Lato,sans-serif;color:#0891b2">Dyn '+d.avgDynPct+'%</span>'
+             +'<span style="font-size:12px;font-family:Lato,sans-serif;color:#6366f1">Ser '+d.avgSerPct+'%</span></div>';
+          break;
+        case 'mos_rn':
+          cc = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.sumRn+' rn</span><span style="font-size:11px;color:#9ca3af;margin-left:6px">H: '+d.avgRnH+'</span></div>'
+             +'<div class="wv-occ-bar-track"><div style="width:'+Math.min(92,Math.round(d.sumRn/WV*100))+'%;background:#004948;height:6px"></div></div>'
+             +refChips([{k:'stly',l:'STLY',v:d.sdlyRn+' rn'},{k:'ly',l:'LY',v:d.lyRn+' rn'},{k:'fcst',l:'Fcst',v:d.fcstRn+' rn'}]);
+          break;
+        case 'mos_avga':
+          cc = '<div class="wb-sect-val"><span class="wv-occ-total">'+(d.avgTotAdults/Math.max(1,d.sumRn)).toFixed(1)+'</span><span style="font-size:11px;color:#9ca3af;margin-left:6px">H: '+(d.avgHotelTotAdults/Math.max(1,d.avgRnH*d.n7)).toFixed(1)+'</span></div>'
+             +'<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,(d.avgTotAdults/Math.max(1,d.sumRn))/3*100)+'%;background:#004948;height:6px"></div></div>';
+          break;
+        case 'mos_avgc':
+          cc = '<div class="wb-sect-val"><span class="wv-occ-total">'+(d.avgTotChildren/Math.max(1,d.sumRn)).toFixed(1)+'</span><span style="font-size:11px;color:#9ca3af;margin-left:6px">H: '+(d.avgHotelTotChildren/Math.max(1,d.avgRnH*d.n7)).toFixed(1)+'</span></div>'
+             +'<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,(d.avgTotChildren/Math.max(1,d.sumRn))/2*100)+'%;background:#d33030;height:6px"></div></div>';
+          break;
+        case 'mos_tota':
+          cc = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.avgTotAdults+'</span><span style="font-size:11px;color:#9ca3af;margin-left:6px">H: '+d.avgHotelTotAdults+'</span></div>'; break;
+        case 'mos_totc':
+          cc = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.avgTotChildren+'</span><span style="font-size:11px;color:#9ca3af;margin-left:6px">H: '+d.avgHotelTotChildren+'</span></div>'; break;
+        case 'mos_totg':
+          cc = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.avgTotGuests+'</span><span style="font-size:11px;color:#9ca3af;margin-left:6px">H: '+d.avgHotelTotGuests+'</span></div>'; break;
+        case 'mos_los':
+          cc = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.avgLos+'</span><span style="font-size:11px;color:#9ca3af;margin-left:6px">H: '+d.avgHotelLos+'</span></div>'
+             +'<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,parseFloat(d.avgLos)/10*100)+'%;background:#004948;height:6px"></div></div>'; break;
+        case 'mos_lead':
+          cc = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.avgLead+'</span><span style="font-size:11px;color:#9ca3af;margin-left:6px">H: '+d.avgHotelLead+'</span></div>'
+             +'<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,parseInt(d.avgLead)/90*100)+'%;background:#004948;height:6px"></div></div>'; break;
+        case 'mos_avail':
+          cc = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.avgAvailRooms+' rm</span></div>'
+             +'<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,Math.round(d.avgAvailRooms/WV*100))+'%;background:#16a34a;height:6px"></div></div>'; break;
+        case 'mos_availg':
+          cc = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.avgAvailGuar+' rm</span></div>'
+             +'<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,Math.round(d.avgAvailGuar/20*100))+'%;background:#004948;height:6px"></div></div>'; break;
+        case 'mos_mpsum':
+          cc = stackBar([{p:d.avgAiPct,c:'#006461'},{p:d.avgBbPct,c:'#3b82f6'},{p:d.avgHbPct,c:'#967EF3'},{p:d.avgRoPct,c:'#f59e0b'}])
+             +'<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:3px">'
+             +'<span style="font-size:12px;font-family:Lato,sans-serif;color:#006461">AI '+d.avgAiPct+'%</span>'
+             +'<span style="font-size:12px;font-family:Lato,sans-serif;color:#3b82f6">BB '+d.avgBbPct+'%</span>'
+             +'<span style="font-size:12px;font-family:Lato,sans-serif;color:#967EF3">HB '+d.avgHbPct+'%</span>'
+             +'<span style="font-size:12px;font-family:Lato,sans-serif;color:#f59e0b">RO '+d.avgRoPct+'%</span></div>';
+          break;
+        case 'mos_bizbar':
+          cc = stackBar([{p:d.avgToMix,c:'#006461'},{p:d.avgDirMix,c:'#0284c7'},{p:d.avgOtaMix,c:'#D97706'},{p:d.avgOtherMix,c:'#9ca3af'}])
+             +'<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:3px">'
+             +'<span style="font-size:12px;font-family:Lato,sans-serif;color:#006461">TO '+d.avgToMix+'%</span>'
+             +'<span style="font-size:12px;font-family:Lato,sans-serif;color:#0284c7">D '+d.avgDirMix+'%</span>'
+             +'<span style="font-size:12px;font-family:Lato,sans-serif;color:#D97706">OTA '+d.avgOtaMix+'%</span></div>';
+          break;
+        case 'mos_tcbase':
+          cc = '<div class="wb-sect-val"><span class="wv-occ-total" style="font-weight:700;color:#1C1C1C">$'+(d.avgHotelAdr+8)+'</span></div>'
+             +'<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,Math.round((d.avgHotelAdr+8)/280*100))+'%;background:#004948;height:6px"></div></div>';
+          break;
+        default:
+          if(row.toIdx!==undefined){
+            cc = '<div class="wb-sect-val" style="justify-content:space-between">'
+               +'<span class="wv-occ-total" style="color:#1C1C1C">$'+d.avgTcRates[row.toIdx]+'</span>'
+               +'<span style="font-size:11px;font-weight:700;padding:1px 5px;border-radius:3px;background:'+promoClr+'22;color:'+promoClr+';border:1px solid '+promoClr+'44">'+promoLabel+'</span>'
+               +'</div>'
+               +'<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,Math.round(d.avgTcRates[row.toIdx]/280*100))+'%;background:#004948;height:6px"></div></div>';
+          }
+          break;
+      }
+    } else {
+      // Sub rows — same as monthly
+      var v1 = '';
+      switch(row.id){
+        case 'mos_occ_to':     v1 = d.avgTo+'%'; break;
+        case 'mos_occ_htl':    v1 = d.avgHotel+'%'; break;
+        case 'mos_occ_stly':   v1 = d.sdlyTo+'%'; break;
+        case 'mos_adr_to':     v1 = '$'+d.avgToAdr; break;
+        case 'mos_adr_htl':    v1 = '$'+d.avgHotelAdr; break;
+        case 'mos_rev_to':     v1 = d.totalRevStr; break;
+        case 'mos_rev_htl':    v1 = d.totalHotelRevStr; break;
+        case 'mos_revpar_stly':v1 = '$'+d.sdlyRevpar; break;
+        case 'mos_rn_stly':    v1 = d.sdlyRn+' rn'; break;
+        case 'mos_onoff_on':   v1 = d.avgOnline+'%'; break;
+        case 'mos_onoff_off':  v1 = (100-d.avgOnline)+'%'; break;
+        case 'mos_seg_fit':    v1 = d.avgFitPct+'% · '+d.avgFitRms+' rm'; break;
+        case 'mos_seg_dyn':    v1 = d.avgDynPct+'% · '+d.avgDynRms+' rm'; break;
+        case 'mos_seg_ser':    v1 = d.avgSerPct+'% · '+d.avgSerRms+' rm'; break;
+        case 'mos_seg_oth':    v1 = d.avgOtherPct+'% · '+d.avgOtherRms+' rm'; break;
+        case 'mos_seg_rem':    v1 = d.avgFreePct+'% · '+d.avgFreeRms+' rm'; break;
+        case 'mos_mp_ai':      v1 = d.avgAiPct+'% · TO '+d.aiToP+'%'; break;
+        case 'mos_mp_bb':      v1 = d.avgBbPct+'% · TO '+d.bbToP+'%'; break;
+        case 'mos_mp_hb':      v1 = d.avgHbPct+'% · TO '+d.hbToP+'%'; break;
+        case 'mos_mp_ro':      v1 = d.avgRoPct+'% · TO '+d.roToP+'%'; break;
+        case 'mos_biz_to':     v1 = d.avgToMix+'%'; break;
+        case 'mos_biz_dir':    v1 = d.avgDirMix+'%'; break;
+        case 'mos_biz_ota':    v1 = d.avgOtaMix+'%'; break;
+        case 'mos_biz_oth':    v1 = d.avgOtherMix+'%'; break;
+      }
+      cc = '<span class="wb-sub-val">'+v1+'</span>';
+    }
+
+    html += '<div class="wb-data-cell">'+cc+'</div>';
+    html += '</div>'; // close wb-row
+  });
+  html += '</div>'; // close wb-layout
+
+  // Wrap in outer accordion (same as monthly "Overview")
+  var ovCollapsed = _wv7dAccState['wv7d_overview'] === true;
+  var ovChev = ovCollapsed
+    ? '<span class="material-icons" style="font-size:16px">expand_more</span>'
+    : '<span class="material-icons" style="font-size:16px">expand_less</span>';
+  return '<div class="cal-summary-wrap" style="background:#fff">'
+    +'<div class="wv-acc-sect'+(ovCollapsed?'':' wv-acc-open')+'" style="border:1px solid #dde1e2;border-radius:0;overflow:hidden">'
+    +'<div class="wv-acc-hdr" onclick="wv7dToggle(\'wv7d_overview\')" style="background:#fff;border-bottom:none;border-radius:0">'
+    +'<span class="wv-acc-chev" style="color:#006461">'+ovChev+'</span>'
+    +'<span class="wv-acc-title" style="font-weight:700">7 Day Metrics Summary</span>'
+    +'</div>'
+    +'<div class="wv-acc-body'+(ovCollapsed?' wv-body-hidden':'')+'" style="padding:0;background:#fff">'
+    +html
+    +'</div></div></div>';
 };
 
 /* ── Daily-H AG Grid ─────────────────────────────────────────────────────── */
@@ -7283,25 +7559,54 @@ function buildWeekGrid(month, weekStart, activeDay) {
     +'</div>'
   );
 
-  const summaryPanel = '<div class="wv-summary-panel" style="padding:0">'
-    +'<div id="wvSummaryToggle" onclick="wvToggleSummary(this)" style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 16px;cursor:pointer;user-select:none;">'
-    +'<span style="font-size:14px;font-weight:700;color:#111827;letter-spacing:0">7 Day Metrics Summary</span>'
-    +'<span class="material-icons" id="wvSummaryChev" style="font-size:14px;color:#6b7280;flex-shrink:0;transition:transform .2s">expand_more</span>'
-    +'</div>'
-    +'<div id="wvSummaryDetail" style="display:none;padding:10px 12px">'
-    +'<div style="display:grid;grid-template-columns:2fr 2fr 1fr 1fr 1fr;gap:8px;align-items:start">'
-    +secOcc+secMore
-    +'<div style="display:flex;flex-direction:column;gap:8px">'
-    +secMeals+secBiz
-    +'</div>'
-    +secRoomTypes+secTC
-    +'</div>'
-    +'</div>'
-    +'</div>';
+  // Close-out counts for the 7 days
+  var fullCoCount7=0, partCoCount7=0;
+  days.forEach(function(dv){
+    if(LOCKED_DAYS.has(dv.month+'-'+dv.day)) fullCoCount7++;
+    var pr=PARTIAL_CLOSURES[dv.month+'-'+dv.day];
+    if(pr&&pr.length) partCoCount7++;
+  });
 
+  // Init accordion state once
+  if(!_wv7dAccState._init){
+    _wv7dAccState._init=true;
+    ['wv7d_overview','wv7d_co','wv7d_daily','wv7d_seg','wv7d_more','wv7d_meals','wv7d_biz','wv7d_tc',
+     'mos_co_full','mos_co_part','mos_occ','mos_adr','mos_rev','mos_revpar','mos_pickup','mos_onoff',
+     'mos_segbar','mos_rn','mos_avga','mos_avgc','mos_tota','mos_totc','mos_totg','mos_los','mos_lead',
+     'mos_avail','mos_availg','mos_mpsum','mos_bizbar',
+     'mos_tc0','mos_tc1','mos_tc2','mos_tc3','mos_tc4','mos_tcbase'
+    ].forEach(function(k){_wv7dAccState[k]=false;});
+  }
+
+  _wv7dSummaryData = {
+    avgTo:avgTo, avgHotel:avgHotel,
+    avgToAdr:avgToAdr, avgHotelAdr:avgHotelAdr,
+    totalRevStr:totalRevStr, totalHotelRevStr:totalHotelRevStr,
+    avgRevpar:avgRevpar, avgHotelRevpar:avgHotelRevpar,
+    sumPickup:sumPickup, sumHotelPickup:sumHotelPickup,
+    sumRn:sumRn, avgRnH:avgRnH,
+    avgLos:avgLos, avgHotelLos:avgHotelLos,
+    avgLead:avgLead, avgHotelLead:avgHotelLead,
+    avgAvailRooms:avgAvailRooms, avgAvailGuar:avgAvailGuar,
+    avgTotGuests:avgTotGuests, avgHotelTotGuests:avgHotelTotGuests,
+    avgTotAdults:avgTotAdults, avgTotChildren:avgTotChildren,
+    avgHotelTotAdults:avgHotelTotAdults, avgHotelTotChildren:avgHotelTotChildren,
+    avgAiPct:avgAiPct, avgBbPct:avgBbPct, avgHbPct:avgHbPct, avgRoPct:avgRoPct,
+    aiToP:aiToP, bbToP:bbToP, hbToP:hbToP, roToP:roToP,
+    avgToMix:avgToMix, avgDirMix:avgDirMix, avgOtaMix:avgOtaMix, avgOtherMix:avgOtherMix,
+    avgFitPct:avgFitPct, avgDynPct:avgDynPct, avgSerPct:avgSerPct, avgOtherPct:avgOtherPct, avgFreePct:avgFreePct,
+    avgFitRms:avgFitRms, avgDynRms:avgDynRms, avgSerRms:avgSerRms, avgOtherRms:avgOtherRms, avgFreeRms:avgFreeRms,
+    avgOnline:avgOnline, avgTcRates:avgTcRates,
+    sdlyTo:sdlyTo, lyTo:lyTo, fcstTo:fcstTo,
+    sdlyAdr:sdlyAdr, lyAdr:lyAdr, fcstAdr:fcstAdr,
+    sdlyRev:sdlyRev, lyRev:lyRev, fcstRev:fcstRev,
+    sdlyRn:sdlyRn, lyRn:lyRn, fcstRn:fcstRn,
+    sdlyRevpar:sdlyRevpar, lyRevpar:lyRevpar,
+    isEbbWeek:isEbbWeek, fullCoCount7:fullCoCount7, partCoCount7:partCoCount7, n7:n7
+  };
 
   var summaryContainer = document.getElementById('wvSummaryContainer');
-  if (summaryContainer) summaryContainer.innerHTML = summaryPanel;
+  if(summaryContainer) summaryContainer.innerHTML = _buildWv7dSummaryHtml(_wv7dSummaryData);
 
   // Close-out heat map removed
   var coHeatmapContainer = document.getElementById('coHeatmapContainer');
