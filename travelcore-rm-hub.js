@@ -2020,7 +2020,7 @@ function renderCalMonthlySummary() {
       tcRates,baseRate,isEbb,
       sdlyT,lyT,fcstT,sdlyAdr,lyAdr,fcstAdr,sdlyRev,lyRev,fcstRev,
       sdlyRevpar,lyRevpar,sdlyRn,lyRn,fcstRn,
-      fullCoCount,partCoCount,nd,coRoomTypes,coBoards,coTOs};
+      fullCoCount,partCoCount,nd,nm,coRoomTypes,coBoards,coTOs};
   });
 
   var tcOps=[['Sunshine Tours','#3b82f6'],['Global Adv.','#967EF3'],['Beach Hols','#0ea5e9'],['City Breaks','#10b981'],['Adventure','#f59e0b']];
@@ -2065,6 +2065,7 @@ function renderCalMonthlySummary() {
     _calAccState.mo_biz = false;
     _calAccState.mo_tc = false;
     _calAccState.mo_closeouts = false;
+    _calAccState.mo_avail = false;
   }
 
   // Row definitions (same pattern as Daily B)
@@ -2127,6 +2128,20 @@ function renderCalMonthlySummary() {
   moRows.push({type:'sub', id:'mos_biz_dir', label:'Direct', dot:'#0284c7', parent:'mos_bizbar', gp:'mo_biz'});
   moRows.push({type:'sub', id:'mos_biz_ota', label:'OTA', dot:'#D97706', parent:'mos_bizbar', gp:'mo_biz'});
   moRows.push({type:'sub', id:'mos_biz_oth', label:'Other', dot:'#9ca3af', parent:'mos_bizbar', gp:'mo_biz'});
+
+  // ── Room Availability group
+  moRows.push({type:'top', id:'mo_avail', label:'Room Availability'});
+  var MO_RT_NAMES = ['Standard','Superior','Deluxe','Suite','Jr. Suite','Family'];
+  var MO_RT_CAPS  = [51,36,27,12,15,9];
+  MO_RT_NAMES.forEach(function(name, i) {
+    moRows.push({type:'sect', id:'moavrt'+i,       label:name,                    parent:'mo_avail', rtIdx:i});
+    moRows.push({type:'sub',  id:'moavrt'+i+'_to', label:'TO Sold',               dot:'#004948', parent:'moavrt'+i, gp:'mo_avail', rtIdx:i, rtSub:'to'});
+    moRows.push({type:'sub',  id:'moavrt'+i+'_ot', label:'Other Segments',        dot:'#52d9ce', parent:'moavrt'+i, gp:'mo_avail', rtIdx:i, rtSub:'other'});
+    moRows.push({type:'sub',  id:'moavrt'+i+'_tn', label:'Tentative Sold (Group)',dot:'#967EF3', parent:'moavrt'+i, gp:'mo_avail', rtIdx:i, rtSub:'tentative'});
+    moRows.push({type:'sub',  id:'moavrt'+i+'_oo', label:'Out-of-Order',          dot:'#ef4444', parent:'moavrt'+i, gp:'mo_avail', rtIdx:i, rtSub:'ooo'});
+    moRows.push({type:'sub',  id:'moavrt'+i+'_al', label:'Alloc Rem.',            dot:'#D97706', parent:'moavrt'+i, gp:'mo_avail', rtIdx:i, rtSub:'alloc'});
+    moRows.push({type:'sub',  id:'moavrt'+i+'_av', label:'Total Hotel Occupancy', dot:'#445e0d', parent:'moavrt'+i, gp:'mo_avail', rtIdx:i, rtSub:'avail', isRem:true});
+  });
 
   // ── Travel Co. Rates group
   moRows.push({type:'top', id:'mo_tc', label:'Travel Co. Rates'});
@@ -2317,8 +2332,32 @@ function renderCalMonthlySummary() {
             break;
           }
           default:
+            // Room Availability (dynamic rtIdx)
+            if (row.rtIdx !== undefined) {
+              var moInv  = MO_RT_CAPS[row.rtIdx];
+              var moSold = Math.min(moInv, Math.floor(moInv * mo.avgH / 110));
+              var moToS  = Math.min(moSold, Math.round(moSold * mo.avgT / Math.max(1, mo.avgH)));
+              var moOtS  = moSold - moToS;
+              var moTent = Math.max(0, Math.floor(2+Math.abs((mo.nm*(row.rtIdx+4)+mo.nd*(row.rtIdx+2))%6)));
+              var moAlloc = Math.floor(moInv * 0.8 + Math.abs((mo.nm*(row.rtIdx+3)+mo.nd*(row.rtIdx+5))%15));
+              var moAlRem = Math.max(0, moAlloc - moToS);
+              var moAvRm  = Math.max(0, moInv - moSold - moTent);
+              var moToP  = Math.round(moToS/moInv*100), moOtP = Math.round(moOtS/moInv*100);
+              var moTnP  = Math.round(moTent/moInv*100);
+              var moAlP  = Math.round(moAlRem/moInv*100), moAvP = Math.max(0, 100-moToP-moOtP-moTnP-moAlP);
+              var moAvClr = moAvRm <= 0 ? '#dc2626' : '#004948';
+              cc = '<div class="wb-sect-val"><span class="wv-occ-total" style="color:'+(moAvRm<=0?'#16a34a':moAvClr)+'">'
+                + (moAvRm <= 0 ? '0 available' : moAvRm+' avail') + '</span>'
+                + '<span style="font-size:12px;color:#9ca3af;margin-left:4px">/ '+moInv+'</span></div>'
+                + '<div class="wv-occ-bar-track">'
+                + '<div style="width:'+moToP+'%;background:'+moGrad('#004948')+';height:6px"></div>'
+                + '<div style="width:'+moOtP+'%;background:'+moGrad('#52d9ce')+';height:6px"></div>'
+                + '<div style="width:'+moTnP+'%;background:'+moGrad('#967EF3')+';height:6px"></div>'
+                + '<div style="width:'+moAlP+'%;background:'+moGrad('#D97706')+';height:6px"></div>'
+                + '<div style="width:'+moAvP+'%;background:'+moGrad('#d7f7ed')+';height:6px"></div>'
+                + '</div>';
             // Travel Co. rates (dynamic toIdx)
-            if (row.toIdx !== undefined) {
+            } else if (row.toIdx !== undefined) {
               var isEbb = mo.isEbb;
               var promoTxt = isEbb ? 'EBB 10%' : 'Contract';
               var promoClr = isEbb ? '#16a34a' : '#2563eb';
@@ -2363,7 +2402,26 @@ function renderCalMonthlySummary() {
           case 'mos_co_boards': v1 = mo.coBoards.length>0    ? mo.coBoards.join(', ')    : '—'; break;
           case 'mos_co_tos':    v1 = mo.coTOs.length>0       ? mo.coTOs.join(', ')       : '—'; break;
         }
-        cc = '<span class="wb-sub-val">' + v1 + '</span>';
+        // Room Availability sub-rows (dynamic rtSub)
+        if (row.rtSub !== undefined) {
+          var moInv2   = MO_RT_CAPS[row.rtIdx];
+          var moSold2  = Math.min(moInv2, Math.floor(moInv2 * mo.avgH / 110));
+          var moToS2   = Math.min(moSold2, Math.round(moSold2 * mo.avgT / Math.max(1, mo.avgH)));
+          var moOtS2   = moSold2 - moToS2;
+          var moAlloc2 = Math.floor(moInv2 * 0.8 + Math.abs((mo.nm*(row.rtIdx+3)+mo.nd*(row.rtIdx+5))%15));
+          var moAlRem2 = Math.max(0, moAlloc2 - moToS2);
+          var moAvRm2  = Math.max(0, moInv2 - moSold2);
+          var remCls = '';
+          if      (row.rtSub === 'to')        v1 = moToS2 + ' rm';
+          else if (row.rtSub === 'other')     v1 = moOtS2 + ' rm';
+          else if (row.rtSub === 'tentative') { var moTent2 = Math.max(0, Math.floor(2+Math.abs((mo.nm*(row.rtIdx+4)+mo.nd*(row.rtIdx+2))%6))); v1 = moTent2 + ' rm'; }
+          else if (row.rtSub === 'ooo')       { var moOoo2  = Math.max(0, Math.floor(Math.abs((mo.nm*(row.rtIdx+1)+mo.nd*(row.rtIdx+3))%4))); v1 = moOoo2 + ' rm'; }
+          else if (row.rtSub === 'alloc')     v1 = moAlRem2 + ' rm';
+          else if (row.rtSub === 'avail')     { v1 = moAvRm2 + ' rm'; remCls = moAvRm2 === 0 ? ' wb-sub-val-rem' : ''; }
+          cc = '<span class="wb-sub-val' + remCls + '">' + v1 + '</span>';
+        } else {
+          cc = '<span class="wb-sub-val">' + v1 + '</span>';
+        }
       }
 
       html += '<div class="wb-data-cell">' + cc + '</div>';
@@ -2420,11 +2478,11 @@ document.querySelectorAll('.mo-grp-btn').forEach(function(btn) {
 });
 
 window.moAccCloseAll = function() {
-  ['mo_daily','mo_more','mo_meals','mo_biz','mo_tc','overview'].forEach(function(k) { _calAccState[k] = true; });
+  ['mo_daily','mo_more','mo_meals','mo_biz','mo_avail','mo_tc','overview'].forEach(function(k) { _calAccState[k] = true; });
   renderCalMonthlySummary();
 };
 window.moAccOpenAll = function() {
-  ['mo_daily','mo_more','mo_meals','mo_biz','mo_tc','overview'].forEach(function(k) { _calAccState[k] = false; });
+  ['mo_daily','mo_more','mo_meals','mo_biz','mo_avail','mo_tc','overview'].forEach(function(k) { _calAccState[k] = false; });
   renderCalMonthlySummary();
 };
 
