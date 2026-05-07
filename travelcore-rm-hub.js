@@ -4144,9 +4144,11 @@ function buildDailyBView(days, month, activeDay) {
     return '<span class="wv-cmp-sep"> / </span><span class="wv-cmp-val-txt" style="color:' + clr + '">' + cmpStr + '</span>';
   }
 
-  // trendBadge delegates to multi-badge helper
+  // trendBadge wraps badges in a single container so wb-sect-val always has
+  // exactly 2 flex children (value + badges), keeping space-between sane with multiple compares
   function trendBadge(curr, stlyComp, lyComp, fcstComp) {
-    return _wvMultiTrendBadge(curr, stlyComp, lyComp, fcstComp);
+    var b = _wvMultiTrendBadge(curr, stlyComp, lyComp, fcstComp);
+    return b ? '<span style="display:inline-flex;gap:2px;flex-wrap:wrap;flex-shrink:0;align-items:center">' + b + '</span>' : '';
   }
 
   function wbGrad(clr) {

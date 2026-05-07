@@ -8236,6 +8236,17 @@ body.dark .cal-mfilt-btn.active { background: #1a3535; }
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 4px;
+  overflow: hidden;    /* clip — badges container stays on right */
+  min-width: 0;
+}
+/* Value text: shrink-to-fit, never force cell wider */
+.wb-sect-val > .wv-occ-total {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* ── Sub-row label ── */
