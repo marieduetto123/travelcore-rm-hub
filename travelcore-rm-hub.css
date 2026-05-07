@@ -8249,6 +8249,14 @@ body.dark .cal-mfilt-btn.active { background: #1a3535; }
   overflow: hidden;
   text-overflow: ellipsis;
 }
+/* Compare line: sits below the value row, wraps within the cell */
+.wb-cmp-line {
+  font-size: 11px;
+  line-height: 1.4;
+  overflow: hidden;
+}
+.wb-cmp-line .wv-cmp-sep,
+.wb-cmp-line .wv-cmp-val-txt { font-size: 11px; }
 
 /* ── Sub-row label ── */
 .wb-sub-lbl-cell {

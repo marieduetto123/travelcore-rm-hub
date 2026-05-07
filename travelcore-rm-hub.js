@@ -4338,7 +4338,8 @@ function buildDailyBView(days, month, activeDay) {
           case 'occ': {
             cs = _wvMultiCmpSfx(d.hotel, d.sdlyH, d.lyH, d.fcstH, function(v){ return v+'%'; });
             var _cv0 = wvCompare.has('stly')?d.sdlyH:wvCompare.has('ly')?d.lyH:wvCompare.has('fcst')?d.fcstH:null;
-            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.hotel+'%'+cs+'</span>'+trendBadge(d.hotel,d.sdlyH,d.lyH,d.fcstH)+'</div>'
+            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.hotel+'%</span>'+trendBadge(d.hotel,d.sdlyH,d.lyH,d.fcstH)+'</div>'
+              + (cs ? '<div class="wb-cmp-line">'+cs+'</div>' : '')
               + wbBarMark('<div class="wv-occ-bar-track">'
                 + '<div style="width:'+d.to+'%;background:'+wbGrad('#004948')+';height:6px"></div>'
                 + '<div style="width:'+d.otherPct+'%;background:'+wbGrad('#52d9ce')+';height:6px"></div>'
@@ -4356,7 +4357,8 @@ function buildDailyBView(days, month, activeDay) {
             cs = _wvMultiCmpSfx(d.toAdr, d.sdlyA, d.lyA, d.fcstA, function(v){ return '$'+v; });
             var _cv0 = wvCompare.has('stly')?d.sdlyA:wvCompare.has('ly')?d.lyA:wvCompare.has('fcst')?d.fcstA:null;
             var cvPct = _cv0!=null?Math.min(90,Math.round(_cv0/280*100)):null;
-            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">$'+d.toAdr+cs+'</span>'+trendBadge(d.toAdr,d.sdlyA,d.lyA,d.fcstA)+'</div>'
+            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">$'+d.toAdr+'</span>'+trendBadge(d.toAdr,d.sdlyA,d.lyA,d.fcstA)+'</div>'
+              + (cs ? '<div class="wb-cmp-line">'+cs+'</div>' : '')
               + wbBarMark(wbBar(d.adrBar, '#004948'), cvPct);
             break;
           }
@@ -4364,7 +4366,8 @@ function buildDailyBView(days, month, activeDay) {
             cs = _wvMultiCmpSfx(d.toRev, d.sdlyR, d.lyR, d.fcstR, d.fR);
             var _cv0 = wvCompare.has('stly')?d.sdlyR:wvCompare.has('ly')?d.lyR:wvCompare.has('fcst')?d.fcstR:null;
             var cvPct = _cv0!=null?Math.min(90,Math.round(_cv0/4500000*100)):null;
-            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.fR(d.toRev)+cs+'</span>'+trendBadge(d.toRev,d.sdlyR,d.lyR,d.fcstR)+'</div>'
+            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.fR(d.toRev)+'</span>'+trendBadge(d.toRev,d.sdlyR,d.lyR,d.fcstR)+'</div>'
+              + (cs ? '<div class="wb-cmp-line">'+cs+'</div>' : '')
               + wbBarMark(wbBar(d.revBar, '#004948'), cvPct);
             break;
           }
@@ -4373,14 +4376,17 @@ function buildDailyBView(days, month, activeDay) {
             cs = _wvMultiCmpSfx(d.toRn, d.sdlyRn, d.lyRn, d.fcstRn, String);
             var _cv0 = wvCompare.has('stly')?d.sdlyRn:wvCompare.has('ly')?d.lyRn:wvCompare.has('fcst')?d.fcstRn:null;
             var cvPct = _cv0!=null?Math.round(_cv0/WV_CAP*100):null;
-            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.toRn+cs+'</span>'+trendBadge(d.toRn,d.sdlyRn,d.lyRn,d.fcstRn)+'</div>'
+            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.toRn+'</span>'+trendBadge(d.toRn,d.sdlyRn,d.lyRn,d.fcstRn)+'</div>'
+              + (cs ? '<div class="wb-cmp-line">'+cs+'</div>' : '')
               + wbBarMark(wbBar(Math.round(d.toRn/WV_CAP*100), '#004948'), cvPct) + wbBar(Math.round(d.hnRn/WV_CAP*100), '#52d9ce');
             break;
           }
           case 'revpar_s': {
             var _cv0 = wvCompare.has('stly')?d.sdlyRevpar:wvCompare.has('ly')?d.lyRevpar:null;
             var cvPct = _cv0!=null?Math.min(90,Math.round(_cv0/4)):null;
-            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">$'+d.hRevpar+_wvMultiCmpSfx(d.hRevpar,d.sdlyRevpar,d.lyRevpar,null,function(v){return '$'+v;})+'</span>'+trendBadge(d.hRevpar,d.sdlyRevpar,d.lyRevpar,null)+'</div>'
+            var _rcs = _wvMultiCmpSfx(d.hRevpar,d.sdlyRevpar,d.lyRevpar,null,function(v){return '$'+v;});
+            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">$'+d.hRevpar+'</span>'+trendBadge(d.hRevpar,d.sdlyRevpar,d.lyRevpar,null)+'</div>'
+              + (_rcs ? '<div class="wb-cmp-line">'+_rcs+'</div>' : '')
               + wbBarMark(wbBar(Math.min(90,Math.round(d.hRevpar/4)), '#004948'), cvPct);
             break;
           }
