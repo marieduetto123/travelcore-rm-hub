@@ -2274,13 +2274,18 @@ function renderCalMonthlySummary() {
               + moBar(Math.min(90,Math.round(mo.avgAvailGuar/20*100)), '#004948');
             break;
           case 'mos_mpsum':
+            { var _moGPR=parseFloat(mo.hAvgA)+parseFloat(mo.hAvgC);
+              var _msAiR=Math.round(mo.avgHRn*mo.avgAi/100),_msAiSt=Math.round(_msAiR*_moGPR);
+              var _msBbR=Math.round(mo.avgHRn*mo.avgBb/100),_msBbSt=Math.round(_msBbR*_moGPR);
+              var _msHbR=Math.round(mo.avgHRn*mo.avgHb/100),_msHbSt=Math.round(_msHbR*_moGPR);
+              var _msRoR=Math.round(mo.avgHRn*mo.avgRo/100),_msRoSt=Math.round(_msRoR*_moGPR);
             cc = moStackBar([{p:mo.avgAi,c:'#006461'},{p:mo.avgBb,c:'#3b82f6'},{p:mo.avgHb,c:'#967EF3'},{p:mo.avgRo,c:'#f59e0b'}])
               + '<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:3px">'
-              + '<span style="font-size:12px;font-family:Lato,sans-serif;color:#006461">AI '+mo.avgAi+'%</span>'
-              + '<span style="font-size:12px;font-family:Lato,sans-serif;color:#3b82f6">BB '+mo.avgBb+'%</span>'
-              + '<span style="font-size:12px;font-family:Lato,sans-serif;color:#967EF3">HB '+mo.avgHb+'%</span>'
-              + '<span style="font-size:12px;font-family:Lato,sans-serif;color:#f59e0b">RO '+mo.avgRo+'%</span>'
-              + '</div>';
+              + '<span style="font-size:12px;font-family:Lato,sans-serif;color:#006461">AI '+mo.avgAi+'% · '+_msAiSt+' seats</span>'
+              + '<span style="font-size:12px;font-family:Lato,sans-serif;color:#3b82f6">BB '+mo.avgBb+'% · '+_msBbSt+' seats</span>'
+              + '<span style="font-size:12px;font-family:Lato,sans-serif;color:#967EF3">HB '+mo.avgHb+'% · '+_msHbSt+' seats</span>'
+              + '<span style="font-size:12px;font-family:Lato,sans-serif;color:#f59e0b">RO '+mo.avgRo+'% · '+_msRoSt+' seats</span>'
+              + '</div>'; }
             break;
           case 'mos_bizbar':
             cc = moStackBar([{p:mo.avgToMix,c:'#006461'},{p:mo.avgDirMix,c:'#0284c7'},{p:mo.avgOtaMix,c:'#D97706'},{p:mo.avgOtherMix,c:'#9ca3af'}])
@@ -3040,7 +3045,8 @@ function clearCalSelection() {
     _pb += '<div style="padding:4px 0">'+mealBarHtml+'</div>';
     mealPlans.forEach(function(mp){
       var rn = Math.round(rnSold * mp.pct / 100);
-      _pb += _pSect(mp.short, mp.pct+'% · '+rn+' rms', _pBar(mp.pct, _C1), mp.color);
+      var seats = Math.round(rn * _popAvgGPR);
+      _pb += _pSect(mp.short, mp.pct+'% · '+rn+' rms · '+seats+' seats', _pBar(mp.pct, _C1), mp.color);
     });
     _pb += _pGrpEnd();
 
@@ -4479,13 +4485,17 @@ function buildDailyBView(days, month, activeDay) {
               + wbBar(d.roPct, '#004948'); }
             break;
           case 'mp_sum':
-            { var _aiR=Math.round(d.hnRn*d.aiPct/100), _bbR=Math.round(d.hnRn*d.bbPct/100), _hbR=Math.round(d.hnRn*d.hbPct/100), _roR=Math.round(d.hnRn*d.roPct/100);
+            { var _sumGPR=parseFloat(d.hAvgA)+parseFloat(d.hAvgC);
+              var _aiR=Math.round(d.hnRn*d.aiPct/100),_aiSt=Math.round(_aiR*_sumGPR);
+              var _bbR=Math.round(d.hnRn*d.bbPct/100),_bbSt=Math.round(_bbR*_sumGPR);
+              var _hbR=Math.round(d.hnRn*d.hbPct/100),_hbSt=Math.round(_hbR*_sumGPR);
+              var _roR=Math.round(d.hnRn*d.roPct/100),_roSt=Math.round(_roR*_sumGPR);
             cellContent = wbStackBar([{p:d.aiPct,c:'#004948'},{p:d.bbPct,c:'#52d9ce'},{p:d.hbPct,c:'#D97706'},{p:d.roPct,c:'#d7f7ed'}])
               + '<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:3px">'
-              + '<span style="font-size:12px;font-family:Lato,sans-serif;color:#004948">AI '+d.aiPct+'% · '+_aiR+'</span>'
-              + '<span style="font-size:12px;font-family:Lato,sans-serif;color:#52d9ce">BB '+d.bbPct+'% · '+_bbR+'</span>'
-              + '<span style="font-size:12px;font-family:Lato,sans-serif;color:#D97706">HB '+d.hbPct+'% · '+_hbR+'</span>'
-              + '<span style="font-size:12px;font-family:Lato,sans-serif;color:#6b7280">RO '+d.roPct+'% · '+_roR+'</span>'
+              + '<span style="font-size:12px;font-family:Lato,sans-serif;color:#004948">AI '+d.aiPct+'% · '+_aiSt+' seats</span>'
+              + '<span style="font-size:12px;font-family:Lato,sans-serif;color:#52d9ce">BB '+d.bbPct+'% · '+_bbSt+' seats</span>'
+              + '<span style="font-size:12px;font-family:Lato,sans-serif;color:#D97706">HB '+d.hbPct+'% · '+_hbSt+' seats</span>'
+              + '<span style="font-size:12px;font-family:Lato,sans-serif;color:#6b7280">RO '+d.roPct+'% · '+_roSt+' seats</span>'
               + '</div>'; }
             break;
           // (co_summary removed — summary now shown in collapsed group header)
@@ -5682,12 +5692,17 @@ window._buildWv7dSummaryHtml = function(d) {
           cc = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.avgAvailGuar+' rm</span></div>'
              +'<div class="wv-occ-bar-track"><div style="width:'+Math.min(90,Math.round(d.avgAvailGuar/20*100))+'%;background:#004948;height:6px"></div></div>'; break;
         case 'mos_mpsum':
+          { var _7sGPR=d.avgHotelTotGuests/Math.max(1,d.avgRnH*d.n7);
+            var _7sAiR=Math.round(d.avgRnH*d.avgAiPct/100),_7sAiSt=Math.round(_7sAiR*_7sGPR);
+            var _7sBbR=Math.round(d.avgRnH*d.avgBbPct/100),_7sBbSt=Math.round(_7sBbR*_7sGPR);
+            var _7sHbR=Math.round(d.avgRnH*d.avgHbPct/100),_7sHbSt=Math.round(_7sHbR*_7sGPR);
+            var _7sRoR=Math.round(d.avgRnH*d.avgRoPct/100),_7sRoSt=Math.round(_7sRoR*_7sGPR);
           cc = stackBar([{p:d.avgAiPct,c:'#006461'},{p:d.avgBbPct,c:'#3b82f6'},{p:d.avgHbPct,c:'#967EF3'},{p:d.avgRoPct,c:'#f59e0b'}])
              +'<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:3px">'
-             +'<span style="font-size:12px;font-family:Lato,sans-serif;color:#006461">AI '+d.avgAiPct+'%</span>'
-             +'<span style="font-size:12px;font-family:Lato,sans-serif;color:#3b82f6">BB '+d.avgBbPct+'%</span>'
-             +'<span style="font-size:12px;font-family:Lato,sans-serif;color:#967EF3">HB '+d.avgHbPct+'%</span>'
-             +'<span style="font-size:12px;font-family:Lato,sans-serif;color:#f59e0b">RO '+d.avgRoPct+'%</span></div>';
+             +'<span style="font-size:12px;font-family:Lato,sans-serif;color:#006461">AI '+d.avgAiPct+'% · '+_7sAiSt+' seats</span>'
+             +'<span style="font-size:12px;font-family:Lato,sans-serif;color:#3b82f6">BB '+d.avgBbPct+'% · '+_7sBbSt+' seats</span>'
+             +'<span style="font-size:12px;font-family:Lato,sans-serif;color:#967EF3">HB '+d.avgHbPct+'% · '+_7sHbSt+' seats</span>'
+             +'<span style="font-size:12px;font-family:Lato,sans-serif;color:#f59e0b">RO '+d.avgRoPct+'% · '+_7sRoSt+' seats</span></div>'; }
           break;
         case 'mos_bizbar':
           cc = stackBar([{p:d.avgToMix,c:'#006461'},{p:d.avgDirMix,c:'#0284c7'},{p:d.avgOtaMix,c:'#D97706'},{p:d.avgOtherMix,c:'#9ca3af'}])
