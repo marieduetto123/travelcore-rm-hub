@@ -1012,8 +1012,14 @@
               <!-- Tree list -->
               <div class="ts-tree-wrap">
                 <div class="ts-tree-toolbar">
-                  <button class="ts-tree-btn" onclick="tsCheckAll(true)">Select All</button>
-                  <button class="ts-tree-btn" onclick="tsCheckAll(false)">Deselect All</button>
+                  <div class="ts-search-wrap">
+                    <span class="material-icons ts-search-icon">search</span>
+                    <input id="tsSearchInput" class="ts-search-input" type="text" placeholder="Search metrics…" oninput="tsFilterRows(this.value)">
+                  </div>
+                  <div style="display:flex;gap:8px;margin-left:auto">
+                    <button class="ts-tree-btn" onclick="tsCheckAll(true)">Select All</button>
+                    <button class="ts-tree-btn" onclick="tsCheckAll(false)">Deselect All</button>
+                  </div>
                 </div>
                 <div id="dhReorderList" class="ts-tree-list"></div>
               </div>

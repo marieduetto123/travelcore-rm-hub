@@ -1272,8 +1272,21 @@ body.dark .daily-b-ag-wrap {
 .ts-body { flex: 1; overflow-y: auto; min-height: 120px; }
 .ts-tree-wrap { display: flex; flex-direction: column; gap: 8px; }
 .ts-tree-toolbar {
-  display: flex; gap: 8px; padding: 4px 0;
+  display: flex; align-items: center; gap: 8px; padding: 4px 0;
 }
+.ts-search-wrap {
+  display: flex; align-items: center; gap: 6px;
+  background: #fff; border: 1px solid #DDE1E2; border-radius: 4px;
+  padding: 4px 10px; flex: 1;
+}
+.ts-search-wrap:focus-within { border-color: #38AAA3; }
+.ts-search-icon { font-size: 16px; color: #9ca3af; }
+.ts-search-input {
+  border: none; outline: none; background: transparent;
+  font-family: 'Lato', sans-serif; font-size: 13px; color: #1C1C1C;
+  width: 100%;
+}
+.ts-search-input::placeholder { color: #9ca3af; }
 .ts-tree-btn {
   background: none; border: none; cursor: pointer;
   font-family: inherit; font-size: 12px; color: #006461;

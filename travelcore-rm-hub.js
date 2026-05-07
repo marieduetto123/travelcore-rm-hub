@@ -8608,6 +8608,40 @@ function _buildReorderList(list, items) {
 }
 
 // Select All / Deselect All for Table Settings
+window.tsFilterRows = function(query) {
+  var q = query.trim().toLowerCase();
+  var list = document.getElementById('dhReorderList');
+  if (!list) return;
+  var rows = list.querySelectorAll('.ts-tree-row');
+  if (!q) {
+    rows.forEach(function(r) { r.style.display = ''; });
+    return;
+  }
+  // First pass: mark which rows match
+  var matchSet = new Set();
+  rows.forEach(function(r) {
+    var lbl = (r.querySelector('.ts-tree-lbl') || {}).textContent || '';
+    if (lbl.toLowerCase().includes(q)) matchSet.add(r);
+  });
+  // Second pass: show matched rows + their depth-0 parents
+  rows.forEach(function(r) {
+    var depth = parseInt(r.dataset.depth || 0);
+    if (matchSet.has(r)) {
+      r.style.display = '';
+      // Show parent depth-0 row
+      if (depth > 0) {
+        var prev = r.previousElementSibling;
+        while (prev) {
+          if (parseInt(prev.dataset.depth || 0) === 0) { prev.style.display = ''; break; }
+          prev = prev.previousElementSibling;
+        }
+      }
+    } else {
+      r.style.display = 'none';
+    }
+  });
+};
+
 window.tsCheckAll = function(checked) {
   var list = document.getElementById('dhReorderList');
   if (!list) return;
@@ -8688,6 +8722,8 @@ window.dhOpenReorder = function() {
   }
 
   modal.style.display = 'flex';
+  var srch = document.getElementById('tsSearchInput');
+  if (srch) { srch.value = ''; tsFilterRows(''); srch.focus(); }
 };
 
 window.dhReorderModalBg = function(e) {
