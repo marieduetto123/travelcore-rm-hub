@@ -2551,13 +2551,15 @@ body.dark .wv-range { color: var(--text-primary); }
 .wvwp-day:not(.wvwp-empty):not(.wvwp-week-start):not(.wvwp-in-week):not(.wvwp-week-end):hover .wvwp-day-lbl { background: #e0f7f6; }
 .wvwp-empty { visibility: hidden; pointer-events: none; }
 /* Week layout: left section panel + 7-column grid */
+.wv-cal-scroll-area {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
+}
 .wv-week-layout {
   display: flex;
   align-items: stretch;
   margin-bottom: 4px;
-  width: 100%;          /* never push page wider */
-  overflow-x: auto;     /* horizontal scroll lives here, not on .wv-grid */
-  -webkit-overflow-scrolling: touch;
 }
 
 
@@ -8106,7 +8108,6 @@ body.dark .cal-mfilt-btn.active { background: #1a3535; }
 .wb-layout {
   display: flex;
   flex-direction: column;
-  overflow-x: auto;
   flex: 1;
   min-width: 0;
   background: #fff;
