@@ -14577,6 +14577,34 @@ window.calHideCapTip = function() {
     return cmMetrics.length;
   }
 
+  function syncDisabled() {
+    var rows = countRows();
+    var atLimit = rows >= 4;
+    // Track which TR rows have at least one checked cb — don't dim those
+    var processedTrs = new Set();
+    document.querySelectorAll('#calMetricsDropdown .cal-md-cb[onclick*="cmToggleMetric"]').forEach(function(cb) {
+      var isChecked = cb.classList.contains('checked');
+      var tr = cb.closest('tr');
+      if (atLimit && !isChecked) {
+        cb.classList.add('cm-disabled');
+      } else {
+        cb.classList.remove('cm-disabled');
+      }
+      if (tr && !processedTrs.has(tr)) {
+        processedTrs.add(tr);
+        // Check if any cb in this TR is checked
+        var hasChecked = Array.from(tr.querySelectorAll('.cal-md-cb[onclick*="cmToggleMetric"]')).some(function(c) { return c.classList.contains('checked'); });
+        if (atLimit && !hasChecked) {
+          tr.style.opacity = '0.38';
+          tr.style.pointerEvents = 'none';
+        } else {
+          tr.style.opacity = '';
+          tr.style.pointerEvents = '';
+        }
+      }
+    });
+  }
+
   // isAdding: true when user just checked a metric — show over-limit warning
   //           false when user just unchecked — only disable Apply, no warning text
   function updateHint(isAdding) {
@@ -14589,14 +14617,13 @@ window.calHideCapTip = function() {
     var applyBtn = document.getElementById('cmApplyBtn');
     var limitHint = document.getElementById('cmSelectUpTo4');
     if (rows > 4) {
-      // Disable Apply in all over-limit cases
       if (applyBtn) { applyBtn.disabled = true; applyBtn.style.background = '#9ca3af'; applyBtn.style.cursor = 'not-allowed'; applyBtn.style.opacity = '0.7'; }
-      // Show "Select up to 4" warning only when actively adding beyond limit
       if (limitHint) limitHint.style.display = (isAdding !== false) ? '' : 'none';
     } else {
       if (applyBtn) { applyBtn.disabled = false; applyBtn.style.background = '#006461'; applyBtn.style.cursor = 'pointer'; applyBtn.style.opacity = '1'; }
       if (limitHint) limitHint.style.display = 'none';
     }
+    syncDisabled();
   }
 
   // ── Mode toggle ────────────────────────────────────────────────
