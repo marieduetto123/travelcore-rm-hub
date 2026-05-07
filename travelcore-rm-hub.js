@@ -7570,7 +7570,8 @@ function buildWeekGrid(month, weekStart, activeDay) {
   // Init accordion state once
   if(!_wv7dAccState._init){
     _wv7dAccState._init=true;
-    ['wv7d_overview','wv7d_co','wv7d_daily','wv7d_seg','wv7d_more','wv7d_meals','wv7d_biz','wv7d_tc',
+    _wv7dAccState['wv7d_overview']=true; // outer accordion closed on first load
+    ['wv7d_co','wv7d_daily','wv7d_seg','wv7d_more','wv7d_meals','wv7d_biz','wv7d_tc',
      'mos_co_full','mos_co_part','mos_occ','mos_adr','mos_rev','mos_revpar','mos_pickup','mos_onoff',
      'mos_segbar','mos_rn','mos_avga','mos_avgc','mos_tota','mos_totc','mos_totg','mos_los','mos_lead',
      'mos_avail','mos_availg','mos_mpsum','mos_bizbar',
