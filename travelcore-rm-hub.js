@@ -2064,7 +2064,6 @@ function renderCalMonthlySummary() {
     _calAccState.mo_meals = false;
     _calAccState.mo_biz = false;
     _calAccState.mo_tc = false;
-    _calAccState.mo_seg = false;
     _calAccState.mo_closeouts = false;
   }
 
@@ -2098,13 +2097,6 @@ function renderCalMonthlySummary() {
   moRows.push({type:'sub', id:'mos_onoff_off', label:'Offline', dot:'#f97316', parent:'mos_onoff', gp:'mo_daily'});
 
   // ── Segments group
-  moRows.push({type:'top', id:'mo_seg', label:'Segment Mix'});
-  moRows.push({type:'sect', id:'mos_segbar', label:'Summary', parent:'mo_seg'});
-  moRows.push({type:'sub', id:'mos_seg_fit', label:'Static FIT', dot:'#006461', parent:'mos_segbar', gp:'mo_seg'});
-  moRows.push({type:'sub', id:'mos_seg_dyn', label:'TO Dynamic', dot:'#0891b2', parent:'mos_segbar', gp:'mo_seg'});
-  moRows.push({type:'sub', id:'mos_seg_ser', label:'Tour Series', dot:'#6366f1', parent:'mos_segbar', gp:'mo_seg'});
-  moRows.push({type:'sub', id:'mos_seg_oth', label:'Other Segs', dot:'#5883ed', parent:'mos_segbar', gp:'mo_seg'});
-  moRows.push({type:'sub', id:'mos_seg_rem', label:'Remaining', dot:'#9ca3af', parent:'mos_segbar', gp:'mo_seg', isRem:true});
 
   // ── More Metrics group
   moRows.push({type:'top', id:'mo_more', label:'More Metrics'});
@@ -2428,11 +2420,11 @@ document.querySelectorAll('.mo-grp-btn').forEach(function(btn) {
 });
 
 window.moAccCloseAll = function() {
-  ['mo_daily','mo_seg','mo_more','mo_meals','mo_biz','mo_tc','overview'].forEach(function(k) { _calAccState[k] = true; });
+  ['mo_daily','mo_more','mo_meals','mo_biz','mo_tc','overview'].forEach(function(k) { _calAccState[k] = true; });
   renderCalMonthlySummary();
 };
 window.moAccOpenAll = function() {
-  ['mo_daily','mo_seg','mo_more','mo_meals','mo_biz','mo_tc','overview'].forEach(function(k) { _calAccState[k] = false; });
+  ['mo_daily','mo_more','mo_meals','mo_biz','mo_tc','overview'].forEach(function(k) { _calAccState[k] = false; });
   renderCalMonthlySummary();
 };
 
@@ -5540,13 +5532,6 @@ window._buildWv7dSummaryHtml = function(d) {
   rows.push({type:'sub', id:'mos_onoff_on',  label:'Online',  dot:'#3b82f6', parent:'mos_onoff', gp:'wv7d_daily'});
   rows.push({type:'sub', id:'mos_onoff_off', label:'Offline', dot:'#f97316', parent:'mos_onoff', gp:'wv7d_daily'});
 
-  rows.push({type:'top', id:'wv7d_seg', label:'Segment Mix'});
-  rows.push({type:'sect', id:'mos_segbar', label:'Summary', parent:'wv7d_seg'});
-  rows.push({type:'sub', id:'mos_seg_fit', label:'Static FIT',  dot:'#006461', parent:'mos_segbar', gp:'wv7d_seg'});
-  rows.push({type:'sub', id:'mos_seg_dyn', label:'TO Dynamic',  dot:'#0891b2', parent:'mos_segbar', gp:'wv7d_seg'});
-  rows.push({type:'sub', id:'mos_seg_ser', label:'Tour Series', dot:'#6366f1', parent:'mos_segbar', gp:'wv7d_seg'});
-  rows.push({type:'sub', id:'mos_seg_oth', label:'Other Segs',  dot:'#5883ed', parent:'mos_segbar', gp:'wv7d_seg'});
-  rows.push({type:'sub', id:'mos_seg_rem', label:'Remaining',   dot:'#9ca3af', parent:'mos_segbar', gp:'wv7d_seg', isRem:true});
 
   rows.push({type:'top', id:'wv7d_more', label:'More Metrics'});
   rows.push({type:'sect', id:'mos_rn',    label:'RN Sold',       parent:'wv7d_more'});
