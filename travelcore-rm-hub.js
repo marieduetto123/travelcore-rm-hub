@@ -7026,14 +7026,7 @@ function buildWeekGrid(month, weekStart, activeDay) {
     initDailyHGrid(days, month, activeDay, grid);
     return;
   }
-  if (wvGroupBy === 'dailyB') {
-    grid.style.cssText = 'display:flex;flex-direction:column;flex:1;min-width:0;';
-    grid.innerHTML = buildDailyBView(days, month, activeDay);
-    return;
-  }
-  grid.style.cssText = '';
-
-  // ── Build 7-day aggregate summary ──────────────────────────────────────
+  // ── Build 7-day aggregate summary (runs for all views including dailyB) ──
   var sumRn=0,sumHotelRn=0,sumRev=0,sumHotelRev=0,sumAdr=0,sumHotelAdr=0;
   var sumHotel=0,sumTo=0,sumPickup=0,sumHotelPickup=0;
   var sumAvgLos=0,sumHotelLos=0,sumAvgLead=0,sumHotelLead=0;
@@ -7313,6 +7306,14 @@ function buildWeekGrid(month, weekStart, activeDay) {
   // Close-out heat map removed
   var coHeatmapContainer = document.getElementById('coHeatmapContainer');
   if (coHeatmapContainer) coHeatmapContainer.innerHTML = '';
+
+  // ── Render grid based on view mode ──────────────────────────────────────
+  if (wvGroupBy === 'dailyB') {
+    grid.style.cssText = 'display:flex;flex-direction:column;flex:1;min-width:0;';
+    grid.innerHTML = buildDailyBView(days, month, activeDay);
+    return;
+  }
+  grid.style.cssText = '';
 
   grid.innerHTML = days.map(({ month: dm, day: dd }) => {
     const isToday  = dm === 3 && dd === 9;
