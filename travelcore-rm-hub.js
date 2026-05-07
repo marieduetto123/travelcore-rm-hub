@@ -2354,10 +2354,10 @@ function renderCalMonthlySummary() {
           case 'mos_seg_ser':   v1 = mo.avgSer+'% · '+mo.serRm+' rm'; break;
           case 'mos_seg_oth':   v1 = mo.avgOtherSeg+'% · '+mo.othRm+' rm'; break;
           case 'mos_seg_rem':   v1 = mo.avgFree+'% · '+mo.freeRm+' rm'; break;
-          case 'mos_mp_ai':     { var _moAiRm=Math.round(mo.avgHRn*mo.avgAi/100),_moAiSt=Math.round(_moAiRm*(parseFloat(mo.hAvgA)+parseFloat(mo.hAvgC))); v1=mo.avgAi+'% · '+_moAiRm+' rms · '+_moAiSt+' seats'; } break;
-          case 'mos_mp_bb':     { var _moBbRm=Math.round(mo.avgHRn*mo.avgBb/100),_moBbSt=Math.round(_moBbRm*(parseFloat(mo.hAvgA)+parseFloat(mo.hAvgC))); v1=mo.avgBb+'% · '+_moBbRm+' rms · '+_moBbSt+' seats'; } break;
-          case 'mos_mp_hb':     { var _moHbRm=Math.round(mo.avgHRn*mo.avgHb/100),_moHbSt=Math.round(_moHbRm*(parseFloat(mo.hAvgA)+parseFloat(mo.hAvgC))); v1=mo.avgHb+'% · '+_moHbRm+' rms · '+_moHbSt+' seats'; } break;
-          case 'mos_mp_ro':     { var _moRoRm=Math.round(mo.avgHRn*mo.avgRo/100),_moRoSt=Math.round(_moRoRm*(parseFloat(mo.hAvgA)+parseFloat(mo.hAvgC))); v1=mo.avgRo+'% · '+_moRoRm+' rms · '+_moRoSt+' seats'; } break;
+          case 'mos_mp_ai':     { var _moAiRm=Math.round(mo.avgHRn*mo.avgAi/100),_moAiSt=Math.round(_moAiRm*(parseFloat(mo.hAvgA)+parseFloat(mo.hAvgC))); v1=mo.avgAi+'% · '+_moAiRm+'r · '+_moAiSt+' seats'; } break;
+          case 'mos_mp_bb':     { var _moBbRm=Math.round(mo.avgHRn*mo.avgBb/100),_moBbSt=Math.round(_moBbRm*(parseFloat(mo.hAvgA)+parseFloat(mo.hAvgC))); v1=mo.avgBb+'% · '+_moBbRm+'r · '+_moBbSt+' seats'; } break;
+          case 'mos_mp_hb':     { var _moHbRm=Math.round(mo.avgHRn*mo.avgHb/100),_moHbSt=Math.round(_moHbRm*(parseFloat(mo.hAvgA)+parseFloat(mo.hAvgC))); v1=mo.avgHb+'% · '+_moHbRm+'r · '+_moHbSt+' seats'; } break;
+          case 'mos_mp_ro':     { var _moRoRm=Math.round(mo.avgHRn*mo.avgRo/100),_moRoSt=Math.round(_moRoRm*(parseFloat(mo.hAvgA)+parseFloat(mo.hAvgC))); v1=mo.avgRo+'% · '+_moRoRm+'r · '+_moRoSt+' seats'; } break;
           case 'mos_biz_to':    v1 = mo.avgToMix+'%'; break;
           case 'mos_biz_dir':   v1 = mo.avgDirMix+'%'; break;
           case 'mos_biz_ota':   v1 = mo.avgOtaMix+'%'; break;
@@ -4456,22 +4456,26 @@ function buildDailyBView(days, month, activeDay) {
           // ── Meal Plans — each uses its own dot color ────────────────────────
           case 'mp_ai':
             { var aiRn=Math.round(d.hnRn*d.aiPct/100),aiSeats=Math.round(aiRn*(parseFloat(d.hAvgA)+parseFloat(d.hAvgC)));
-            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.aiPct+'%</span><span style="font-size:11px;color:#6b7280;margin-left:4px">· '+aiRn+' rms · '+aiSeats+' seats</span></div>'
+            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.aiPct+'%</span><span style="font-size:11px;color:#6b7280;margin-left:4px">'+aiRn+' rms</span></div>'
+              +'<div style="font-size:11px;color:#374151;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:-2px">'+aiSeats+' seats</div>'
               + wbBar(d.aiPct, '#004948'); }
             break;
           case 'mp_bb':
             { var bbRn=Math.round(d.hnRn*d.bbPct/100),bbSeats=Math.round(bbRn*(parseFloat(d.hAvgA)+parseFloat(d.hAvgC)));
-            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.bbPct+'%</span><span style="font-size:11px;color:#6b7280;margin-left:4px">· '+bbRn+' rms · '+bbSeats+' seats</span></div>'
+            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.bbPct+'%</span><span style="font-size:11px;color:#6b7280;margin-left:4px">'+bbRn+' rms</span></div>'
+              +'<div style="font-size:11px;color:#374151;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:-2px">'+bbSeats+' seats</div>'
               + wbBar(d.bbPct, '#004948'); }
             break;
           case 'mp_hb':
             { var hbRn=Math.round(d.hnRn*d.hbPct/100),hbSeats=Math.round(hbRn*(parseFloat(d.hAvgA)+parseFloat(d.hAvgC)));
-            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.hbPct+'%</span><span style="font-size:11px;color:#6b7280;margin-left:4px">· '+hbRn+' rms · '+hbSeats+' seats</span></div>'
+            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.hbPct+'%</span><span style="font-size:11px;color:#6b7280;margin-left:4px">'+hbRn+' rms</span></div>'
+              +'<div style="font-size:11px;color:#374151;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:-2px">'+hbSeats+' seats</div>'
               + wbBar(d.hbPct, '#004948'); }
             break;
           case 'mp_ro':
             { var roRn=Math.round(d.hnRn*d.roPct/100),roSeats=Math.round(roRn*(parseFloat(d.hAvgA)+parseFloat(d.hAvgC)));
-            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.roPct+'%</span><span style="font-size:11px;color:#6b7280;margin-left:4px">· '+roRn+' rms · '+roSeats+' seats</span></div>'
+            cellContent = '<div class="wb-sect-val"><span class="wv-occ-total">'+d.roPct+'%</span><span style="font-size:11px;color:#6b7280;margin-left:4px">'+roRn+' rms</span></div>'
+              +'<div style="font-size:11px;color:#374151;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:-2px">'+roSeats+' seats</div>'
               + wbBar(d.roPct, '#004948'); }
             break;
           case 'mp_sum':
@@ -4592,14 +4596,14 @@ function buildDailyBView(days, month, activeDay) {
           case 'lead_t':     v1 = d.avgLead;                                                break;
           case 'lead_h':     v1 = d.hLead;                                                  break;
           // meal plans (% · rooms)
-          case 'mp_ai_h':    { var _aiHRm=Math.round(d.hnRn*d.aiPct/100),_aiHSt=Math.round(_aiHRm*(parseFloat(d.hAvgA)+parseFloat(d.hAvgC))); v1=d.aiPct+'% · '+_aiHRm+' rms · '+_aiHSt+' seats'; } break;
-          case 'mp_ai_t':    { var _aiTp=Math.max(0,Math.round(d.aiPct*d.toPct*0.9)),_aiTRm=Math.round(d.toRn*d.aiPct/100),_aiTSt=Math.round(_aiTRm*(parseFloat(d.avgA)+parseFloat(d.avgC))); v1=_aiTp+'% · '+_aiTRm+' rms · '+_aiTSt+' seats'; } break;
-          case 'mp_bb_h':    { var _bbHRm=Math.round(d.hnRn*d.bbPct/100),_bbHSt=Math.round(_bbHRm*(parseFloat(d.hAvgA)+parseFloat(d.hAvgC))); v1=d.bbPct+'% · '+_bbHRm+' rms · '+_bbHSt+' seats'; } break;
-          case 'mp_bb_t':    { var _bbTp=Math.max(0,Math.round(d.bbPct*d.toPct*0.9)),_bbTRm=Math.round(d.toRn*d.bbPct/100),_bbTSt=Math.round(_bbTRm*(parseFloat(d.avgA)+parseFloat(d.avgC))); v1=_bbTp+'% · '+_bbTRm+' rms · '+_bbTSt+' seats'; } break;
-          case 'mp_hb_h':    { var _hbHRm=Math.round(d.hnRn*d.hbPct/100),_hbHSt=Math.round(_hbHRm*(parseFloat(d.hAvgA)+parseFloat(d.hAvgC))); v1=d.hbPct+'% · '+_hbHRm+' rms · '+_hbHSt+' seats'; } break;
-          case 'mp_hb_t':    { var _hbTp=Math.max(0,Math.round(d.hbPct*d.toPct*0.9)),_hbTRm=Math.round(d.toRn*d.hbPct/100),_hbTSt=Math.round(_hbTRm*(parseFloat(d.avgA)+parseFloat(d.avgC))); v1=_hbTp+'% · '+_hbTRm+' rms · '+_hbTSt+' seats'; } break;
-          case 'mp_ro_h':    { var _roHRm=Math.round(d.hnRn*d.roPct/100),_roHSt=Math.round(_roHRm*(parseFloat(d.hAvgA)+parseFloat(d.hAvgC))); v1=d.roPct+'% · '+_roHRm+' rms · '+_roHSt+' seats'; } break;
-          case 'mp_ro_t':    { var _roTp=Math.max(0,Math.round(d.roPct*d.toPct*0.9)),_roTRm=Math.round(d.toRn*d.roPct/100),_roTSt=Math.round(_roTRm*(parseFloat(d.avgA)+parseFloat(d.avgC))); v1=_roTp+'% · '+_roTRm+' rms · '+_roTSt+' seats'; } break;
+          case 'mp_ai_h':    { var _aiHRm=Math.round(d.hnRn*d.aiPct/100),_aiHSt=Math.round(_aiHRm*(parseFloat(d.hAvgA)+parseFloat(d.hAvgC))); v1=d.aiPct+'% · '+_aiHRm+'r · '+_aiHSt+' seats'; } break;
+          case 'mp_ai_t':    { var _aiTp=Math.max(0,Math.round(d.aiPct*d.toPct*0.9)),_aiTRm=Math.round(d.toRn*d.aiPct/100),_aiTSt=Math.round(_aiTRm*(parseFloat(d.avgA)+parseFloat(d.avgC))); v1=_aiTp+'% · '+_aiTRm+'r · '+_aiTSt+' seats'; } break;
+          case 'mp_bb_h':    { var _bbHRm=Math.round(d.hnRn*d.bbPct/100),_bbHSt=Math.round(_bbHRm*(parseFloat(d.hAvgA)+parseFloat(d.hAvgC))); v1=d.bbPct+'% · '+_bbHRm+'r · '+_bbHSt+' seats'; } break;
+          case 'mp_bb_t':    { var _bbTp=Math.max(0,Math.round(d.bbPct*d.toPct*0.9)),_bbTRm=Math.round(d.toRn*d.bbPct/100),_bbTSt=Math.round(_bbTRm*(parseFloat(d.avgA)+parseFloat(d.avgC))); v1=_bbTp+'% · '+_bbTRm+'r · '+_bbTSt+' seats'; } break;
+          case 'mp_hb_h':    { var _hbHRm=Math.round(d.hnRn*d.hbPct/100),_hbHSt=Math.round(_hbHRm*(parseFloat(d.hAvgA)+parseFloat(d.hAvgC))); v1=d.hbPct+'% · '+_hbHRm+'r · '+_hbHSt+' seats'; } break;
+          case 'mp_hb_t':    { var _hbTp=Math.max(0,Math.round(d.hbPct*d.toPct*0.9)),_hbTRm=Math.round(d.toRn*d.hbPct/100),_hbTSt=Math.round(_hbTRm*(parseFloat(d.avgA)+parseFloat(d.avgC))); v1=_hbTp+'% · '+_hbTRm+'r · '+_hbTSt+' seats'; } break;
+          case 'mp_ro_h':    { var _roHRm=Math.round(d.hnRn*d.roPct/100),_roHSt=Math.round(_roHRm*(parseFloat(d.hAvgA)+parseFloat(d.hAvgC))); v1=d.roPct+'% · '+_roHRm+'r · '+_roHSt+' seats'; } break;
+          case 'mp_ro_t':    { var _roTp=Math.max(0,Math.round(d.roPct*d.toPct*0.9)),_roTRm=Math.round(d.toRn*d.roPct/100),_roTSt=Math.round(_roTRm*(parseFloat(d.avgA)+parseFloat(d.avgC))); v1=_roTp+'% · '+_roTRm+'r · '+_roTSt+' seats'; } break;
           // business mix
           case 'biz_to':     v1 = d.toMix+'%';                                              break;
           case 'biz_dir':    v1 = d.dirMix+'%';                                             break;
@@ -5726,10 +5730,10 @@ window._buildWv7dSummaryHtml = function(d) {
         case 'mos_seg_ser':    v1 = d.avgSerPct+'% · '+d.avgSerRms+' rm'; break;
         case 'mos_seg_oth':    v1 = d.avgOtherPct+'% · '+d.avgOtherRms+' rm'; break;
         case 'mos_seg_rem':    v1 = d.avgFreePct+'% · '+d.avgFreeRms+' rm'; break;
-        case 'mos_mp_ai':      { var _7gpr=d.avgHotelTotGuests/Math.max(1,d.avgRnH*d.n7),_7aiRm=Math.round(d.avgRnH*d.avgAiPct/100),_7aiSt=Math.round(_7aiRm*_7gpr); v1=d.avgAiPct+'% · '+_7aiRm+' rms · '+_7aiSt+' seats'; } break;
-        case 'mos_mp_bb':      { var _7gprb=d.avgHotelTotGuests/Math.max(1,d.avgRnH*d.n7),_7bbRm=Math.round(d.avgRnH*d.avgBbPct/100),_7bbSt=Math.round(_7bbRm*_7gprb); v1=d.avgBbPct+'% · '+_7bbRm+' rms · '+_7bbSt+' seats'; } break;
-        case 'mos_mp_hb':      { var _7gprh=d.avgHotelTotGuests/Math.max(1,d.avgRnH*d.n7),_7hbRm=Math.round(d.avgRnH*d.avgHbPct/100),_7hbSt=Math.round(_7hbRm*_7gprh); v1=d.avgHbPct+'% · '+_7hbRm+' rms · '+_7hbSt+' seats'; } break;
-        case 'mos_mp_ro':      { var _7gprr=d.avgHotelTotGuests/Math.max(1,d.avgRnH*d.n7),_7roRm=Math.round(d.avgRnH*d.avgRoPct/100),_7roSt=Math.round(_7roRm*_7gprr); v1=d.avgRoPct+'% · '+_7roRm+' rms · '+_7roSt+' seats'; } break;
+        case 'mos_mp_ai':      { var _7gpr=d.avgHotelTotGuests/Math.max(1,d.avgRnH*d.n7),_7aiRm=Math.round(d.avgRnH*d.avgAiPct/100),_7aiSt=Math.round(_7aiRm*_7gpr); v1=d.avgAiPct+'% · '+_7aiRm+'r · '+_7aiSt+' seats'; } break;
+        case 'mos_mp_bb':      { var _7gprb=d.avgHotelTotGuests/Math.max(1,d.avgRnH*d.n7),_7bbRm=Math.round(d.avgRnH*d.avgBbPct/100),_7bbSt=Math.round(_7bbRm*_7gprb); v1=d.avgBbPct+'% · '+_7bbRm+'r · '+_7bbSt+' seats'; } break;
+        case 'mos_mp_hb':      { var _7gprh=d.avgHotelTotGuests/Math.max(1,d.avgRnH*d.n7),_7hbRm=Math.round(d.avgRnH*d.avgHbPct/100),_7hbSt=Math.round(_7hbRm*_7gprh); v1=d.avgHbPct+'% · '+_7hbRm+'r · '+_7hbSt+' seats'; } break;
+        case 'mos_mp_ro':      { var _7gprr=d.avgHotelTotGuests/Math.max(1,d.avgRnH*d.n7),_7roRm=Math.round(d.avgRnH*d.avgRoPct/100),_7roSt=Math.round(_7roRm*_7gprr); v1=d.avgRoPct+'% · '+_7roRm+'r · '+_7roSt+' seats'; } break;
         case 'mos_biz_to':     v1 = d.avgToMix+'%'; break;
         case 'mos_biz_dir':    v1 = d.avgDirMix+'%'; break;
         case 'mos_biz_ota':    v1 = d.avgOtaMix+'%'; break;
