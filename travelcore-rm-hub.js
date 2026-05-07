@@ -4079,7 +4079,7 @@ function buildDailyBView(days, month, activeDay) {
   // Group: Business Mix
   if (wvMetricState.bizMix) {
     grp.g_biz.push({type:'top',  id:'g_biz',    label:'Business Mix'});
-    grp.g_biz.push({type:'sect', id:'biz',       label:'Channel Mix', parent:'g_biz'});
+    grp.g_biz.push({type:'sect', id:'biz',       label:'Business Mix', parent:'g_biz'});
     grp.g_biz.push({type:'sub',  id:'biz_to',    label:'TO',          dot:'#004948', parent:'biz'});
     grp.g_biz.push({type:'sub',  id:'biz_dir',   label:'Direct',      dot:'#52d9ce', parent:'biz'});
     grp.g_biz.push({type:'sub',  id:'biz_ota',   label:'OTA',         dot:'#D97706', parent:'biz'});
@@ -4966,7 +4966,7 @@ function initDailyBGrid(days, month, activeDay, containerEl) {
   // ── Business Mix ──────────────────────────────────────────────────────────
   if (wvMetricState.bizMix) {
     grp('Business Mix', C1);
-    sect('Channel Mix', C1, C1, function(d){
+    sect('Business Mix', C1, C1, function(d){
       return sBar([{p:d.toMix,c:C1},{p:d.dirMix,c:C2},{p:d.otaMix,c:C3},{p:d.otherMix,c:'#9ca3af'}])
         +'<div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:3px">'
         +'<span style="font-size:12px;color:'+C1+'">TO '+d.toMix+'%</span>'
@@ -13422,7 +13422,7 @@ document.querySelectorAll('.ds-search-field').forEach(function(wrap) {
           }).join('')
           +'</div>'
           // Channel mini-bar
-          +'<div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px">Channel Mix</div>'
+          +'<div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px">Business Mix</div>'
           +'<div style="display:flex;height:8px;border-radius:4px;overflow:hidden;margin-bottom:4px">'
           +'<div style="flex:'+dynamicPctOv+';background:#0ea5e9"></div>'
           +'<div style="flex:'+staticFITPctOv+';background:#967EF3"></div>'
