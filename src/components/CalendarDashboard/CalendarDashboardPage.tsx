@@ -237,7 +237,8 @@ export function CalendarDashboardPage() {
 
   const handleDayClick = (day: CalendarDay) => {
     if (activeTab === 0) {
-      // Monthly → go to week view
+      // Monthly → switch to Weekly tab and show week view
+      setActiveTab(1);
       setWeekStart(getWeekStart(day.date));
       setWeekViewDay(day.date);
       setSelectedDay(null);
@@ -287,7 +288,6 @@ export function CalendarDashboardPage() {
         >
           <Tab label="Monthly" />
           <Tab label="Weekly" />
-          <Tab label="Daily" />
         </Tabs>
 
         {/* Week view */}
