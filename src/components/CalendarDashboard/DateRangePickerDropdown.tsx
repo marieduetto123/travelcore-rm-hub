@@ -268,11 +268,13 @@ export function DateRangePickerDropdown({ anchorEl, value, onApply, onClose }: P
   const handleMonthClick = useCallback((ref: MonthRef) => {
     setActiveQuick(null);
     if (!pendingStart || (pendingStart && pendingEnd)) {
+      // Start a new selection
       setPendingStart(ref);
       setPendingEnd(null);
     } else {
       if (cmpMonth(ref, pendingStart) === 0) {
-        setPendingStart(null);
+        // Clicking the same month → confirm as single-month range
+        setPendingEnd(ref);
       } else if (cmpMonth(ref, pendingStart) < 0) {
         setPendingEnd(pendingStart);
         setPendingStart(ref);
@@ -318,9 +320,10 @@ export function DateRangePickerDropdown({ anchorEl, value, onApply, onClose }: P
   };
 
   const rangeLabel = (() => {
-    if (pendingStart && pendingEnd) return `${fmtMonth(pendingStart)} – ${fmtMonth(pendingEnd)}`;
-    if (pendingStart) return `${fmtMonth(pendingStart)} – …`;
-    return '–';
+    if (!pendingStart) return '–';
+    const end = pendingEnd ?? pendingStart;
+    if (cmpMonth(pendingStart, end) === 0) return fmtMonth(pendingStart);
+    return `${fmtMonth(pendingStart)} – ${fmtMonth(end)}`;
   })();
 
   const renderPanel = (year: number, isLeft: boolean) => (
@@ -434,10 +437,10 @@ export function DateRangePickerDropdown({ anchorEl, value, onApply, onClose }: P
           <Button
             className={classes.applyBtn}
             disableElevation
-            disabled={!pendingStart || !pendingEnd}
+            disabled={!pendingStart}
             onClick={() => {
-              if (pendingStart && pendingEnd) {
-                onApply({ start: pendingStart, end: pendingEnd });
+              if (pendingStart) {
+                onApply({ start: pendingStart, end: pendingEnd ?? pendingStart });
                 onClose();
               }
             }}
