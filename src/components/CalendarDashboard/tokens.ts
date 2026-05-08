@@ -7,6 +7,6 @@ export const calendarTokens = {
   benchmarkColor: '#8c7843',      // Sycamore — compare/benchmark metric
   checkboxBorder: '#6b7280',
   headerShadow: '0px 2px 3px rgba(0,0,0,0.07)',
-  dropdownBackground: '#f1f5f9',
+  dropdownBackground: '#fafafa',
   primaryHover: 'rgba(0, 100, 97, 0.08)',
 } as const;

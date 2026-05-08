@@ -149,7 +149,7 @@ const useStyles = makeStyles((theme) => ({
     '& .MuiInputLabel-root': { fontFamily: 'Lato, sans-serif', fontSize: 13 },
   },
   opSelect: {
-    height: 38, fontFamily: 'Lato, sans-serif', fontSize: 13,
+    height: 36, fontFamily: 'Lato, sans-serif', fontSize: 13,
     '& .MuiSelect-select': { padding: theme.spacing(0.625, 3.5, 0.625, 1.25), fontFamily: 'Lato, sans-serif' },
     '& .MuiOutlinedInput-notchedOutline': { borderColor: tokens.border },
   },

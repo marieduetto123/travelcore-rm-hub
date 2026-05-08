@@ -72,14 +72,14 @@ const useStyles = makeStyles((theme) => ({
     '& .MuiOutlinedInput-root fieldset': { borderColor: tokens.border },
   },
   periodSelect: {
-    height: 34,
+    height: 36,
     fontFamily: 'Lato, sans-serif',
     fontSize: 13,
     '& .MuiSelect-select': { padding: theme.spacing(0.5, 3.5, 0.5, 1.25), fontFamily: 'Lato, sans-serif' },
     '& .MuiOutlinedInput-notchedOutline': { borderColor: tokens.border },
   },
   actionBtn: {
-    height: 34,
+    height: 36,
     fontFamily: 'Lato, sans-serif',
     fontSize: 13,
     textTransform: 'none',

@@ -120,7 +120,7 @@ const useStyles = makeStyles((theme) => ({
     '& .MuiOutlinedInput-root fieldset': { borderColor: tokens.border },
   },
   actionBtn: {
-    height: 34,
+    height: 36,
     fontFamily: 'Lato, sans-serif',
     fontSize: 13,
     textTransform: 'none',
@@ -129,7 +129,7 @@ const useStyles = makeStyles((theme) => ({
     '& .MuiIcon-root': { fontSize: '16px !important', marginRight: theme.spacing(0.5) },
   },
   primaryBtn: {
-    height: 34,
+    height: 36,
     backgroundColor: theme.palette.primary.main,
     color: theme.palette.common.white,
     fontFamily: 'Lato, sans-serif',
@@ -171,7 +171,7 @@ const useStyles = makeStyles((theme) => ({
     fontFamily: 'Lato, sans-serif',
     fontSize: 11,
     fontWeight: 600,
-    height: 20,
+    height: 24,
     '& .MuiChip-label': { padding: theme.spacing(0, 1) },
   },
   statusActive: { backgroundColor: '#dcfce7', color: '#15803d' },

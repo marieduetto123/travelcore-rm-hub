@@ -8,7 +8,7 @@ const duettoTheme = createMuiTheme({
   palette: {
     primary: {
       main: '#006461',
-      dark: '#004d4a',
+      dark: '#053c3c',
     },
     secondary: {
       main: '#0E2124',
@@ -16,10 +16,10 @@ const duettoTheme = createMuiTheme({
     text: {
       primary: '#1c1c1c',
       secondary: '#4f5b60',
-      disabled: '#8a9096',
+      disabled: '#aeb4ba',
     },
     background: {
-      default: '#f1f5f9',
+      default: '#fafafa',
       paper: '#ffffff',
     },
     error: {

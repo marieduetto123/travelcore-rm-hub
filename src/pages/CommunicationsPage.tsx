@@ -139,7 +139,7 @@ const useStyles = makeStyles((theme) => ({
   typeChip: {
     fontFamily: 'Lato, sans-serif',
     fontSize: 11,
-    height: 20,
+    height: 24,
     '& .MuiChip-label': { padding: '0 8px' },
   },
   typeEmail: { backgroundColor: '#dbeafe', color: '#1d4ed8' },
