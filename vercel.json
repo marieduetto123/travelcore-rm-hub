@@ -1,5 +1,5 @@
 {
   "rewrites": [
-    { "source": "/", "destination": "/calendar-skeleton.html" }
+    { "source": "/", "destination": "/index.html" }
   ]
 }
