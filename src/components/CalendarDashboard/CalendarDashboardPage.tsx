@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
@@ -10,80 +9,17 @@ import Tabs from '@material-ui/core/Tabs';
 import { CalendarHeader } from './CalendarHeader';
 import { CalendarMonthGrid } from './CalendarMonthGrid';
 import { DayDetailPopup } from './DayDetailPopup';
+import { WeekView } from './WeekView';
 import { CalendarDay, DayDetailGroup, MonthData } from './types';
 import { buildMonthData } from './calendarUtils';
 import { calendarTokens } from './tokens';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    display: 'flex',
-    minHeight: '100vh',
-    backgroundColor: theme.palette.background.default,
-  },
-
-  // Sidebar
-  sidebar: {
-    width: 220,
-    backgroundColor: theme.palette.secondary.main,
-    flexShrink: 0,
-    display: 'flex',
-    flexDirection: 'column',
-    paddingTop: theme.spacing(1),
-  },
-  navItem: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: theme.spacing(1.5),
-    padding: theme.spacing(1.5, 2),
-    cursor: 'pointer',
-    color: theme.palette.common.white,
-    fontFamily: 'Lato, sans-serif',
-    fontSize: 14,
-    opacity: 0.7,
-    '&:hover': {
-      opacity: 1,
-      backgroundColor: 'rgba(255,255,255,0.08)',
-    },
-    '& .MuiIcon-root': {
-      fontSize: '20px !important',
-    },
-  },
-  navItemActive: {
-    opacity: 1,
-    backgroundColor: 'rgba(255,255,255,0.12)',
-  },
-
-  // Main content
-  main: {
-    flex: 1,
-    overflow: 'auto',
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  pageHeader: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: theme.spacing(2),
-    padding: theme.spacing(0, 3),
-    height: 44,
-    borderBottom: `1px solid ${calendarTokens.border}`,
-    backgroundColor: theme.palette.common.white,
-    flexShrink: 0,
-  },
-  pageTitle: {
-    fontFamily: 'Lato, sans-serif',
-    fontSize: 16,
-    fontWeight: 700,
-    color: theme.palette.text.primary,
-    flex: 1,
-  },
-
-  // Content cards
-  contentArea: {
     padding: theme.spacing(3),
     display: 'flex',
     flexDirection: 'column',
-    gap: theme.spacing(2),
+    gap: theme.spacing(2.5),
   },
 
   // Trends section (placeholder)
@@ -106,13 +42,14 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.primary,
   },
   trendsPlaceholder: {
-    height: 382,
+    height: 160,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     color: theme.palette.text.disabled,
     fontFamily: 'Lato, sans-serif',
     fontSize: 14,
+    gap: theme.spacing(1),
   },
 
   // Calendar card
@@ -152,6 +89,7 @@ const useStyles = makeStyles((theme) => ({
     gap: theme.spacing(2),
     padding: theme.spacing(1.25, 2.5),
     borderBottom: `1px solid ${calendarTokens.border}`,
+    flexWrap: 'wrap',
   },
   legendItem: {
     display: 'flex',
@@ -269,23 +207,8 @@ const SAMPLE_DAY_DETAIL: DayDetailGroup[] = [
       { label: 'Oth', percentage: 15, value: '$4,260' },
     ],
   },
-  {
-    title: 'Contract Rates',
-    isExpanded: false,
-    items: [
-      { label: 'Operator A', value: '$285' },
-      { label: 'Operator B', value: '$301' },
-      { label: 'Operator C', value: '$267' },
-    ],
-  },
+  { title: 'Contract Rates', isExpanded: false, items: [{ label: 'Operator A', value: '$285' }] },
   { title: 'Summary', isExpanded: false, items: [] },
-];
-
-const NAV_ITEMS = [
-  { icon: 'dashboard', label: 'Dashboard', active: true },
-  { icon: 'calendar_today', label: 'Calendar' },
-  { icon: 'bar_chart', label: 'Trends' },
-  { icon: 'settings', label: 'Settings' },
 ];
 
 export function CalendarDashboardPage() {
@@ -293,15 +216,35 @@ export function CalendarDashboardPage() {
   const [activeTab, setActiveTab] = useState(0);
   const [selectedDay, setSelectedDay] = useState<CalendarDay | null>(null);
   const [detailGroups, setDetailGroups] = useState<DayDetailGroup[]>(SAMPLE_DAY_DETAIL);
+  const [weekViewDay, setWeekViewDay] = useState<Date | null>(null);
 
   const months: [MonthData, MonthData] = [
     buildMonthData(2026, 0),
     buildMonthData(2026, 1, { isLocked: true }),
   ];
 
+  // Monday-align the week that contains the clicked day
+  const getWeekStart = (date: Date): Date => {
+    const d = new Date(date);
+    const day = d.getDay();
+    const diff = day === 0 ? -6 : 1 - day;
+    d.setDate(d.getDate() + diff);
+    d.setHours(0, 0, 0, 0);
+    return d;
+  };
+
+  const [weekStart, setWeekStart] = useState<Date>(getWeekStart(new Date()));
+
   const handleDayClick = (day: CalendarDay) => {
-    setSelectedDay(day);
-    setDetailGroups(SAMPLE_DAY_DETAIL);
+    if (activeTab === 0) {
+      // Monthly → go to week view
+      setWeekStart(getWeekStart(day.date));
+      setWeekViewDay(day.date);
+      setSelectedDay(null);
+    } else {
+      setSelectedDay(day);
+      setDetailGroups(SAMPLE_DAY_DETAIL);
+    }
   };
 
   const handleToggleGroup = (index: number) => {
@@ -310,56 +253,55 @@ export function CalendarDashboardPage() {
     );
   };
 
+  const shiftWeek = (dir: number) => {
+    setWeekStart((d) => {
+      const next = new Date(d);
+      next.setDate(d.getDate() + dir * 7);
+      return next;
+    });
+  };
+
   return (
     <div className={classes.root}>
-      {/* Sidebar */}
-      <div className={classes.sidebar}>
-        {NAV_ITEMS.map((item) => (
-          <div key={item.label} className={clsx(classes.navItem, item.active && classes.navItemActive)}>
-            <Icon>{item.icon}</Icon>
-            {item.label}
-          </div>
-        ))}
-      </div>
-
-      {/* Main */}
-      <div className={classes.main}>
-        {/* Page header */}
-        <div className={classes.pageHeader}>
-          <Typography className={classes.pageTitle}>Travel Distribution Hub</Typography>
+      {/* Trends card (placeholder) */}
+      <Paper className={classes.trendsCard} elevation={0}>
+        <div className={classes.trendsHeader}>
+          <Typography className={classes.trendsTitle}>Trends</Typography>
+          <Icon style={{ fontSize: 18, color: '#9ca3af' }}>more_horiz</Icon>
         </div>
+        <div className={classes.trendsPlaceholder}>
+          <Icon style={{ fontSize: 32, color: '#d1d5db' }}>show_chart</Icon>
+          <span>Chart area — connect a charting library</span>
+        </div>
+      </Paper>
 
-        <div className={classes.contentArea}>
-          {/* Trends card (placeholder — requires charting library) */}
-          <Paper className={classes.trendsCard} elevation={0}>
-            <div className={classes.trendsHeader}>
-              <Typography className={classes.trendsTitle}>Trends</Typography>
-            </div>
-            <div className={classes.trendsPlaceholder}>
-              Chart area — connect a charting library (Recharts / Victory)
-            </div>
-          </Paper>
+      {/* Calendar card */}
+      <Paper className={classes.calendarCard} elevation={0}>
+        <CalendarHeader />
 
-          {/* Calendar card */}
-          <Paper className={classes.calendarCard} elevation={0}>
-            <CalendarHeader
-              onCloseReopen={() => {}}
-              onFilters={() => {}}
-              onHeatmap={() => {}}
-              onDateRange={() => {}}
+        {/* Tab bar */}
+        <Tabs
+          value={activeTab}
+          onChange={(_, v) => { setActiveTab(v); setWeekViewDay(null); setSelectedDay(null); }}
+          className={classes.tabBar}
+        >
+          <Tab label="Monthly" />
+          <Tab label="Weekly" />
+          <Tab label="Daily" />
+        </Tabs>
+
+        {/* Week view */}
+        {weekViewDay ? (
+          <div style={{ padding: 16 }}>
+            <WeekView
+              weekStart={weekStart}
+              onBack={() => setWeekViewDay(null)}
+              onPrevWeek={() => shiftWeek(-1)}
+              onNextWeek={() => shiftWeek(1)}
             />
-
-            {/* Tab bar */}
-            <Tabs
-              value={activeTab}
-              onChange={(_, v) => setActiveTab(v)}
-              className={classes.tabBar}
-            >
-              <Tab label="Monthly" />
-              <Tab label="Weekly" />
-              <Tab label="Daily" />
-            </Tabs>
-
+          </div>
+        ) : (
+          <>
             {/* Legend */}
             <div className={classes.legendRow}>
               <div className={classes.legendItem}>
@@ -396,14 +338,9 @@ export function CalendarDashboardPage() {
 
               {SAMPLE_METRICS_ROWS.map((row) => (
                 <div key={row.label} className={classes.metricsRow}>
-                  <Typography className={classes.metricsRowLabel}>
-                    {row.label}
-                  </Typography>
+                  <Typography className={classes.metricsRowLabel}>{row.label}</Typography>
                   <div className={classes.progressBarWrapper}>
-                    <div
-                      className={classes.progressBarFill}
-                      style={{ width: `${row.pct * 100}%` }}
-                    />
+                    <div className={classes.progressBarFill} style={{ width: `${row.pct * 100}%` }} />
                   </div>
                   <div className={classes.metricsRowValues}>
                     {row.values.map((v, vi) => (
@@ -413,25 +350,25 @@ export function CalendarDashboardPage() {
                 </div>
               ))}
             </div>
+          </>
+        )}
 
-            {/* Day detail popup */}
-            {selectedDay && (
-              <DayDetailPopup
-                date={selectedDay.date.toLocaleDateString('en-US', {
-                  weekday: 'short',
-                  month: 'short',
-                  day: 'numeric',
-                  year: 'numeric',
-                })}
-                groups={detailGroups}
-                onClose={() => setSelectedDay(null)}
-                onToggleGroup={handleToggleGroup}
-                style={{ top: 943, right: 24 }}
-              />
-            )}
-          </Paper>
-        </div>
-      </div>
+        {/* Day detail popup */}
+        {selectedDay && (
+          <DayDetailPopup
+            date={selectedDay.date.toLocaleDateString('en-US', {
+              weekday: 'short',
+              month: 'short',
+              day: 'numeric',
+              year: 'numeric',
+            })}
+            groups={detailGroups}
+            onClose={() => setSelectedDay(null)}
+            onToggleGroup={handleToggleGroup}
+            style={{ top: 800, right: 24 }}
+          />
+        )}
+      </Paper>
     </div>
   );
 }

@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import { CalendarDashboardPage } from './components/CalendarDashboard';
+import { App } from './App';
 
 const duettoTheme = createMuiTheme({
   palette: {
@@ -36,7 +36,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <ThemeProvider theme={duettoTheme}>
       <CssBaseline />
-      <CalendarDashboardPage />
+      <App />
     </ThemeProvider>
   </React.StrictMode>
 );

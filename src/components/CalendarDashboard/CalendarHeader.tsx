@@ -3,8 +3,22 @@ import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Icon from '@material-ui/core/Icon';
 import Typography from '@material-ui/core/Typography';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+import Badge from '@material-ui/core/Badge';
 import { calendarTokens } from './tokens';
 import { CellMetricsPopup } from './CellMetricsPopup';
+import { FiltersDropdown, CalendarFilters, DEFAULT_FILTERS } from './FiltersDropdown';
+import { HeatmapModal } from './HeatmapModal';
+import { CloseOutModal } from './CloseOutModal';
+
+const COMPARE_OPTIONS = [
+  { value: 'none', label: 'No Compare' },
+  { value: 'ly', label: 'vs LY' },
+  { value: 'stly', label: 'vs STLY' },
+  { value: 'forecast', label: 'vs Forecast' },
+  { value: 'budget', label: 'vs Budget' },
+];
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -20,6 +34,7 @@ const useStyles = makeStyles((theme) => ({
     paddingRight: theme.spacing(2),
     minHeight: 63,
     boxSizing: 'border-box',
+    flexWrap: 'wrap',
   },
   titleContainer: {
     flex: '1 0 0',
@@ -75,24 +90,22 @@ const useStyles = makeStyles((theme) => ({
       gap: theme.spacing(0.75),
     },
   },
-  compareDisabled: {
-    backgroundColor: calendarTokens.dropdownBackground,
-    border: `1px solid ${calendarTokens.border}`,
-    height: 36,
-    minWidth: 120,
-    padding: theme.spacing(0, 1.375),
-    borderRadius: 4,
-    display: 'flex',
-    alignItems: 'center',
-    boxShadow: '0px 1px 1.5px rgba(0,0,0,0.08)',
-    opacity: 0.4,
-    cursor: 'default',
+  ghostBtnActive: {
+    color: theme.palette.primary.main,
+    backgroundColor: calendarTokens.primaryHover,
   },
-  compareLabel: {
+  compareSelect: {
+    height: 36,
     fontFamily: 'Lato, sans-serif',
     fontSize: 13,
-    color: theme.palette.text.disabled,
-    lineHeight: '16px',
+    '& .MuiSelect-select': {
+      padding: theme.spacing(0.5, 3.5, 0.5, 1.25),
+      fontFamily: 'Lato, sans-serif',
+      fontSize: 13,
+    },
+    '& .MuiOutlinedInput-notchedOutline': {
+      borderColor: calendarTokens.border,
+    },
   },
   dateRangeBtn: {
     backgroundColor: theme.palette.common.white,
@@ -119,27 +132,59 @@ const useStyles = makeStyles((theme) => ({
   expandIcon: {
     fontSize: '14px !important',
   },
+  filtersBadge: {
+    '& .MuiBadge-badge': {
+      backgroundColor: theme.palette.primary.main,
+      color: theme.palette.common.white,
+      fontSize: 10,
+      height: 16,
+      minWidth: 16,
+      top: 4,
+      right: 4,
+    },
+  },
 }));
 
 type Props = {
   title?: string;
   dateRangeLabel?: string;
-  onCloseReopen?: () => void;
-  onFilters?: () => void;
-  onHeatmap?: () => void;
   onDateRange?: () => void;
 };
+
+function countActiveFilters(f: CalendarFilters): number {
+  let n = 0;
+  if (f.operator !== 'all') n++;
+  if (f.roomType !== 'all') n++;
+  if (f.mealPlan !== 'all') n++;
+  if (f.sourceGeo !== 'all') n++;
+  if (f.pickup !== 7) n++;
+  return n;
+}
 
 export function CalendarHeader({
   title = 'Calendar',
   dateRangeLabel = 'January 2026 – February 2026',
-  onCloseReopen,
-  onFilters,
-  onHeatmap,
   onDateRange,
 }: Props) {
   const classes = useStyles();
+
+  // CellMetrics
   const [cellMetricsAnchor, setCellMetricsAnchor] = useState<HTMLElement | null>(null);
+
+  // Filters
+  const [filtersAnchor, setFiltersAnchor] = useState<HTMLElement | null>(null);
+  const [filters, setFilters] = useState<CalendarFilters>(DEFAULT_FILTERS);
+
+  // Heatmap
+  const [heatmapOpen, setHeatmapOpen] = useState(false);
+
+  // Close/Re-Open
+  const [closeOutOpen, setCloseOutOpen] = useState(false);
+
+  // Compare
+  const [compareMode, setCompareMode] = useState('none');
+
+  const activeFilterCount = countActiveFilters(filters);
 
   return (
     <div className={classes.root}>
@@ -148,22 +193,41 @@ export function CalendarHeader({
       </div>
 
       <div className={classes.controls}>
-        <Button className={classes.primaryBtn} onClick={onCloseReopen} disableElevation>
+        {/* Close/Re-Open */}
+        <Button
+          className={classes.primaryBtn}
+          onClick={() => setCloseOutOpen(true)}
+          disableElevation
+        >
           <Icon>lock</Icon>
           Close/Re-Open
         </Button>
 
-        <Button className={classes.ghostBtn} onClick={onFilters}>
-          <Icon>filter_list</Icon>
-          Filters
-          <Icon className={classes.expandIcon}>expand_more</Icon>
-        </Button>
+        {/* Filters */}
+        <Badge
+          badgeContent={activeFilterCount || undefined}
+          className={classes.filtersBadge}
+        >
+          <Button
+            className={classes.ghostBtn}
+            onClick={(e) => setFiltersAnchor(e.currentTarget)}
+          >
+            <Icon>filter_list</Icon>
+            Filters
+            <Icon className={classes.expandIcon}>expand_more</Icon>
+          </Button>
+        </Badge>
 
-        <Button className={classes.ghostBtn} onClick={onHeatmap}>
+        {/* Heatmap */}
+        <Button
+          className={`${classes.ghostBtn}${heatmapOpen ? ` ${classes.ghostBtnActive}` : ''}`}
+          onClick={() => setHeatmapOpen(true)}
+        >
           <Icon>grid_view</Icon>
           Heatmap
         </Button>
 
+        {/* Cell Metrics */}
         <Button
           className={classes.ghostBtn}
           onClick={(e) => setCellMetricsAnchor(e.currentTarget)}
@@ -173,20 +237,53 @@ export function CalendarHeader({
           <Icon className={classes.expandIcon}>expand_more</Icon>
         </Button>
 
-        <div className={classes.compareDisabled}>
-          <Typography className={classes.compareLabel}>No Compare</Typography>
-        </div>
+        {/* Compare */}
+        <Select
+          value={compareMode}
+          onChange={(e) => setCompareMode(e.target.value as string)}
+          variant="outlined"
+          className={classes.compareSelect}
+        >
+          {COMPARE_OPTIONS.map((o) => (
+            <MenuItem
+              key={o.value}
+              value={o.value}
+              style={{ fontFamily: 'Lato, sans-serif', fontSize: 13 }}
+            >
+              {o.label}
+            </MenuItem>
+          ))}
+        </Select>
 
+        {/* Date Range */}
         <Button className={classes.dateRangeBtn} onClick={onDateRange}>
           {dateRangeLabel}
           <Icon>calendar_today</Icon>
         </Button>
       </div>
 
+      {/* Popups */}
       <CellMetricsPopup
         anchorEl={cellMetricsAnchor}
         onClose={() => setCellMetricsAnchor(null)}
         onApply={() => setCellMetricsAnchor(null)}
+      />
+
+      <FiltersDropdown
+        anchorEl={filtersAnchor}
+        onClose={() => setFiltersAnchor(null)}
+        filters={filters}
+        onApply={(f) => setFilters(f)}
+      />
+
+      <HeatmapModal
+        open={heatmapOpen}
+        onClose={() => setHeatmapOpen(false)}
+      />
+
+      <CloseOutModal
+        open={closeOutOpen}
+        onClose={() => setCloseOutOpen(false)}
       />
     </div>
   );
