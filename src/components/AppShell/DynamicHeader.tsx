@@ -52,7 +52,7 @@ const useStyles = makeStyles((theme) => ({
     fontFamily: 'Lato, sans-serif',
     fontWeight: 700,
     fontSize: 16,
-    color: theme.palette.common.white,
+    color: '#c4ff45',
     letterSpacing: 1,
     userSelect: 'none',
   },
