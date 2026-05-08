@@ -213,29 +213,65 @@ const useStyles = makeStyles((theme) => ({
     borderRight: `1px solid ${calendarTokens.border}`,
     borderBottom: `1px solid ${calendarTokens.border}`,
   },
-  bulkBanner: {
+  stickyFooter: {
+    position: 'fixed',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    zIndex: 1200,
+    height: 60,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: theme.spacing(0, 3),
+    backgroundColor: theme.palette.common.white,
+    borderTop: `2px solid ${theme.palette.primary.main}`,
+    boxShadow: '0 -4px 20px rgba(0,0,0,0.1)',
+  },
+  footerLeft: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: theme.spacing(1),
+  },
+  footerDot: {
+    width: 8,
+    height: 8,
+    borderRadius: '50%',
+    backgroundColor: theme.palette.primary.main,
+    flexShrink: 0,
+  },
+  footerCount: {
+    fontFamily: 'Lato, sans-serif',
+    fontSize: 14,
+    fontWeight: 600,
+    color: theme.palette.text.primary,
+  },
+  footerRight: {
     display: 'flex',
     alignItems: 'center',
     gap: theme.spacing(1.5),
-    padding: theme.spacing(1, 2),
-    backgroundColor: calendarTokens.primaryHover,
-    borderTop: `1px solid ${calendarTokens.border}`,
   },
-  bulkBannerText: {
+  footerClearBtn: {
     fontFamily: 'Lato, sans-serif',
     fontSize: 13,
-    color: theme.palette.primary.main,
-    fontWeight: 600,
-    flex: 1,
+    textTransform: 'none',
+    color: theme.palette.text.secondary,
+    height: 36,
+    padding: theme.spacing(0, 1.5),
+    '&:hover': { backgroundColor: 'transparent', color: theme.palette.text.primary },
   },
-  bulkCloseBtn: {
+  footerCloseBtn: {
     backgroundColor: theme.palette.primary.main,
     color: theme.palette.common.white,
     fontFamily: 'Lato, sans-serif',
-    fontSize: 12,
+    fontSize: 13,
+    fontWeight: 600,
     textTransform: 'none',
-    padding: theme.spacing(0.5, 1.5),
+    height: 36,
+    padding: theme.spacing(0, 2),
+    borderRadius: 4,
     '&:hover': { backgroundColor: theme.palette.primary.dark },
+    '& .MuiIcon-root': { fontSize: '16px !important', marginRight: theme.spacing(0.75) },
   },
 }));
 
@@ -395,29 +431,33 @@ export function WeekView({ weekStart, onBack, onPrevWeek, onNextWeek }: Props) {
           </div>
         </div>
 
-        {/* Bulk close banner */}
-        {selectedDays.size > 0 && (
-          <div className={classes.bulkBanner}>
-            <Typography className={classes.bulkBannerText}>
+      </div>
+
+      {/* Sticky footer — shown when days are selected */}
+      {selectedDays.size > 0 && (
+        <div className={classes.stickyFooter}>
+          <div className={classes.footerLeft}>
+            <div className={classes.footerDot} />
+            <Typography className={classes.footerCount}>
               {selectedDays.size} day{selectedDays.size > 1 ? 's' : ''} selected
             </Typography>
+          </div>
+          <div className={classes.footerRight}>
+            <Button className={classes.footerClearBtn} disableRipple onClick={() => setSelectedDays(new Set())}>
+              Clear selection
+            </Button>
             <Button
-              className={classes.bulkCloseBtn}
+              className={classes.footerCloseBtn}
               variant="contained"
               disableElevation
               onClick={openCloseOut}
             >
-              Close/Re-Open Selected
-            </Button>
-            <Button
-              style={{ fontFamily: 'Lato, sans-serif', fontSize: 12, textTransform: 'none' }}
-              onClick={() => setSelectedDays(new Set())}
-            >
-              Clear
+              <Icon>lock</Icon>
+              Close Out
             </Button>
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
       <CloseOutModal
         open={closeOutOpen}
