@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Icon from '@material-ui/core/Icon';
 import clsx from 'clsx';
 import { DynamicHeader, type PageId } from './components/AppShell/DynamicHeader';
 import { CalendarDashboardPage } from './components/CalendarDashboard';
@@ -17,6 +16,12 @@ const NAV_ITEMS = [
   { icon: 'settings', label: 'Configuration' },
 ];
 
+const SIDEBAR_BG = '#19393e';
+const SIDEBAR_ACTIVE_BG = '#2a5258';
+const SIDEBAR_ACCENT = '#c4ff45';
+const SIDEBAR_TEXT_INACTIVE = '#94a3b8';
+const SIDEBAR_TEXT_COLLAPSE = '#64748b';
+
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
@@ -31,56 +36,65 @@ const useStyles = makeStyles((theme) => ({
     overflow: 'hidden',
   },
   sidebar: {
-    width: 220,
-    backgroundColor: theme.palette.secondary.main,
+    width: 240,
+    backgroundColor: SIDEBAR_BG,
     flexShrink: 0,
     display: 'flex',
     flexDirection: 'column',
-    paddingTop: theme.spacing(1),
+    paddingTop: theme.spacing(2),
     transition: 'width 0.2s ease',
     overflow: 'hidden',
   },
   sidebarCollapsed: {
-    width: 52,
+    width: 48,
   },
   navItem: {
+    position: 'relative',
+    height: 48,
     display: 'flex',
     alignItems: 'center',
-    gap: theme.spacing(1.5),
-    padding: theme.spacing(1.5, 2),
+    paddingLeft: 20,
     cursor: 'pointer',
-    color: theme.palette.common.white,
     fontFamily: 'Lato, sans-serif',
-    fontSize: 14,
-    opacity: 0.65,
+    fontSize: 13,
+    fontWeight: 400,
+    color: SIDEBAR_TEXT_INACTIVE,
     whiteSpace: 'nowrap',
     overflow: 'hidden',
-    transition: 'opacity 0.15s, background-color 0.15s',
+    transition: 'background-color 0.15s, color 0.15s',
     '&:hover': {
-      opacity: 1,
-      backgroundColor: 'rgba(255,255,255,0.08)',
-    },
-    '& .MuiIcon-root': {
-      fontSize: '20px !important',
-      flexShrink: 0,
+      backgroundColor: SIDEBAR_ACTIVE_BG,
+      color: theme.palette.common.white,
     },
   },
   navItemActive: {
-    opacity: 1,
-    backgroundColor: 'rgba(255,255,255,0.12)',
-    fontWeight: 700,
+    backgroundColor: SIDEBAR_ACTIVE_BG,
+    color: theme.palette.common.white,
+    fontWeight: 600,
+    '&::before': {
+      content: '""',
+      position: 'absolute',
+      left: 0,
+      top: '50%',
+      transform: 'translateY(-50%)',
+      width: 3,
+      height: 30,
+      backgroundColor: SIDEBAR_ACCENT,
+      borderRadius: '0 2px 2px 0',
+    },
   },
   collapseBtn: {
     marginTop: 'auto',
+    height: 40,
     display: 'flex',
     alignItems: 'center',
-    justifyContent: collapsed => (collapsed ? 'center' : 'flex-start'),
-    padding: theme.spacing(1.5, 2),
+    paddingLeft: 20,
     cursor: 'pointer',
-    color: 'rgba(255,255,255,0.4)',
-    gap: theme.spacing(1),
+    fontFamily: 'Lato, sans-serif',
+    fontSize: 12,
+    color: SIDEBAR_TEXT_COLLAPSE,
+    whiteSpace: 'nowrap',
     '&:hover': { color: theme.palette.common.white },
-    '& .MuiIcon-root': { fontSize: '18px !important' },
   },
   main: {
     flex: 1,
@@ -118,7 +132,6 @@ export function App() {
               className={clsx(classes.navItem, activePage === i && classes.navItemActive)}
               onClick={() => setActivePage(i as PageId)}
             >
-              <Icon>{item.icon}</Icon>
               {!collapsed && item.label}
             </div>
           ))}
@@ -127,10 +140,7 @@ export function App() {
             className={classes.collapseBtn}
             onClick={() => setCollapsed((c) => !c)}
           >
-            <Icon>{collapsed ? 'chevron_right' : 'chevron_left'}</Icon>
-            {!collapsed && (
-              <span style={{ fontFamily: 'Lato, sans-serif', fontSize: 12 }}>Collapse</span>
-            )}
+            {collapsed ? '›' : '‹ Collapse'}
           </div>
         </div>
 
