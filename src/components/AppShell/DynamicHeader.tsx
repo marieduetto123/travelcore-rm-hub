@@ -2,19 +2,19 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Icon from '@material-ui/core/Icon';
 import IconButton from '@material-ui/core/IconButton';
-import Badge from '@material-ui/core/Badge';
 import clsx from 'clsx';
 
 export type PageId = 0 | 1 | 2 | 3 | 4;
 export type BreadcrumbOption = { title: string; url?: string | false };
 
-const TOP_NAV_TABS = [
-  'Home',
-  'Advance',
-  'Pricing & Strategy',
-  'Forecasts',
-  'Reports',
-  'Travel Distribution Hub',
+const TOP_NAV = [
+  { label: 'Home', hasChevron: false },
+  { label: 'Advance', hasChevron: false },
+  { label: 'Pricing & Strategy', hasChevron: true },
+  { label: 'Forecasts & Budgets', hasChevron: true },
+  { label: 'Reports', hasChevron: true },
+  { label: 'Groups', hasChevron: true },
+  { label: 'Travel Distribution Hub', hasChevron: true, isActive: true },
 ];
 
 type Props = {
@@ -26,143 +26,256 @@ type Props = {
 const useStyles = makeStyles((theme) => ({
   root: {
     width: '100%',
-    height: 80,
     flexShrink: 0,
-    backgroundColor: theme.palette.common.white,
-    borderBottom: '1px solid #e0e4e6',
-    boxShadow: '0px 2px 6px 0px rgba(0,0,0,0.06)',
-    display: 'flex',
-    alignItems: 'stretch',
     position: 'sticky',
     top: 0,
     zIndex: theme.zIndex.appBar,
-    boxSizing: 'border-box',
   },
 
-  // Logo box
+  // ── Top bar ────────────────────────────────────────────────────────
+  topBar: {
+    height: 40,
+    backgroundColor: theme.palette.secondary.main, // #0E2124
+    display: 'flex',
+    alignItems: 'stretch',
+    paddingLeft: 24,
+    paddingRight: 14,
+    boxSizing: 'border-box',
+  },
   logo: {
-    width: 110,
-    height: 32,
-    backgroundColor: theme.palette.primary.main,
-    borderRadius: 4,
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'center',
+    paddingRight: 32,
     flexShrink: 0,
-    alignSelf: 'center',
-    marginLeft: 23,
-    marginRight: 20,
-    cursor: 'default',
   },
   logoText: {
     fontFamily: 'Lato, sans-serif',
     fontWeight: 700,
-    fontSize: 13,
+    fontSize: 16,
     color: theme.palette.common.white,
-    letterSpacing: 0.5,
+    letterSpacing: 1,
     userSelect: 'none',
   },
 
   // Nav tabs
-  navTabs: {
+  nav: {
     display: 'flex',
     alignItems: 'stretch',
     flex: 1,
   },
-  navTab: {
+  tab: {
     display: 'flex',
     alignItems: 'center',
-    padding: theme.spacing(0, 1.5),
-    position: 'relative',
+    justifyContent: 'center',
+    gap: 2,
+    padding: theme.spacing(0, 2),
     cursor: 'pointer',
     fontFamily: 'Lato, sans-serif',
     fontSize: 13,
     fontWeight: 400,
-    color: '#6b7280',
+    color: theme.palette.common.white,
     whiteSpace: 'nowrap',
-    borderBottom: '2px solid transparent',
     userSelect: 'none',
     '&:hover': {
-      color: theme.palette.text.primary,
+      backgroundColor: 'rgba(255,255,255,0.08)',
     },
   },
-  navTabActive: {
-    color: theme.palette.primary.main,
-    fontWeight: 600,
-    borderBottom: `2px solid ${theme.palette.primary.main}`,
+  tabActive: {
+    backgroundColor: '#c4ff45',
+    color: theme.palette.secondary.main, // #0E2124
+    '&:hover': {
+      backgroundColor: '#bdf03e',
+    },
+  },
+  tabChevron: {
+    fontSize: '16px !important',
+    lineHeight: '16px',
   },
 
   // Right icons
   icons: {
     display: 'flex',
     alignItems: 'center',
-    gap: theme.spacing(0.5),
-    paddingRight: theme.spacing(2),
+    gap: 4,
     flexShrink: 0,
   },
   iconBtn: {
-    color: '#6b7280',
-    padding: 6,
-    '&:hover': { color: theme.palette.text.primary },
+    width: 32,
+    height: 32,
+    borderRadius: '50%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    cursor: 'pointer',
+    color: 'rgba(255,255,255,0.8)',
+    '&:hover': {
+      backgroundColor: 'rgba(255,255,255,0.1)',
+    },
     '& .MuiIcon-root': { fontSize: '20px !important' },
+  },
+  notifWrap: {
+    position: 'relative',
+  },
+  notifBadge: {
+    position: 'absolute',
+    top: 1,
+    right: -1,
+    backgroundColor: theme.palette.error.main,
+    color: theme.palette.common.white,
+    fontSize: 7,
+    fontFamily: 'Lato, sans-serif',
+    fontWeight: 700,
+    height: 14,
+    minWidth: 14,
+    padding: '0 2px',
+    borderRadius: 4,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    lineHeight: 1,
   },
   avatar: {
     width: 32,
     height: 32,
-    borderRadius: '50%',
-    backgroundColor: theme.palette.primary.main,
+    borderRadius: 16,
+    backgroundColor: '#f59e0b', // orange
     color: theme.palette.common.white,
     fontFamily: 'Lato, sans-serif',
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: 700,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     cursor: 'pointer',
     flexShrink: 0,
-    marginLeft: theme.spacing(0.5),
+  },
+
+  // ── Breadcrumb bar ─────────────────────────────────────────────────
+  breadcrumbBar: {
+    height: 32,
+    backgroundColor: '#f8fafc',
+    borderBottom: '1px solid #dde1e2',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingLeft: 24,
+    boxSizing: 'border-box',
+  },
+  breadcrumbs: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  crumbLink: {
+    fontFamily: 'Lato, sans-serif',
+    fontSize: 12,
+    color: theme.palette.primary.main, // #006461
+    cursor: 'pointer',
+    '&:hover': { textDecoration: 'underline' },
+  },
+  crumbSep: {
+    fontSize: '12px !important',
+    color: '#585858',
+    margin: '0 4px',
+    lineHeight: '12px',
+  },
+  crumbCurrent: {
+    fontFamily: 'Lato, sans-serif',
+    fontSize: 12,
+    color: '#4f5b60',
+    cursor: 'default',
+  },
+
+  // Property picker (right side of breadcrumb bar)
+  propertyPicker: {
+    height: '100%',
+    minWidth: 200,
+    backgroundColor: theme.palette.common.white,
+    borderLeft: '1px solid #dde1e2',
+    display: 'flex',
+    alignItems: 'center',
+    gap: 6,
+    paddingLeft: 13,
+    paddingRight: 12,
+    paddingBottom: 1,
+    boxSizing: 'border-box',
+    cursor: 'pointer',
+  },
+  propertyIcon: {
+    fontSize: '20px !important',
+    color: '#19393e',
+  },
+  propertyName: {
+    fontFamily: 'Lato, sans-serif',
+    fontSize: 13,
+    color: theme.palette.primary.main, // #006461
+    flex: 1,
+    whiteSpace: 'nowrap',
+  },
+  propertyChevron: {
+    fontSize: '16px !important',
+    color: '#19393e',
   },
 }));
 
-export function DynamicHeader({ activePage, onNavigate, propertyName = 'Hotel Las Américas' }: Props) {
+export function DynamicHeader({ activePage, onNavigate, propertyName = 'Hotel Sevilla' }: Props) {
   const classes = useStyles();
 
   return (
     <div className={classes.root}>
-      {/* Logo */}
-      <div className={classes.logo}>
-        <span className={classes.logoText}>duetto</span>
-      </div>
+      {/* Top bar */}
+      <div className={classes.topBar}>
+        {/* Logo */}
+        <div className={classes.logo}>
+          <span className={classes.logoText}>duetto</span>
+        </div>
 
-      {/* Top nav tabs */}
-      <div className={classes.navTabs}>
-        {TOP_NAV_TABS.map((tab) => {
-          const isTDH = tab === 'Travel Distribution Hub';
-          return (
+        {/* Nav tabs */}
+        <div className={classes.nav}>
+          {TOP_NAV.map((tab) => (
             <div
-              key={tab}
-              className={clsx(classes.navTab, isTDH && classes.navTabActive)}
+              key={tab.label}
+              className={clsx(classes.tab, tab.isActive && classes.tabActive)}
             >
-              {tab}
+              {tab.label}
+              {tab.hasChevron && (
+                <Icon className={classes.tabChevron}>expand_more</Icon>
+              )}
             </div>
-          );
-        })}
+          ))}
+        </div>
+
+        {/* Right icons */}
+        <div className={classes.icons}>
+          <div className={classes.iconBtn}>
+            <Icon>dark_mode</Icon>
+          </div>
+          <div className={clsx(classes.iconBtn, classes.notifWrap)}>
+            <Icon>notifications</Icon>
+            <span className={classes.notifBadge}>99+</span>
+          </div>
+          <div className={classes.iconBtn}>
+            <Icon>help</Icon>
+          </div>
+          <div className={classes.iconBtn}>
+            <Icon>settings</Icon>
+          </div>
+          <div className={classes.avatar}>M</div>
+        </div>
       </div>
 
-      {/* Right icons */}
-      <div className={classes.icons}>
-        <IconButton className={classes.iconBtn} size="small">
-          <Badge badgeContent="99+" color="error" style={{ fontSize: 9 }}>
-            <Icon>notifications</Icon>
-          </Badge>
-        </IconButton>
-        <IconButton className={classes.iconBtn} size="small">
-          <Icon>help_outline</Icon>
-        </IconButton>
-        <IconButton className={classes.iconBtn} size="small">
-          <Icon>settings</Icon>
-        </IconButton>
-        <div className={classes.avatar}>M</div>
+      {/* Breadcrumb bar */}
+      <div className={classes.breadcrumbBar}>
+        <div className={classes.breadcrumbs}>
+          <span className={classes.crumbLink}>Home</span>
+          <Icon className={classes.crumbSep}>chevron_right</Icon>
+          <span className={classes.crumbCurrent}>Travel Distribution Hubs</span>
+        </div>
+
+        <div className={classes.propertyPicker}>
+          <Icon className={classes.propertyIcon}>home</Icon>
+          <span className={classes.propertyName}>{propertyName}</span>
+          <Icon className={classes.propertyChevron}>expand_more</Icon>
+        </div>
       </div>
     </div>
   );
