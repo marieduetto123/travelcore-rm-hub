@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Monthly Calendar — Travel Distribution Hub</title>
+  <title>Weekly Calendar — Travel Distribution Hub</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
@@ -50,14 +50,25 @@
       background: #fff; border: 1px solid var(--border); border-radius: 8px;
       padding: 20px 24px; display: flex; flex-direction: column; gap: 16px; overflow: hidden;
     }
-    .card-hdr   { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-    .card-hdr-r { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 
-    .cal-dow   { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; margin-bottom: 2px; }
-    .cal-weeks { display: flex; flex-direction: column; gap: 2px; }
-    .cal-week  { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; }
-    .cal-cell  { height: 72px; border-radius: 2px; }
-    .faded     { opacity: 0.3; }
+    /* Weekly topbar inside card */
+    .wv-topbar-sk {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    }
+    .wv-topbar-left-sk { display: flex; align-items: center; gap: 10px; }
+    .wv-topbar-right-sk { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+    /* Weekly table grid */
+    .wv-table {
+      display: grid;
+      grid-template-columns: 200px repeat(7, 1fr);
+      gap: 1px;
+      overflow-x: auto;
+    }
+    .wv-cell { display: flex; align-items: center; }
+    .wv-day-hdr { height: 40px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; }
+    .wv-section-row { height: 36px; background: rgba(234,238,239,0.35); display: flex; align-items: center; }
+    .wv-data-row { height: 32px; display: flex; align-items: center; }
   </style>
 </head>
 <body>
@@ -115,94 +126,134 @@
       </div>
     </div>
 
-    <!-- MONTHLY CALENDAR -->
+    <!-- WEEKLY CALENDAR -->
     <div class="section-card">
 
-      <!-- header -->
-      <div class="card-hdr">
-        <div class="sk" style="width:80px;height:22px;border-radius:3px"></div>
-        <div class="card-hdr-r">
-          <div class="sk" style="width:110px;height:32px;border-radius:4px"></div>
+      <!-- weekly topbar inside card -->
+      <div class="wv-topbar-sk">
+        <div class="wv-topbar-left-sk">
+          <div class="sk" style="width:110px;height:28px;border-radius:4px"></div>
+          <div class="sk" style="width:80px;height:20px;border-radius:3px"></div>
+        </div>
+        <div class="wv-topbar-right-sk">
+          <div class="sk" style="width:120px;height:32px;border-radius:4px"></div>
+          <div class="sk" style="width:100px;height:32px;border-radius:4px"></div>
+          <div class="sk" style="width:80px;height:32px;border-radius:4px"></div>
           <div class="sk" style="width:140px;height:32px;border-radius:4px"></div>
-          <div class="sk" style="width:90px;height:32px;border-radius:4px"></div>
-          <div class="sk" style="width:80px;height:32px;border-radius:4px"></div>
-          <div class="sk" style="width:80px;height:32px;border-radius:4px"></div>
-          <div class="sk" style="width:130px;height:32px;border-radius:4px"></div>
+          <div class="sk" style="width:100px;height:32px;border-radius:4px"></div>
         </div>
       </div>
 
       <!-- tab bar + nav -->
       <div style="display:flex;align-items:center;justify-content:space-between">
         <div style="display:flex;gap:4px">
-          <div class="sk" style="width:80px;height:30px;border-radius:4px"></div>
-          <div class="sk" style="width:72px;height:30px;border-radius:4px;opacity:.4"></div>
+          <div class="sk" style="width:80px;height:30px;border-radius:4px;opacity:.4"></div>
+          <div class="sk" style="width:72px;height:30px;border-radius:4px"></div>
         </div>
         <div style="display:flex;align-items:center;gap:6px">
+          <div class="sk" style="width:90px;height:28px;border-radius:4px"></div>
+          <div class="sk" style="width:80px;height:28px;border-radius:4px"></div>
+          <div style="width:16px"></div>
           <div class="sk" style="width:24px;height:24px;border-radius:4px"></div>
-          <div class="sk" style="width:140px;height:14px"></div>
           <div class="sk" style="width:24px;height:24px;border-radius:4px"></div>
         </div>
       </div>
 
       <!-- legend -->
       <div style="display:flex;gap:16px">
-        <div class="sk" style="width:130px;height:12px"></div>
-        <div class="sk" style="width:90px;height:12px"></div>
+        <div class="sk" style="width:110px;height:12px"></div>
+        <div class="sk" style="width:120px;height:12px"></div>
         <div class="sk" style="width:100px;height:12px"></div>
-        <div class="sk" style="width:60px;height:12px"></div>
-        <div class="sk" style="width:50px;height:12px"></div>
-        <div class="sk" style="width:90px;height:12px"></div>
+        <div class="sk" style="width:110px;height:12px"></div>
+        <div class="sk" style="width:70px;height:12px"></div>
       </div>
 
-      <!-- 3-month grid -->
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px">
+      <!-- weekly grid -->
+      <div style="overflow-x:auto">
+        <div class="wv-table" style="min-width:740px">
 
-        <!-- Month 1 -->
-        <div>
-          <div class="sk" style="width:100px;height:14px;margin-bottom:10px"></div>
-          <div class="cal-dow">
-            <div class="sk" style="height:20px"></div><div class="sk" style="height:20px"></div><div class="sk" style="height:20px"></div><div class="sk" style="height:20px"></div><div class="sk" style="height:20px"></div><div class="sk" style="height:20px"></div><div class="sk" style="height:20px"></div>
+          <!-- Day header row: label col + 7 days -->
+          <div class="wv-cell" style="height:40px;padding:0 8px">
+            <div class="sk" style="width:60px;height:12px"></div>
           </div>
-          <div class="cal-weeks">
-            <div class="cal-week"><div class="sk cal-cell faded"></div><div class="sk cal-cell faded"></div><div class="sk cal-cell faded"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div></div>
-            <div class="cal-week"><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div></div>
-            <div class="cal-week"><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div></div>
-            <div class="cal-week"><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div></div>
-            <div class="cal-week"><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell faded"></div><div class="sk cal-cell faded"></div><div class="sk cal-cell faded"></div><div class="sk cal-cell faded"></div></div>
-          </div>
+          <!-- 7 day headers -->
+          <div class="wv-day-hdr"><div class="sk" style="width:28px;height:11px"></div><div class="sk" style="width:20px;height:14px"></div></div>
+          <div class="wv-day-hdr"><div class="sk" style="width:28px;height:11px"></div><div class="sk" style="width:20px;height:14px"></div></div>
+          <div class="wv-day-hdr"><div class="sk" style="width:28px;height:11px"></div><div class="sk" style="width:20px;height:14px"></div></div>
+          <div class="wv-day-hdr"><div class="sk" style="width:28px;height:11px"></div><div class="sk" style="width:20px;height:14px"></div></div>
+          <div class="wv-day-hdr"><div class="sk" style="width:28px;height:11px"></div><div class="sk" style="width:20px;height:14px"></div></div>
+          <div class="wv-day-hdr"><div class="sk" style="width:28px;height:11px"></div><div class="sk" style="width:20px;height:14px"></div></div>
+          <div class="wv-day-hdr"><div class="sk" style="width:28px;height:11px"></div><div class="sk" style="width:20px;height:14px"></div></div>
+
+          <!-- Section: Occupancy (4 rows: section hdr + 3 data) -->
+          <div class="wv-section-row" style="padding:0 8px"><div class="sk" style="width:90px;height:12px"></div></div>
+          <div class="wv-section-row"></div><div class="wv-section-row"></div><div class="wv-section-row"></div><div class="wv-section-row"></div><div class="wv-section-row"></div><div class="wv-section-row"></div><div class="wv-section-row"></div>
+
+          <div class="wv-data-row" style="padding:0 8px"><div class="sk" style="width:70px;height:11px"></div></div>
+          <div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:38px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:38px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:38px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:38px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:38px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:38px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:38px;height:11px"></div></div>
+
+          <div class="wv-data-row" style="padding:0 8px;opacity:.55"><div class="sk" style="width:50px;height:11px"></div></div>
+          <div class="wv-data-row" style="justify-content:center;opacity:.55"><div class="sk" style="width:34px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center;opacity:.55"><div class="sk" style="width:34px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center;opacity:.55"><div class="sk" style="width:34px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center;opacity:.55"><div class="sk" style="width:34px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center;opacity:.55"><div class="sk" style="width:34px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center;opacity:.55"><div class="sk" style="width:34px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center;opacity:.55"><div class="sk" style="width:34px;height:11px"></div></div>
+
+          <div class="wv-data-row" style="padding:0 8px;opacity:.55"><div class="sk" style="width:56px;height:11px"></div></div>
+          <div class="wv-data-row" style="justify-content:center;opacity:.55"><div class="sk" style="width:34px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center;opacity:.55"><div class="sk" style="width:34px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center;opacity:.55"><div class="sk" style="width:34px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center;opacity:.55"><div class="sk" style="width:34px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center;opacity:.55"><div class="sk" style="width:34px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center;opacity:.55"><div class="sk" style="width:34px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center;opacity:.55"><div class="sk" style="width:34px;height:11px"></div></div>
+
+          <!-- Section: ADR -->
+          <div class="wv-section-row" style="padding:0 8px"><div class="sk" style="width:40px;height:12px"></div></div>
+          <div class="wv-section-row"></div><div class="wv-section-row"></div><div class="wv-section-row"></div><div class="wv-section-row"></div><div class="wv-section-row"></div><div class="wv-section-row"></div><div class="wv-section-row"></div>
+
+          <div class="wv-data-row" style="padding:0 8px"><div class="sk" style="width:60px;height:11px"></div></div>
+          <div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:42px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:42px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:42px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:42px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:42px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:42px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:42px;height:11px"></div></div>
+
+          <div class="wv-data-row" style="padding:0 8px;opacity:.55"><div class="sk" style="width:50px;height:11px"></div></div>
+          <div class="wv-data-row" style="justify-content:center;opacity:.55"><div class="sk" style="width:34px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center;opacity:.55"><div class="sk" style="width:34px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center;opacity:.55"><div class="sk" style="width:34px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center;opacity:.55"><div class="sk" style="width:34px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center;opacity:.55"><div class="sk" style="width:34px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center;opacity:.55"><div class="sk" style="width:34px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center;opacity:.55"><div class="sk" style="width:34px;height:11px"></div></div>
+
+          <!-- Section: Revenue -->
+          <div class="wv-section-row" style="padding:0 8px"><div class="sk" style="width:68px;height:12px"></div></div>
+          <div class="wv-section-row"></div><div class="wv-section-row"></div><div class="wv-section-row"></div><div class="wv-section-row"></div><div class="wv-section-row"></div><div class="wv-section-row"></div><div class="wv-section-row"></div>
+
+          <div class="wv-data-row" style="padding:0 8px"><div class="sk" style="width:60px;height:11px"></div></div>
+          <div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:46px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:46px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:46px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:46px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:46px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:46px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:46px;height:11px"></div></div>
+
+          <div class="wv-data-row" style="padding:0 8px;opacity:.55"><div class="sk" style="width:50px;height:11px"></div></div>
+          <div class="wv-data-row" style="justify-content:center;opacity:.55"><div class="sk" style="width:38px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center;opacity:.55"><div class="sk" style="width:38px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center;opacity:.55"><div class="sk" style="width:38px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center;opacity:.55"><div class="sk" style="width:38px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center;opacity:.55"><div class="sk" style="width:38px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center;opacity:.55"><div class="sk" style="width:38px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center;opacity:.55"><div class="sk" style="width:38px;height:11px"></div></div>
+
+          <!-- Section: Availability -->
+          <div class="wv-section-row" style="padding:0 8px"><div class="sk" style="width:90px;height:12px"></div></div>
+          <div class="wv-section-row"></div><div class="wv-section-row"></div><div class="wv-section-row"></div><div class="wv-section-row"></div><div class="wv-section-row"></div><div class="wv-section-row"></div><div class="wv-section-row"></div>
+
+          <div class="wv-data-row" style="padding:0 8px"><div class="sk" style="width:80px;height:11px"></div></div>
+          <div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:38px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:38px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:38px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:38px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:38px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:38px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:38px;height:11px"></div></div>
+
+          <div class="wv-data-row" style="padding:0 8px;opacity:.55"><div class="sk" style="width:60px;height:11px"></div></div>
+          <div class="wv-data-row" style="justify-content:center;opacity:.55"><div class="sk" style="width:34px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center;opacity:.55"><div class="sk" style="width:34px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center;opacity:.55"><div class="sk" style="width:34px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center;opacity:.55"><div class="sk" style="width:34px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center;opacity:.55"><div class="sk" style="width:34px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center;opacity:.55"><div class="sk" style="width:34px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center;opacity:.55"><div class="sk" style="width:34px;height:11px"></div></div>
+
+          <!-- Section: Room Types -->
+          <div class="wv-section-row" style="padding:0 8px"><div class="sk" style="width:80px;height:12px"></div></div>
+          <div class="wv-section-row"></div><div class="wv-section-row"></div><div class="wv-section-row"></div><div class="wv-section-row"></div><div class="wv-section-row"></div><div class="wv-section-row"></div><div class="wv-section-row"></div>
+
+          <div class="wv-data-row" style="padding:0 8px"><div class="sk" style="width:70px;height:11px"></div></div>
+          <div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:38px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:38px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:38px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:38px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:38px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:38px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:38px;height:11px"></div></div>
+
+          <div class="wv-data-row" style="padding:0 8px"><div class="sk" style="width:55px;height:11px"></div></div>
+          <div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:38px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:38px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:38px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:38px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:38px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:38px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:38px;height:11px"></div></div>
+
+          <div class="wv-data-row" style="padding:0 8px"><div class="sk" style="width:48px;height:11px"></div></div>
+          <div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:38px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:38px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:38px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:38px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:38px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:38px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:38px;height:11px"></div></div>
+
+          <!-- Section: Business Mix -->
+          <div class="wv-section-row" style="padding:0 8px"><div class="sk" style="width:95px;height:12px"></div></div>
+          <div class="wv-section-row"></div><div class="wv-section-row"></div><div class="wv-section-row"></div><div class="wv-section-row"></div><div class="wv-section-row"></div><div class="wv-section-row"></div><div class="wv-section-row"></div>
+
+          <div class="wv-data-row" style="padding:0 8px"><div class="sk" style="width:75px;height:11px"></div></div>
+          <div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:38px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:38px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:38px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:38px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:38px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:38px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center"><div class="sk" style="width:38px;height:11px"></div></div>
+
+          <div class="wv-data-row" style="padding:0 8px;opacity:.55"><div class="sk" style="width:50px;height:11px"></div></div>
+          <div class="wv-data-row" style="justify-content:center;opacity:.55"><div class="sk" style="width:34px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center;opacity:.55"><div class="sk" style="width:34px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center;opacity:.55"><div class="sk" style="width:34px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center;opacity:.55"><div class="sk" style="width:34px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center;opacity:.55"><div class="sk" style="width:34px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center;opacity:.55"><div class="sk" style="width:34px;height:11px"></div></div><div class="wv-data-row" style="justify-content:center;opacity:.55"><div class="sk" style="width:34px;height:11px"></div></div>
+
         </div>
-
-        <!-- Month 2 -->
-        <div>
-          <div class="sk" style="width:100px;height:14px;margin-bottom:10px"></div>
-          <div class="cal-dow">
-            <div class="sk" style="height:20px"></div><div class="sk" style="height:20px"></div><div class="sk" style="height:20px"></div><div class="sk" style="height:20px"></div><div class="sk" style="height:20px"></div><div class="sk" style="height:20px"></div><div class="sk" style="height:20px"></div>
-          </div>
-          <div class="cal-weeks">
-            <div class="cal-week"><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div></div>
-            <div class="cal-week"><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div></div>
-            <div class="cal-week"><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div></div>
-            <div class="cal-week"><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div></div>
-            <div class="cal-week"><div class="sk cal-cell faded"></div><div class="sk cal-cell faded"></div><div class="sk cal-cell faded"></div><div class="sk cal-cell faded"></div><div class="sk cal-cell faded"></div><div class="sk cal-cell faded"></div><div class="sk cal-cell faded"></div></div>
-          </div>
-        </div>
-
-        <!-- Month 3 -->
-        <div>
-          <div class="sk" style="width:100px;height:14px;margin-bottom:10px"></div>
-          <div class="cal-dow">
-            <div class="sk" style="height:20px"></div><div class="sk" style="height:20px"></div><div class="sk" style="height:20px"></div><div class="sk" style="height:20px"></div><div class="sk" style="height:20px"></div><div class="sk" style="height:20px"></div><div class="sk" style="height:20px"></div>
-          </div>
-          <div class="cal-weeks">
-            <div class="cal-week"><div class="sk cal-cell faded"></div><div class="sk cal-cell faded"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div></div>
-            <div class="cal-week"><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div></div>
-            <div class="cal-week"><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div></div>
-            <div class="cal-week"><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div></div>
-            <div class="cal-week"><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell"></div><div class="sk cal-cell faded"></div><div class="sk cal-cell faded"></div><div class="sk cal-cell faded"></div></div>
-          </div>
-        </div>
-
       </div>
+
     </div>
 
   </main>
