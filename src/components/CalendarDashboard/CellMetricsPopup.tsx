@@ -473,15 +473,7 @@ type CheckboxCellProps = {
 function CheckboxCell({ type, checked, onToggle, isAtMax, classes }: CheckboxCellProps) {
   if (type === 'absent') return <div style={{ flex: 1, minWidth: 0 }} />;
 
-  if (type === 'unavailable') {
-    return (
-      <div className={classes.dataCheckCell}>
-        <div className={classes.unavailableBox} />
-      </div>
-    );
-  }
-
-  // 'interactive' and 'checkboxDisabled' both render as selectable checkboxes
+  // All non-absent types render as selectable checkboxes
   const showDisabled = isAtMax && !checked;
 
   return (
