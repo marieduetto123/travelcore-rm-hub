@@ -9,6 +9,7 @@ import { calendarTokens } from './tokens';
 const DAYS_OF_WEEK = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
 const useStyles = makeStyles((theme) => ({
+  // ── Normal (2-month side-by-side) ──
   root: {
     width: '100%',
     display: 'flex',
@@ -73,15 +74,85 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: calendarTokens.border,
     marginTop: theme.spacing(1),
   },
+
+  // ── Compact (4-per-row, square tiles) ──
+  rootCompact: {
+    width: '100%',
+    display: 'grid',
+    gridTemplateColumns: 'repeat(4, 1fr)',
+    gap: theme.spacing(2),
+    padding: theme.spacing(2, 2.5),
+    boxSizing: 'border-box',
+  },
+  monthColumnCompact: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  monthHeaderCompact: {
+    display: 'flex',
+    alignItems: 'center',
+    height: 24,
+    marginBottom: 4,
+  },
+  monthLabelCompact: {
+    fontFamily: 'Lato, sans-serif',
+    fontSize: 12,
+    fontWeight: 600,
+    color: theme.palette.text.secondary,
+  },
+  dowRowCompact: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(7, 1fr)',
+    marginBottom: 2,
+  },
+  dowCellCompact: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontFamily: 'Lato, sans-serif',
+    fontSize: 9,
+    fontWeight: 400,
+    color: theme.palette.text.disabled,
+    height: 14,
+  },
+  daysGridCompact: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(7, 1fr)',
+  },
 }));
 
 type Props = {
-  months: [MonthData, MonthData];
+  months: MonthData[];
+  compact?: boolean;
   onDayClick?: (day: CalendarDay) => void;
 };
 
-export function CalendarMonthGrid({ months, onDayClick }: Props) {
+export function CalendarMonthGrid({ months, compact, onDayClick }: Props) {
   const classes = useStyles();
+
+  if (compact) {
+    return (
+      <div className={classes.rootCompact}>
+        {months.map((month, mi) => (
+          <div key={mi} className={classes.monthColumnCompact}>
+            <div className={classes.monthHeaderCompact}>
+              <span className={classes.monthLabelCompact}>{month.label}</span>
+            </div>
+            <div className={classes.dowRowCompact}>
+              {DAYS_OF_WEEK.map((d, i) => (
+                <div key={i} className={classes.dowCellCompact}>{d}</div>
+              ))}
+            </div>
+            <div className={classes.daysGridCompact}>
+              {month.days.map((day, di) => (
+                <CalendarDayCell key={di} day={day} compact onClick={onDayClick} />
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div className={classes.root}>

@@ -224,10 +224,21 @@ export function CalendarDashboardPage() {
     end:   { year: 2026, month: 1 },
   });
 
-  const months: [MonthData, MonthData] = [
-    buildMonthData(calRange.start.year, calRange.start.month),
-    buildMonthData(calRange.end.year,   calRange.end.month, { isLocked: true }),
-  ];
+  const monthCount =
+    (calRange.end.year - calRange.start.year) * 12 +
+    (calRange.end.month - calRange.start.month) + 1;
+  const compact = monthCount >= 3;
+
+  const months: MonthData[] = (() => {
+    const result: MonthData[] = [];
+    for (let i = 0; i < monthCount; i++) {
+      const total = calRange.start.year * 12 + calRange.start.month + i;
+      const y = Math.floor(total / 12);
+      const m = total % 12;
+      result.push(buildMonthData(y, m, i === monthCount - 1 ? { isLocked: true } : undefined));
+    }
+    return result;
+  })();
 
   // Monday-align the week that contains the clicked day
   const getWeekStart = (date: Date): Date => {
@@ -332,8 +343,8 @@ export function CalendarDashboardPage() {
               </div>
             </div>
 
-            {/* Two-month grid */}
-            <CalendarMonthGrid months={months} onDayClick={handleDayClick} />
+            {/* Month grid */}
+            <CalendarMonthGrid months={months} compact={compact} onDayClick={handleDayClick} />
 
             {/* Monthly metrics */}
             <Divider />

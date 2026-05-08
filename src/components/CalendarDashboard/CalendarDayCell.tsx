@@ -18,6 +18,9 @@ const useStyles = makeStyles((theme) => ({
     cursor: 'pointer',
     flexShrink: 0,
     backgroundColor: theme.palette.common.white,
+    // reveal hover-only controls when this cell is hovered
+    '&:hover $checkbox': { visibility: 'visible' },
+    '&:hover $rightIcon': { visibility: 'visible' },
   },
   closed: {
     backgroundColor: calendarTokens.cellBackgroundClosed,
@@ -43,6 +46,7 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: 2,
     boxSizing: 'border-box',
     flexShrink: 0,
+    visibility: 'hidden',
   },
   dateContainer: {
     width: 24,
@@ -66,6 +70,7 @@ const useStyles = makeStyles((theme) => ({
   rightIcon: {
     fontSize: '18px !important',
     color: theme.palette.text.secondary,
+    visibility: 'hidden',
   },
 
   // Metric rows
@@ -105,15 +110,55 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '14px !important',
     color: theme.palette.primary.main,
   },
+
+  // ── Compact mode (square tile, no metrics) ──
+  rootCompact: {
+    width: '100%',
+    height: 32,
+    padding: 0,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    border: `1px solid ${calendarTokens.border}`,
+    boxSizing: 'border-box',
+    cursor: 'pointer',
+    backgroundColor: theme.palette.common.white,
+  },
+  closedCompact: {
+    backgroundColor: calendarTokens.cellBackgroundClosed,
+  },
+  emptyCompact: {
+    visibility: 'hidden',
+    cursor: 'default',
+  },
+  dayNumberCompact: {
+    fontFamily: 'Lato, sans-serif',
+    fontWeight: 400,
+    fontSize: 10,
+    color: '#252525',
+  },
 }));
 
 type Props = {
   day: CalendarDay;
+  compact?: boolean;
   onClick?: (day: CalendarDay) => void;
 };
 
-export function CalendarDayCell({ day, onClick }: Props) {
+export function CalendarDayCell({ day, compact, onClick }: Props) {
   const classes = useStyles();
+
+  if (compact) {
+    if (!day.isInMonth) return <div className={clsx(classes.rootCompact, classes.emptyCompact)} />;
+    return (
+      <div
+        className={clsx(classes.rootCompact, day.isClosed && classes.closedCompact)}
+        onClick={() => onClick?.(day)}
+      >
+        <span className={classes.dayNumberCompact}>{day.dayNumber}</span>
+      </div>
+    );
+  }
 
   if (!day.isInMonth) {
     return <div className={clsx(classes.root, classes.empty)} />;
