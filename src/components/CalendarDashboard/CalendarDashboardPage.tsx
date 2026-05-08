@@ -346,7 +346,6 @@ export function CalendarDashboardPage() {
               onCloseReopen={() => {}}
               onFilters={() => {}}
               onHeatmap={() => {}}
-              onCellMetrics={() => {}}
               onDateRange={() => {}}
             />
 

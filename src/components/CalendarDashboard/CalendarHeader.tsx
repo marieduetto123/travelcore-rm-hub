@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Icon from '@material-ui/core/Icon';
 import Typography from '@material-ui/core/Typography';
 import { calendarTokens } from './tokens';
+import { CellMetricsPopup } from './CellMetricsPopup';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -126,7 +127,6 @@ type Props = {
   onCloseReopen?: () => void;
   onFilters?: () => void;
   onHeatmap?: () => void;
-  onCellMetrics?: () => void;
   onDateRange?: () => void;
 };
 
@@ -136,10 +136,10 @@ export function CalendarHeader({
   onCloseReopen,
   onFilters,
   onHeatmap,
-  onCellMetrics,
   onDateRange,
 }: Props) {
   const classes = useStyles();
+  const [cellMetricsAnchor, setCellMetricsAnchor] = useState<HTMLElement | null>(null);
 
   return (
     <div className={classes.root}>
@@ -164,7 +164,10 @@ export function CalendarHeader({
           Heatmap
         </Button>
 
-        <Button className={classes.ghostBtn} onClick={onCellMetrics}>
+        <Button
+          className={classes.ghostBtn}
+          onClick={(e) => setCellMetricsAnchor(e.currentTarget)}
+        >
           <Icon>tune</Icon>
           Cell Metrics
           <Icon className={classes.expandIcon}>expand_more</Icon>
@@ -179,6 +182,12 @@ export function CalendarHeader({
           <Icon>calendar_today</Icon>
         </Button>
       </div>
+
+      <CellMetricsPopup
+        anchorEl={cellMetricsAnchor}
+        onClose={() => setCellMetricsAnchor(null)}
+        onApply={() => setCellMetricsAnchor(null)}
+      />
     </div>
   );
 }
