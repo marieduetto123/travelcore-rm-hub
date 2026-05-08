@@ -21,6 +21,7 @@ export type HeatmapType = 'stop_sales' | 'hotel_occ' | 'remaining_rooms' | 'meal
 export type HeatmapConfig = {
   type: HeatmapType | null;
   thresholds: { grey: number; green: number; blue: number };
+  thresholdColors: { grey: string; green: string; blue: string };
   roomTypes: string[];
   conditionEnabled: boolean;
   conditionMetric: string;
@@ -31,6 +32,7 @@ export type HeatmapConfig = {
 export const DEFAULT_HEATMAP: HeatmapConfig = {
   type: null,
   thresholds: { grey: 50, green: 75, blue: 90 },
+  thresholdColors: { grey: '#E7EFFF', green: '#2E65E8', blue: '#D33030' },
   roomTypes: [],
   conditionEnabled: false,
   conditionMetric: 'hotel_occ',
@@ -147,17 +149,26 @@ const useStyles = makeStyles((theme) => ({
     gap: theme.spacing(1.5),
     marginBottom: theme.spacing(1),
   },
+  colorColumn: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: 4,
+    cursor: 'pointer',
+    minWidth: 52,
+  },
   colorDot: {
     width: 12,
     height: 12,
     borderRadius: '50%',
     flexShrink: 0,
   },
-  thresholdLabel: {
+  changeColorText: {
     fontFamily: 'Lato, sans-serif',
-    fontSize: 13,
-    color: theme.palette.text.secondary,
-    minWidth: 60,
+    fontSize: 11,
+    color: theme.palette.primary.main,
+    whiteSpace: 'nowrap' as const,
+    userSelect: 'none' as const,
   },
   thresholdInput: {
     width: 80,
@@ -302,16 +313,26 @@ export function HeatmapModal({ open, onClose, config = DEFAULT_HEATMAP, onApply 
         {draft.type && (
           <div className={classes.thresholdSection}>
             <Typography className={classes.sectionLabel}>Colour Thresholds</Typography>
-            {(
-              [
-                { key: 'grey' as const, color: '#9ca3af', label: 'Grey zone ≤' },
-                { key: 'green' as const, color: '#16a34a', label: 'Green zone ≤' },
-                { key: 'blue' as const, color: '#2563eb', label: 'Blue zone ≤' },
-              ] as const
-            ).map(({ key, color, label }) => (
+            {(['grey', 'green', 'blue'] as const).map((key) => (
               <div key={key} className={classes.thresholdRow}>
-                <div className={classes.colorDot} style={{ backgroundColor: color }} />
-                <Typography className={classes.thresholdLabel}>{label}</Typography>
+                <label className={classes.colorColumn}>
+                  <div
+                    className={classes.colorDot}
+                    style={{ backgroundColor: draft.thresholdColors[key] }}
+                  />
+                  <input
+                    type="color"
+                    value={draft.thresholdColors[key]}
+                    onChange={(e) =>
+                      setDraft((d) => ({
+                        ...d,
+                        thresholdColors: { ...d.thresholdColors, [key]: e.target.value },
+                      }))
+                    }
+                    style={{ position: 'absolute', width: 0, height: 0, opacity: 0, pointerEvents: 'none' }}
+                  />
+                  <span className={classes.changeColorText}>Change colour</span>
+                </label>
                 <TextField
                   value={draft.thresholds[key]}
                   onChange={(e) =>

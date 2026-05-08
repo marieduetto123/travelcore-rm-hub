@@ -349,7 +349,7 @@ export function CalendarDashboardPage() {
             </div>
 
             {/* Month grid */}
-            <CalendarMonthGrid months={months} compact={compact} heatmapConfig={heatmapConfig} onDayClick={handleDayClick} />
+            <CalendarMonthGrid months={months} compact={compact} fullWidth={monthCount === 1} heatmapConfig={heatmapConfig} onDayClick={handleDayClick} />
 
             {/* Monthly metrics */}
             <Divider />

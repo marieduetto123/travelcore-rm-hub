@@ -72,6 +72,19 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: calendarTokens.border,
     border: `1px solid ${calendarTokens.border}`,
   },
+  daysGridFull: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(7, 1fr)',
+    gap: 1,
+    backgroundColor: calendarTokens.border,
+    border: `1px solid ${calendarTokens.border}`,
+  },
+  dowRowFull: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(7, 1fr)',
+    height: 15,
+    marginBottom: 2,
+  },
   divider: {
     height: 21,
     borderRadius: 4,
@@ -128,11 +141,12 @@ const useStyles = makeStyles((theme) => ({
 type Props = {
   months: MonthData[];
   compact?: boolean;
+  fullWidth?: boolean;
   heatmapConfig?: HeatmapConfig | null;
   onDayClick?: (day: CalendarDay) => void;
 };
 
-export function CalendarMonthGrid({ months, compact, heatmapConfig, onDayClick }: Props) {
+export function CalendarMonthGrid({ months, compact, fullWidth, heatmapConfig, onDayClick }: Props) {
   const classes = useStyles();
 
   if (compact) {
@@ -174,15 +188,15 @@ export function CalendarMonthGrid({ months, compact, heatmapConfig, onDayClick }
             )}
           </div>
 
-          <div className={classes.dowRow}>
+          <div className={fullWidth ? classes.dowRowFull : classes.dowRow}>
             {DAYS_OF_WEEK.map((d, i) => (
               <div key={i} className={classes.dowCell}>{d}</div>
             ))}
           </div>
 
-          <div className={classes.daysGrid}>
+          <div className={fullWidth ? classes.daysGridFull : classes.daysGrid}>
             {month.days.map((day, di) => (
-              <CalendarDayCell key={di} day={day} heatmapConfig={heatmapConfig} onClick={onDayClick} />
+              <CalendarDayCell key={di} day={day} fullWidth={fullWidth} heatmapConfig={heatmapConfig} onClick={onDayClick} />
             ))}
           </div>
 

@@ -6,25 +6,32 @@ import { CalendarDay } from './types';
 import { calendarTokens } from './tokens';
 import { HeatmapConfig, HeatmapType } from './HeatmapModal';
 
+function hexToRgba(hex: string, alpha: number): string {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
 function resolveHeatmapBg(day: CalendarDay, cfg: HeatmapConfig): string | null {
   if (!cfg.type || !day.isInMonth) return null;
 
-  // Condition gate
   if (cfg.conditionEnabled) {
     const condVal = extractValue(day, cfg.conditionMetric as HeatmapType);
     if (!evalCondition(condVal, cfg.conditionOp, cfg.conditionValue)) return null;
   }
 
   if (cfg.type === 'stop_sales') {
-    return day.isClosed ? 'rgba(220,38,38,0.28)' : null;
+    return day.isClosed ? hexToRgba('#D33030', 0.28) : null;
   }
 
   const val = extractValue(day, cfg.type);
   const { grey, green, blue } = cfg.thresholds;
-  if (val <= grey)  return 'rgba(156,163,175,0.32)';
-  if (val <= green) return 'rgba(22,163,74,0.24)';
-  if (val <= blue)  return 'rgba(37,99,235,0.22)';
-  return 'rgba(220,38,38,0.24)';
+  const { grey: greyColor, green: greenColor, blue: blueColor } = cfg.thresholdColors;
+  if (val <= grey)  return hexToRgba(greyColor, 0.35);
+  if (val <= green) return hexToRgba(greenColor, 0.35);
+  if (val <= blue)  return hexToRgba(blueColor, 0.35);
+  return hexToRgba(blueColor, 0.6);
 }
 
 function extractValue(day: CalendarDay, type: HeatmapType | string): number {
@@ -152,6 +159,39 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.primary.main,
   },
 
+  // ── Full-width single-month mode ──
+  rootFull: {
+    width: '100%',
+    height: 160,
+    border: 'none',
+    padding: 6,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 3,
+    boxSizing: 'border-box' as const,
+    cursor: 'pointer',
+    flexShrink: 0,
+    backgroundColor: theme.palette.common.white,
+    '&:hover $checkbox': { visibility: 'visible' },
+    '&:hover $rightIcon': { visibility: 'visible' },
+  },
+  dayNumberFull: {
+    fontFamily: 'Lato, sans-serif',
+    fontWeight: 400,
+    fontSize: 13,
+    lineHeight: 'normal',
+    color: '#252525',
+    whiteSpace: 'nowrap',
+  },
+  metricTextFull: {
+    fontFamily: 'Lato, sans-serif',
+    fontWeight: 400,
+    fontSize: 11,
+    lineHeight: 1.3,
+    color: '#000000',
+    whiteSpace: 'nowrap',
+  },
+
   // ── Compact mode (square tile, no metrics) ──
   rootCompact: {
     width: '100%',
@@ -183,11 +223,12 @@ const useStyles = makeStyles((theme) => ({
 type Props = {
   day: CalendarDay;
   compact?: boolean;
+  fullWidth?: boolean;
   heatmapConfig?: HeatmapConfig | null;
   onClick?: (day: CalendarDay) => void;
 };
 
-export function CalendarDayCell({ day, compact, heatmapConfig, onClick }: Props) {
+export function CalendarDayCell({ day, compact, fullWidth, heatmapConfig, onClick }: Props) {
   const classes = useStyles();
   const heatmapBg = heatmapConfig ? resolveHeatmapBg(day, heatmapConfig) : null;
 
@@ -204,13 +245,17 @@ export function CalendarDayCell({ day, compact, heatmapConfig, onClick }: Props)
     );
   }
 
+  const rootClass = fullWidth ? classes.rootFull : classes.root;
+  const numClass = fullWidth ? classes.dayNumberFull : classes.dayNumber;
+  const metricClass = fullWidth ? classes.metricTextFull : classes.metricText;
+
   if (!day.isInMonth) {
-    return <div className={clsx(classes.root, classes.empty)} />;
+    return <div className={clsx(rootClass, classes.empty)} />;
   }
 
   return (
     <div
-      className={clsx(classes.root, day.isClosed && classes.closed)}
+      className={clsx(rootClass, day.isClosed && classes.closed)}
       style={heatmapBg ? { backgroundColor: heatmapBg } : undefined}
       onClick={() => onClick?.(day)}
     >
@@ -219,7 +264,7 @@ export function CalendarDayCell({ day, compact, heatmapConfig, onClick }: Props)
         <div className={classes.checkbox} />
 
         <div className={classes.dateContainer}>
-          <span className={classes.dayNumber}>{day.dayNumber}</span>
+          <span className={numClass}>{day.dayNumber}</span>
         </div>
 
         <Icon className={classes.rightIcon}>
@@ -233,8 +278,8 @@ export function CalendarDayCell({ day, compact, heatmapConfig, onClick }: Props)
           key={index}
           className={clsx(classes.metricRow, metric.isCompare && classes.metricRowCompare)}
         >
-          <span className={classes.metricText}>{metric.label}</span>
-          <span className={classes.metricText}>{metric.value}</span>
+          <span className={metricClass}>{metric.label}</span>
+          <span className={metricClass}>{metric.value}</span>
         </div>
       ))}
 
