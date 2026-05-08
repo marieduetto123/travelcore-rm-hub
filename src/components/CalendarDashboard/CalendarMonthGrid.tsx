@@ -67,6 +67,9 @@ const useStyles = makeStyles((theme) => ({
   daysGrid: {
     display: 'grid',
     gridTemplateColumns: 'repeat(7, 80.5px)',
+    gap: 1,
+    backgroundColor: calendarTokens.border,
+    border: `1px solid ${calendarTokens.border}`,
   },
   divider: {
     height: 21,

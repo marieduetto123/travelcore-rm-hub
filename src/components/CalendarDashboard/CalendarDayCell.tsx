@@ -9,7 +9,7 @@ const useStyles = makeStyles((theme) => ({
   root: {
     width: 80.5,
     height: 130,
-    border: `1px solid ${calendarTokens.border}`,
+    border: 'none',
     padding: 4,
     display: 'flex',
     flexDirection: 'column',
