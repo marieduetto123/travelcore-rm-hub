@@ -13,6 +13,7 @@ import { WeekView } from './WeekView';
 import { CalendarDay, DayDetailGroup, MonthData } from './types';
 import { buildMonthData } from './calendarUtils';
 import { DateRange, MonthRef } from './DateRangePickerDropdown';
+import { HeatmapConfig } from './HeatmapModal';
 import { calendarTokens } from './tokens';
 
 const useStyles = makeStyles((theme) => ({
@@ -251,6 +252,7 @@ export function CalendarDashboardPage() {
   };
 
   const [weekStart, setWeekStart] = useState<Date>(getWeekStart(new Date()));
+  const [heatmapConfig, setHeatmapConfig] = useState<HeatmapConfig | null>(null);
 
   const handleDayClick = (day: CalendarDay) => {
     if (activeTab === 0) {
@@ -295,7 +297,10 @@ export function CalendarDashboardPage() {
 
       {/* Calendar card */}
       <Paper className={classes.calendarCard} elevation={0}>
-        <CalendarHeader onRangeChange={setCalRange} />
+        <CalendarHeader
+          onRangeChange={setCalRange}
+          onHeatmapApply={(cfg) => setHeatmapConfig(cfg.type ? cfg : null)}
+        />
 
         {/* Tab bar */}
         <Tabs
@@ -344,7 +349,7 @@ export function CalendarDashboardPage() {
             </div>
 
             {/* Month grid */}
-            <CalendarMonthGrid months={months} compact={compact} onDayClick={handleDayClick} />
+            <CalendarMonthGrid months={months} compact={compact} heatmapConfig={heatmapConfig} onDayClick={handleDayClick} />
 
             {/* Monthly metrics */}
             <Divider />

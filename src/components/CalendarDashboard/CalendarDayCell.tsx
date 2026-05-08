@@ -4,6 +4,47 @@ import Icon from '@material-ui/core/Icon';
 import clsx from 'clsx';
 import { CalendarDay } from './types';
 import { calendarTokens } from './tokens';
+import { HeatmapConfig, HeatmapType } from './HeatmapModal';
+
+function resolveHeatmapBg(day: CalendarDay, cfg: HeatmapConfig): string | null {
+  if (!cfg.type || !day.isInMonth) return null;
+
+  // Condition gate
+  if (cfg.conditionEnabled) {
+    const condVal = extractValue(day, cfg.conditionMetric as HeatmapType);
+    if (!evalCondition(condVal, cfg.conditionOp, cfg.conditionValue)) return null;
+  }
+
+  if (cfg.type === 'stop_sales') {
+    return day.isClosed ? 'rgba(220,38,38,0.28)' : null;
+  }
+
+  const val = extractValue(day, cfg.type);
+  const { grey, green, blue } = cfg.thresholds;
+  if (val <= grey)  return 'rgba(156,163,175,0.32)';
+  if (val <= green) return 'rgba(22,163,74,0.24)';
+  if (val <= blue)  return 'rgba(37,99,235,0.22)';
+  return 'rgba(220,38,38,0.24)';
+}
+
+function extractValue(day: CalendarDay, type: HeatmapType | string): number {
+  if (type === 'hotel_occ') {
+    const row = day.metrics.find(m => m.label === 'Occ' && !m.isCompare);
+    return row ? parseFloat(row.value.replace('%','')) || 0 : 0;
+  }
+  // Deterministic mock for other types seeded by day number
+  const seed = day.dayNumber || 1;
+  const offsets: Record<string, number> = { remaining_rooms: 17, meal_plan: 37, to_forecast: 53 };
+  return ((seed * 13 + (offsets[type] ?? 7)) % 101);
+}
+
+function evalCondition(val: number, op: string, threshold: number): boolean {
+  if (op === '>')  return val > threshold;
+  if (op === '>=') return val >= threshold;
+  if (op === '<')  return val < threshold;
+  if (op === '<=') return val <= threshold;
+  return true;
+}
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -142,17 +183,20 @@ const useStyles = makeStyles((theme) => ({
 type Props = {
   day: CalendarDay;
   compact?: boolean;
+  heatmapConfig?: HeatmapConfig | null;
   onClick?: (day: CalendarDay) => void;
 };
 
-export function CalendarDayCell({ day, compact, onClick }: Props) {
+export function CalendarDayCell({ day, compact, heatmapConfig, onClick }: Props) {
   const classes = useStyles();
+  const heatmapBg = heatmapConfig ? resolveHeatmapBg(day, heatmapConfig) : null;
 
   if (compact) {
     if (!day.isInMonth) return <div className={clsx(classes.rootCompact, classes.emptyCompact)} />;
     return (
       <div
         className={clsx(classes.rootCompact, day.isClosed && classes.closedCompact)}
+        style={heatmapBg ? { backgroundColor: heatmapBg } : undefined}
         onClick={() => onClick?.(day)}
       >
         <span className={classes.dayNumberCompact}>{day.dayNumber}</span>
@@ -167,6 +211,7 @@ export function CalendarDayCell({ day, compact, onClick }: Props) {
   return (
     <div
       className={clsx(classes.root, day.isClosed && classes.closed)}
+      style={heatmapBg ? { backgroundColor: heatmapBg } : undefined}
       onClick={() => onClick?.(day)}
     >
       {/* Top row: checkbox | day number | icon */}

@@ -9,7 +9,7 @@ import Badge from '@material-ui/core/Badge';
 import { calendarTokens } from './tokens';
 import { CellMetricsPopup } from './CellMetricsPopup';
 import { FiltersDropdown, CalendarFilters, DEFAULT_FILTERS } from './FiltersDropdown';
-import { HeatmapModal } from './HeatmapModal';
+import { HeatmapModal, HeatmapConfig, DEFAULT_HEATMAP } from './HeatmapModal';
 import { CloseOutModal } from './CloseOutModal';
 import { DateRangePickerDropdown, DateRange, MonthRef } from './DateRangePickerDropdown';
 
@@ -158,6 +158,7 @@ const useStyles = makeStyles((theme) => ({
 type Props = {
   title?: string;
   onRangeChange?: (range: DateRange) => void;
+  onHeatmapApply?: (config: HeatmapConfig) => void;
 };
 
 function countActiveFilters(f: CalendarFilters): number {
@@ -170,7 +171,7 @@ function countActiveFilters(f: CalendarFilters): number {
   return n;
 }
 
-export function CalendarHeader({ title = 'Calendar', onRangeChange }: Props) {
+export function CalendarHeader({ title = 'Calendar', onRangeChange, onHeatmapApply }: Props) {
   const classes = useStyles();
 
   // CellMetrics
@@ -291,6 +292,7 @@ export function CalendarHeader({ title = 'Calendar', onRangeChange }: Props) {
       <HeatmapModal
         open={heatmapOpen}
         onClose={() => setHeatmapOpen(false)}
+        onApply={(cfg) => { onHeatmapApply?.(cfg); }}
       />
 
       <CloseOutModal

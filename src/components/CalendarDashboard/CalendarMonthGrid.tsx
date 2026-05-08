@@ -5,6 +5,7 @@ import clsx from 'clsx';
 import { CalendarDayCell } from './CalendarDayCell';
 import { CalendarDay, MonthData } from './types';
 import { calendarTokens } from './tokens';
+import { HeatmapConfig } from './HeatmapModal';
 
 const DAYS_OF_WEEK = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
@@ -127,10 +128,11 @@ const useStyles = makeStyles((theme) => ({
 type Props = {
   months: MonthData[];
   compact?: boolean;
+  heatmapConfig?: HeatmapConfig | null;
   onDayClick?: (day: CalendarDay) => void;
 };
 
-export function CalendarMonthGrid({ months, compact, onDayClick }: Props) {
+export function CalendarMonthGrid({ months, compact, heatmapConfig, onDayClick }: Props) {
   const classes = useStyles();
 
   if (compact) {
@@ -148,7 +150,7 @@ export function CalendarMonthGrid({ months, compact, onDayClick }: Props) {
             </div>
             <div className={classes.daysGridCompact}>
               {month.days.map((day, di) => (
-                <CalendarDayCell key={di} day={day} compact onClick={onDayClick} />
+                <CalendarDayCell key={di} day={day} compact heatmapConfig={heatmapConfig} onClick={onDayClick} />
               ))}
             </div>
           </div>
@@ -180,7 +182,7 @@ export function CalendarMonthGrid({ months, compact, onDayClick }: Props) {
 
           <div className={classes.daysGrid}>
             {month.days.map((day, di) => (
-              <CalendarDayCell key={di} day={day} onClick={onDayClick} />
+              <CalendarDayCell key={di} day={day} heatmapConfig={heatmapConfig} onClick={onDayClick} />
             ))}
           </div>
 
