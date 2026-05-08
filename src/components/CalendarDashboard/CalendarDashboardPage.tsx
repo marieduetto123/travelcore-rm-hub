@@ -12,6 +12,7 @@ import { DayDetailPopup } from './DayDetailPopup';
 import { WeekView } from './WeekView';
 import { CalendarDay, DayDetailGroup, MonthData } from './types';
 import { buildMonthData } from './calendarUtils';
+import { DateRange, MonthRef } from './DateRangePickerDropdown';
 import { calendarTokens } from './tokens';
 
 const useStyles = makeStyles((theme) => ({
@@ -218,9 +219,14 @@ export function CalendarDashboardPage() {
   const [detailGroups, setDetailGroups] = useState<DayDetailGroup[]>(SAMPLE_DAY_DETAIL);
   const [weekViewDay, setWeekViewDay] = useState<Date | null>(null);
 
+  const [calRange, setCalRange] = useState<DateRange>({
+    start: { year: 2026, month: 0 },
+    end:   { year: 2026, month: 1 },
+  });
+
   const months: [MonthData, MonthData] = [
-    buildMonthData(2026, 0),
-    buildMonthData(2026, 1, { isLocked: true }),
+    buildMonthData(calRange.start.year, calRange.start.month),
+    buildMonthData(calRange.end.year,   calRange.end.month, { isLocked: true }),
   ];
 
   // Monday-align the week that contains the clicked day
@@ -278,7 +284,7 @@ export function CalendarDashboardPage() {
 
       {/* Calendar card */}
       <Paper className={classes.calendarCard} elevation={0}>
-        <CalendarHeader />
+        <CalendarHeader onRangeChange={setCalRange} />
 
         {/* Tab bar */}
         <Tabs
@@ -333,7 +339,7 @@ export function CalendarDashboardPage() {
             <Divider />
             <div className={classes.metricsSection}>
               <div className={classes.metricsMonthHeader}>
-                January 2026 · February 2026
+                {months.map(m => m.label).join(' · ')}
               </div>
 
               {SAMPLE_METRICS_ROWS.map((row) => (

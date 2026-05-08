@@ -11,6 +11,16 @@ import { CellMetricsPopup } from './CellMetricsPopup';
 import { FiltersDropdown, CalendarFilters, DEFAULT_FILTERS } from './FiltersDropdown';
 import { HeatmapModal } from './HeatmapModal';
 import { CloseOutModal } from './CloseOutModal';
+import { DateRangePickerDropdown, DateRange, MonthRef } from './DateRangePickerDropdown';
+
+const MONTH_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+function fmtRange(start: MonthRef, end: MonthRef): string {
+  if (start.year === end.year && start.month === end.month) {
+    return `${MONTH_SHORT[start.month]} ${start.year}`;
+  }
+  return `${MONTH_SHORT[start.month]} ${start.year} – ${MONTH_SHORT[end.month]} ${end.year}`;
+}
 
 const COMPARE_OPTIONS = [
   { value: 'none', label: 'No Compare' },
@@ -147,8 +157,7 @@ const useStyles = makeStyles((theme) => ({
 
 type Props = {
   title?: string;
-  dateRangeLabel?: string;
-  onDateRange?: () => void;
+  onRangeChange?: (range: DateRange) => void;
 };
 
 function countActiveFilters(f: CalendarFilters): number {
@@ -161,11 +170,7 @@ function countActiveFilters(f: CalendarFilters): number {
   return n;
 }
 
-export function CalendarHeader({
-  title = 'Calendar',
-  dateRangeLabel = 'January 2026 – February 2026',
-  onDateRange,
-}: Props) {
+export function CalendarHeader({ title = 'Calendar', onRangeChange }: Props) {
   const classes = useStyles();
 
   // CellMetrics
@@ -183,6 +188,13 @@ export function CalendarHeader({
 
   // Compare
   const [compareMode, setCompareMode] = useState('none');
+
+  // Date range picker
+  const [datePickerAnchor, setDatePickerAnchor] = useState<HTMLElement | null>(null);
+  const [dateRange, setDateRange] = useState<DateRange>({
+    start: { year: 2026, month: 0 },
+    end:   { year: 2026, month: 1 },
+  });
 
   const activeFilterCount = countActiveFilters(filters);
 
@@ -256,8 +268,8 @@ export function CalendarHeader({
         </Select>
 
         {/* Date Range */}
-        <Button className={classes.dateRangeBtn} onClick={onDateRange}>
-          {dateRangeLabel}
+        <Button className={classes.dateRangeBtn} onClick={(e) => setDatePickerAnchor(e.currentTarget)}>
+          {fmtRange(dateRange.start, dateRange.end)}
           <Icon>calendar_today</Icon>
         </Button>
       </div>
@@ -284,6 +296,17 @@ export function CalendarHeader({
       <CloseOutModal
         open={closeOutOpen}
         onClose={() => setCloseOutOpen(false)}
+      />
+
+      <DateRangePickerDropdown
+        anchorEl={datePickerAnchor}
+        value={dateRange}
+        onClose={() => setDatePickerAnchor(null)}
+        onApply={(range) => {
+          setDateRange(range);
+          setDatePickerAnchor(null);
+          onRangeChange?.(range);
+        }}
       />
     </div>
   );
