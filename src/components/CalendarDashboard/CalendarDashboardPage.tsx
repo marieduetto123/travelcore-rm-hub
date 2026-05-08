@@ -106,11 +106,11 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: 2,
     flexShrink: 0,
   },
-  legendSwatchPrimary: {
-    backgroundColor: theme.palette.primary.main,
+  legendSwatchHotel: {
+    backgroundColor: calendarTokens.cellBackground,
   },
-  legendSwatchBenchmark: {
-    backgroundColor: calendarTokens.benchmarkColor,
+  legendSwatchOperator: {
+    backgroundColor: calendarTokens.compareRowBackground,
   },
   legendIcon: {
     fontSize: '16px !important',
@@ -334,12 +334,12 @@ export function CalendarDashboardPage() {
                 Today
               </div>
               <div className={classes.legendItem}>
-                <div className={`${classes.legendSwatch} ${classes.legendSwatchPrimary}`} />
-                Current
+                <div className={`${classes.legendSwatch} ${classes.legendSwatchHotel}`} />
+                Hotel
               </div>
               <div className={classes.legendItem}>
-                <div className={`${classes.legendSwatch} ${classes.legendSwatchBenchmark}`} />
-                Benchmark
+                <div className={`${classes.legendSwatch} ${classes.legendSwatchOperator}`} />
+                Operator
               </div>
             </div>
 
