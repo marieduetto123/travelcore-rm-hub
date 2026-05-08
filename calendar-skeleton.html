@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calendar — Travel Distribution Hub</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <!-- AG Grid Community -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@33.3.0/styles/ag-grid.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@33.3.0/styles/ag-theme-quartz.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@33.3.0/dist/ag-grid-community.min.js"></script>
+  <link rel="stylesheet" href="travelcore-rm-hub.css?v=163">
+</head>
+<body>
+
+<!-- ═══ TOP APP BAR ═══ -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<header class="topbar">
+  <div class="topbar-left">
+    <button class="topbar-hamburger" id="hamburger" aria-label="Open menu">
+      <span class="material-icons" style="font-size:24px">menu</span>
+    </button>
+    <div class="topbar-logo">
+      <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCABCANIDASIAAhEBAxEB/8QAHAABAQEBAQEBAQEAAAAAAAAAAAgHBgkFBAID/8QAPRAAAQIFAwMCAwUECQUAAAAAAQIDAAQFBhEHEiEIMUETURQiYSMycYGRFRY3Uhc1QnN0hLGytCQzYqHw/8QAGgEBAAIDAQAAAAAAAAAAAAAAAAEGAgMFBP/EADIRAAEDAgUEAAQDCQAAAAAAAAEAAhEDBAUGITFBElFhgRNxkaEUIpIVFjJCcrHh8PH/2gAMAwEAAhEDEQA/AJfhCEehc1IQhBEhCEESEIQRIQhBEhCEESEIQRIQhBEhCEESEIQRIQhBEhCEESEIQRIQhBEhCEEVHWboLYl32xJ1KhXvNzDxl0/F+mG1ht4jJBRgKRzn5VHP1j6NjdOslIXhKVKbuCl3LRJdbiJqXLBQVKLagBgKUMpUUHBPiJ8su7bgs6rpqdv1F2Te4DiRyh1IOdq0nhQ/+GIqTTmo21rfR5qpT1JmKHclOKGnqhTHlMPJ3ZKFIdHKh8h+Re4JIH0MUPGRiuHh7zXJou0mAS2dNdjzoQdOyxMhdg5pXpa2+0w5atHQ89n0m1cKXgZOBnJwO+ITOjmmUw0WnLQkUpPltS2z+qVAxJ+q94V6buCZoirrma7IUyYcRJzr8ohl8bgA4AoDeBkbTzhQSDgdhwjUxMNTImWn3W3wrcHErIUD7575jXbZXxCpTbUN44E6/wA3rcgjTxokFVtefTXaFRlFqtqam6JOAkoC1l9k/wDiQo7h+IVxk8HiJn1CsqvWLXlUivS6UOFO9p5olTT6f5kKIGR45AI8iNm6bNXlSk63bV11WqzDT2xqUfmHUOtMqKsAKUUhaU8pSMrUkewzxs2vdnsXjpvUZX0gZ6TbVNySwjcoOIGSkY5+YApx9R7Rpt8WxDBb5tpfu66btnHzzO+nIMpJB1UIQit+nzTqx69pDQ6rWLakZ2ef+I9V5xJKlbZhxIzz4AA/KMV6l6FSLd1QeptEkGZGTTKMrDLQwkKIOTFosswULu+fZNaQ5k66RoY7qZ1WZQjTemihUi4tUGabW5Bmek1Sjyyy6MpKgBgxtXUHp1Y9B0hrlVo9tSMlPMfD+k82khSd0w2k458gkfnC9zBQtL5lk5pLnxrpGpjuk6qSIRtfT1owL1a/eO4/WZoKVlDDSCUrm1JODg+EA5BI5JBAxgxSabc04s+QSXaXblHlj8odmUNI3YAzla+ScJycnxmPHiebLayrG3Y0veN42B7fP0hKgGEXrWtP9Nr1kVOuUWkTaVJ2CbkdqFpOAR87eMkcEA57+xOZG1n01qWnNwIlXnTN0yaBXJTe3G8DuhQ8LGRn3BB84G/CMzW2JVPgwWP7Hn5H/iAyt6016dbWp8oxULoecrk2tKXAyCpqXb7HGAdy/wAzg/yxKNTSlFSmkISEpS8sAAYAG4x6OUr+q5T+4R/tEcivSXTdaytdoU1SlHJJSokn9YpuFZufb1qr70uf1RERAieNAPSxDlgHT/onSb1oCbmr1TmPgy8tpEnLgIUop4JUs54+gH5xxfURQqTbeqM7RqJJNyUhLy7AbaQScZaSSSSSSTno3K1qzKzQTpEgHkzv6Rqs/pyrNUr+lFPqlZnnp6ddefC3nTlRCXFAf+gIxXqN1Eva39V6hS6Ncc7IyTTLBQy0QEgqbST49yY1XpLfS9ozJNpxlibmG1YOed+78vvCMU6vaHUZLVBdadlnfgKhLtei/sOzehO1SM9t3y5x7EQwahQ/eCvSqNEfmgECNxsPkg3XZdJK6jdV3XDeNwzjlQqErLMybL72CoBZUVY9sBAHbso8989V1Z3rU7Ws+QplGm3JOcq7y0qebJC0soSN4SR90krQM5BxnHfI4nokqzDdQuOiOONpffbZmWUk/MoIKkr/HG9H6/p2fVxZtRuSzpCr0qVdm5mjuuKcabyVFlwJ3kJA+YgoQfoMmMbxlJuZmsrgCmIgcfw6eI6k5UhIeeRMCYQ64l5K94cCiFBWc5z3znzFldKd3z90afPStWnHJuepcz6HquK3LUypIUgqJ5JzvTn2SIjGLJ6TLUqtt2BMzdXl3JV6qTIfaZWMKDIQAlRHcEnccHxj3iwZ1FH9nfnjqkdPfz9lLtlmvWpRWJS7aJXGm0oXUZVxp0gcrUyU/MeeTtcSO39kd/GARQfWxVmZi6KBRm1hTklKOPuAE" alt="Duetto" class="logo-img" style="height:28px;width:auto;display:block" />
+    </div>
+    <nav class="topbar-tabs">
+      <a class="tab" href="#">Home</a>
+      <a class="tab" href="#">Advance</a>
+      <a class="tab" href="#">Pricing &amp; Strategy
+        <span class="material-icons" style="font-size:16px">expand_more</span>
+      </a>
+      <a class="tab" href="#">Forecasts &amp; Budgets
+        <span class="material-icons" style="font-size:16px">expand_more</span>
+      </a>
+      <a class="tab" href="#">Reports
+        <span class="material-icons" style="font-size:16px">expand_more</span>
+      </a>
+      <a class="tab" href="#">Groups
+        <span class="material-icons" style="font-size:16px">expand_more</span>
+      </a>
+      <a class="tab active mega-trigger" href="#" id="tourOpTab">Travel Distribution Hub
+        <span class="material-icons" style="font-size:16px">expand_more</span>
+      </a>
+    </nav>
+  </div>
+  <div class="topbar-icons">
+    <button class="top-icon-btn theme-toggle" id="themeToggle" title="Toggle theme">
+      <span class="material-icons icon-moon" style="font-size:20px">dark_mode</span>
+      <span class="material-icons icon-sun" style="font-size:20px">light_mode</span>
+    </button>
+    <div class="notif-wrap">
+      <button class="top-icon-btn" title="Notifications">
+        <span class="material-icons" style="font-size:20px">notifications</span>
+      </button>
+      <span class="notif-badge">99+</span>
+    </div>
+    <button class="top-icon-btn" title="Help">
+      <span class="material-icons" style="font-size:20px">help</span>
+    </button>
+    <button class="top-icon-btn" title="Settings">
+      <span class="material-icons" style="font-size:20px">settings</span>
+    </button>
+    <div class="topbar-avatar">M</div>
+  </div>
+</header>
+
+<!-- ═══ MEGA MENU ═══ -->
+<div class="mega-menu" id="tourOpMegaMenu">
+  <a class="mega-link" href="#" data-navpage="0">Dashboard</a>
+  <a class="mega-link" href="#" data-navpage="1">Contacts &amp; Contracts</a>
+  <a class="mega-link" href="#" data-navpage="3">Communications &amp; Notes</a>
+  <a class="mega-link" href="#" data-navpage="4">Configuration</a>
+</div>
+
+<!-- ═══ BREADCRUMB BAR ═══ -->
+<div class="breadcrumb-bar">
+  <div class="breadcrumb">
+    <span class="bc-home">Home</span>
+    <span class="bc-sep">
+      <span class="material-icons" style="font-size:12px;color:#585858">chevron_right</span>
+    </span>
+    <span class="bc-current">Travel Distribution Hubs</span>
+  </div>
+  <div class="property-picker">
+    <span class="material-icons" style="font-size:20px;color:#19393E">home</span>
+    <span class="pp-label">Hotel Sevilla</span>
+    <span class="material-icons pp-arrow" style="font-size:16px;color:#19393E">expand_more</span>
+  </div>
+</div>
+
+<!-- ═══ LAYOUT ═══ -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <nav class="sidebar-nav">
+      <a class="nav-item active" href="#" data-label="Dashboard">
+        <span class="material-icons">dashboard</span>
+        Dashboard
+      </a>
+      <a class="nav-item" href="#" data-label="Travel Distribution Hubs & Contracts">
+        <span class="material-icons">people</span>
+        Contacts &amp; Contracts
+      </a>
+      <a class="nav-item" href="#" data-label="Communications & Notes">
+        <span class="material-icons">chat</span>
+        Communications &amp; Notes
+      </a>
+      <a class="nav-item" href="#" data-label="Settings">
+        <span class="material-icons">settings</span>
+        Configuration
+      </a>
+    </nav>
+    <button class="sidebar-collapse-btn" id="sidebarCollapseBtn" title="Collapse sidebar">
+      <span class="material-icons sc-arrow-left" style="font-size:14px">chevron_left</span>
+      <span class="material-icons sc-arrow-right" style="font-size:14px;display:none">chevron_right</span>
+    </button>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="page-content">
+
+      <!-- Page header row -->
+      <div class="page-header-row">
+        <h1 class="page-h1">Travel Distribution Hub</h1>
+        <div class="page-header-actions">
+          <div class="ds-search-field" id="globalSearch" style="min-width:220px">
+            <span class="material-icons ds-sf-icon" style="font-size:18px;color:#AEB4BA">search</span>
+            <input class="ds-sf-input" type="text" id="searchInput" placeholder="Search..." />
+            <button class="ds-sf-clear" id="searchClear" style="display:none" aria-label="Clear">
+              <span class="material-icons" style="font-size:18px;color:#6B7280">close</span>
+            </button>
+          </div>
+          <div class="dp-wrap">
+            <div class="dp-trigger" id="dpTrigger">
+              <span class="material-icons" style="font-size:20px">calendar_today</span>
+              <span class="dp-trigger-text" id="dpTriggerText">07/17/2025 – 07/25/2025</span>
+            </div>
+            <div class="dp-dropdown" id="dpDropdown">
+              <div class="dp-months" id="dpMonths"></div>
+              <div class="dp-actions">
+                <span class="dp-selected-range" id="dpRangeLabel">07/17/2025 – 07/25/2025</span>
+                <button class="dp-btn-cancel" id="dpCancel">Cancel</button>
+                <button class="dp-btn-apply" id="dpApply">Apply</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ╔══════════════════════════════════════════════╗ -->
+      <!-- ║  DEMAND CALENDAR  (Monthly View)             ║ -->
+      <!-- ╚══════════════════════════════════════════════╝ -->
+      <div class="section-card" id="demand-calendar">
+
+        <!-- Header (single bar with all controls) -->
+        <div class="cal-header">
+          <div class="cal-header-left">
+            <button id="wvBack" class="wv-back-btn" style="display:none" onclick="goToMonthView()">
+              <span class="material-icons" style="font-size:16px">chevron_left</span>Back to month
+            </button>
+            <h2 class="cal-title">Calendar</h2>
+          </div>
+          <!-- Header centre — compare + date picker, only visible in week view -->
+          <div class="cal-header-center" id="wvHeaderCenter" style="display:none;gap:8px">
+            <!-- Compare multi-select -->
+            <div id="wvCmpWrap" class="wv-cmp-wrap" style="margin:0">
+              <div class="wv-cmp-dd" id="wvCmpDd">
+                <button class="wv-cmp-dd-btn" id="wvCmpDdBtn" onclick="wvCmpDdToggle(event)">
+                  <span id="wvCmpDdLabel">Compare</span>
+                  <span class="material-icons" style="font-size:15px;margin-left:2px;opacity:.65">expand_more</span>
+                </button>
+                <div class="wv-cmp-dd-menu" id="wvCmpDdMenu">
+                  <div class="wv-cmp-dd-item active" data-cmp="none" onclick="event.stopPropagation();wvSetCompare('none')"><input type="checkbox" class="wv-cmp-chk" checked onclick="event.preventDefault();event.stopPropagation()"><span>None</span></div>
+                  <div class="wv-cmp-dd-item"         data-cmp="stly" onclick="event.stopPropagation();wvSetCompare('stly')"><input type="checkbox" class="wv-cmp-chk"         onclick="event.preventDefault();event.stopPropagation()"><span>STLY</span></div>
+                  <div class="wv-cmp-dd-item"         data-cmp="ly"   onclick="event.stopPropagation();wvSetCompare('ly')"  ><input type="checkbox" class="wv-cmp-chk"         onclick="event.preventDefault();event.stopPropagation()"><span>LY</span></div>
+                  <div class="wv-cmp-dd-item"         data-cmp="fcst" onclick="event.stopPropagation();wvSetCompare('fcst')"><input type="checkbox" class="wv-cmp-chk"         onclick="event.preventDefault();event.stopPropagation()"><span>Forecast</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="cal-header-right">
+            <!-- Single smart Close/Re-Open button -->
+            <button class="wv-closeout-primary mo-custom-close-btn" id="moCloseOutBtn" onclick="moSmartClose()" style="order:1">
+              <span class="material-icons" style="font-size:16px">lock</span> Close/Re-Open
+            </button>
+            <!-- Date Range selector -->
+            <div style="position:relative;order:8" id="calDRWrap">
+              <button id="calDRTrigger" onclick="calDRToggle()" style="display:flex;align-items:center;gap:8px;padding:6px 14px;background:#fff;border:1px solid #e0e0e0;border-radius:4px;font-size:14px;color:#1c1c1c;cursor:pointer;white-space:nowrap;font-family:inherit;height:36px">
+                <span id="calDRLabel">Jan 2026 – Dec 2026</span>
+                <span class="material-icons" style="font-size:16px">calendar_today</span>
+              </button>
+              <!-- Month range picker — two-panel -->
+              <div id="calDRPanel" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #e2e8f0;border-radius:12px;box-shadow:0 12px 40px rgba(0,0,0,.2);user-select:none">
+                <div style="display:flex">
+                  <div class="caldr-half">
+                    <div class="caldr-hdr">
+                      <button class="caldr-nav-btn" onclick="calDRNav(-1)">&#8249;</button>
+                      <span id="calDRLeftYear" class="caldr-yr"></span>
+                      <div style="width:32px"></div>
+                    </div>
+                    <div id="calDRLeftGrid" class="caldr-mgrid"></div>
+                  </div>
+                  <div style="width:1px;background:#e5e7eb"></div>
+                  <div class="caldr-half">
+                    <div class="caldr-hdr">
+                      <div style="width:32px"></div>
+                      <span id="calDRRightYear" class="caldr-yr"></span>
+                      <button class="caldr-nav-btn" onclick="calDRNav(1)">&#8250;</button>
+                    </div>
+                    <div id="calDRRightGrid" class="caldr-mgrid"></div>
+                  </div>
+                </div>
+                <div class="caldr-foot">
+                  <span id="calDRFooterLabel" class="caldr-foot-lbl"></span>
+                  <div style="display:flex;gap:8px">
+                    <button onclick="calDRCancel()" class="caldr-btn-cancel">Cancel</button>
+                    <button onclick="calDRApply()" class="caldr-btn-apply">Apply</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Cell metrics selector -->
+            <div class="cal-metrics-wrap" id="calMetricsWrap" style="order:5">
+              <button class="wv-topbar-text-btn" id="calMetricsBtn">
+                <span class="material-icons" style="font-size:16px">tune</span>
+                Cell Metrics
+                <span class="material-icons cal-filters-chevron" style="font-size:14px">expand_more</span>
+              </button>
+
+              <!-- Daily R column visibility panel (shown only in Daily R view) -->
+              <div id="dailyRevColPanel" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #e0e3e5;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.12);padding:12px 0;min-width:220px">
+                <div style="padding:6px 16px 10px;font-size:10px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid #f1f5f9">Column Groups</div>
+                <div style="padding:8px 0">
+                  <label class="dr-col-item"><input type="checkbox" checked onchange="drColToggle('daily',this)"><span>Daily Metrics</span></label>
+                  <label class="dr-col-item"><input type="checkbox" checked onchange="drColToggle('avail',this)"><span>Room Availability</span></label>
+                  <label class="dr-col-item"><input type="checkbox" checked onchange="drColToggle('segs',this)"><span>Segments (T)</span></label>
+                  <label class="dr-col-item"><input type="checkbox" checked onchange="drColToggle('biz',this)"><span>Business Mix</span></label>
+                  <label class="dr-col-item"><input type="checkbox" onchange="drColToggle('meals',this)"><span>Meal Plans</span></label>
+                  <label class="dr-col-item"><input type="checkbox" checked onchange="drColToggle('tc',this)"><span>Travel Co. Rates</span></label>
+                </div>
+              </div>
+
+              <div class="cal-metrics-dropdown" id="calMetricsDropdown" style="display:none">
+  <div class="cal-md-hdr" style="flex-direction:column;align-items:flex-start;gap:0">
+    <div style="display:flex;align-items:center;justify-content:space-between;width:100%">
+      <span class="cal-md-title">CELL METRICS</span>
+      <span class="cal-md-hint" id="calCmHint">Max 4 rows</span>
+    </div>
+  </div>
+  <div id="cmSegSection" style="padding:8px 12px 8px;border-bottom:1px solid var(--border-sub)">
+    <div style="font-size:9px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Segments to show</div>
+    <label class="cal-md-item" style="padding:3px 0">
+      <span class="cal-md-cb checked" id="cmSegAllCb" onclick="cmToggleAllSegs(this)"></span>
+      <span class="cal-md-label" style="font-weight:600;color:#1c1c1c">All</span>
+    </label>
+    <label class="cal-md-item" style="padding:3px 0">
+      <span class="cal-md-cb checked" data-seg-key="fit" onclick="cmToggleSeg('fit',this)"></span>
+      <span class="cal-md-swatch" style="background:#0891b2"></span>
+      <span class="cal-md-label">Static FIT Rates</span>
+    </label>
+    <label class="cal-md-item" style="padding:3px 0">
+      <span class="cal-md-cb checked" data-seg-key="dynamic" onclick="cmToggleSeg('dynamic',this)"></span>
+      <span class="cal-md-swatch" style="background:#7c3aed"></span>
+      <span class="cal-md-label">Operator Dynamic</span>
+    </label>
+    <label class="cal-md-item" style="padding:3px 0">
+      <span class="cal-md-cb checked" data-seg-key="series" onclick="cmToggleSeg('series',this)"></span>
+      <span class="cal-md-swatch" style="background:#f59e0b"></span>
+      <span class="cal-md-label">Tour Series</span>
+    </label>
+    <div id="cmInfoBox" style="display:flex;margin-top:8px;padding:10px 8px;background:#fff;border:1px solid #00298c;border-radius:4px;align-items:flex-start;gap:8px">
+      <span class="material-icons" style="color:#1b4dc0;font-size:20px;flex-shrink:0;line-height:1.3">info</span>
+      <span style="font-size:14px;color:#1b4dc0;line-height:1.4">Only select up to 4 metrics</span>
+    </div>
+  </div>
+  <div style="border-top:1px solid var(--border-sub);width:100%">
+    <table class="cmv4-table">
+      <thead class="cmv4-thead">
+        <tr>
+          <th style="width:90px"></th>
+          <th style="width:50%">HOTEL</th>
+          <th style="width:50%">OPERATOR</th>
+        </tr>
+      </thead>
+      <tbody>
+<tr class="cmv4-group-hdr"><td colspan="3" style="font-size:9px;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;padding:5px 12px 2px;background:#f8f9fa;border-top:1px solid #e5e7eb;border-bottom:1px solid #e5e7eb">Occupancy</td></tr><tr><td class="cmv4-row-lbl">Actual</td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="hocc" onclick="cmToggleMetric('hocc',this)"></span><span class="cmv4-dot" style="background:#5883ed"></span></label></td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="tocc" onclick="cmToggleMetric('tocc',this)"></span><span class="cmv4-dot" style="background:#006461"></span></label></td></tr><tr><td class="cmv4-row-lbl">LY</td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="hlyOcc" onclick="cmToggleMetric('hlyOcc',this)"></span><span class="cmv4-dot" style="background:#93c5fd"></span></label></td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="tlyOcc" onclick="cmToggleMetric('tlyOcc',this)"></span><span class="cmv4-dot" style="background:#6ee7b7"></span></label></td></tr><tr><td class="cmv4-row-lbl">STLY</td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="hstlyOcc" onclick="cmToggleMetric('hstlyOcc',this)"></span><span class="cmv4-dot" style="background:#bfdbfe"></span></label></td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="tstlyOcc" onclick="cmToggleMetric('tstlyOcc',this)"></span><span class="cmv4-dot" style="background:#a7f3d0"></span></label></td></tr><tr><td class="cmv4-row-lbl">Fcst</td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="hfcstOcc" onclick="cmToggleMetric('hfcstOcc',this)"></span><span class="cmv4-dot" style="background:#fde68a"></span></label></td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="tfcstOcc" onclick="cmToggleMetric('tfcstOcc',this)"></span><span class="cmv4-dot" style="background:#fef3c7"></span></label></td></tr><tr class="cmv4-group-hdr"><td colspan="3" style="font-size:9px;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;padding:5px 12px 2px;background:#f8f9fa;border-top:1px solid #e5e7eb;border-bottom:1px solid #e5e7eb">ADR</td></tr><tr><td class="cmv4-row-lbl">Actual</td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="hadr" onclick="cmToggleMetric('hadr',this)"></span><span class="cmv4-dot" style="background:#7c3aed"></span></label></td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="tadr" onclick="cmToggleMetric('tadr',this)"></span><span class="cmv4-dot" style="background:#4f46e5"></span></label></td></tr><tr><td class="cmv4-row-lbl">LY</td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="hlyAdr" onclick="cmToggleMetric('hlyAdr',this)"></span><span class="cmv4-dot" style="background:#c4b5fd"></span></label></td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="tlyAdr" onclick="cmToggleMetric('tlyAdr',this)"></span><span class="cmv4-dot" style="background:#a5b4fc"></span></label></td></tr><tr><td class="cmv4-row-lbl">STLY</td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="hstlyAdr" onclick="cmToggleMetric('hstlyAdr',this)"></span><span class="cmv4-dot" style="background:#ddd6fe"></span></label></td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="tstlyAdr" onclick="cmToggleMetric('tstlyAdr',this)"></span><span class="cmv4-dot" style="background:#c7d2fe"></span></label></td></tr><tr><td class="cmv4-row-lbl">Fcst</td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="hfcstAdr" onclick="cmToggleMetric('hfcstAdr',this)"></span><span class="cmv4-dot" style="background:#fde68a"></span></label></td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="tfcstAdr" onclick="cmToggleMetric('tfcstAdr',this)"></span><span class="cmv4-dot" style="background:#fef08a"></span></label></td></tr><tr class="cmv4-group-hdr"><td colspan="3" style="font-size:9px;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;padding:5px 12px 2px;background:#f8f9fa;border-top:1px solid #e5e7eb;border-bottom:1px solid #e5e7eb">Revenue</td></tr><tr><td class="cmv4-row-lbl">Actual</td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="hrev" onclick="cmToggleMetric('hrev',this)"></span><span class="cmv4-dot" style="background:#ea580c"></span></label></td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="trev" onclick="cmToggleMetric('trev',this)"></span><span class="cmv4-dot" style="background:#b45309"></span></label></td></tr><tr><td class="cmv4-row-lbl">LY</td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="hlyRev" onclick="cmToggleMetric('hlyRev',this)"></span><span class="cmv4-dot" style="background:#fdba74"></span></label></td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="tlyRev" onclick="cmToggleMetric('tlyRev',this)"></span><span class="cmv4-dot" style="background:#fcd34d"></span></label></td></tr><tr><td class="cmv4-row-lbl">STLY</td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="hstlyRev" onclick="cmToggleMetric('hstlyRev',this)"></span><span class="cmv4-dot" style="background:#fed7aa"></span></label></td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="tstlyRev" onclick="cmToggleMetric('tstlyRev',this)"></span><span class="cmv4-dot" style="background:#fef3c7"></span></label></td></tr><tr><td class="cmv4-row-lbl">Fcst</td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="hfcstRev" onclick="cmToggleMetric('hfcstRev',this)"></span><span class="cmv4-dot" style="background:#fcd34d"></span></label></td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="tfcstRev" onclick="cmToggleMetric('tfcstRev',this)"></span><span class="cmv4-dot" style="background:#fef9c3"></span></label></td></tr><tr class="cmv4-group-hdr"><td colspan="3" style="font-size:9px;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;padding:5px 12px 2px;background:#f8f9fa;border-top:1px solid #e5e7eb;border-bottom:1px solid #e5e7eb">RN Sold</td></tr><tr><td class="cmv4-row-lbl">Actual</td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="hrn" onclick="cmToggleMetric('hrn',this)"></span><span class="cmv4-dot" style="background:#2e65e8"></span></label></td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="trn" onclick="cmToggleMetric('trn',this)"></span><span class="cmv4-dot" style="background:#0284c7"></span></label></td></tr><tr><td class="cmv4-row-lbl">LY</td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="hlyRn" onclick="cmToggleMetric('hlyRn',this)"></span><span class="cmv4-dot" style="background:#93c5fd"></span></label></td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="tlyRn" onclick="cmToggleMetric('tlyRn',this)"></span><span class="cmv4-dot" style="background:#7dd3fc"></span></label></td></tr><tr><td class="cmv4-row-lbl">STLY</td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="hstlyRn" onclick="cmToggleMetric('hstlyRn',this)"></span><span class="cmv4-dot" style="background:#bfdbfe"></span></label></td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="tstlyRn" onclick="cmToggleMetric('tstlyRn',this)"></span><span class="cmv4-dot" style="background:#bae6fd"></span></label></td></tr><tr><td class="cmv4-row-lbl">Fcst</td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="hfcstRn" onclick="cmToggleMetric('hfcstRn',this)"></span><span class="cmv4-dot" style="background:#fbbf24"></span></label></td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="tfcstRn" onclick="cmToggleMetric('tfcstRn',this)"></span><span class="cmv4-dot" style="background:#fde68a"></span></label></td></tr><tr class="cmv4-group-hdr"><td colspan="3" style="font-size:9px;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;padding:5px 12px 2px;background:#f8f9fa;border-top:1px solid #e5e7eb;border-bottom:1px solid #e5e7eb">RevPAR</td></tr><tr><td class="cmv4-row-lbl">Actual</td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="hrevpar" onclick="cmToggleMetric('hrevpar',this)"></span><span class="cmv4-dot" style="background:#9333ea"></span></label></td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="trevpar" onclick="cmToggleMetric('trevpar',this)"></span><span class="cmv4-dot" style="background:#7c3aed"></span></label></td></tr><tr><td class="cmv4-row-lbl">LY</td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="hlyRevpar" onclick="cmToggleMetric('hlyRevpar',this)"></span><span class="cmv4-dot" style="background:#d8b4fe"></span></label></td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="tlyRevpar" onclick="cmToggleMetric('tlyRevpar',this)"></span><span class="cmv4-dot" style="background:#c4b5fd"></span></label></td></tr><tr><td class="cmv4-row-lbl">STLY</td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="hstlyRevpar" onclick="cmToggleMetric('hstlyRevpar',this)"></span><span class="cmv4-dot" style="background:#ede9fe"></span></label></td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="tstlyRevpar" onclick="cmToggleMetric('tstlyRevpar',this)"></span><span class="cmv4-dot" style="background:#e0e7ff"></span></label></td></tr><tr><td class="cmv4-row-lbl">Fcst</td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="hfcstRevpar" onclick="cmToggleMetric('hfcstRevpar',this)"></span><span class="cmv4-dot" style="background:#fef08a"></span></label></td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="tfcstRevpar" onclick="cmToggleMetric('tfcstRevpar',this)"></span><span class="cmv4-dot" style="background:#fefce8"></span></label></td></tr><tr class="cmv4-group-hdr"><td colspan="3" style="font-size:9px;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;padding:5px 12px 2px;background:#f8f9fa;border-top:1px solid #e5e7eb;border-bottom:1px solid #e5e7eb">Other Metrics</td></tr><tr><td class="cmv4-row-lbl">Pickup</td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="hpickup" onclick="cmToggleMetric('hpickup',this)"></span><span class="cmv4-dot" style="background:#16a34a"></span></label></td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="tpickup" onclick="cmToggleMetric('tpickup',this)"></span><span class="cmv4-dot" style="background:#0d9488"></span></label></td></tr><tr><td class="cmv4-row-lbl">Avg LOS</td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="havgLos" onclick="cmToggleMetric('havgLos',this)"></span><span class="cmv4-dot" style="background:#0891b2"></span></label></td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="tavgLos" onclick="cmToggleMetric('tavgLos',this)"></span><span class="cmv4-dot" style="background:#22d3ee"></span></label></td></tr><tr><td class="cmv4-row-lbl">Average Lead Time</td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="havgLeadTime" onclick="cmToggleMetric('havgLeadTime',this)"></span><span class="cmv4-dot" style="background:#6366f1"></span></label></td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="tavgLeadTime" onclick="cmToggleMetric('tavgLeadTime',this)"></span><span class="cmv4-dot" style="background:#a5b4fc"></span></label></td></tr><tr><td class="cmv4-row-lbl">Avg Adults</td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="havgAdults" onclick="cmToggleMetric('havgAdults',this)"></span><span class="cmv4-dot" style="background:#2e65e8"></span></label></td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="tavgAdults" onclick="cmToggleMetric('tavgAdults',this)"></span><span class="cmv4-dot" style="background:#60a5fa"></span></label></td></tr><tr><td class="cmv4-row-lbl">Avg Children</td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="havgChildren" onclick="cmToggleMetric('havgChildren',this)"></span><span class="cmv4-dot" style="background:#d33030"></span></label></td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="tavgChildren" onclick="cmToggleMetric('tavgChildren',this)"></span><span class="cmv4-dot" style="background:#f87171"></span></label></td></tr><tr><td class="cmv4-row-lbl">Total Guests</td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="htotalGuests" onclick="cmToggleMetric('htotalGuests',this)"></span><span class="cmv4-dot" style="background:#0369a1"></span></label></td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="ttotalGuests" onclick="cmToggleMetric('ttotalGuests',this)"></span><span class="cmv4-dot" style="background:#0ea5e9"></span></label></td></tr><tr class="cmv4-group-hdr"><td colspan="3" style="font-size:9px;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;padding:5px 12px 2px;background:#f8f9fa;border-top:1px solid #e5e7eb;border-bottom:1px solid #e5e7eb">Availability</td></tr><tr><td class="cmv4-row-lbl">Avail Rooms</td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="availRooms" onclick="cmToggleMetric('availRooms',this)"></span><span class="cmv4-dot" style="background:#16a34a"></span></label></td><td class="cmv4-cb-cell"></td></tr><tr><td class="cmv4-row-lbl">Avail Guar.</td><td class="cmv4-cb-cell"></td><td class="cmv4-cb-cell"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="availGuar" onclick="cmToggleMetric('availGuar',this)"></span><span class="cmv4-dot" style="background:#ea580c"></span></label></td></tr><tr class="cmv4-group-hdr"><td colspan="3" style="font-size:9px;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;padding:5px 12px 2px;background:#f8f9fa;border-top:1px solid #e5e7eb;border-bottom:1px solid #e5e7eb">Business Mix</td></tr><tr><td class="cmv4-row-lbl" style="padding-left:12px">TO Mix %</td><td colspan="2" class="cmv4-cb-cell" style="text-align:left"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="bizMixTO" onclick="cmToggleMetric('bizMixTO',this)"></span><span class="cmv4-dot" style="background:#006461"></span></label></td></tr><tr><td class="cmv4-row-lbl" style="padding-left:12px">Direct Mix %</td><td colspan="2" class="cmv4-cb-cell" style="text-align:left"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="bizMixDirect" onclick="cmToggleMetric('bizMixDirect',this)"></span><span class="cmv4-dot" style="background:#0284c7"></span></label></td></tr><tr><td class="cmv4-row-lbl" style="padding-left:12px">OTA Mix %</td><td colspan="2" class="cmv4-cb-cell" style="text-align:left"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="bizMixOTA" onclick="cmToggleMetric('bizMixOTA',this)"></span><span class="cmv4-dot" style="background:#7c3aed"></span></label></td></tr><tr class="cmv4-group-hdr"><td colspan="3" style="font-size:9px;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;padding:5px 12px 2px;background:#f8f9fa;border-top:1px solid #e5e7eb;border-bottom:1px solid #e5e7eb">Selling Rates</td></tr><tr><td class="cmv4-row-lbl" style="padding-left:12px">TO Contract Rate</td><td colspan="2" class="cmv4-cb-cell" style="text-align:left"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="rateTO" onclick="cmToggleMetric('rateTO',this)"></span><span class="cmv4-dot" style="background:#0f766e"></span></label></td></tr><tr><td class="cmv4-row-lbl" style="padding-left:12px">Promotion %</td><td colspan="2" class="cmv4-cb-cell" style="text-align:left"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="ratePromo" onclick="cmToggleMetric('ratePromo',this)"></span><span class="cmv4-dot" style="background:#d97706"></span></label></td></tr><tr><td class="cmv4-row-lbl" style="padding-left:12px">Base Segment Rate</td><td colspan="2" class="cmv4-cb-cell" style="text-align:left"><label class="cmv4-cb-item"><span class="cal-md-cb" data-cm-key="rateBase" onclick="cmToggleMetric('rateBase',this)"></span><span class="cmv4-dot" style="background:#9333ea"></span></label></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div id="cmModalSnackbar" style="display:none;margin:0 12px 8px;padding:12px 8px;background:#ffebee;border-radius:4px;align-items:center;gap:8px;box-shadow:0px 1px 0.5px rgba(0,0,0,0.14),0px 2px 0.5px rgba(0,0,0,0.12),0px 1px 1.5px rgba(0,0,0,0.2)">
+    <span class="material-icons" style="color:#991f1f;font-size:24px;flex-shrink:0">error_outline</span>
+    <span style="font-size:14px;color:#991f1f;flex:1;font-family:Lato,sans-serif">Only select up to 4 metrics</span>
+    <span class="material-icons" onclick="cmModalSnackbarHide()" style="color:#991f1f;cursor:pointer;font-size:20px;flex-shrink:0">close</span>
+  </div>
+  <div style="position:sticky;bottom:0;background:#fff;border-top:1px solid #e5e7eb;padding:10px 12px;display:flex;align-items:center;justify-content:flex-end;gap:8px">
+    <button onclick="cmResetMetrics()" style="height:32px;padding:0 12px;background:transparent;border:none;border-radius:4px;font-size:12px;color:#006461;cursor:pointer;font-family:inherit">Reset</button>
+    <button id="cmApplyBtn" onclick="cmApplyMetrics()" style="height:32px;padding:0 12px;background:#006461;color:#fff;border:none;border-radius:4px;font-size:12px;cursor:pointer;font-family:inherit">Apply</button>
+  </div>
+</div>
+
+              </div>
+            <!-- Compare dropdown -->
+            <div style="position:relative;order:6" id="calCompareWrap">
+              <select class="wv-cmp-select" id="calCompare" onchange="calSetCompare(this.value)">
+                <option value="ly">vs LY</option>
+                <option value="stly">vs STLY</option>
+                <option value="fcst">vs Forecast</option>
+                <option value="budget">vs Budget</option>
+                <option value="none" selected>No Compare</option>
+              </select>
+            </div>
+            <!-- Filters -->
+            <div class="cal-filters-wrap" id="calFiltersWrap" style="position:relative;order:3">
+              <button class="wv-topbar-text-btn" id="calFiltBtn" onclick="calToggleFilters(this)">
+                <span class="material-icons" style="font-size:16px">filter_list</span>
+                Filters
+                <span class="cal-filter-count" id="calFilterCount" style="display:none"></span>
+                <span class="material-icons cal-filters-chevron" style="font-size:14px">expand_more</span>
+              </button>
+              <div class="cal-filters-dropdown wv-metrics-dropdown" id="calFiltersDropdown" style="display:none;right:0;left:auto">
+                <div class="wv-ms-hdr"><span class="wv-ms-hdr-label">OPERATOR</span></div>
+                <label class="wv-ms-item"><span class="wv-ms-cb wv-fi-rb checked" data-fid="calFiltTO" data-val="all"></span><span class="wv-ms-label">All Operators</span></label>
+                <label class="wv-ms-item"><span class="wv-ms-cb wv-fi-rb" data-fid="calFiltTO" data-val="sunwing"></span><span class="wv-ms-label">Sunwing</span></label>
+                <label class="wv-ms-item"><span class="wv-ms-cb wv-fi-rb" data-fid="calFiltTO" data-val="tui"></span><span class="wv-ms-label">TUI</span></label>
+                <label class="wv-ms-item"><span class="wv-ms-cb wv-fi-rb" data-fid="calFiltTO" data-val="thomas-cook"></span><span class="wv-ms-label">Thomas Cook</span></label>
+                <label class="wv-ms-item"><span class="wv-ms-cb wv-fi-rb" data-fid="calFiltTO" data-val="club-med"></span><span class="wv-ms-label">Club Med</span></label>
+                <label class="wv-ms-item"><span class="wv-ms-cb wv-fi-rb" data-fid="calFiltTO" data-val="jet2"></span><span class="wv-ms-label">Jet2holidays</span></label>
+                <div class="wv-ms-hdr wv-ms-hdr-divider"><span class="wv-ms-hdr-label">ROOM TYPE</span></div>
+                <label class="wv-ms-item"><span class="wv-ms-cb wv-fi-rb checked" data-fid="calFiltRoom" data-val="all"></span><span class="wv-ms-label">All Rooms</span></label>
+                <label class="wv-ms-item"><span class="wv-ms-cb wv-fi-rb" data-fid="calFiltRoom" data-val="standard"></span><span class="wv-ms-label">Standard</span></label>
+                <label class="wv-ms-item"><span class="wv-ms-cb wv-fi-rb" data-fid="calFiltRoom" data-val="superior"></span><span class="wv-ms-label">Superior</span></label>
+                <label class="wv-ms-item"><span class="wv-ms-cb wv-fi-rb" data-fid="calFiltRoom" data-val="deluxe"></span><span class="wv-ms-label">Deluxe</span></label>
+                <label class="wv-ms-item"><span class="wv-ms-cb wv-fi-rb" data-fid="calFiltRoom" data-val="suite"></span><span class="wv-ms-label">Suite</span></label>
+                <div class="wv-ms-hdr wv-ms-hdr-divider"><span class="wv-ms-hdr-label">MEAL PLAN</span></div>
+                <label class="wv-ms-item"><span class="wv-ms-cb wv-fi-rb checked" data-fid="calFiltBoard" data-val="all"></span><span class="wv-ms-label">All Plans</span></label>
+                <label class="wv-ms-item"><span class="wv-ms-cb wv-fi-rb" data-fid="calFiltBoard" data-val="ai"></span><span class="wv-ms-label">All Inclusive</span></label>
+                <label class="wv-ms-item"><span class="wv-ms-cb wv-fi-rb" data-fid="calFiltBoard" data-val="hb"></span><span class="wv-ms-label">Half Board</span></label>
+                <label class="wv-ms-item"><span class="wv-ms-cb wv-fi-rb" data-fid="calFiltBoard" data-val="bb"></span><span class="wv-ms-label">Bed &amp; Breakfast</span></label>
+                <label class="wv-ms-item"><span class="wv-ms-cb wv-fi-rb" data-fid="calFiltBoard" data-val="ro"></span><span class="wv-ms-label">Room Only</span></label>
+                <div class="wv-ms-hdr wv-ms-hdr-divider"><span class="wv-ms-hdr-label">SOURCE GEO</span></div>
+                <label class="wv-ms-item"><span class="wv-ms-cb wv-fi-rb checked" data-fid="calFiltMarket" data-val="all"></span><span class="wv-ms-label">All Origins</span></label>
+                <label class="wv-ms-item"><span class="wv-ms-cb wv-fi-rb" data-fid="calFiltMarket" data-val="UK"></span><span class="wv-ms-label">UK</span></label>
+                <label class="wv-ms-item"><span class="wv-ms-cb wv-fi-rb" data-fid="calFiltMarket" data-val="SP"></span><span class="wv-ms-label">Spain</span></label>
+                <label class="wv-ms-item"><span class="wv-ms-cb wv-fi-rb" data-fid="calFiltMarket" data-val="US"></span><span class="wv-ms-label">US</span></label>
+                <label class="wv-ms-item"><span class="wv-ms-cb wv-fi-rb" data-fid="calFiltMarket" data-val="MX"></span><span class="wv-ms-label">Mexico</span></label>
+                <div class="wv-ms-hdr wv-ms-hdr-divider">
+                  <span class="wv-ms-hdr-label">CUSTOMIZE PICKUP <span id="calPickupLabel" style="color:#006461;font-weight:600;text-transform:none;letter-spacing:0">All time</span></span>
+                </div>
+                <div class="pickup-btns-wrap" id="calPickupBtns">
+                  <input type="number" class="pickup-day-input" value="1" min="1" max="365" onfocus="pickupInputFocus(this,'cal')" oninput="pickupInputChange(this,'cal')">
+                  <input type="number" class="pickup-day-input" value="3" min="1" max="365" onfocus="pickupInputFocus(this,'cal')" oninput="pickupInputChange(this,'cal')">
+                  <input type="number" class="pickup-day-input" value="7" min="1" max="365" onfocus="pickupInputFocus(this,'cal')" oninput="pickupInputChange(this,'cal')">
+                </div>
+                <input type="hidden" id="calFiltPickup" value="all">
+                <div class="cal-filters-footer">
+                  <button class="cal-filter-reset" onclick="calResetFilters()">
+                    <span class="material-icons" style="font-size:14px">close</span>
+                    Reset all
+                  </button>
+                  <button class="cal-filter-apply cal-filter-apply-btn" onclick="calApplyFilters()">Apply</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Heatmap configurator -->
+            <div style="position:relative;order:4" id="hmWrap">
+              <button class="wv-topbar-text-btn" id="hmBtn" onclick="hmToggle()">
+                <span id="hmBtnIcon" style="font-size:13px;line-height:1;display:none"></span>
+                <span class="material-icons" id="hmBtnDefaultIcon" style="font-size:16px">grid_view</span>
+                <span id="hmBtnLabel">Heatmap</span>
+              </button>
+            </div>
+
+            <!-- Heatmap modal -->
+            <div id="hmModal" class="hm-modal-overlay" onclick="hmModalBg(event)">
+              <div class="hm-modal">
+                <div class="hm-modal-title">
+                  <span class="hm-modal-title-text">Heatmap</span>
+                  <button class="hm-modal-close" onclick="hmToggle()">
+                    <span class="material-icons" style="font-size:20px;color:#4F5B60">close</span>
+                  </button>
+                </div>
+                <div class="hm-modal-content">
+                  <div class="hm-modal-subtitle">Select a heatmap type, then configure each colour threshold</div>
+                  <div class="hm-modal-divider"></div>
+                  <div class="hm-modal-section">
+                    <div class="hm-modal-section-heading">Please select</div>
+                    <div class="hm-type-grid" id="hmTypeCards">
+                      <button type="button" class="hm-type-option" data-hmtype="stopsales" onclick="hmSelectType('stopsales')">
+                        <span class="hm-type-radio"></span>
+                        <span class="material-icons hm-type-icon" style="font-size:18px;color:#006461">lock</span>
+                        <span class="hm-type-label">Stop Sales</span>
+                      </button>
+                      <button type="button" class="hm-type-option" data-hmtype="hotelocc" onclick="hmSelectType('hotelocc')">
+                        <span class="hm-type-radio"></span>
+                        <span class="material-icons hm-type-icon" style="font-size:18px;color:#006461">hotel</span>
+                        <span class="hm-type-label">Hotel Occupancy</span>
+                      </button>
+                      <button type="button" class="hm-type-option" data-hmtype="remaining" onclick="hmSelectType('remaining')">
+                        <span class="hm-type-radio"></span>
+                        <span class="material-icons hm-type-icon" style="font-size:18px;color:#006461">meeting_room</span>
+                        <span class="hm-type-label">Remaining Rooms</span>
+                      </button>
+                      <button type="button" class="hm-type-option" data-hmtype="mealplan" onclick="hmSelectType('mealplan')">
+                        <span class="hm-type-radio"></span>
+                        <span class="material-icons hm-type-icon" style="font-size:18px;color:#006461">restaurant</span>
+                        <span class="hm-type-label">Meal Plan Guests</span>
+                      </button>
+                      <button type="button" class="hm-type-option" data-hmtype="toforecast" onclick="hmSelectType('toforecast')">
+                        <span class="hm-type-radio"></span>
+                        <span class="material-icons hm-type-icon" style="font-size:18px;color:#006461">trending_up</span>
+                        <span class="hm-type-label">TO Forecast</span>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="hm-modal-section" id="hmColourSection" style="display:none">
+                    <div class="hm-modal-section-heading">Colour Thresholds</div>
+                    <div id="hmColourRows" class="hm-threshold-rows"></div>
+                    <div id="hmRtFilter" style="display:none"></div>
+                  </div>
+                  <div id="hmRtSection" style="display:none">
+                    <div class="hm-rt-block">
+                      <div class="hm-rt-selector-wrap">
+                        <label class="hm-rt-label">Room Type</label>
+                        <div class="hm-rt-select-box" id="hmRtSelectBox" onclick="hmRtToggleDD()">
+                          <span id="hmRtSelectText">All</span>
+                        </div>
+                        <div class="hm-rt-dd-list" id="hmRtDDList"></div>
+                      </div>
+                      <div class="hm-rt-chips" id="hmRtChips"></div>
+                    </div>
+                  </div>
+                  <div id="hmConditionSection" style="display:none">
+                    <label class="hm-addcond-toggle">
+                      <input type="checkbox" id="hmCondEnabled" onchange="hmCondToggle(this)" class="hm-addcond-cb">
+                      <span class="hm-addcond-label">Add condition</span>
+                    </label>
+                    <div id="hmCondControls" class="hm-cond-controls" style="display:none">
+                      <select id="hmCondMetric" class="hm-cond-select">
+                        <option value="hotel">Hotel Occ (%)</option>
+                        <option value="remainRooms">Remaining Rooms</option>
+                        <option value="totalGuests">Meal Plan Guests</option>
+                        <option value="toOtb">TO OTB (rooms)</option>
+                      </select>
+                      <select id="hmCondOp" class="hm-cond-select">
+                        <option value=">">&gt; above</option>
+                        <option value=">=">&gt;= at least</option>
+                        <option value="<">&lt; below</option>
+                        <option value="<=">&lt;= at most</option>
+                      </select>
+                      <input type="number" id="hmCondValue" value="50" min="0" max="9999" class="hm-cond-input">
+                    </div>
+                  </div>
+                </div>
+                <div class="hm-modal-actions">
+                  <div class="hm-modal-divider"></div>
+                  <div class="hm-modal-buttons">
+                    <button class="hm-btn-reset" onclick="hmReset()">Reset</button>
+                    <button class="hm-btn-apply" onclick="hmApply()">Apply</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Monthly View Filter Bar -->
+        <div class="filter-chips-bar" id="filterChipsBar" style="display:none">
+          <div class="filter-chips-bar-left">
+            <span class="fchips-active-wrap" id="fchipsActiveWrap"></span>
+          </div>
+        </div>
+
+        <!-- Monthly / Weekly tab bar -->
+        <div class="wv-groupby-bar" id="moGroupbyBar">
+          <div class="wv-groupby-row">
+            <button class="wv-groupby-btn mo-grp-btn active" data-mogroupby="monthly">Monthly</button>
+            <button class="wv-groupby-btn mo-grp-btn" data-mogroupby="daily">Weekly</button>
+            <div class="wv-date-shuffler" style="margin-left:auto">
+              <button class="wv-nav-btn" id="moShufPrev" title="Previous"><span class="material-icons" style="font-size:18px">chevron_left</span></button>
+              <span class="wv-range" id="moShufRange">February – April 2026</span>
+              <button class="wv-nav-btn" id="moShufNext" title="Next"><span class="material-icons" style="font-size:18px">chevron_right</span></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="cal-legend">
+          <div class="leg-item">
+            <span class="material-icons" style="font-size:14px">visibility</span>
+            <span>Hover cell for quick view</span>
+          </div>
+          <div class="leg-item">
+            <span class="material-icons" style="font-size:14px;color:#dc2626">lock</span>
+            <span>Full close out</span>
+          </div>
+          <div class="leg-item">
+            <span class="material-icons" style="font-size:14px;color:#ea580c">lock</span>
+            <span>Partial close out</span>
+          </div>
+          <div class="leg-item leg-item-event">
+            <span class="material-icons" style="font-size:18px;color:#006461">today</span>
+            <span>Event</span>
+          </div>
+          <div class="leg-item">
+            <span class="leg-color-swatch" style="background:#1C1C1C"></span>
+            <span>Hotel</span>
+          </div>
+          <div class="leg-item">
+            <span class="leg-color-swatch" style="background:#8C7843"></span>
+            <span>Tour Operator</span>
+          </div>
+        </div>
+
+        <!-- Calendar months grid -->
+        <div class="cal-months-grid" id="calMonths"></div>
+        <!-- Monthly Summary Metrics -->
+        <div id="calMonthlySummary" style="display:none"></div>
+      </div>
+
+      <!-- ╔══════════════════════════════════════════════╗ -->
+      <!-- ║  WEEK VIEW                                    ║ -->
+      <!-- ╚══════════════════════════════════════════════╝ -->
+      <div class="section-card" id="weekView">
+        <div class="wv-topbar">
+          <div class="wv-topbar-left">
+            <button class="wv-back-btn" id="wvTopbarBack" onclick="goToMonthView()">
+              <span class="material-icons" style="font-size:16px">chevron_left</span>Back to month
+            </button>
+            <span class="wv-topbar-title">Calendar</span>
+          </div>
+          <div class="wv-topbar-right">
+            <!-- Close/Re-Open -->
+            <button class="wv-closeout-primary" id="wbCloseOutBtn" onclick="wvSmartClose()">
+              <span class="material-icons" style="font-size:16px">lock</span>
+              Close/Re-Open
+            </button>
+            <!-- Table Settings -->
+            <button class="wv-topbar-text-btn" id="wvTableSettingsBtn" onclick="dhOpenReorder()">
+              <svg viewBox="0 0 17.4 15.04" width="16" height="14" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path d="M5.25 5.265H9V13.5H5.25V5.265ZM10.5 6.383H14.25V5.25H10.5V6.383ZM12.75 0H1.5C0.675 0 0 0.675 0 1.5V3.75H14.25V1.5C14.25 0.675 13.575 0 12.75 0ZM0 12C0 12.825 0.675 13.5 1.5 13.5H3.75V5.25H0V12Z"/>
+                <path d="M16.585 11.45c0-.082-.004-.161-.011-.244l.667-.505a.281.281 0 0 0 .093-.466l-.67-1.158a.278.278 0 0 0-.378-.152l-.771.326a3.01 3.01 0 0 0-.42-.244l-.104-.828a.28.28 0 0 0-.279-.315h-1.337a.28.28 0 0 0-.28.315l-.103.828c-.147.068-.287.15-.42.244l-.77-.326a.278.278 0 0 0-.378.152l-.67 1.162a.281.281 0 0 0 .093.466l.667.505a2.64 2.64 0 0 0 0 .488l-.667.505a.281.281 0 0 0-.093.466l.67 1.158c.09.158.284.222.449.15l.77-.326c.133.094.273.176.42.244l.104.828a.28.28 0 0 0 .279.316h1.337a.28.28 0 0 0 .28-.316l.103-.828c.147-.068.287-.15.42-.244l.77.326a.278.278 0 0 0 .378-.15l.67-1.159a.281.281 0 0 0-.093-.466l-.667-.505c.01-.083.014-.161.014-.244zm-2.675 1.255a1.255 1.255 0 1 1 0-2.51 1.255 1.255 0 0 1 0 2.51z"/>
+              </svg>
+              Table Settings
+            </button>
+            <!-- Filters -->
+            <div class="cal-filters-wrap wv-filters-wrap" id="wvFiltersWrap">
+              <button class="wv-topbar-text-btn" id="wvFiltersBtn">
+                <span class="material-icons" style="font-size:16px">filter_list</span>
+                Filters
+                <span class="cal-filter-count" id="wvFilterCount" style="display:none"></span>
+              </button>
+              <div class="cal-filters-dropdown wv-metrics-dropdown" id="wvFiltersDropdown" style="display:none">
+                <div class="wv-ms-hdr"><span class="wv-ms-hdr-label">TOUR OPERATOR</span></div>
+                <label class="wv-ms-item"><span class="wv-ms-cb wv-fi-rb checked" data-fid="wvFiltTO" data-val="all"></span><span class="wv-ms-label">All Operators</span></label>
+                <label class="wv-ms-item"><span class="wv-ms-cb wv-fi-rb" data-fid="wvFiltTO" data-val="sunwing"></span><span class="wv-ms-label">Sunwing</span></label>
+                <label class="wv-ms-item"><span class="wv-ms-cb wv-fi-rb" data-fid="wvFiltTO" data-val="tui"></span><span class="wv-ms-label">TUI</span></label>
+                <label class="wv-ms-item"><span class="wv-ms-cb wv-fi-rb" data-fid="wvFiltTO" data-val="thomas-cook"></span><span class="wv-ms-label">Thomas Cook</span></label>
+                <label class="wv-ms-item"><span class="wv-ms-cb wv-fi-rb" data-fid="wvFiltTO" data-val="club-med"></span><span class="wv-ms-label">Club Med</span></label>
+                <div class="wv-ms-hdr wv-ms-hdr-divider"><span class="wv-ms-hdr-label">ROOM TYPE</span></div>
+                <label class="wv-ms-item"><span class="wv-ms-cb wv-fi-rb checked" data-fid="wvFiltRoom" data-val="all"></span><span class="wv-ms-label">All Rooms</span></label>
+                <label class="wv-ms-item"><span class="wv-ms-cb wv-fi-rb" data-fid="wvFiltRoom" data-val="standard"></span><span class="wv-ms-label">Standard</span></label>
+                <label class="wv-ms-item"><span class="wv-ms-cb wv-fi-rb" data-fid="wvFiltRoom" data-val="superior"></span><span class="wv-ms-label">Superior</span></label>
+                <label class="wv-ms-item"><span class="wv-ms-cb wv-fi-rb" data-fid="wvFiltRoom" data-val="deluxe"></span><span class="wv-ms-label">Deluxe</span></label>
+                <label class="wv-ms-item"><span class="wv-ms-cb wv-fi-rb" data-fid="wvFiltRoom" data-val="suite"></span><span class="wv-ms-label">Suite</span></label>
+                <div class="wv-ms-hdr wv-ms-hdr-divider"><span class="wv-ms-hdr-label">BOARD TYPE</span></div>
+                <label class="wv-ms-item"><span class="wv-ms-cb wv-fi-rb checked" data-fid="wvFiltBoard" data-val="all"></span><span class="wv-ms-label">All Board</span></label>
+                <label class="wv-ms-item"><span class="wv-ms-cb wv-fi-rb" data-fid="wvFiltBoard" data-val="ai"></span><span class="wv-ms-label">All Inclusive</span></label>
+                <label class="wv-ms-item"><span class="wv-ms-cb wv-fi-rb" data-fid="wvFiltBoard" data-val="bb"></span><span class="wv-ms-label">Bed &amp; Breakfast</span></label>
+                <label class="wv-ms-item"><span class="wv-ms-cb wv-fi-rb" data-fid="wvFiltBoard" data-val="ro"></span><span class="wv-ms-label">Room Only</span></label>
+                <div class="wv-ms-hdr wv-ms-hdr-divider"><span class="wv-ms-hdr-label">SOURCE GEO</span></div>
+                <label class="wv-ms-item"><span class="wv-ms-cb wv-fi-rb checked" data-fid="wvFiltMarket" data-val="all"></span><span class="wv-ms-label">All Origins</span></label>
+                <label class="wv-ms-item"><span class="wv-ms-cb wv-fi-rb" data-fid="wvFiltMarket" data-val="uk"></span><span class="wv-ms-label">UK</span></label>
+                <label class="wv-ms-item"><span class="wv-ms-cb wv-fi-rb" data-fid="wvFiltMarket" data-val="de"></span><span class="wv-ms-label">Germany</span></label>
+                <label class="wv-ms-item"><span class="wv-ms-cb wv-fi-rb" data-fid="wvFiltMarket" data-val="fr"></span><span class="wv-ms-label">France</span></label>
+                <label class="wv-ms-item"><span class="wv-ms-cb wv-fi-rb" data-fid="wvFiltMarket" data-val="es"></span><span class="wv-ms-label">Spain</span></label>
+                <div class="wv-ms-hdr wv-ms-hdr-divider">
+                  <span class="wv-ms-hdr-label">CUSTOMIZE PICKUP <span id="wvPickupLabel" style="color:#006461;font-weight:600;text-transform:none;letter-spacing:0">All time</span></span>
+                </div>
+                <div class="pickup-btns-wrap" id="wvPickupBtns">
+                  <input type="number" class="pickup-day-input" value="1" min="1" max="365" onfocus="pickupInputFocus(this,'wv')" oninput="pickupInputChange(this,'wv')">
+                  <input type="number" class="pickup-day-input" value="3" min="1" max="365" onfocus="pickupInputFocus(this,'wv')" oninput="pickupInputChange(this,'wv')">
+                  <input type="number" class="pickup-day-input" value="7" min="1" max="365" onfocus="pickupInputFocus(this,'wv')" oninput="pickupInputChange(this,'wv')">
+                </div>
+                <input type="hidden" id="wvFiltPickup" value="all">
+                <div class="cal-filters-footer">
+                  <button class="cal-filter-reset" id="wvFilterReset">
+                    <span class="material-icons" style="font-size:14px">close</span>
+                    Reset all
+                  </button>
+                  <button class="cal-filter-apply cal-filter-apply-btn" id="wvFilterApply">Apply</button>
+                </div>
+              </div>
+            </div>
+            <!-- Metrics (hidden — controlled via Table Settings) -->
+            <div class="wv-metrics-wrap" id="wvMetricsWrap" style="display:none">
+              <button class="wv-outline-btn wv-metrics-btn" id="wvMetricsBtn">
+                <span class="material-icons" style="font-size:16px">tune</span>
+                Metrics
+                <span class="material-icons cal-filters-chevron" style="font-size:14px">expand_more</span>
+              </button>
+              <div class="wv-metrics-dropdown" id="wvMetricsDropdown" style="display:none"></div>
+            </div>
+            <!-- Week date picker -->
+            <div class="wv-week-pick-wrap" id="wvWeekPickWrap">
+              <button class="wv-week-pick-btn" id="wvWeekPickBtn" onclick="wvWeekPickToggle()">
+                <span id="wvRange">March 1 – 7, 2026</span>
+                <span class="material-icons" style="font-size:16px">calendar_today</span>
+              </button>
+              <div id="wvWeekPickPanel">
+                <div class="wvwp-hdr">
+                  <button class="caldr-nav-btn" onclick="wvwpNav(-1)">&#8249;</button>
+                  <span class="caldr-yr" id="wvwpTitle"></span>
+                  <button class="caldr-nav-btn" onclick="wvwpNav(1)">&#8250;</button>
+                </div>
+                <div id="wvwpGrid" class="wvwp-grid"></div>
+              </div>
+            </div>
+            <!-- Compare multi-select -->
+            <div class="wv-cmp-dd" id="wvCmpDd2">
+              <button class="wv-cmp-dd-btn" id="wvCmpDdBtn2" onclick="wvCmpDdToggle2(event)">
+                <span id="wvCmpDdLabel2">Compare</span>
+                <span class="material-icons" style="font-size:15px;margin-left:2px;opacity:.65">expand_more</span>
+              </button>
+              <div class="wv-cmp-dd-menu" id="wvCmpDdMenu2">
+                <div class="wv-cmp-dd-item active" data-cmp="none" onclick="event.stopPropagation();wvSetCompare('none')"><input type="checkbox" class="wv-cmp-chk" checked onclick="event.preventDefault();event.stopPropagation()"><span>None</span></div>
+                <div class="wv-cmp-dd-item"         data-cmp="stly" onclick="event.stopPropagation();wvSetCompare('stly')"><input type="checkbox" class="wv-cmp-chk"         onclick="event.preventDefault();event.stopPropagation()"><span>STLY</span></div>
+                <div class="wv-cmp-dd-item"         data-cmp="ly"   onclick="event.stopPropagation();wvSetCompare('ly')"  ><input type="checkbox" class="wv-cmp-chk"         onclick="event.preventDefault();event.stopPropagation()"><span>LY</span></div>
+                <div class="wv-cmp-dd-item"         data-cmp="fcst" onclick="event.stopPropagation();wvSetCompare('fcst')"><input type="checkbox" class="wv-cmp-chk"         onclick="event.preventDefault();event.stopPropagation()"><span>Forecast</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Table Settings modal -->
+        <div id="dhReorderModal" onclick="dhReorderModalBg(event)" class="ts-modal-overlay" style="display:none">
+          <div class="ts-modal">
+            <div class="ts-header">
+              <span class="ts-title">Table Settings</span>
+              <button class="ts-close" onclick="document.getElementById('dhReorderModal').style.display='none'">
+                <span class="material-icons" style="font-size:24px;color:#1C1C1C">close</span>
+              </button>
+            </div>
+            <div class="ts-divider"></div>
+            <div class="ts-body">
+              <div class="ts-tree-wrap">
+                <div class="ts-tree-toolbar">
+                  <div class="ts-search-wrap">
+                    <span class="material-icons ts-search-icon">search</span>
+                    <input id="tsSearchInput" class="ts-search-input" type="text" placeholder="Search metrics…" oninput="tsFilterRows(this.value)">
+                  </div>
+                  <div style="display:flex;gap:8px;margin-left:auto">
+                    <button class="ts-tree-btn" onclick="tsCheckAll(true)">Select All</button>
+                    <button class="ts-tree-btn" onclick="tsCheckAll(false)">Deselect All</button>
+                  </div>
+                </div>
+                <div id="dhReorderList" class="ts-tree-list"></div>
+              </div>
+            </div>
+            <div class="ts-footer">
+              <div class="ts-footer-divider"></div>
+              <div class="ts-footer-btns">
+                <button class="ts-btn-cancel" onclick="dhResetReorder()">Cancel</button>
+                <button class="ts-btn-apply" onclick="dhApplyReorder()">Apply</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- View toggle -->
+        <div class="wv-groupby-bar">
+          <div class="wv-groupby-row">
+            <button class="wv-groupby-btn" data-groupby="monthly">Monthly</button>
+            <button class="wv-groupby-btn active" data-groupby="dailyB">Weekly</button>
+            <button id="drColsBtn" class="wv-groupby-btn" style="display:none;margin-left:4px;gap:5px" onclick="drColsBtnClick(this)">
+              <span class="material-icons" style="font-size:16px">tune</span>
+              Columns
+            </button>
+            <div class="wv-date-acc-controls" style="margin-left:auto">
+              <button class="wv-acc-action-btn" id="wvRtCloseAll">
+                <span class="material-icons" style="font-size:16px">unfold_less</span>
+                Close All
+              </button>
+              <button class="wv-acc-action-btn" id="wvRtOpenAll">
+                <span class="material-icons" style="font-size:16px">unfold_more</span>
+                Open All
+              </button>
+            </div>
+            <div class="wv-date-shuffler">
+              <button class="wv-nav-btn" id="wvPrev" title="Previous week"><span class="material-icons" style="font-size:18px">chevron_left</span></button>
+              <button class="wv-nav-btn" id="wvNext" title="Next week"><span class="material-icons" style="font-size:18px">chevron_right</span></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="cal-legend">
+          <div class="leg-item"><span class="leg-dot-blue"></span><span>Online | Offline</span></div>
+          <div class="leg-item"><span class="material-icons" style="font-size:14px">visibility</span><span>Quick view (hover)</span></div>
+          <div class="leg-item"><span class="material-icons" style="font-size:14px;color:#dc2626">lock</span><span>Full close out</span></div>
+          <div class="leg-item"><span class="material-icons" style="font-size:14px;color:#ea580c">lock</span><span>Partial close out</span></div>
+          <div class="leg-item leg-item-event"><span class="material-icons" style="font-size:18px;color:#006461">today</span><span>Event</span></div>
+        </div>
+
+        <div class="wv-cal-scroll-area">
+          <div class="wv-week-layout">
+            <div class="wv-section-panel" id="wvSectionPanel" style="display:none"></div>
+            <div class="wv-grid" id="weekGrid"></div>
+          </div>
+        </div>
+        <div id="coHeatmapContainer"></div>
+        <div id="wvSummaryContainer"></div>
+      </div>
+
+    </div><!-- /page-content -->
+  </main>
+</div><!-- /layout -->
+
+<!-- ═══ DAY POPUP ═══ -->
+<div id="dayPopup" role="dialog" aria-modal="true" aria-label="Day detail">
+  <div class="popup-header">
+    <div>
+      <div class="popup-date" id="popupDate">Tue, March 24, 2026</div>
+      <div class="popup-operator" id="popupOperator">All Operators</div>
+    </div>
+    <button class="popup-close" id="popupClose" aria-label="Close">&times;</button>
+  </div>
+  <div class="popup-body" id="popupBody"></div>
+  <div class="popup-footer">
+    <button class="popup-btn-closeout">
+      <span class="material-icons" style="font-size:12px">lock</span>
+      Close Out
+    </button>
+    <button class="popup-btn-week">
+      View More Details
+      <span class="material-icons" style="font-size:12px;color:white">chevron_right</span>
+    </button>
+  </div>
+</div>
+
+<!-- ═══ CLOSE OUT SALES MODAL ═══ -->
+<div class="modal-overlay" id="closeOutOverlay">
+  <div class="co2-modal" id="closeOutModal" role="dialog" aria-modal="true" aria-labelledby="closeOutTitle">
+    <div class="co2-title-row">
+      <span class="co2-title" id="closeOutTitle">Close out sales</span>
+      <button class="co2-close" id="closeOutClose" aria-label="Close">
+        <span class="material-icons" style="font-size:20px">close</span>
+      </button>
+    </div>
+    <div class="co2-body">
+      <div class="co2-section">
+        <div class="co2-heading" style="font-weight:400;font-size:14px">Please select</div>
+        <div class="co2-type-row" id="coTypeGroup">
+          <label class="co2-type-card active" data-type="full">
+            <span class="co2-radio"><span class="co2-radio-dot"></span></span>
+            <span class="material-icons co2-type-ico">lock</span>
+            <span class="co2-type-label">Close all Day</span>
+          </label>
+          <label class="co2-type-card" data-type="los">
+            <span class="co2-radio"><span class="co2-radio-dot"></span></span>
+            <span class="material-icons co2-type-ico">lock</span>
+            <span class="co2-type-label">Min Length of Stay</span>
+          </label>
+          <label class="co2-type-card" data-type="reopen">
+            <span class="co2-radio"><span class="co2-radio-dot"></span></span>
+            <span class="material-icons co2-type-ico">lock_open</span>
+            <span class="co2-type-label">Re-Open</span>
+          </label>
+        </div>
+      </div>
+      <div class="co2-section" id="coLosField" style="display:none">
+        <label class="co2-field-label">Minimum Nights</label>
+        <input class="co2-input" type="number" id="coMinNights" min="1" max="30" value="3" style="width:90px" />
+      </div>
+      <div class="co2-section">
+        <div id="coDateRangeList" style="display:flex;flex-direction:column;gap:8px"></div>
+        <button type="button" class="co2-add-btn" onclick="coAddDateRange()">
+          <span class="material-icons" style="font-size:16px">add</span>
+          Add Date Range
+        </button>
+      </div>
+      <div class="co2-section">
+        <div class="co2-heading">What to Close</div>
+        <div id="coRuleList" style="display:flex;flex-direction:column;gap:16px"></div>
+        <button type="button" class="co2-add-btn" onclick="coAddRule()">
+          <span class="material-icons" style="font-size:16px">add</span>
+          Add Strategy
+        </button>
+      </div>
+      <div class="co2-section">
+        <div class="co2-heading">Contact sales team</div>
+        <div class="co2-field-group">
+          <label class="co2-field-label">Email Address</label>
+          <input class="co2-input" type="email" id="coEmail" placeholder="Placeholder" style="width:215px" />
+        </div>
+        <div class="co2-field-group">
+          <label class="co2-field-label">Sales Messages</label>
+          <textarea class="co2-textarea" id="coMessage" placeholder="Placeholder"></textarea>
+        </div>
+      </div>
+      <div class="co2-section">
+        <div class="co2-send-label">Send Action</div>
+        <div class="co2-radio-group" id="coActionGroup">
+          <label class="co2-radio-row">
+            <input type="radio" name="coSendAction" value="email" checked class="co2-radio-input">
+            <span class="co2-radio-circle"></span>
+            <span>Email Operators</span>
+          </label>
+          <label class="co2-radio-row">
+            <input type="radio" name="coSendAction" value="internal" class="co2-radio-input">
+            <span class="co2-radio-circle"></span>
+            <span>Internal Note</span>
+          </label>
+          <label class="co2-radio-row">
+            <input type="radio" name="coSendAction" value="both" class="co2-radio-input">
+            <span class="co2-radio-circle"></span>
+            <span>Both</span>
+          </label>
+        </div>
+      </div>
+    </div>
+    <div class="co2-footer">
+      <div class="co2-footer-divider"></div>
+      <div class="co2-footer-btns">
+        <button class="co2-btn-cancel" id="closeOutCancel">Cancel</button>
+        <button class="co2-btn-confirm" id="coConfirmBtn">Close Out</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Shared date range picker (used by close-out modal) -->
+<div id="coDRPanel" style="display:none;position:fixed;top:0;left:0;z-index:9999;background:#fff;border:1px solid #e2e8f0;border-radius:12px;box-shadow:0 12px 40px rgba(0,0,0,.2);width:720px;max-width:95vw">
+  <div style="display:flex">
+    <div style="flex:1;padding:20px 20px 0">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <div style="display:flex;gap:4px">
+          <button onclick="coDRPickNav(-12)" style="border:none;background:none;cursor:pointer;padding:4px 6px;border-radius:4px;color:#374151;font-size:13px">«</button>
+          <button onclick="coDRPickNav(-1)" style="border:none;background:none;cursor:pointer;padding:4px 6px;border-radius:4px;color:#374151;font-size:13px">‹</button>
+        </div>
+        <span id="coDRLeftLbl" style="font-size:14px;font-weight:700;color:#111827"></span>
+        <div style="display:flex;gap:4px">
+          <button onclick="coDRPickNav(1)" style="border:none;background:none;cursor:pointer;padding:4px 6px;border-radius:4px;color:#374151;font-size:13px">›</button>
+          <button onclick="coDRPickNav(12)" style="border:none;background:none;cursor:pointer;padding:4px 6px;border-radius:4px;color:#374151;font-size:13px">»</button>
+        </div>
+        <span style="width:60px"></span>
+        <span id="coDRRightLbl" style="font-size:14px;font-weight:700;color:#111827"></span>
+        <div style="width:60px"></div>
+      </div>
+      <div id="coDRPickBanner" style="display:none;padding:6px 12px;background:#e0f7f6;border-radius:6px;font-size:12px;color:#0f766e;font-weight:600;margin-bottom:10px">
+        ✓ Start date selected — now click the end date
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px" id="coDRPickGrids"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0 16px;border-top:1px solid #f1f5f9;margin-top:14px">
+        <span id="coDRPickFooter" style="font-size:13px;color:#374151;font-weight:500"></span>
+        <div style="display:flex;gap:10px">
+          <button onclick="coDRPickCancel()" style="padding:8px 18px;border:none;background:none;color:#374151;font-size:13px;cursor:pointer;border-radius:6px">Cancel</button>
+          <button onclick="coDRPickApply()" style="padding:8px 20px;background:#006461;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">Apply</button>
+        </div>
+      </div>
+    </div>
+    <div style="width:130px;border-left:1px solid #f1f5f9;padding:16px 0;display:flex;flex-direction:column">
+      <button onclick="coDRPickPreset('today')" class="caldr-preset">Today</button>
+      <div style="padding:8px 16px;font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.4px">Next:</div>
+      <button onclick="coDRPickPreset('7d')" class="caldr-preset">7 days</button>
+      <button onclick="coDRPickPreset('14d')" class="caldr-preset">14 days</button>
+      <button onclick="coDRPickPreset('1m')" class="caldr-preset">1 month</button>
+      <button onclick="coDRPickPreset('2m')" class="caldr-preset">2 months</button>
+      <button onclick="coDRPickPreset('3m')" class="caldr-preset">3 months</button>
+    </div>
+  </div>
+</div>
+
+<!-- DS Snackbar -->
+<div id="dsSnackbar" class="ds-snackbar" role="status" aria-live="polite">
+  <span class="material-icons" style="font-size:24px;color:#28592c;flex-shrink:0">check_circle</span>
+  <span class="ds-snackbar-msg">Saved successfully</span>
+  <button class="ds-snackbar-close" onclick="dsSnackbarHide()" aria-label="Dismiss">
+    <span class="material-icons" style="font-size:20px">close</span>
+  </button>
+</div>
+
+<script src="travelcore-rm-hub.js?v=163"></script>
+</body>
+</html>
