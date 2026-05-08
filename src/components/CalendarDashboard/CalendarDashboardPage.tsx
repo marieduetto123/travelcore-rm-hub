@@ -11,7 +11,7 @@ import { CalendarMonthGrid } from './CalendarMonthGrid';
 import { DayDetailPopup } from './DayDetailPopup';
 import { WeekView } from './WeekView';
 import { CalendarDay, DayDetailGroup, MonthData } from './types';
-import { buildMonthData } from './calendarUtils';
+import { buildMonthData, DEFAULT_METRIC_IDS } from './calendarUtils';
 import { DateRange, MonthRef } from './DateRangePickerDropdown';
 import { HeatmapConfig } from './HeatmapModal';
 import { calendarTokens } from './tokens';
@@ -224,6 +224,7 @@ export function CalendarDashboardPage() {
     start: { year: 2026, month: 0 },
     end:   { year: 2026, month: 1 },
   });
+  const [cellMetricIds, setCellMetricIds] = useState<string[]>(DEFAULT_METRIC_IDS);
 
   const monthCount =
     (calRange.end.year - calRange.start.year) * 12 +
@@ -236,7 +237,7 @@ export function CalendarDashboardPage() {
       const total = calRange.start.year * 12 + calRange.start.month + i;
       const y = Math.floor(total / 12);
       const m = total % 12;
-      result.push(buildMonthData(y, m, i === monthCount - 1 ? { isLocked: true } : undefined));
+      result.push(buildMonthData(y, m, { isLocked: i === monthCount - 1, cellMetricIds }));
     }
     return result;
   })();
@@ -300,6 +301,10 @@ export function CalendarDashboardPage() {
         <CalendarHeader
           onRangeChange={setCalRange}
           onHeatmapApply={(cfg) => setHeatmapConfig(cfg.type ? cfg : null)}
+          onMetricsApply={(selections) => {
+            const ids = Object.entries(selections).filter(([, v]) => v).map(([k]) => k);
+            setCellMetricIds(ids.length > 0 ? ids : DEFAULT_METRIC_IDS);
+          }}
         />
 
         {/* Tab bar */}

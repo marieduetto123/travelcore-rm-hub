@@ -159,6 +159,7 @@ type Props = {
   title?: string;
   onRangeChange?: (range: DateRange) => void;
   onHeatmapApply?: (config: HeatmapConfig) => void;
+  onMetricsApply?: (selections: Record<string, boolean>) => void;
 };
 
 function countActiveFilters(f: CalendarFilters): number {
@@ -171,7 +172,7 @@ function countActiveFilters(f: CalendarFilters): number {
   return n;
 }
 
-export function CalendarHeader({ title = 'Calendar', onRangeChange, onHeatmapApply }: Props) {
+export function CalendarHeader({ title = 'Calendar', onRangeChange, onHeatmapApply, onMetricsApply }: Props) {
   const classes = useStyles();
 
   // CellMetrics
@@ -279,7 +280,7 @@ export function CalendarHeader({ title = 'Calendar', onRangeChange, onHeatmapApp
       <CellMetricsPopup
         anchorEl={cellMetricsAnchor}
         onClose={() => setCellMetricsAnchor(null)}
-        onApply={() => setCellMetricsAnchor(null)}
+        onApply={(selections) => onMetricsApply?.(selections)}
       />
 
       <FiltersDropdown

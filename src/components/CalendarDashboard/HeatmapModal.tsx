@@ -373,59 +373,61 @@ export function HeatmapModal({ open, onClose, config = DEFAULT_HEATMAP, onApply 
           </div>
         )}
 
-        {/* Condition */}
-        <div className={classes.conditionSection}>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={draft.conditionEnabled}
-                onChange={(_, v) => setDraft((d) => ({ ...d, conditionEnabled: v }))}
-                size="small"
-              />
-            }
-            label="Add condition"
-            className={classes.conditionCheckLabel}
-          />
-          {draft.conditionEnabled && (
-            <div className={classes.conditionControls}>
-              <Typography style={{ fontFamily: 'Lato, sans-serif', fontSize: 13 }}>When</Typography>
-              <Select
-                value={draft.conditionMetric}
-                onChange={(e) => setDraft((d) => ({ ...d, conditionMetric: e.target.value as string }))}
-                variant="outlined"
-                className={classes.conditionSelect}
-              >
-                {CONDITION_METRICS.map((m) => (
-                  <MenuItem key={m.value} value={m.value} style={{ fontFamily: 'Lato, sans-serif', fontSize: 13 }}>
-                    {m.label}
-                  </MenuItem>
-                ))}
-              </Select>
-              <Select
-                value={draft.conditionOp}
-                onChange={(e) => setDraft((d) => ({ ...d, conditionOp: e.target.value as string }))}
-                variant="outlined"
-                className={classes.conditionSelect}
-                style={{ minWidth: 64 }}
-              >
-                {CONDITION_OPS.map((op) => (
-                  <MenuItem key={op} value={op} style={{ fontFamily: 'Lato, sans-serif', fontSize: 13 }}>
-                    {op}
-                  </MenuItem>
-                ))}
-              </Select>
-              <TextField
-                value={draft.conditionValue}
-                onChange={(e) => setDraft((d) => ({ ...d, conditionValue: Number(e.target.value) }))}
-                type="number"
-                variant="outlined"
-                size="small"
-                className={classes.conditionValueInput}
-                inputProps={{ min: 0 }}
-              />
-            </div>
-          )}
-        </div>
+        {/* Condition — Stop Sales only */}
+        {draft.type === 'stop_sales' && (
+          <div className={classes.conditionSection}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={draft.conditionEnabled}
+                  onChange={(_, v) => setDraft((d) => ({ ...d, conditionEnabled: v }))}
+                  size="small"
+                />
+              }
+              label="Add condition"
+              className={classes.conditionCheckLabel}
+            />
+            {draft.conditionEnabled && (
+              <div className={classes.conditionControls}>
+                <Typography style={{ fontFamily: 'Lato, sans-serif', fontSize: 13 }}>When</Typography>
+                <Select
+                  value={draft.conditionMetric}
+                  onChange={(e) => setDraft((d) => ({ ...d, conditionMetric: e.target.value as string }))}
+                  variant="outlined"
+                  className={classes.conditionSelect}
+                >
+                  {CONDITION_METRICS.map((m) => (
+                    <MenuItem key={m.value} value={m.value} style={{ fontFamily: 'Lato, sans-serif', fontSize: 13 }}>
+                      {m.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+                <Select
+                  value={draft.conditionOp}
+                  onChange={(e) => setDraft((d) => ({ ...d, conditionOp: e.target.value as string }))}
+                  variant="outlined"
+                  className={classes.conditionSelect}
+                  style={{ minWidth: 64 }}
+                >
+                  {CONDITION_OPS.map((op) => (
+                    <MenuItem key={op} value={op} style={{ fontFamily: 'Lato, sans-serif', fontSize: 13 }}>
+                      {op}
+                    </MenuItem>
+                  ))}
+                </Select>
+                <TextField
+                  value={draft.conditionValue}
+                  onChange={(e) => setDraft((d) => ({ ...d, conditionValue: Number(e.target.value) }))}
+                  type="number"
+                  variant="outlined"
+                  size="small"
+                  className={classes.conditionValueInput}
+                  inputProps={{ min: 0 }}
+                />
+              </div>
+            )}
+          </div>
+        )}
       </DialogContent>
 
       <DialogActions className={classes.actions}>

@@ -142,13 +142,7 @@ const METRIC_GROUPS: MetricGroup[] = [
   },
 ];
 
-const DEFAULT_SELECTIONS: Record<string, boolean> = {
-  occ_act_1: true,
-  occ_act_3: true,
-  adr_act_1: true,
-  adr_act_2: true,
-  av_rooms: true,
-};
+const DEFAULT_SELECTIONS: Record<string, boolean> = {};
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
 const useStyles = makeStyles((theme) => ({
@@ -472,10 +466,11 @@ type CheckboxCellProps = {
   type: CellType;
   checked?: boolean;
   onToggle?: () => void;
+  isAtMax?: boolean;
   classes: ReturnType<typeof useStyles>;
 };
 
-function CheckboxCell({ type, checked, onToggle, classes }: CheckboxCellProps) {
+function CheckboxCell({ type, checked, onToggle, isAtMax, classes }: CheckboxCellProps) {
   if (type === 'absent') return <div style={{ flex: 1, minWidth: 0 }} />;
 
   if (type === 'unavailable') {
@@ -486,18 +481,20 @@ function CheckboxCell({ type, checked, onToggle, classes }: CheckboxCellProps) {
     );
   }
 
-  if (type === 'checkboxDisabled') {
-    return (
-      <div className={classes.dataCheckCell}>
-        <div className={clsx(classes.checkbox, classes.checkboxDisabledState)} />
-      </div>
-    );
-  }
+  // 'interactive' and 'checkboxDisabled' both render as selectable checkboxes
+  const showDisabled = isAtMax && !checked;
 
   return (
     <div className={classes.dataCheckCell}>
       <div
-        className={clsx(classes.checkbox, checked ? classes.checkboxChecked : classes.checkboxUnchecked)}
+        className={clsx(
+          classes.checkbox,
+          checked
+            ? classes.checkboxChecked
+            : showDisabled
+            ? classes.checkboxDisabledState
+            : classes.checkboxUnchecked,
+        )}
         onClick={onToggle}
       >
         <Icon className={classes.checkboxIcon}>check</Icon>
@@ -524,10 +521,12 @@ export function CellMetricsPopup({ anchorEl, onClose, onApply }: Props) {
 
   const handleToggle = (id: string) => {
     const isChecked = selections[id];
-    const newSelections = { ...selections, [id]: !isChecked };
-    const newCount = Object.values(newSelections).filter(Boolean).length;
-    setSelections(newSelections);
-    setShowError(newCount > MAX_SELECTIONS);
+    if (!isChecked && selectedCount >= MAX_SELECTIONS) {
+      setShowError(true);
+      return;
+    }
+    setSelections((prev) => ({ ...prev, [id]: !isChecked }));
+    setShowError(false);
   };
 
   const handleReset = () => {
@@ -614,12 +613,14 @@ export function CellMetricsPopup({ anchorEl, onClose, onApply }: Props) {
                   type={row.hotel}
                   checked={!!selections[`${row.id}_hotel`]}
                   onToggle={() => handleToggle(`${row.id}_hotel`)}
+                  isAtMax={selectedCount >= MAX_SELECTIONS}
                   classes={classes}
                 />
                 <CheckboxCell
                   type={row.operator}
                   checked={!!selections[`${row.id}_op`]}
                   onToggle={() => handleToggle(`${row.id}_op`)}
+                  isAtMax={selectedCount >= MAX_SELECTIONS}
                   classes={classes}
                 />
               </div>
