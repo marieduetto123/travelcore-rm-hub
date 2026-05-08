@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Calendar — Travel Distribution Hub</title>
+  <title>Monthly Calendar — Travel Distribution Hub</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
@@ -50,21 +50,14 @@
       background: #fff; border: 1px solid var(--border); border-radius: 8px;
       padding: 20px 24px; display: flex; flex-direction: column; gap: 16px; overflow: hidden;
     }
-    .card-hdr { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .card-hdr   { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
     .card-hdr-r { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 
-    /* monthly */
-    .cal-dow { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; margin-bottom: 2px; }
+    .cal-dow   { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; margin-bottom: 2px; }
     .cal-weeks { display: flex; flex-direction: column; gap: 2px; }
     .cal-week  { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; }
     .cal-cell  { height: 72px; border-radius: 2px; }
     .faded     { opacity: 0.3; }
-
-    /* weekly */
-    .wk-grid { display: grid; grid-template-columns: 200px repeat(7,1fr); gap: 2px; }
-    .wk-cell      { height: 32px; border-radius: 2px; }
-    .wk-cell--hdr { height: 40px; }
-    .wk-cell--sec { height: 36px; opacity: 0.55; }
   </style>
 </head>
 <body>
@@ -124,6 +117,8 @@
 
     <!-- MONTHLY CALENDAR -->
     <div class="section-card">
+
+      <!-- header -->
       <div class="card-hdr">
         <div class="sk" style="width:80px;height:22px;border-radius:3px"></div>
         <div class="card-hdr-r">
@@ -135,6 +130,8 @@
           <div class="sk" style="width:130px;height:32px;border-radius:4px"></div>
         </div>
       </div>
+
+      <!-- tab bar + nav -->
       <div style="display:flex;align-items:center;justify-content:space-between">
         <div style="display:flex;gap:4px">
           <div class="sk" style="width:80px;height:30px;border-radius:4px"></div>
@@ -146,6 +143,8 @@
           <div class="sk" style="width:24px;height:24px;border-radius:4px"></div>
         </div>
       </div>
+
+      <!-- legend -->
       <div style="display:flex;gap:16px">
         <div class="sk" style="width:130px;height:12px"></div>
         <div class="sk" style="width:90px;height:12px"></div>
@@ -203,67 +202,6 @@
           </div>
         </div>
 
-      </div>
-    </div>
-
-    <!-- WEEKLY VIEW -->
-    <div class="section-card">
-      <div class="card-hdr">
-        <div style="display:flex;align-items:center;gap:12px">
-          <div class="sk" style="width:110px;height:20px;border-radius:3px"></div>
-          <div class="sk" style="width:90px;height:22px;border-radius:3px"></div>
-        </div>
-        <div class="card-hdr-r">
-          <div class="sk" style="width:110px;height:32px;border-radius:4px"></div>
-          <div class="sk" style="width:100px;height:32px;border-radius:4px"></div>
-          <div class="sk" style="width:80px;height:32px;border-radius:4px"></div>
-          <div class="sk" style="width:140px;height:32px;border-radius:4px"></div>
-          <div class="sk" style="width:100px;height:32px;border-radius:4px"></div>
-        </div>
-      </div>
-      <div style="display:flex;align-items:center;justify-content:space-between">
-        <div style="display:flex;gap:4px">
-          <div class="sk" style="width:80px;height:30px;border-radius:4px;opacity:.4"></div>
-          <div class="sk" style="width:72px;height:30px;border-radius:4px"></div>
-        </div>
-        <div style="display:flex;align-items:center;gap:8px">
-          <div class="sk" style="width:90px;height:28px;border-radius:4px"></div>
-          <div class="sk" style="width:90px;height:28px;border-radius:4px"></div>
-          <div class="sk" style="width:24px;height:24px;border-radius:4px"></div>
-          <div class="sk" style="width:24px;height:24px;border-radius:4px"></div>
-        </div>
-      </div>
-      <div style="display:flex;gap:16px">
-        <div class="sk" style="width:80px;height:12px"></div>
-        <div class="sk" style="width:110px;height:12px"></div>
-        <div class="sk" style="width:90px;height:12px"></div>
-        <div class="sk" style="width:100px;height:12px"></div>
-        <div class="sk" style="width:56px;height:12px"></div>
-      </div>
-
-      <div style="overflow-x:auto">
-        <div class="wk-grid">
-          <!-- header -->
-          <div class="sk wk-cell wk-cell--hdr" style="opacity:.3"></div>
-          <div class="sk wk-cell wk-cell--hdr"></div><div class="sk wk-cell wk-cell--hdr"></div><div class="sk wk-cell wk-cell--hdr"></div><div class="sk wk-cell wk-cell--hdr"></div><div class="sk wk-cell wk-cell--hdr"></div><div class="sk wk-cell wk-cell--hdr"></div><div class="sk wk-cell wk-cell--hdr"></div>
-          <!-- section A -->
-          <div class="sk wk-cell wk-cell--sec"></div><div class="sk wk-cell wk-cell--sec"></div><div class="sk wk-cell wk-cell--sec"></div><div class="sk wk-cell wk-cell--sec"></div><div class="sk wk-cell wk-cell--sec"></div><div class="sk wk-cell wk-cell--sec"></div><div class="sk wk-cell wk-cell--sec"></div><div class="sk wk-cell wk-cell--sec"></div>
-          <div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div>
-          <div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div>
-          <div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div>
-          <div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div>
-          <!-- section B -->
-          <div class="sk wk-cell wk-cell--sec"></div><div class="sk wk-cell wk-cell--sec"></div><div class="sk wk-cell wk-cell--sec"></div><div class="sk wk-cell wk-cell--sec"></div><div class="sk wk-cell wk-cell--sec"></div><div class="sk wk-cell wk-cell--sec"></div><div class="sk wk-cell wk-cell--sec"></div><div class="sk wk-cell wk-cell--sec"></div>
-          <div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div>
-          <div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div>
-          <div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div>
-          <div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div>
-          <!-- section C -->
-          <div class="sk wk-cell wk-cell--sec"></div><div class="sk wk-cell wk-cell--sec"></div><div class="sk wk-cell wk-cell--sec"></div><div class="sk wk-cell wk-cell--sec"></div><div class="sk wk-cell wk-cell--sec"></div><div class="sk wk-cell wk-cell--sec"></div><div class="sk wk-cell wk-cell--sec"></div><div class="sk wk-cell wk-cell--sec"></div>
-          <div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div>
-          <div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div>
-          <div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div><div class="sk wk-cell"></div>
-        </div>
       </div>
     </div>
 
