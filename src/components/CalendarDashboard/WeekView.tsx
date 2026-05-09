@@ -23,7 +23,7 @@ const METRICS = [
   { key: 'adr', label: 'ADR', format: (v: number) => `$${v}` },
   { key: 'revenue', label: 'Revenue', format: (v: number) => `$${(v / 1000).toFixed(0)}k` },
   { key: 'rnSold', label: 'RN Sold', format: (v: number) => `${v}` },
-  { key: 'availRooms', label: 'Avail Rooms', format: (v: number) => `${v}` },
+  { key: 'availRooms', label: 'Available Rooms', format: (v: number) => `${v}` },
   { key: 'revpar', label: 'RevPAR', format: (v: number) => `$${v}` },
 ];
 

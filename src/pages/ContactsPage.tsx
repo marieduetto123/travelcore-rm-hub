@@ -597,7 +597,7 @@ export function ContactsPage() {
                       { label: 'Revenue', value: op.revenue, pct: 0.72 },
                       { label: 'Bookings', value: op.bookings.toLocaleString(), pct: 0.58 },
                       { label: 'Closure Rate', value: op.closureRate, pct: 0.35 },
-                      { label: 'Avg Lead Time', value: '28 days', pct: 0.45 },
+                      { label: 'Average Lead Time', value: '28 days', pct: 0.45 },
                     ].map(({ label, value, pct }) => (
                       <div key={label} className={classes.insightMetricRow}>
                         <Typography className={classes.insightMetricLabel}>{label}</Typography>

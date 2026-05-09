@@ -98,7 +98,7 @@ const METRIC_GROUPS: MetricGroup[] = [
     ],
   },
   {
-    id: 'revpar', name: 'REVPAR',
+    id: 'revpar', name: 'RevPAR',
     rows: [
       { id: 'rp_act', label: 'Actual', hotel: 'unavailable', operator: 'unavailable' },
       { id: 'rp_ly', label: 'LY', hotel: 'unavailable', operator: 'unavailable' },
@@ -111,16 +111,16 @@ const METRIC_GROUPS: MetricGroup[] = [
     rows: [
       { id: 'oth_pickup', label: 'Pickup', hotel: 'unavailable', operator: 'unavailable' },
       { id: 'oth_los', label: 'Avg LOS', hotel: 'unavailable', operator: 'unavailable' },
-      { id: 'oth_lead', label: 'Lead Time', hotel: 'unavailable', operator: 'unavailable' },
-      { id: 'oth_adults', label: 'Avg Adults', hotel: 'unavailable', operator: 'unavailable' },
-      { id: 'oth_children', label: 'Avg Children', hotel: 'unavailable', operator: 'unavailable' },
-      { id: 'oth_guests', label: 'Total Guests', hotel: 'unavailable', operator: 'unavailable' },
+      { id: 'oth_lead', label: 'ALT', hotel: 'unavailable', operator: 'unavailable' },
+      { id: 'oth_adults', label: 'AD', hotel: 'unavailable', operator: 'unavailable' },
+      { id: 'oth_children', label: 'CHD', hotel: 'unavailable', operator: 'unavailable' },
+      { id: 'oth_guests', label: 'PAX', hotel: 'unavailable', operator: 'unavailable' },
     ],
   },
   {
     id: 'availability', name: 'Availability',
     rows: [
-      { id: 'av_rooms', label: 'Avail Rooms', hotel: 'interactive', operator: 'absent' },
+      { id: 'av_rooms', label: 'AR', hotel: 'interactive', operator: 'absent' },
       { id: 'av_guar', label: 'Avail Guar.', hotel: 'absent', operator: 'checkboxDisabled' },
     ],
   },
