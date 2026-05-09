@@ -262,12 +262,18 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: calendarTokens.cellBackground,
     borderRight: `1px solid ${calendarTokens.border}`,
     borderBottom: `1px solid ${calendarTokens.border}`,
+    cursor: 'pointer',
+    '&:hover': { backgroundColor: '#ebebeb' },
   },
   closeOutLabelText: {
     fontFamily: 'Lato, sans-serif',
     fontSize: 12,
     fontWeight: 700,
-    color: theme.palette.text.primary,
+    color: theme.palette.primary.main,
+    textDecoration: 'underline',
+    textDecorationColor: 'transparent',
+    transition: 'text-decoration-color 0.1s',
+    '$closeOutLabelCell:hover &': { textDecorationColor: theme.palette.primary.main },
   },
   closeOutCell: {
     display: 'flex',
@@ -562,8 +568,8 @@ export function WeekView({ weekStart, onBack, onPrevWeek, onNextWeek }: Props) {
             })}
 
             {/* ── Close Out row ── */}
-            <div className={classes.closeOutLabelCell}>
-              <Icon style={{ fontSize: 13, color: '#888' }}>lock_outline</Icon>
+            <div className={classes.closeOutLabelCell} onClick={openCloseOut}>
+              <Icon style={{ fontSize: 13, color: '#006461' }}>lock_outline</Icon>
               <Typography className={classes.closeOutLabelText}>Close Out</Typography>
             </div>
             {days.map((_, i) => (
