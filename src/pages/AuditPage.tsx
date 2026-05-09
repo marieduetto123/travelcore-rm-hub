@@ -142,6 +142,14 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(1.5, 2),
     borderTop: `1px solid ${tokens.border}`,
   },
+  applyBtn: {
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.common.white,
+    fontFamily: 'Lato, sans-serif',
+    fontSize: 13,
+    textTransform: 'none' as const,
+    '&:hover': { backgroundColor: theme.palette.primary.dark },
+  },
   table: {
     '& .MuiTableCell-head': {
       fontFamily: 'Lato, sans-serif',
@@ -388,7 +396,7 @@ export function AuditPage() {
             variant="contained"
             disableElevation
             onClick={applyFilters}
-            style={{ backgroundColor: '#006461', color: '#fff', fontFamily: 'Lato, sans-serif', fontSize: 13, textTransform: 'none' }}
+            className={classes.applyBtn}
           >
             Apply
           </Button>

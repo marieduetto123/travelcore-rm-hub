@@ -144,6 +144,14 @@ const useStyles = makeStyles((theme) => ({
   },
   typeEmail: { backgroundColor: '#dbeafe', color: '#1d4ed8' },
   typeNote: { backgroundColor: '#f3f4f6', color: '#4b5563' },
+  saveNoteBtn: {
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.common.white,
+    fontFamily: 'Lato, sans-serif',
+    fontSize: 13,
+    textTransform: 'none' as const,
+    '&:hover': { backgroundColor: theme.palette.primary.dark },
+  },
 }));
 
 export function CommunicationsPage() {
@@ -332,7 +340,7 @@ export function CommunicationsPage() {
             onClick={handleAddNote}
             variant="contained"
             disableElevation
-            style={{ backgroundColor: '#006461', color: '#fff', fontFamily: 'Lato, sans-serif', textTransform: 'none', fontSize: 13 }}
+            className={classes.saveNoteBtn}
           >
             Save Note
           </Button>
